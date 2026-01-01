@@ -8,29 +8,34 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-tasks.register("installGitHook") {
-    description = "Installs the pre-commit git hook"
+tasks.register("installPrePushHook") {
+    description = "Installs the pre-push git hook"
     group = "help"
     doLast {
-        val preCommitFile = file(".git/hooks/pre-commit")
-        preCommitFile.writeText(
-            """
+        val prePushFile = file(".git/hooks/pre-push")
+        val script = """
             #!/bin/bash
-            echo "Running ktlintFormat..."
-            ./gradlew ktlintFormat
+            echo "--------------------------------------------------"
+            echo "🚀 Pushing to GitHub... Running ktlintCheck first."
+            echo "--------------------------------------------------"
+
+            ./gradlew ktlintCheck
+
             if [ $? -ne 0 ]; then
-                echo "❌ ktlintFormat failed! Please fix the errors."
+                echo ""
+                echo "❌ ktlintCheck failed!"
+                echo "스타일 가이드를 위반했습니다. 코드를 수정하고 다시 푸시해주세요."
+                echo "Tip: ./gradlew ktlintFormat 을 실행하면 자동으로 고쳐집니다."
+                echo "--------------------------------------------------"
                 exit 1
             fi
-            git add .
-            echo "✅ ktlintFormat finished!"
-            """.trimIndent().replace("\r\n", "\n")
-        )
-        try {
-            val permissions = java.nio.file.attribute.PosixFilePermissions.fromString("rwxr-xr-x")
-            java.nio.file.Files.setPosixFilePermissions(preCommitFile.toPath(), permissions)
-        } catch (e: Exception) {
-        }
-        println("✅ Git pre-commit hook installed successfully!")
+
+            echo "✅ Style check passed! Proceeding with push..."
+            echo "--------------------------------------------------"
+        """.trimIndent().replace("\r\n", "\n") + "\n"
+
+        prePushFile.writeText(script)
+        prePushFile.setExecutable(true)
+        println("✅ Git pre-push hook installed successfully!")
     }
 }
