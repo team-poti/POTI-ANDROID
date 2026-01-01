@@ -1,4 +1,4 @@
-package com.poti.android.ui.theme
+package com.poti.android.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.PlatformTextStyle
