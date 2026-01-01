@@ -7,3 +7,29 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
 }
+
+tasks.register("installGitHook") {
+    description = "Installs the pre-commit git hook"
+    group = "help"
+    doLast {
+        val preCommitFile = file(".git/hooks/pre-commit")
+        preCommitFile.writeText(
+            """
+            echo "Running ktlintFormat..."
+            ./gradlew ktlintFormat
+            if [ $? -ne 0 ]; then
+                echo "❌ ktlintFormat failed! Please fix the errors."
+                exit 1
+            fi
+            git add .
+            echo "✅ ktlintFormat finished!"
+            """.trimIndent()
+        )
+        try {
+            val permissions = java.nio.file.attribute.PosixFilePermissions.fromString("rwxr-xr-x")
+            java.nio.file.Files.setPosixFilePermissions(preCommitFile.toPath(), permissions)
+        } catch (e: Exception) {
+        }
+        println("✅ Git pre-commit hook installed successfully!")
+    }
+}
