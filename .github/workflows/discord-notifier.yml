@@ -1,0 +1,28 @@
+name: Discord Notifier
+
+on:
+    pull_request:
+        types: [opened]
+
+jobs:
+    notify:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set Upper Case ID
+              run: |
+                  ACTOR_NAME=$(echo "${{ github.actor }}" | tr '[:lower:]' '[:upper:]')
+                  echo "ACTOR_UPPER=$ACTOR_NAME" >> $GITHUB_ENV
+
+            - name: Discord notification
+              uses: sarisia/actions-status-discord@v1
+              with:
+                  webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: ${{ job.status }}
+                  content: |
+                      ${{ secrets[format('ID_{0}', env.ACTOR_UPPER)] != '' && format('<@{0}>', secrets[format('ID_{0}', env.ACTOR_UPPER)]) || github.actor }} 🚀 **새로운 PR을 생성했습니다!**
+                  title: "PR #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}"
+                  description: |
+                      **작성자:** ${{ github.actor }}
+                      **브랜치:** ${{ github.head_ref }} -> ${{ github.base_ref }}
+                      **링크:** ${{ github.event.pull_request.html_url }}
+                  color: 0x5865F2
