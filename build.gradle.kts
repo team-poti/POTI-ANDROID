@@ -15,6 +15,7 @@ tasks.register("installGitHook") {
         val preCommitFile = file(".git/hooks/pre-commit")
         preCommitFile.writeText(
             """
+            #!/bin/bash
             echo "Running ktlintFormat..."
             ./gradlew ktlintFormat
             if [ $? -ne 0 ]; then
@@ -23,7 +24,7 @@ tasks.register("installGitHook") {
             fi
             git add .
             echo "✅ ktlintFormat finished!"
-            """.trimIndent()
+            """.trimIndent().replace("\r\n", "\n")
         )
         try {
             val permissions = java.nio.file.attribute.PosixFilePermissions.fromString("rwxr-xr-x")
