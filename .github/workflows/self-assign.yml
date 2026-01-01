@@ -1,0 +1,33 @@
+name: Self-Assign
+on:
+    issues:
+        types: [opened]
+    pull_request:
+        types: [opened]
+
+jobs:
+    assign:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Assign creator
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const { owner, repo } = context.repo;
+                      const actor = context.actor;
+
+                      if (context.payload.issue) {
+                        await github.rest.issues.addAssignees({
+                          owner,
+                          repo,
+                          issue_number: context.issue.number,
+                          assignees: [actor]
+                        });
+                      } else if (context.payload.pull_request) {
+                        await github.rest.issues.addAssignees({
+                          owner,
+                          repo,
+                          issue_number: context.payload.pull_request.number,
+                          assignees: [actor]
+                        });
+                      }
