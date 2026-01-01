@@ -1,4 +1,4 @@
-package com.poti.android
+package com.poti.android.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
