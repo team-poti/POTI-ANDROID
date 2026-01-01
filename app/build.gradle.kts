@@ -1,3 +1,6 @@
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +9,10 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -20,6 +27,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", properties["poti.base.url"].toString())
     }
 
     buildTypes {
@@ -49,22 +57,27 @@ ktlint {
 }
 
 dependencies {
-    // Core Libraries
+    // --- Android Core & Lifecycle ---
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
 
-    // Jetpack Compose
+    // --- UI (Jetpack Compose) ---
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.core.splashscreen)
 
-    // Network
+    // --- Dependency Injection (Hilt) ---
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    // --- Network (Retrofit & OkHttp) ---
     implementation(libs.retrofit)
     implementation(libs.kotlinx.serialization.json)
     implementation(platform(libs.okhttp.bom))
@@ -72,29 +85,23 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.converter.kotlinx.serialization)
 
-    // Hilt
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-
-    // Coil
+    // --- Image Loading (Coil) ---
     implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
 
-    // DataStore
+    // --- Local Storage ---
     implementation(libs.androidx.datastore.preferences)
 
-    // Test
+    // --- Utils ---
+    implementation(libs.timber)
+
+    // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    // Timber
-    implementation(libs.timber)
-
-    // Debug
+    // --- Debugging ---
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
