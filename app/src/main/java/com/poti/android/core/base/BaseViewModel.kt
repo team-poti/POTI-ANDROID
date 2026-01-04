@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface ViewState
+
 interface ViewEvent
+
 interface ViewSideEffect
 
-abstract class BaseViewModel<State: ViewState, Event: ViewEvent, SideEffect: ViewSideEffect>(
-    initialState: State
-): ViewModel() {
+abstract class BaseViewModel<State : ViewState, Event : ViewEvent, SideEffect : ViewSideEffect>(
+    initialState: State,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<State> = _uiState.asStateFlow()
 

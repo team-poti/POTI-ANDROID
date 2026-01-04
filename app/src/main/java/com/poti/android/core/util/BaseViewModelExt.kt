@@ -13,7 +13,7 @@ import com.poti.android.core.base.ViewState
 @Composable
 fun <S : ViewState, E : ViewEvent, SE : ViewSideEffect> BaseViewModel<S, E, SE>.ObserveSideEffect(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    action: (SE) -> Unit
+    action: (SE) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
