@@ -1,12 +1,12 @@
 package com.poti.android.core.util
 
-import com.poti.android.core.base.UiState
+import com.poti.android.core.base.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-inline fun <T> MutableStateFlow<UiState<T>>.updateSuccess(crossinline onUpdate: (T) -> T) {
+inline fun <T> MutableStateFlow<ApiState<T>>.updateSuccess(crossinline onUpdate: (T) -> T) {
     update { currentState ->
-        if (currentState is UiState.Success) {
+        if (currentState is ApiState.Success) {
             currentState.copy(data = onUpdate(currentState.data))
         } else {
             currentState

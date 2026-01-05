@@ -10,8 +10,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
-abstract class BaseViewModel<S, E>(initialState: S) : ViewModel() {
+interface UiState
+
+interface UiIntent
+
+interface UiEffect
+
+abstract class BaseViewModel<S : UiState, I : UiIntent, E : UiEffect>(
+    initialState: S,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<S> = _uiState.asStateFlow()
 
@@ -22,11 +31,13 @@ abstract class BaseViewModel<S, E>(initialState: S) : ViewModel() {
         _uiState.update { it.reducer() }
     }
 
-    protected fun postSideEffect(effect: E) {
+    protected fun sendEffect(effect: E) {
         viewModelScope.launch {
             _sideEffect.send(effect)
         }
     }
+
+    abstract fun processIntent(intent: I)
 
     protected fun launchScope(
         onError: (Throwable) -> Unit = {},
@@ -35,7 +46,8 @@ abstract class BaseViewModel<S, E>(initialState: S) : ViewModel() {
         viewModelScope.launch {
             try {
                 block()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
                 onError(e)
             }
         }

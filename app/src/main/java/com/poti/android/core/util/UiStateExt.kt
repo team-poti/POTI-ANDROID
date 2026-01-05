@@ -1,13 +1,13 @@
 package com.poti.android.core.util
 
-import com.poti.android.core.base.UiState
+import com.poti.android.core.base.ApiState
 
-inline fun <T> UiState<T>.onSuccess(block: (T) -> Unit) {
-    if (this is UiState.Success) {
+inline fun <T> ApiState<T>.onSuccess(block: (T) -> Unit) {
+    if (this is ApiState.Success) {
         block(data)
     }
 }
 
-fun <T> UiState<T>.getSuccessDataOrNull(): T? {
-    return (this as? UiState.Success)?.data
+fun <T> ApiState<T>.getSuccessDataOrNull(): T? {
+    return (this as? ApiState.Success)?.data
 }
