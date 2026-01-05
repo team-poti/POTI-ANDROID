@@ -1,4 +1,4 @@
-package com.poti.android.core.extension
+package com.poti.android.core.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

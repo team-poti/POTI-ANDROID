@@ -1,4 +1,4 @@
-package com.poti.android.core.util
+package com.poti.android.core.extension
 
 import android.content.Context
 import android.widget.Toast

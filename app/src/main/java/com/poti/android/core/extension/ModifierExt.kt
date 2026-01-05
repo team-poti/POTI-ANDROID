@@ -1,4 +1,4 @@
-package com.poti.android.core.util
+package com.poti.android.core.extension
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
