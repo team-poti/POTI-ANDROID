@@ -1,4 +1,4 @@
-package com.poti.android.core.ui.theme
+package com.poti.android.core.designsystem.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
