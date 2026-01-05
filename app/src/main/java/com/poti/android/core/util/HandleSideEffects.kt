@@ -5,22 +5,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import com.poti.android.core.base.BaseViewModel
-import com.poti.android.core.base.ViewEvent
-import com.poti.android.core.base.ViewSideEffect
-import com.poti.android.core.base.ViewState
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun <S : ViewState, E : ViewEvent, SE : ViewSideEffect> BaseViewModel<S, E, SE>.ObserveSideEffect(
+fun <T> HandleSideEffects(
+    sideEffectFlow: Flow<T>,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    action: (SE) -> Unit,
+    onSideEffect: (T) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(this, lifecycleOwner) {
+    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
-            this@ObserveSideEffect.sideEffect.collect { effect ->
-                action(effect)
+            sideEffectFlow.collect { effect ->
+                onSideEffect(effect)
             }
         }
     }

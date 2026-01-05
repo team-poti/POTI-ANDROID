@@ -11,39 +11,33 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-interface ViewState
-
-interface ViewEvent
-
-interface ViewSideEffect
-
-abstract class BaseViewModel<State : ViewState, Event : ViewEvent, SideEffect : ViewSideEffect>(
-    initialState: State,
-) : ViewModel() {
+abstract class BaseViewModel<S, E>(initialState: S) : ViewModel() {
     private val _uiState = MutableStateFlow(initialState)
-    val uiState: StateFlow<State> = _uiState.asStateFlow()
+    val uiState: StateFlow<S> = _uiState.asStateFlow()
 
-    private val _sideEffect = Channel<SideEffect>(Channel.BUFFERED)
-    val sideEffect: Flow<SideEffect> = _sideEffect.receiveAsFlow()
+    private val _sideEffect = Channel<E>()
+    val sideEffect: Flow<E> = _sideEffect.receiveAsFlow()
 
-    protected val currentState: State
-        get() = _uiState.value
+    protected fun updateState(reducer: S.() -> S) {
+        _uiState.update { it.reducer() }
+    }
 
-    fun setEvent(event: Event) {
+    protected fun postSideEffect(effect: E) {
         viewModelScope.launch {
-            handleEvent(event)
+            _sideEffect.send(effect)
         }
     }
 
-    protected abstract suspend fun handleEvent(event: Event)
-
-    protected fun updateState(reducer: State.() -> State) {
-        _uiState.update { currentState.reducer() }
-    }
-
-    protected fun postSideEffect(effect: SideEffect) {
+    protected fun launchScope(
+        onError: (Throwable) -> Unit = {},
+        block: suspend () -> Unit,
+    ) {
         viewModelScope.launch {
-            _sideEffect.send(effect)
+            try {
+                block()
+            } catch (e: Exception) {
+                onError(e)
+            }
         }
     }
 }
