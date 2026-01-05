@@ -1,6 +1,6 @@
 package com.poti.android.core.util
 
-import com.poti.android.core.base.ApiState
+import com.poti.android.core.common.ApiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 

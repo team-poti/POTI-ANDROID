@@ -1,4 +1,4 @@
-package com.poti.android.core.base
+package com.poti.android.core.common
 
 sealed interface ApiState<out T> {
     data object Empty : ApiState<Nothing>

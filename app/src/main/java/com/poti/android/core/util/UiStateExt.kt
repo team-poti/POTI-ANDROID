@@ -1,6 +1,6 @@
 package com.poti.android.core.util
 
-import com.poti.android.core.base.ApiState
+import com.poti.android.core.common.ApiState
 
 inline fun <T> ApiState<T>.onSuccess(block: (T) -> Unit) {
     if (this is ApiState.Success) {
