@@ -1,4 +1,4 @@
-package com.poti.android.core.util
+package com.poti.android.core.extension
 
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.currentCoroutineContext
