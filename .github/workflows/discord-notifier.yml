@@ -21,7 +21,8 @@ jobs:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
                   status: ${{ job.status }}
                   content: |
-                      ${{ secrets[format('ID_{0}', env.ACTOR_UPPER)] != '' && format('<@{0}>', secrets[format('ID_{0}', env.ACTOR_UPPER)]) || github.actor }} 🚀 **새로운 ${{ github.event_name == 'pull_request' && 'PR' || '이슈' }}을(를) 생성했습니다!**
+                      🚀 **새로운 ${{ github.event_name == 'pull_request' && 'PR을' || '이슈를' }} 생성했습니다!**
+                      담당자: ${{ secrets[format('ID_{0}', env.ACTOR_UPPER)] != '' && format('<@{0}>', secrets[format('ID_{0}', env.ACTOR_UPPER)]) || github.actor }}
                   title: "${{ github.event_name == 'pull_request' && 'PR' || 'Issue' }} #${{ github.event.pull_request.number || github.event.issue.number }} - ${{ github.event.pull_request.title || github.event.issue.title }}"
                   description: |
                       **작성자:** ${{ github.actor }}
