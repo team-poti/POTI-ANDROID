@@ -1,0 +1,31 @@
+name: Discord Notifier
+
+on:
+    pull_request:
+        types: [opened]
+    issues:
+        types: [opened]
+
+jobs:
+    notify:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Set Upper Case ID
+              run: |
+                  ACTOR_NAME=$(echo "${{ github.actor }}" | tr '[:lower:]' '[:upper:]')
+                  echo "ACTOR_UPPER=$ACTOR_NAME" >> $GITHUB_ENV
+
+            - name: Discord notification
+              uses: sarisia/actions-status-discord@v1
+              with:
+                  webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  status: ${{ job.status }}
+                  content: |
+                      🚀 **새로운 ${{ github.event_name == 'pull_request' && 'PR을' || '이슈를' }} 생성했습니다!**
+                      담당자: ${{ secrets[format('ID_{0}', env.ACTOR_UPPER)] != '' && format('<@{0}>', secrets[format('ID_{0}', env.ACTOR_UPPER)]) || github.actor }}
+                  title: "${{ github.event_name == 'pull_request' && 'PR' || 'Issue' }} #${{ github.event.pull_request.number || github.event.issue.number }} - ${{ github.event.pull_request.title || github.event.issue.title }}"
+                  description: |
+                      **작성자:** ${{ github.actor }}
+                      ${{ github.event_name == 'pull_request' && format('**브랜치:** {0} -> {1}', github.head_ref, github.base_ref) || '' }}
+                      **링크:** ${{ github.event.pull_request.html_url || github.event.issue.html_url }}
+                  color: 0x5865F2
