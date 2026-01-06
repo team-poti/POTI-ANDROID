@@ -21,11 +21,12 @@ jobs:
                   webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
                   status: ${{ job.status }}
                   content: |
-                      🚀 **새로운 ${{ github.event_name == 'pull_request' && 'PR을' || '이슈를' }} 생성했습니다!**
+                      # **${{ github.event_name == 'pull_request' && '🚀 PR' || '📌 이슈' }} 생성**: ${{ github.event.pull_request.title || github.event.issue.title }}
                       담당자: ${{ secrets[format('ID_{0}', env.ACTOR_UPPER)] != '' && format('<@{0}>', secrets[format('ID_{0}', env.ACTOR_UPPER)]) || github.actor }}
-                  title: "${{ github.event_name == 'pull_request' && 'PR' || 'Issue' }} #${{ github.event.pull_request.number || github.event.issue.number }} - ${{ github.event.pull_request.title || github.event.issue.title }}"
+                  title: "${{ github.event_name == 'pull_request' && format('PR #{0} - {1}', github.event.pull_request.number, github.event.pull_request.title) || format('Issue #{0} - {1}', github.event.issue.number, github.event.issue.title) }}"
                   description: |
                       **작성자:** ${{ github.actor }}
-                      ${{ github.event_name == 'pull_request' && format('**브랜치:** {0} -> {1}', github.head_ref, github.base_ref) || '' }}
-                      **링크:** ${{ github.event.pull_request.html_url || github.event.issue.html_url }}
+                      ${{ github.event_name == 'pull_request'
+                        && format('**브랜치:** {0} -> {1}\n**링크:** {2}', github.head_ref, github.base_ref, github.event.pull_request.html_url)
+                        || format('**링크:** {0}', github.event.issue.html_url) }}
                   color: 0x5865F2
