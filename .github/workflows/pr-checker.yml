@@ -4,9 +4,14 @@ on:
     pull_request:
         branches: [ develop, main ]
 
+permissions:
+    contents: read
+    issues: write
+    pull-requests: write
+
 jobs:
     lint:
-        name: Lint Check
+        name: PR CI Check (Lint & Build)
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -39,11 +44,14 @@ jobs:
                   else
                     echo "poti.base.url=\"https://temp.example.com/\"" > local.properties
                   fi
+
             - name: Run ktlintCheck
+              id: ktlint
+              continue-on-error: true
               run: ./gradlew ktlintCheck
 
             - name: Upload ktlint report
-              if: failure()
+              if: steps.ktlint.outcome == 'failure'
               uses: actions/upload-artifact@v4
               with:
                   name: ktlint-report
@@ -51,70 +59,159 @@ jobs:
                   retention-days: 7
 
             - name: Comment PR on ktlint failure
-              if: failure()
+              if: steps.ktlint.outcome == 'failure'
               uses: actions/github-script@v7
               with:
                   script: |
-                      github.rest.issues.createComment({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        body: '❌ **Ktlint check failed!**\n\n' +
-                              'Please fix the code style issues:\n' +
-                              '```bash\n' +
-                              './gradlew ktlintFormat\n' +
-                              '```'
-                      })
-    build:
-        name: Build Check
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+                      const marker = "<!-- CI:KTLINT -->";
+                      const body =
+                        `${marker}\n` +
+                        `❌ **Ktlint check failed!**\n\n` +
+                        `Please fix the code style issues:\n` +
+                        "```bash\n" +
+                        "./gradlew ktlintFormat\n" +
+                        "```";
+                      const { owner, repo } = context.repo;
+                      const issue_number = context.issue.number;
 
-            - name: Gradle cache
-              uses: actions/cache@v4
+                      const comments = await github.paginate(
+                        github.rest.issues.listComments,
+                        { owner, repo, issue_number, per_page: 100 }
+                      );
+
+                      const existing = comments.find(c =>
+                        c?.body?.includes(marker) && c?.user?.login === "github-actions[bot]"
+                      );
+
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          owner, repo,
+                          comment_id: existing.id,
+                          body
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner, repo,
+                          issue_number,
+                          body
+                        });
+                      }
+
+            - name: Fail job if ktlint failed
+              if: steps.ktlint.outcome == 'failure'
+              run: exit 1
+
+            - name: Mark ktlint comment as resolved
+              if: steps.ktlint.outcome == 'success'
+              uses: actions/github-script@v7
               with:
-                  path: |
-                      ~/.gradle/caches
-                      ~/.gradle/wrapper
-                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                  restore-keys: |
-                      ${{ runner.os }}-gradle-
-            - name: Set up JDK 17
-              uses: actions/setup-java@v4
-              with:
-                  java-version: '17'
-                  distribution: 'temurin'
+                  script: |
+                      const marker = "<!-- CI:KTLINT -->";
+                      const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+                      const body =
+                        `${marker}\n` +
+                        `✅ **Ktlint check passed.**\n\n` +
+                        `Run: ${runUrl}`;
 
-            - name: Grant permission to gradlew
-              run: chmod +x ./gradlew
+                      const { owner, repo } = context.repo;
+                      const issue_number = context.issue.number;
 
-            - name: Create local.properties
-              env:
-                  LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
-              run: |
-                  if [ -n "$LOCAL_PROPERTIES" ]; then
-                    echo "${LOCAL_PROPERTIES}" > local.properties
-                  else
-                    echo "poti.base.url=\"https://temp.example.com/\"" > local.properties
-                  fi
+                      const comments = await github.paginate(
+                        github.rest.issues.listComments,
+                        { owner, repo, issue_number, per_page: 100 }
+                      );
+
+                      const existing = comments.find(c =>
+                        c?.body?.includes(marker) && c?.user?.login === "github-actions[bot]"
+                      );
+
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          owner, repo,
+                          comment_id: existing.id,
+                          body
+                        });
+                      }
+
             - name: Build Debug APK
+              id: build
+              if: steps.ktlint.outcome == 'success'
+              continue-on-error: true
               run: ./gradlew :app:assembleDebug
 
             - name: Comment PR on build failure
-              if: failure()
+              if: steps.build.outcome == 'failure'
               uses: actions/github-script@v7
               with:
                   script: |
-                      github.rest.issues.createComment({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        body: '🔥 **Build Failed!**\n\n' +
-                              'The project build has failed.\n' +
-                              'Please check the error logs and try again.\n' +
-                              '```bash\n' +
-                              './gradlew :app:assembleDebug\n' +
-                              '```'
-                      })
+                      const marker = "<!-- CI:BUILD -->";
+                      const body =
+                        `${marker}\n` +
+                        `🔥 **Build Failed!**\n\n` +
+                        `The project build has failed.\n` +
+                        `Please check the error logs and try again.\n` +
+                        "```bash\n" +
+                        "./gradlew :app:assembleDebug\n" +
+                        "```";
+
+                      const { owner, repo } = context.repo;
+                      const issue_number = context.issue.number;
+
+                      const comments = await github.paginate(
+                        github.rest.issues.listComments,
+                        { owner, repo, issue_number, per_page: 100 }
+                      );
+
+                      const existing = comments.find(c =>
+                        c?.body?.includes(marker) && c?.user?.login === "github-actions[bot]"
+                      );
+
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          owner, repo,
+                          comment_id: existing.id,
+                          body
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner, repo,
+                          issue_number,
+                          body
+                        });
+                      }
+
+            - name: Mark build comment as resolved
+              if: steps.build.outcome == 'success'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const marker = "<!-- CI:BUILD -->";
+                      const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+                      const body =
+                        `${marker}\n` +
+                        `✅ **Build passed.**\n\n` +
+                        `Run: ${runUrl}`;
+
+                      const { owner, repo } = context.repo;
+                      const issue_number = context.issue.number;
+
+                      const comments = await github.paginate(
+                        github.rest.issues.listComments,
+                        { owner, repo, issue_number, per_page: 100 }
+                      );
+
+                      const existing = comments.find(c =>
+                        c?.body?.includes(marker) && c?.user?.login === "github-actions[bot]"
+                      );
+
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          owner, repo,
+                          comment_id: existing.id,
+                          body
+                        });
+                      }
+
+            - name: Fail job if build failed
+              if: steps.build.outcome == 'failure'
+              run: exit 1
