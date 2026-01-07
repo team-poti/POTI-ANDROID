@@ -18,17 +18,13 @@ val PotiFontMedium = FontFamily(Font(R.font.pretendard_medium))
 data class PotiTypography(
     val display20b: TextStyle,
     val display18b: TextStyle,
-
     val title18sb: TextStyle,
-
     val body16sb: TextStyle,
     val body16m: TextStyle,
     val body14sb: TextStyle,
     val body14m: TextStyle,
-
     val caption12m: TextStyle,
     val caption10m: TextStyle,
-
     val button16sb: TextStyle,
     val button14sb: TextStyle,
 )
@@ -48,7 +44,6 @@ val defaultPotiTypography = PotiTypography(
         lineHeight = 1.4.em,
         letterSpacing = 0.sp,
     ),
-
     title18sb = TextStyle(
         fontFamily = PotiFontSemiBold,
         fontWeight = FontWeight.W600,
@@ -56,7 +51,6 @@ val defaultPotiTypography = PotiTypography(
         lineHeight = 1.4.em,
         letterSpacing = 0.sp,
     ),
-
     body16sb = TextStyle(
         fontFamily = PotiFontSemiBold,
         fontWeight = FontWeight.W600,
@@ -85,7 +79,6 @@ val defaultPotiTypography = PotiTypography(
         lineHeight = 1.5.em,
         letterSpacing = 0.sp,
     ),
-
     caption12m = TextStyle(
         fontFamily = PotiFontMedium,
         fontWeight = FontWeight.W500,
@@ -100,7 +93,6 @@ val defaultPotiTypography = PotiTypography(
         lineHeight = 1.5.em,
         letterSpacing = 0.sp,
     ),
-
     button16sb = TextStyle(
         fontFamily = PotiFontSemiBold,
         fontWeight = FontWeight.W600,

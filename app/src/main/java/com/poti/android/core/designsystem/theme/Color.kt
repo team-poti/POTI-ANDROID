@@ -27,14 +27,12 @@ data class PotiColors(
     val poti400: Color,
     val poti600: Color,
     val poti800: Color,
-
     val gray100: Color,
     val gray300: Color,
     val gray500: Color,
     val gray700: Color,
     val gray800: Color,
     val gray900: Color,
-
     val sementicRed: Color,
     val black: Color,
     val blackA40: Color,
@@ -46,14 +44,12 @@ val defaultPotiColors = PotiColors(
     poti400 = Poti400,
     poti600 = Poti600,
     poti800 = Poti800,
-
     gray100 = Gray100,
     gray300 = Gray300,
     gray500 = Gray500,
     gray700 = Gray700,
     gray800 = Gray800,
     gray900 = Gray900,
-
     sementicRed = SementicRed,
     black = Black,
     blackA40 = BlackA40,

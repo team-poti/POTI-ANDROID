@@ -50,7 +50,7 @@ fun PotiTheme(
             }
         }
         MaterialTheme(
-            content = content
+            content = content,
         )
     }
 }
