@@ -53,7 +53,7 @@ val defaultPotiTypography = PotiTypography(
         fontFamily = PotiFontSemiBold,
         fontWeight = FontWeight.W600,
         fontSize = 18.sp,
-        lineHeight = 1.5.em,
+        lineHeight = 1.4.em,
         letterSpacing = 0.sp,
     ),
 
