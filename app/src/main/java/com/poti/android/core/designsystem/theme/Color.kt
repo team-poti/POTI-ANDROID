@@ -18,7 +18,7 @@ val Gray900 = Color(0xFF505056)
 
 val SementicRed = Color(0xFFFF634B)
 val Black = Color(0xFF303030)
-val BlackA40 = Color(0xFFA6A6A6)
+val BlackA40 = Color(0x66303030)
 val White = Color(0xFFFAFAFC)
 
 @Immutable
