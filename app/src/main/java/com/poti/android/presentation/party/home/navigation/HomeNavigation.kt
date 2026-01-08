@@ -16,9 +16,11 @@ sealed interface HomeRoute : Route {
 
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
+    onNavigateToGoodsCategory: () -> Unit,
 ) {
     composable<HomeRoute.Home> {
         HomeRoute(
+            onNavigateToGoodsCategory = onNavigateToGoodsCategory,
             modifier = Modifier.padding(paddingValues),
         )
     }

@@ -1,7 +1,6 @@
 package com.poti.android.presentation.main
 
 import androidx.annotation.StringRes
-import androidx.navigation.NavDestination
 import com.poti.android.R
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.myparty.navigation.MyPartyRoute
@@ -24,15 +23,4 @@ enum class MainTab(
         label = R.string.bottom_nav_my_page,
         route = MyPageRoute.MyPage,
     ),
-    ;
-
-    companion object {
-        private val tabRouteNames: Set<String> =
-            entries.mapNotNull { it.route::class.qualifiedName }.toSet()
-
-        fun contains(destination: NavDestination?): Boolean {
-            val r = destination?.route ?: return false
-            return r in tabRouteNames
-        }
-    }
 }

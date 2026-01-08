@@ -8,10 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.poti.android.presentation.myparty.navigation.MyPartyRoute
 import com.poti.android.presentation.party.PartyGraph
-import com.poti.android.presentation.party.home.navigation.HomeRoute
-import com.poti.android.presentation.user.mypage.navigation.MyPageRoute
 
 class PotiNavigator(
     val navController: NavHostController,
@@ -24,9 +21,7 @@ class PotiNavigator(
 
     val currentTab: MainTab?
         @Composable get() = MainTab.entries.find { tab ->
-            when (tab.route) {
-                else -> currentDestination?.route == tab.route::class.qualifiedName
-            }
+            currentDestination?.route == tab.route::class.qualifiedName
         }
 
     fun navigate(tab: MainTab) {
@@ -38,17 +33,11 @@ class PotiNavigator(
             restoreState = true
         }
 
-        val route = when (tab) {
-            MainTab.HOME -> HomeRoute.Home
-            MainTab.MY_PARTY -> MyPartyRoute.MyPartyList
-            MainTab.MY_PAGE -> MyPageRoute.MyPage
-        }
-
-        navController.navigate(route, navOptions)
+        navController.navigate(tab.route, navOptions)
     }
 
     @Composable
-    fun shouldShowBottomBar() = MainTab.contains(currentDestination)
+    fun shouldShowBottomBar() = currentTab != null
 }
 
 @Composable
