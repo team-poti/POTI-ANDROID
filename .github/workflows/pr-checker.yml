@@ -9,6 +9,10 @@ permissions:
     issues: write
     pull-requests: write
 
+concurrency:
+    group: pr-ci-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
 jobs:
     lint:
         name: PR CI Check (Lint & Build)
@@ -71,6 +75,7 @@ jobs:
                         "```bash\n" +
                         "./gradlew ktlintFormat\n" +
                         "```";
+
                       const { owner, repo } = context.repo;
                       const issue_number = context.issue.number;
 
@@ -84,18 +89,17 @@ jobs:
                       );
 
                       if (existing) {
-                        await github.rest.issues.updateComment({
+                        await github.rest.issues.deleteComment({
                           owner, repo,
-                          comment_id: existing.id,
-                          body
-                        });
-                      } else {
-                        await github.rest.issues.createComment({
-                          owner, repo,
-                          issue_number,
-                          body
+                          comment_id: existing.id
                         });
                       }
+
+                      await github.rest.issues.createComment({
+                        owner, repo,
+                        issue_number,
+                        body
+                      });
 
             - name: Fail job if ktlint failed
               if: steps.ktlint.outcome == 'failure'
@@ -167,18 +171,17 @@ jobs:
                       );
 
                       if (existing) {
-                        await github.rest.issues.updateComment({
+                        await github.rest.issues.deleteComment({
                           owner, repo,
-                          comment_id: existing.id,
-                          body
-                        });
-                      } else {
-                        await github.rest.issues.createComment({
-                          owner, repo,
-                          issue_number,
-                          body
+                          comment_id: existing.id
                         });
                       }
+
+                      await github.rest.issues.createComment({
+                        owner, repo,
+                        issue_number,
+                        body
+                      });
 
             - name: Mark build comment as resolved
               if: steps.build.outcome == 'success'
