@@ -2,12 +2,24 @@ package com.poti.android.core.designsystem.theme
 
 import android.app.Activity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+
+private fun potiLightColorScheme(colors: PotiColors) = lightColorScheme(
+    primary = colors.poti600,
+    onPrimary = colors.white,
+    background = colors.white,
+    onBackground = colors.black,
+    surface = colors.white,
+    onSurface = colors.black,
+    secondary = colors.poti200,
+    onSecondary = colors.poti600,
+)
 
 object PotiTheme {
     val colors: PotiColors
@@ -37,6 +49,8 @@ fun ProvidePotiColorsAndTypography(
 fun PotiTheme(
     content: @Composable () -> Unit,
 ) {
+    val colors = defaultPotiColors
+
     ProvidePotiColorsAndTypography(
         colors = defaultPotiColors,
         typography = defaultPotiTypography,
@@ -50,6 +64,7 @@ fun PotiTheme(
             }
         }
         MaterialTheme(
+            colorScheme = potiLightColorScheme(colors),
             content = content,
         )
     }
