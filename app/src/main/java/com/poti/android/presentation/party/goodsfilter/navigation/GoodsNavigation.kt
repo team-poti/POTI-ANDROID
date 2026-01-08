@@ -19,6 +19,14 @@ sealed interface GoodsRoute : Route {
     data object GoodsPartyList : GoodsRoute
 }
 
+fun NavController.navigateToGoodsList() {
+    navigate(GoodsRoute.GoodsList)
+}
+
+fun NavController.navigateToGoodsPartyList() {
+    navigate(GoodsRoute.GoodsPartyList)
+}
+
 fun NavController.navigateToGoodsCategory() {
     navigate(GoodsRoute.GoodsList)
 }
