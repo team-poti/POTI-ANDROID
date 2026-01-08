@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
-import com.poti.android.presentation.myparty.MyPartyListRoute
+import com.poti.android.presentation.myparty.list.MyPartyListRoute
 import com.poti.android.presentation.myparty.participant.ParticipantDetailRoute
 import com.poti.android.presentation.myparty.recruiter.ParticipantMangeRoute
 import com.poti.android.presentation.myparty.recruiter.RecruiterDetailRoute
