@@ -1,11 +1,11 @@
-package com.poti.android.presentation.party.goodsfilter
+package com.poti.android.presentation.user.profile
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class GoodsFilterViewModel
+class ProfileViewModel
     @Inject
     constructor() : ViewModel() {
     }
