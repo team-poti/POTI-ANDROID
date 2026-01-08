@@ -1,4 +1,4 @@
-package com.poti.android.presentation.profile.navigation
+package com.poti.android.presentation.user.profile.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder

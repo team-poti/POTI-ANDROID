@@ -74,7 +74,7 @@ private fun MainBottomBarItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewMainBottomBar() {
+private fun MainBottomBarPreview() {
     PotiTheme {
         MainBottomBar(
             visible = true,

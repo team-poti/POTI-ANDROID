@@ -13,5 +13,6 @@ fun MyPartyListRoute(modifier: Modifier = Modifier) {
 private fun MyPartyListScreen(modifier: Modifier = Modifier) {
     Text(
         text = "분철 내역",
+        modifier = modifier,
     )
 }

@@ -1,11 +1,13 @@
-package com.poti.android.presentation.home
+package com.poti.android.presentation.party.home
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HomeRoute(modifier: Modifier = Modifier) {
+fun HomeRoute(
+    modifier: Modifier = Modifier,
+) {
     HomeScreen(modifier = modifier)
 }
 
@@ -13,5 +15,6 @@ fun HomeRoute(modifier: Modifier = Modifier) {
 private fun HomeScreen(modifier: Modifier = Modifier) {
     Text(
         text = "홈",
+        modifier = modifier,
     )
 }

@@ -1,4 +1,4 @@
-package com.poti.android.presentation.mypage
+package com.poti.android.presentation.user.mypage
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,5 +13,6 @@ fun MyPageRoute(modifier: Modifier = Modifier) {
 private fun MyPageScreen(modifier: Modifier = Modifier) {
     Text(
         text = "마이페이지",
+        modifier = modifier,
     )
 }

@@ -1,4 +1,4 @@
-package com.poti.android.presentation.partycreate.navigation
+package com.poti.android.presentation.party.create.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
