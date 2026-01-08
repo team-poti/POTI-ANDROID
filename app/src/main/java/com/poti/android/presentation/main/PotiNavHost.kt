@@ -5,15 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.poti.android.presentation.feature.auth.authNavGraph
-import com.poti.android.presentation.feature.goods.navigation.goodsNavGraph
-import com.poti.android.presentation.feature.home.navigation.homeNavGraph
-import com.poti.android.presentation.feature.mypage.navigation.myPageNavGraph
-import com.poti.android.presentation.feature.myparty.navigation.myPartyNavGraph
-import com.poti.android.presentation.feature.onboarding.navigation.onboardingNavGraph
-import com.poti.android.presentation.feature.partycreate.navigation.partyCreateNavGraph
-import com.poti.android.presentation.feature.partydetail.navigation.partyDetailNavGraph
-import com.poti.android.presentation.feature.profile.navigation.profileNavGraph
+import com.poti.android.presentation.auth.navigation.authNavGraph
+import com.poti.android.presentation.goods.navigation.goodsNavGraph
+import com.poti.android.presentation.home.navigation.homeNavGraph
+import com.poti.android.presentation.mypage.navigation.myPageNavGraph
+import com.poti.android.presentation.myparty.navigation.myPartyNavGraph
+import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
+import com.poti.android.presentation.partycreate.navigation.partyCreateNavGraph
+import com.poti.android.presentation.partydetail.navigation.partyDetailNavGraph
+import com.poti.android.presentation.profile.navigation.profileNavGraph
 
 @Composable
 fun PotiNavHost(

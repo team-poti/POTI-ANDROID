@@ -1,8 +1,8 @@
 package com.poti.android.core.network.util
 
+import com.poti.android.core.common.util.suspendRunCatching
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.core.network.model.NetworkError
-import com.poti.android.core.util.suspendRunCatching
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.net.SocketTimeoutException

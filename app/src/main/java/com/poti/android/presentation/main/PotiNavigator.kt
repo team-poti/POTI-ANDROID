@@ -8,9 +8,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.poti.android.core.navigation.HomeRoute
-import com.poti.android.core.navigation.MyPageRoute
-import com.poti.android.core.navigation.MyPartyRoute
+import com.poti.android.presentation.home.navigation.HomeRoute
+import com.poti.android.presentation.mypage.navigation.MyPageRoute
+import com.poti.android.presentation.myparty.navigation.MyPartyRoute
 
 class PotiNavigator(
     val navController: NavHostController,

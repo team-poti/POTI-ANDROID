@@ -3,10 +3,10 @@ package com.poti.android.presentation.main
 import androidx.annotation.StringRes
 import androidx.navigation.NavDestination
 import com.poti.android.R
-import com.poti.android.core.navigation.HomeRoute
-import com.poti.android.core.navigation.MyPageRoute
-import com.poti.android.core.navigation.MyPartyRoute
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.home.navigation.HomeRoute
+import com.poti.android.presentation.mypage.navigation.MyPageRoute
+import com.poti.android.presentation.myparty.navigation.MyPartyRoute
 
 enum class MainTab(
     @StringRes val label: Int,
