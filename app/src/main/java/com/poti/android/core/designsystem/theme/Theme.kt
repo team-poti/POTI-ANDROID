@@ -1,31 +1,71 @@
 package com.poti.android.core.designsystem.theme
 
+import android.app.Activity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-     */
+private fun potiLightColorScheme(colors: PotiColors) = lightColorScheme(
+    primary = colors.poti600,
+    onPrimary = colors.white,
+    background = colors.white,
+    onBackground = colors.black,
+    surface = colors.white,
+    onSurface = colors.black,
+    secondary = colors.poti200,
+    onSecondary = colors.poti600,
 )
+
+object PotiTheme {
+    val colors: PotiColors
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalPotiColorsProvider.current
+    val typography: PotiTypography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalPotiTypographyProvider.current
+}
+
+@Composable
+fun ProvidePotiColorsAndTypography(
+    colors: PotiColors,
+    typography: PotiTypography,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalPotiColorsProvider provides colors,
+        LocalPotiTypographyProvider provides typography,
+        content = content,
+    )
+}
 
 @Composable
 fun PotiTheme(
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = LightColorScheme,
-        typography = Typography,
-        content = content,
-    )
+    val colors = defaultPotiColors
+
+    ProvidePotiColorsAndTypography(
+        colors = defaultPotiColors,
+        typography = defaultPotiTypography,
+    ) {
+        val view = LocalView.current
+        if (!view.isInEditMode) {
+            SideEffect {
+                (view.context as Activity).window.run {
+                    WindowCompat.getInsetsController(this, view).isAppearanceLightStatusBars = true
+                }
+            }
+        }
+        MaterialTheme(
+            colorScheme = potiLightColorScheme(colors),
+            content = content,
+        )
+    }
 }
