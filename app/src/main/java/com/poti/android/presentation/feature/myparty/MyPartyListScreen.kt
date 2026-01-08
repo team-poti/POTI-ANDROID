@@ -1,5 +1,6 @@
 package com.poti.android.presentation.feature.myparty
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -10,4 +11,7 @@ fun MyPartyListRoute(modifier: Modifier = Modifier) {
 
 @Composable
 private fun MyPartyListScreen(modifier: Modifier = Modifier) {
+    Text(
+        text = "분철 내역",
+    )
 }

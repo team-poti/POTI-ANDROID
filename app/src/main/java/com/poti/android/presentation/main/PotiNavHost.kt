@@ -1,11 +1,11 @@
-package com.poti.android.presentation.navigation
+package com.poti.android.presentation.main
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.poti.android.presentation.feature.auth.navigation.authNavGraph
+import com.poti.android.presentation.feature.auth.authNavGraph
 import com.poti.android.presentation.feature.goods.navigation.goodsNavGraph
 import com.poti.android.presentation.feature.home.navigation.homeNavGraph
 import com.poti.android.presentation.feature.mypage.navigation.myPageNavGraph
