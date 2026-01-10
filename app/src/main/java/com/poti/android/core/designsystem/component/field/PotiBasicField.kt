@@ -86,27 +86,25 @@ internal fun PotiBasicField(
                         .weight(1f),
                     contentAlignment = Alignment.CenterStart,
                 ) {
-                    when {
-                        singleLine && !isFocused && value.isNotEmpty() -> {
-                            Text(
-                                text = value,
-                                color = PotiTheme.colors.black,
-                                style = PotiTheme.typography.body16m,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-
-                        else -> {
-                            innerTextField()
-                        }
-                    }
+                    innerTextField()
 
                     if (value.isEmpty()) {
                         Text(
                             text = placeholder,
                             color = PotiTheme.colors.gray700,
                             style = PotiTheme.typography.body16m,
+                        )
+                    }
+
+                    if (singleLine && !isFocused && value.isNotEmpty()) {
+                        Text(
+                            text = value,
+                            modifier = Modifier
+                                .background(backgroundColor),
+                            color = PotiTheme.colors.black,
+                            style = PotiTheme.typography.body16m,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
