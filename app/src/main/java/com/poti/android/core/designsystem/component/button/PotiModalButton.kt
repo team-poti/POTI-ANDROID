@@ -101,13 +101,6 @@ private fun PotiModalButtonPreview() {
                 modifier = Modifier.width(259.dp),
                 type = ModalButtonType.SUB_2,
             )
-
-            PotiSmallButton(
-                text = "더보기",
-                onClick = {},
-            )
-
-
         }
     }
 }
