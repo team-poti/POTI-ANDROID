@@ -1,9 +1,10 @@
 package com.poti.android.core.designsystem.component.button
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,24 +37,17 @@ fun PotiFloatingButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    val transition = updateTransition(isPressed, label = "transition")
 
-    val targetSize = if (isPressed) 52.dp else 56.dp
-    val targetBackgroundColor = if (isPressed) PotiTheme.colors.poti800 else PotiTheme.colors.poti600
+    val animatedSize by transition.animateDp(
+        transitionSpec = { tween(300, easing = FastOutSlowInEasing) },
+        label = "size",
+    ) { pressed -> if (pressed) 52.dp else 56.dp }
 
-    val animatedSize by animateDpAsState(
-        targetValue = targetSize,
-        animationSpec = tween(
-            durationMillis = 300,
-            easing = FastOutSlowInEasing,
-        ),
-    )
-    val animatedBackgroundColor by animateColorAsState(
-        targetValue = targetBackgroundColor,
-        animationSpec = tween(
-            durationMillis = 300,
-            easing = FastOutSlowInEasing,
-        ),
-    )
+    val animatedBackgroundColor by transition.animateColor(
+        transitionSpec = { tween(300, easing = FastOutSlowInEasing) },
+        label = "background",
+    ) { pressed -> if (pressed) PotiTheme.colors.poti800 else PotiTheme.colors.poti600 }
 
     Box(
         modifier = modifier
