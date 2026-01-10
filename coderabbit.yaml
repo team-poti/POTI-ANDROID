@@ -19,6 +19,7 @@ reviews:
             - 안정성(Stability): List나 일반 클래스를 State로 사용할 때, 불필요한 리컴포지션을 막기 위해 `@Immutable`이나 `@Stable` 어노테이션 사용을 제안해줘.
             - Modifier 규칙: `Modifier`는 항상 컴포저블 함수의 첫 번째 선택적 파라미터로 받아야 하며, 재사용성을 위해 외부에서 주입받아야 해.
             - 리소스 사용: 하드코딩된 값(색상, 크기, 문자열) 대신 `Theme`, `Dimens`, `strings.xml` 리소스를 사용하는지 체크해줘.
+            - 접근성 예외: Icon이나 Image 컴포저블의 `contentDescription`이 `null`인 경우는 장식용(Decorative) 이미지로 간주하고 지적하지 마.
 
         2. MVI (Model-View-Intent) 아키텍처 및 상태 관리:
             - 단방향 데이터 흐름(UDF): UI는 상태를 직접 변경할 수 없고, 반드시 `Intent`(또는 Event)를 통해 ViewModel로 요청을 보내야 해.
