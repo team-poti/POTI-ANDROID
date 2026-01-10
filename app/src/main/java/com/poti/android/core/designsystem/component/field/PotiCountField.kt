@@ -122,7 +122,7 @@ private fun PotiCountFieldWithErrorPreveiw() {
             onValueChanged = { text = it },
             placeholder = "플레이스홀더",
             error = "에러 메시지",
-            maxLength = 10
+            maxLength = 10,
         )
     }
 }
@@ -138,7 +138,7 @@ private fun PotiCountFieldWithLabelPreveiw() {
             onValueChanged = { text = it },
             placeholder = "플레이스홀더",
             label = "라벨",
-            maxLength = 10
+            maxLength = 10,
         )
     }
 }

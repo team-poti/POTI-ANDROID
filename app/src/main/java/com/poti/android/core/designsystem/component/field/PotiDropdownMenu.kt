@@ -55,7 +55,7 @@ internal fun PotiDropdownMenu(
                 ): IntOffset {
                     return IntOffset(
                         x = anchorBounds.left,
-                        y = anchorBounds.bottom + offsetYPx
+                        y = anchorBounds.bottom + offsetYPx,
                     )
                 }
             }
@@ -95,12 +95,12 @@ private fun PotiDropdownMenuContent(
         visibleState = expandedState,
         enter = slideInVertically(
             initialOffsetY = { -it },
-            animationSpec = tween(120, easing = LinearOutSlowInEasing)
+            animationSpec = tween(120, easing = LinearOutSlowInEasing),
         ),
         exit = slideOutVertically(
             targetOffsetY = { -it },
-            animationSpec = tween(75, easing = LinearOutSlowInEasing)
-        )
+            animationSpec = tween(75, easing = LinearOutSlowInEasing),
+        ),
     ) {
         Surface(
             modifier = Modifier

@@ -1,6 +1,5 @@
 package com.poti.android.core.designsystem.component.field
 
-import android.util.Log
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
@@ -43,6 +42,26 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.White
 import kotlinx.coroutines.delay
 
+/**
+ * 필드에 검색어 입력 시, 검색 결과가 드롭다운 메뉴로 제공되는 컴포넌트입니다.
+ * 입력에 따른 자동 검색인 경우 외부에서 적절한 menuItems를 넣어주며 제어하며, 명시적인 검색 콜백은 onSearchClick으로 전달합니다.
+ *
+ *
+ * @param value 필드 입력값입니다. 메뉴에서 유저가 아이템 선택 시 선택한 옵션으로 대체합니다.
+ * @param onValueChange 필드에 입력된 값을 전달합니다.
+ * @param placeholder 입력값 및 선택한 옵션이 없ㅇ르 때 필드에 표시됩니다.
+ * @param onSearchClick 검색 콜백입니다.
+ * @param onItemClick 메뉴에서 아이템 클릭 시 호출되는 콜백으로, 클릭한 아이템 객체를 전달합니다.
+ * @param menuItems 메뉴에 노출되는 아이템 데이터 리스트로, 검색 결과를 넣어줍니다.
+ * @param selectedIds 메뉴 아이템의 selected 상태 표시에 쓰이며, 외부에서 제어합니다. 선택된 아이템 객체의 id 프로퍼티를 넣어줍니다.
+ * @param modifier
+ * @param maxHeight 메뉴 아이템이 많은 경우를 대비해 메뉴 최대 높이를 제한할 수 있습니다. 기본값 null로, 미입력 시 모든 아이템 최대로 노출됩니다.
+ * @param focusRequester 포커스를 외부에서 제어하고 싶을 때 사용합니다. 예: 화면 진입 시 필드에 포커스 가도록
+ * @param scrollState 메뉴 스크롤을 외부에서 제어하고 싶을 때 사용합니다.
+ * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
+ * @param shape 메뉴 전체 모양입니다.
+ * @param border 메뉴 전체 테두리입니다.
+ */
 @Composable
 fun PotiSearchField(
     value: String,
@@ -53,12 +72,12 @@ fun PotiSearchField(
     menuItems: List<FieldMenuItem>,
     selectedIds: Set<String>,
     modifier: Modifier = Modifier,
+    maxHeight: Dp? = null,
     focusRequester: FocusRequester = remember { FocusRequester() },
     scrollState: ScrollState = rememberScrollState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
     border: BorderStroke = BorderStroke(1.dp, PotiTheme.colors.gray700),
-    maxHeight: Dp? = null,
 ) {
     val expandedState = remember { MutableTransitionState(false) }
     var parentWidth by remember { mutableIntStateOf(0) }
@@ -74,7 +93,6 @@ fun PotiSearchField(
     fun onSearch() {
         onSearchClick(value)
         searchActionDone = true
-        Log.d("Search", "👾 searchActionDone=$searchActionDone 세팅 완료")
     }
 
     fun clearFocusAndHideKeyboard() {
@@ -84,27 +102,20 @@ fun PotiSearchField(
 
     LaunchedEffect(isFieldFocused, menuItems.size) {
         if (isFieldFocused) {
-            Log.d("Search", "🛸 포커스 있거나 메뉴 길이가 바뀌었다")
             delay(100)
-            Log.d("Search", "🛸 잠깐 기다렸어")
             expandedState.targetState = menuItems.isNotEmpty()
-            Log.d("Search", "🛸 메뉴 길이에 따라 ${expandedState.targetState}로 설정 완")
         }
     }
 
     LaunchedEffect(dismissRequestDone) {
         if (dismissRequestDone) {
-            Log.d("Search", "👽 dismissRequestDone이어서ㅡLaunchedEffect 실헹")
             delay(100)
-            Log.d("Search", "👽 잠깐 기다렸어")
             if (searchActionDone || isTyping) {
                 searchActionDone = false
                 isTyping = false
-                Log.d("Search", "👽 search/typing 했대서 암것도 안 했어")
             } else {
                 expandedState.targetState = false
                 clearFocusAndHideKeyboard()
-                Log.d("Search", "👽 암 것도 아니니까 다 닫았따")
             }
             dismissRequestDone = false
         }
@@ -118,7 +129,6 @@ fun PotiSearchField(
             value = value,
             onValueChaged = {
                 isTyping = true
-                Log.d("Search", "🦝 키보드 입력")
                 onValueChange(it)
             },
             placeholder = placeholder,
@@ -155,8 +165,6 @@ fun PotiSearchField(
         PotiDropdownMenu(
             expandedState = expandedState,
             onDismissRequest = {
-                Log.d("Search", "🚨 onDismissRequest 호출됨!")
-                Log.d("Search", "🚨 현재 포커스: $isFieldFocused")
                 dismissRequestDone = true
             },
             scrollState = scrollState,
@@ -164,7 +172,7 @@ fun PotiSearchField(
             shape = shape,
             border = border,
             maxHeight = maxHeight,
-            parentWidth = parentWidth
+            parentWidth = parentWidth,
         ) {
             menuItems.forEachIndexed { index, item ->
                 PotiMenuItem(
