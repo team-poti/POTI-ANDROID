@@ -21,7 +21,22 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
+            - name: Check for Android changes
+              uses: dorny/paths-filter@v3
+              id: changes
+              with:
+                  filters: |
+                      android:
+                        - '**/*.kt'
+                        - '**/*.kts'
+                        - '**/*.xml'
+                        - '**/*.gradle'
+                        - '**/*.properties'
+                        - 'gradle/**'
+                        - 'buildSrc/**'
+
             - name: Gradle cache
+              if: steps.changes.outputs.android == 'true'
               uses: actions/cache@v4
               with:
                   path: |
@@ -30,16 +45,20 @@ jobs:
                   key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
                   restore-keys: |
                       ${{ runner.os }}-gradle-
+
             - name: Set up JDK 17
+              if: steps.changes.outputs.android == 'true'
               uses: actions/setup-java@v4
               with:
                   java-version: '17'
                   distribution: 'temurin'
 
             - name: Grant permission to gradlew
+              if: steps.changes.outputs.android == 'true'
               run: chmod +x ./gradlew
 
             - name: Create local.properties
+              if: steps.changes.outputs.android == 'true'
               env:
                   LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
               run: |
@@ -50,6 +69,7 @@ jobs:
                   fi
 
             - name: Run ktlintCheck
+              if: steps.changes.outputs.android == 'true'
               id: ktlint
               continue-on-error: true
               run: ./gradlew ktlintCheck
@@ -139,7 +159,7 @@ jobs:
 
             - name: Build Debug APK
               id: build
-              if: steps.ktlint.outcome == 'success'
+              if: steps.changes.outputs.android == 'true' && steps.ktlint.outcome == 'success'
               continue-on-error: true
               run: ./gradlew :app:assembleDebug
 
