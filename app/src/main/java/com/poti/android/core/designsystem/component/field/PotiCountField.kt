@@ -103,7 +103,7 @@ fun PotiCountField(
                     style = PotiTheme.typography.body14m,
                 )
             },
-            enabled = true,
+            enabled = enabled,
         )
 
         // TODO: [도연] Display>ErrorMessage으로 대체
