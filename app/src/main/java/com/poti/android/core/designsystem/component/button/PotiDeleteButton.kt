@@ -24,7 +24,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun PotiDeleteButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    type: DeleteButtonType,
+    type: DeleteButtonType = DeleteButtonType.DARK,
 ) {
     val colors = PotiTheme.colors
     val backgroundColor = type.getBackgroundColor(colors)
@@ -43,14 +43,14 @@ fun PotiDeleteButton(
 }
 
 enum class DeleteButtonType {
-    GRAY,
-    WHITE,
+    DARK,
+    LIGHT,
     ;
 
     fun getBackgroundColor(colors: PotiColors): Color {
         return when (this) {
-            GRAY -> colors.gray300
-            WHITE -> colors.white
+            DARK -> colors.gray300
+            LIGHT -> colors.white
         }
     }
 }
@@ -64,12 +64,12 @@ private fun PotiDeleteButtonPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             PotiDeleteButton(
-                type = DeleteButtonType.GRAY,
+                type = DeleteButtonType.DARK,
                 onClick = {},
             )
 
             PotiDeleteButton(
-                type = DeleteButtonType.WHITE,
+                type = DeleteButtonType.LIGHT,
                 onClick = {},
             )
         }
