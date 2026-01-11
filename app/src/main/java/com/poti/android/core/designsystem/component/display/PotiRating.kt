@@ -30,7 +30,7 @@ fun PotiRating(
             modifier = Modifier.size(21.dp),
             tint = Gray800
         )
-        Text( // TODO: [천민재] 14dp x 1.5em = 21dp, img: 20dp => 중앙 배열 어긋남
+        Text(
             text = rating,
             style = PotiTheme.typography.body14m,
             color = Gray800,

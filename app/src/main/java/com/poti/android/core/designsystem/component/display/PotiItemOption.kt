@@ -26,10 +26,15 @@ enum class PotiItemOptionType(val iconResId: Int) {
     PRICE(R.drawable.ic_price);
 }
 
-enum class PotiItemOptionSize(val textStyle: @Composable () -> TextStyle) {
-    LG(textStyle = { typography.body16m }),
-    SM(textStyle = { typography.body14m });
+enum class PotiItemOptionSize {
+    LARGE,
+    SMALL
 }
+val PotiItemOptionSize.textStyle: TextStyle
+    @Composable get() = when (this) {
+        PotiItemOptionSize.LARGE -> typography.body16m
+        PotiItemOptionSize.SMALL -> typography.body14m
+    }
 
 @Composable
 fun PotiItemOption(
@@ -51,7 +56,7 @@ fun PotiItemOption(
         )
         Text(
             text = text,
-            style = size.textStyle(),
+            style = size.textStyle,
             color = colors.gray800
         )
     }
@@ -62,13 +67,13 @@ fun PotiItemOption(
 private fun PotiItemOptionPreview() {
     PotiTheme {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.LG, text = "멤버명")
-            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.LG, text = "배송방법")
-            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.LG, text = "9,000원")
+            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.LARGE, text = "멤버명")
+            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.LARGE, text = "배송방법")
+            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.LARGE, text = "9,000원")
 
-            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.SM, text = "멤버명")
-            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.SM, text = "배송방법")
-            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.SM, text = "9,000원")
+            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.SMALL, text = "멤버명")
+            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.SMALL, text = "배송방법")
+            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.SMALL, text = "9,000원")
         }
     }
 }

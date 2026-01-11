@@ -23,12 +23,19 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
-enum class PotiProfileSummarySize(val profilePicSize: Dp, val textSize: @Composable (showReview: Boolean) -> TextStyle) {
-    SM(profilePicSize = 36.dp,
-        textSize = { typography.body14m }),
-    LG(profilePicSize = 52.dp,
-        textSize = { showReview -> if (showReview) { typography.body14sb }
-    else typography.body14m });
+enum class PotiProfileSummarySize(val profilePicSize: Dp) {
+    SMALL(profilePicSize = 36.dp),
+    LARGE(profilePicSize = 52.dp)
+}
+@Composable
+fun PotiProfileSummarySize.textStyle(showReview: Boolean): TextStyle {
+    return when (this) {
+        PotiProfileSummarySize.SMALL -> typography.body14m
+        PotiProfileSummarySize.LARGE -> {
+            if (showReview) typography.body14sb
+            else typography.body14m
+        }
+    }
 }
 
 @Composable
@@ -65,7 +72,7 @@ fun PotiProfileSummary(
         val content: @Composable () -> Unit = {
             Text(
                 text = nickname,
-                style = size.textSize(showReview),
+                style = size.textStyle(showReview),
                 color = colors.black
             )
             PotiRating(rating = rating)
@@ -73,10 +80,10 @@ fun PotiProfileSummary(
 
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = if (size == PotiProfileSummarySize.LG && showReview) Arrangement.spacedBy(4.dp)
+            verticalArrangement = if (size == PotiProfileSummarySize.LARGE && showReview) Arrangement.spacedBy(4.dp)
             else Arrangement.Center
         ) {
-            if (size == PotiProfileSummarySize.LG) {
+            if (size == PotiProfileSummarySize.LARGE) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -89,7 +96,7 @@ fun PotiProfileSummary(
                 }
             }
 
-            if (showReview && size == PotiProfileSummarySize.LG) {
+            if (showReview && size == PotiProfileSummarySize.LARGE) {
                 Text(
                     text = reviewText,
                     style = typography.body14m,
@@ -111,7 +118,7 @@ private fun PotiProfileSummaryPreview() {
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.SM,
+                size = PotiProfileSummarySize.SMALL,
                 rating = "4.8",
                 showReview = false,
                 reviewText = "",
@@ -119,7 +126,7 @@ private fun PotiProfileSummaryPreview() {
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.LG,
+                size = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
                 showReview = false,
                 reviewText = "",
@@ -127,7 +134,7 @@ private fun PotiProfileSummaryPreview() {
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.LG,
+                size = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
                 showReview = true,
                 reviewText = "14개의 평가"

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -16,10 +17,16 @@ import com.poti.android.core.designsystem.theme.PotiTheme.typography
 import com.poti.android.core.designsystem.theme.SementicRed
 import com.poti.android.core.designsystem.theme.White
 
-enum class PotiTagSize(val textStyle: @Composable () -> androidx.compose.ui.text.TextStyle) {
-    SMALL(textStyle = { typography.caption10m }),
-    LARGE(textStyle = { typography.caption12m });
+enum class PotiTagSize {
+    SMALL,
+    LARGE
 }
+
+val PotiTagSize.textStyle: TextStyle
+    @Composable get() = when (this) {
+        PotiTagSize.SMALL -> typography.caption10m
+        PotiTagSize.LARGE -> typography.caption12m
+    }
 
 @Composable
 fun PotiTag(
@@ -27,7 +34,7 @@ fun PotiTag(
     size: PotiTagSize,
     modifier: Modifier = Modifier
 ) {
-    val textStyle = size.textStyle()
+    val textStyle = size.textStyle
 
     Box(
         modifier = modifier

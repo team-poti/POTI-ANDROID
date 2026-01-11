@@ -10,23 +10,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.designsystem.theme.Gray100
 import com.poti.android.core.designsystem.theme.Poti600
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 import com.poti.android.core.designsystem.theme.White
 
-enum class PotiChipSize(val textStyle: @Composable () -> androidx.compose.ui.text.TextStyle) {
-    SMALL(textStyle = { typography.caption12m }),
-    LARGE(textStyle = { typography.body14m });
+enum class PotiChipSize {
+    SMALL,
+    LARGE
+}
+enum class PotiChipColor {
+    GRAY,
+    WHITE
 }
 
-enum class PotiChipColor(val color: @Composable () -> androidx.compose.ui.graphics.Color) {
-    GRAY(color = { Gray100 }),
-    WHITE(color = { White });
-}
+val PotiChipSize.textStyle: TextStyle
+    @Composable get() = when (this) {
+        PotiChipSize.SMALL -> typography.caption12m
+        PotiChipSize.LARGE -> typography.body14m
+    }
+
+val PotiChipColor.color: Color
+    @Composable get() = when (this) {
+        PotiChipColor.GRAY -> colors.gray100
+        PotiChipColor.WHITE -> colors.white
+    }
 
 @Composable
 fun PotiChip(
@@ -35,8 +49,8 @@ fun PotiChip(
     size: PotiChipSize,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = color.color()
-    val textStyle = size.textStyle()
+    val backgroundColor = color.color
+    val textStyle = size.textStyle
 
     Box(
         modifier = modifier
