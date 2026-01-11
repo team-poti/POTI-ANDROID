@@ -5,7 +5,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +58,8 @@ import kotlinx.coroutines.delay
  * @param selectedIds 메뉴 아이템의 selected 상태 표시에 쓰이며, 외부에서 제어합니다. 선택된 아이템 객체의 id 프로퍼티를 넣어줍니다.
  * @param searchType 서치 타입에 따라 메뉴 최대 길이가 조정됩니다. 아티스트 검색 시 ARTIST, 상품 등록을 위한 상품명 검색 시 PRODUCT를 사용합니다.
  * @param modifier
+ * @param label 필드 상단에 표시됩니다.
+ * @param error emptyString이 아닌 경우 필드 하단에 에러 메시지를 노출하고, borderColor를 변경합니다.
  * @param focusRequester 포커스를 외부에서 제어하고 싶을 때 사용합니다. 예: 화면 진입 시 필드에 포커스 가도록
  * @param scrollState 메뉴 스크롤을 외부에서 제어하고 싶을 때 사용합니다.
  * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
@@ -73,6 +77,8 @@ fun PotiSearchField(
     selectedIds: Set<String>,
     searchType: SearchType,
     modifier: Modifier = Modifier,
+    label: String = "",
+    error: String = "",
     focusRequester: FocusRequester = remember { FocusRequester() },
     scrollState: ScrollState = rememberScrollState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
@@ -121,46 +127,58 @@ fun PotiSearchField(
         }
     }
 
+    val borderColor = when {
+        error.isNotEmpty() -> PotiTheme.colors.sementicRed
+        expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
+        else -> PotiTheme.colors.gray300
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        PotiBasicField(
-            value = value,
-            onValueChaged = {
-                isTyping = true
-                onValueChange(it)
-            },
-            placeholder = placeholder,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .onGloballyPositioned { coordinates ->
-                    parentWidth = coordinates.size.width
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FieldLabel(label)
+
+            PotiBasicField(
+                value = value,
+                onValueChaged = {
+                    isTyping = true
+                    onValueChange(it)
                 },
-            onFocusChanged = { isFieldFocused = it },
-            borderColor = when {
-                isFieldFocused -> PotiTheme.colors.gray700
-                else -> PotiTheme.colors.gray300
-            },
-            backgroundColor = White,
-            imeAction = ImeAction.Search,
-            onSearchAction = { onSearch() },
-            trailingIcon = {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_search),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                        ) { onSearch() },
-                    tint = PotiTheme.colors.gray700,
-                )
-            },
-            focusRequester = focusRequester,
-        )
+                placeholder = placeholder,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .onGloballyPositioned { coordinates ->
+                        parentWidth = coordinates.size.width
+                    },
+                onFocusChanged = { isFieldFocused = it },
+                borderColor = borderColor,
+                backgroundColor = White,
+                imeAction = ImeAction.Search,
+                onSearchAction = { onSearch() },
+                trailingIcon = {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                            ) { onSearch() },
+                        tint = PotiTheme.colors.gray700,
+                    )
+                },
+                focusRequester = focusRequester,
+            )
+
+            // TODO: [도연] Display>errorMessage로 대체
+            FieldErrorMessage(error)
+        }
 
         PotiDropdownMenu(
             expandedState = expandedState,
@@ -241,7 +259,8 @@ private fun PotiSearchFieldPreview() {
                 .padding(horizontal = 20.dp)
                 .padding(top = 40.dp),
             onSearchClick = { },
-            searchType = SearchType.ARTIST
+            searchType = SearchType.ARTIST,
+            error = "에러 메시지"
         )
     }
 }

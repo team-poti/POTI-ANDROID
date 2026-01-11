@@ -6,7 +6,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +51,8 @@ import com.poti.android.core.designsystem.theme.White
  * @param menuItems 메뉴에 노출되는 아이템 데이터 리스트입니다.
  * @param selectedIds 메뉴 아이템의 selected 상태 표시에 쓰이며, 외부에서 제어합니다. 선택된 아이템 객체의 id 프로퍼티를 넣어줍니다.
  * @param modifier
+ * @param label 필드 상단에 표시됩니다.
+ * @param error emptyString이 아닌 경우 필드 하단에 에러 메시지를 노출하고, borderColor를 변경합니다.
  * @param initialOpenState 메뉴의 초기 열림 상태를 설정합니다. 기본값 false로, 열린 상태를 초기값으로 하고 싶을 때에만 true로 설정합니다.
  * @param closeOnItemClick 메뉴 아이템 클릭 시 메뉴를 닫는 옵션입니다. 기본값 true로, 다중 선택 필요하다면 false로 설정합니다.
  * @param maxHeight 메뉴 최대 높이를 제한합니다. 기본값 422dp입니다.
@@ -68,6 +72,8 @@ fun PotiDropdownField(
     menuItems: List<FieldMenuItem>,
     selectedIds: Set<String>,
     modifier: Modifier = Modifier,
+    label: String = "",
+    error: String = "",
     initialOpenState: Boolean = false,
     closeOnItemClick: Boolean = true,
     maxHeight: Dp? = 422.dp,
@@ -85,51 +91,63 @@ fun PotiDropdownField(
         }
     }
 
+    val borderColor = when {
+        error.isNotEmpty() -> PotiTheme.colors.sementicRed
+        expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
+        else -> PotiTheme.colors.gray300
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        PotiBasicField(
-            value = value,
-            onValueChaged = {},
-            placeholder = placeholder,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .onGloballyPositioned { coordinates ->
-                    parentWidth = coordinates.size.width
-                }
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused && expandedState.currentState) {
-                        expandedState.targetState = false
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FieldLabel(label)
+
+            PotiBasicField(
+                value = value,
+                onValueChaged = {},
+                placeholder = placeholder,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .onGloballyPositioned { coordinates ->
+                        parentWidth = coordinates.size.width
                     }
-                }
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                ) {
-                    expandedState.targetState = !expandedState.currentState
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused && expandedState.currentState) {
+                            expandedState.targetState = false
+                        }
+                    }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        expandedState.targetState = !expandedState.currentState
+                    },
+                borderColor = borderColor,
+                backgroundColor = White,
+                trailingIcon = {
+                    Crossfade(
+                        targetState = expandedState.targetState,
+                    ) { opened ->
+                        Icon(
+                            imageVector = ImageVector.vectorResource(if (opened) R.drawable.ic_arrow_up_lg else R.drawable.ic_arrow_down_lg),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp),
+                            tint = PotiTheme.colors.gray700,
+                        )
+                    }
                 },
-            borderColor = when {
-                expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
-                else -> PotiTheme.colors.gray300
-            },
-            backgroundColor = White,
-            trailingIcon = {
-                Crossfade(
-                    targetState = expandedState.targetState,
-                ) { opened ->
-                    Icon(
-                        imageVector = ImageVector.vectorResource(if (opened) R.drawable.ic_arrow_up_lg else R.drawable.ic_arrow_down_lg),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp),
-                        tint = PotiTheme.colors.gray700,
-                    )
-                }
-            },
-            enabled = false,
-        )
+                enabled = false,
+            )
+
+            // TODO: [도연] Display>errorMessage로 대체
+            FieldErrorMessage(error)
+        }
 
         PotiDropdownMenu(
             expandedState = expandedState,
@@ -241,6 +259,7 @@ private fun PotiDropdownFieldWithPriceWithMutlipleSelectPreveiw() {
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(top = 40.dp),
+            error = "에러 메시지",
             closeOnItemClick = false,
         )
     }
