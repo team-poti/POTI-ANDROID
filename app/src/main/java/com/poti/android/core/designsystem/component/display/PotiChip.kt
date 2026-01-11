@@ -18,25 +18,14 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 import com.poti.android.core.designsystem.theme.White
 
-enum class PotiChipSize {
-    SMALL,
-    LARGE;
-
-    @Composable
-    fun toTextStyle() = when (this) {
-        SMALL -> typography.caption12m
-        LARGE -> typography.body14m
-    }
+enum class PotiChipSize(val textStyle: @Composable () -> androidx.compose.ui.text.TextStyle) {
+    SMALL(textStyle = { typography.caption12m }),
+    LARGE(textStyle = { typography.body14m });
 }
 
-enum class PotiChipColor {
-    GRAY,
-    WHITE;
-
-    fun toColor() = when (this) {
-        GRAY -> Gray100
-        WHITE -> White
-    }
+enum class PotiChipColor(val color: @Composable () -> androidx.compose.ui.graphics.Color) {
+    GRAY(color = { Gray100 }),
+    WHITE(color = { White });
 }
 
 @Composable
@@ -46,8 +35,8 @@ fun PotiChip(
     size: PotiChipSize,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = color.toColor()
-    val textStyle = size.toTextStyle()
+    val backgroundColor = color.color()
+    val textStyle = size.textStyle()
 
     Box(
         modifier = modifier
