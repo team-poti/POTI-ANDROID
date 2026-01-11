@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -40,7 +41,7 @@ fun PotiActionButton(
     Row(
         modifier = modifier
             .heightIn(min = 52.dp)
-            .clip(RoundedCornerShape(99.dp))
+            .clip(CircleShape)
             .background(backgroundColor)
             .noRippleClickable(
                 interactionSource = interactionSource,

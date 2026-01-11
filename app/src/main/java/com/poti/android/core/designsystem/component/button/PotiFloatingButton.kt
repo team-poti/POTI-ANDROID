@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -59,14 +60,14 @@ fun PotiFloatingButton(
                 scaleY = animatedScale,
             )
             .dropShadow(
-                shape = RoundedCornerShape(99.dp),
+                shape = CircleShape,
                 color = Color.Black.copy(0.05f),
                 offsetX = 0.dp,
                 offsetY = 2.dp,
                 blur = 4.dp,
                 spread = 0.dp,
             )
-            .clip(RoundedCornerShape(99.dp))
+            .clip(CircleShape)
             .background(animatedBackgroundColor)
             .noRippleClickable(
                 interactionSource = interactionSource,
