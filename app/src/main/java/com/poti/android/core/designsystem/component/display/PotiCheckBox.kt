@@ -1,0 +1,61 @@
+package com.poti.android.core.designsystem.component.display
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.designsystem.theme.PotiTheme
+
+@Composable
+fun PotiCheckBox(
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val trackColor = if (selected) PotiTheme.colors.poti200 else PotiTheme.colors.gray300
+    val thumbColor = if (selected) PotiTheme.colors.poti600 else PotiTheme.colors.gray700
+
+    Box(
+        modifier = modifier
+            .size(20.dp)
+            .noRippleClickable(onClick = onClick)
+            .clip(RoundedCornerShape(8.dp))
+            .background(trackColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .clip(RoundedCornerShape(99.dp))
+                .background(thumbColor)
+        )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+private fun PotiCheckBoxPreview() {
+    var selected by remember { mutableStateOf(false) }
+
+    PotiTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            PotiCheckBox(selected = selected, onClick = { selected = !selected })
+        }
+    }
+}
