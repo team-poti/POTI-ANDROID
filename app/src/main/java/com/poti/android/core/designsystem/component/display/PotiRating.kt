@@ -27,7 +27,7 @@ fun PotiRating(
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_star),
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(21.dp),
             tint = Gray800
         )
         Text( // TODO: [천민재] 14dp x 1.5em = 21dp, img: 20dp => 중앙 배열 어긋남
