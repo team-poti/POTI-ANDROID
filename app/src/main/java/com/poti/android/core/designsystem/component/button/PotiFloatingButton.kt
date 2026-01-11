@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.extension.dropShadow
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -58,11 +58,13 @@ fun PotiFloatingButton(
                 scaleX = animatedScale,
                 scaleY = animatedScale,
             )
-            .shadow(
-                elevation = 4.dp,
+            .dropShadow(
                 shape = RoundedCornerShape(99.dp),
-                ambientColor = Color.Black.copy(alpha = 0.05f),
-                spotColor = Color.Black.copy(alpha = 0.05f),
+                color = Color.Black.copy(0.05f),
+                offsetX = 0.dp,
+                offsetY = 2.dp,
+                blur = 4.dp,
+                spread = 0.dp,
             )
             .clip(RoundedCornerShape(99.dp))
             .background(animatedBackgroundColor)
