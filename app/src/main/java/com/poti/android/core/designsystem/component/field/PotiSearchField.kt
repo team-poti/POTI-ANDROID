@@ -108,7 +108,6 @@ fun PotiSearchField(
 
     LaunchedEffect(isFieldFocused, menuItems.size) {
         if (isFieldFocused) {
-            delay(100)
             expandedState.targetState = menuItems.isNotEmpty()
         }
     }
