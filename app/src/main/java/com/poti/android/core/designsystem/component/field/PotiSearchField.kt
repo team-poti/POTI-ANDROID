@@ -140,7 +140,7 @@ fun PotiSearchField(
                 },
             onFocusChanged = { isFieldFocused = it },
             borderColor = when {
-                expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
+                isFieldFocused -> PotiTheme.colors.gray700
                 else -> PotiTheme.colors.gray300
             },
             backgroundColor = White,
