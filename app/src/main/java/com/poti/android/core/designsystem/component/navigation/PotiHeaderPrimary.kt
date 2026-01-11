@@ -71,9 +71,7 @@ fun PotiHeaderPrimary(
 @Composable
 private fun PotiHeaderPrimaryPreview() {
     PotiTheme {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             PotiHeaderPrimary(
                 firstIconRes = R.drawable.ic_search,
                 onFirstIconClick = {},
