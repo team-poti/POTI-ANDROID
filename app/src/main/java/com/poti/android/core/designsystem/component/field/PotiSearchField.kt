@@ -51,7 +51,7 @@ import kotlinx.coroutines.delay
  *
  * @param value 필드 입력값입니다. 메뉴에서 유저가 아이템 선택 시 선택한 옵션으로 대체합니다.
  * @param onValueChange 필드에 입력된 값을 전달합니다.
- * @param placeholder 입력값 및 선택한 옵션이 없ㅇ르 때 필드에 표시됩니다.
+ * @param placeholder 입력값 및 선택한 옵션이 없을 때 필드에 표시됩니다.
  * @param onSearchClick 검색 콜백입니다.
  * @param onItemClick 메뉴에서 아이템 클릭 시 호출되는 콜백으로, 클릭한 아이템 객체를 전달합니다.
  * @param menuItems 메뉴에 노출되는 아이템 데이터 리스트로, 검색 결과를 넣어줍니다.
@@ -65,6 +65,9 @@ import kotlinx.coroutines.delay
  * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
  * @param shape 메뉴 전체 모양입니다.
  * @param border 메뉴 전체 테두리입니다.
+ *
+ * @author 도연
+ * @sample PotiSearchFieldPreview
  */
 @Composable
 fun PotiSearchField(
