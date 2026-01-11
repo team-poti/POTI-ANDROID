@@ -1,13 +1,11 @@
 package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -24,19 +22,15 @@ fun PotiIconButton(
     modifier: Modifier = Modifier,
     tint: Color = PotiTheme.colors.black,
 ) {
-    Box(
+    Icon(
+        painter = painterResource(iconRes),
+        contentDescription = null,
         modifier = modifier
             .size(48.dp)
-            .noRippleClickable { onClick() },
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = tint,
-        )
-    }
+            .noRippleClickable(onClick)
+            .padding(12.dp),
+        tint = tint,
+    )
 }
 
 @Preview(showBackground = true)

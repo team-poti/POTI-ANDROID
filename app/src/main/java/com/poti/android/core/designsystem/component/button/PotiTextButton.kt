@@ -1,10 +1,10 @@
 package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,19 +20,16 @@ fun PotiTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Text(
+        text = text,
         modifier = modifier
             .height(48.dp)
-            .noRippleClickable { onClick() }
+            .noRippleClickable(onClick)
+            .wrapContentHeight(Alignment.CenterVertically)
             .padding(10.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            color = PotiTheme.colors.gray800,
-            style = PotiTheme.typography.body14m,
-        )
-    }
+        color = PotiTheme.colors.gray800,
+        style = PotiTheme.typography.body14m,
+    )
 }
 
 @Preview(showBackground = true)
