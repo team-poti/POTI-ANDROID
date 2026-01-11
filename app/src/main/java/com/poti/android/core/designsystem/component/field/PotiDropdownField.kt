@@ -120,7 +120,7 @@ fun PotiDropdownField(
                     targetState = expandedState.targetState,
                 ) { opened ->
                     Icon(
-                        imageVector = ImageVector.vectorResource(if (opened) R.drawable.ic_arrow_down_lg else R.drawable.ic_arrow_up_lg),
+                        imageVector = ImageVector.vectorResource(if (opened) R.drawable.ic_arrow_up_lg else R.drawable.ic_arrow_down_lg),
                         contentDescription = null,
                         modifier = Modifier
                             .size(24.dp),
