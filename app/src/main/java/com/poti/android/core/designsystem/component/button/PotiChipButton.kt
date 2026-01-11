@@ -16,8 +16,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -29,16 +31,9 @@ fun PotiChipButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-
-    val backgroundColor = when (type) {
-        ChipButtonType.DEFAULT -> if (isPressed) PotiTheme.colors.gray300 else PotiTheme.colors.gray100
-        ChipButtonType.SELECTED -> if (isPressed) PotiTheme.colors.poti800 else PotiTheme.colors.poti600
-    }
-
-    val contentColor = when (type) {
-        ChipButtonType.DEFAULT -> PotiTheme.colors.gray800
-        ChipButtonType.SELECTED -> PotiTheme.colors.white
-    }
+    val colors = PotiTheme.colors
+    val backgroundColor = type.getBackgroundColor(colors, isPressed)
+    val contentColor = type.getContentColor(colors)
 
     Row(
         modifier = modifier
@@ -64,6 +59,23 @@ fun PotiChipButton(
 enum class ChipButtonType {
     DEFAULT,
     SELECTED,
+    ;
+
+    fun getBackgroundColor(
+        colors: PotiColors,
+        isPressed: Boolean,
+    ): Color =
+        when (this) {
+            DEFAULT -> if (isPressed) colors.gray300 else colors.gray100
+            SELECTED -> if (isPressed) colors.poti800 else colors.poti600
+        }
+
+    fun getContentColor(colors: PotiColors): Color {
+        return when (this) {
+            DEFAULT -> colors.gray800
+            SELECTED -> colors.white
+        }
+    }
 }
 
 @Preview(showBackground = true)

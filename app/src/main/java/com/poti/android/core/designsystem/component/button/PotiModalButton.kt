@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -31,18 +32,9 @@ fun PotiModalButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-
-    val backgroundColor = when (type) {
-        ModalButtonType.MAIN -> if (isPressed) PotiTheme.colors.poti800 else PotiTheme.colors.poti600
-        ModalButtonType.SUB_1 -> if (isPressed) PotiTheme.colors.gray300 else PotiTheme.colors.gray100
-        ModalButtonType.SUB_2 -> Color.Transparent
-    }
-
-    val contentColor = when (type) {
-        ModalButtonType.MAIN -> PotiTheme.colors.white
-        ModalButtonType.SUB_1 -> PotiTheme.colors.gray900
-        ModalButtonType.SUB_2 -> PotiTheme.colors.poti600
-    }
+    val colors = PotiTheme.colors
+    val backgroundColor = type.getBackgroundColor(colors, isPressed)
+    val contentColor = type.getContentColor(colors)
 
     Row(
         modifier = modifier
@@ -71,6 +63,25 @@ enum class ModalButtonType {
     MAIN,
     SUB_1,
     SUB_2,
+    ;
+
+    fun getBackgroundColor(
+        colors: PotiColors,
+        isPressed: Boolean,
+    ): Color =
+        when (this) {
+            MAIN -> if (isPressed) colors.poti800 else colors.poti600
+            SUB_1 -> if (isPressed) colors.gray300 else colors.gray100
+            SUB_2 -> Color.Transparent
+        }
+
+    fun getContentColor(colors: PotiColors): Color {
+        return when (this) {
+            MAIN -> colors.white
+            SUB_1 -> colors.gray900
+            SUB_2 -> colors.poti600
+        }
+    }
 }
 
 @Preview(showBackground = true)
