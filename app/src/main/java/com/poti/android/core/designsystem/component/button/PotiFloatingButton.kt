@@ -2,7 +2,7 @@ package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,10 +40,10 @@ fun PotiFloatingButton(
     val isPressed by interactionSource.collectIsPressedAsState()
     val transition = updateTransition(isPressed, label = "transition")
 
-    val animatedSize by transition.animateDp(
+    val animatedScale by transition.animateFloat(
         transitionSpec = { tween(300, easing = FastOutSlowInEasing) },
-        label = "size",
-    ) { pressed -> if (pressed) 52.dp else 56.dp }
+        label = "scale",
+    ) { pressed -> if (pressed) 0.93f else 1f }
 
     val animatedBackgroundColor by transition.animateColor(
         transitionSpec = { tween(300, easing = FastOutSlowInEasing) },
@@ -51,7 +52,11 @@ fun PotiFloatingButton(
 
     Box(
         modifier = modifier
-            .size(animatedSize)
+            .size(56.dp)
+            .graphicsLayer(
+                scaleX = animatedScale,
+                scaleY = animatedScale,
+            )
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(99.dp),
