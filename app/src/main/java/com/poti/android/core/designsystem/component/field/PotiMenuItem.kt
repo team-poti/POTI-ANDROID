@@ -44,7 +44,7 @@ fun PotiMenuItem(
                 interactionSource = interactionSource,
                 indication = null,
                 enabled = !disabled,
-                onClick = onClick
+                onClick = onClick,
             )
             .padding(horizontal = 16.dp, vertical = 15.5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

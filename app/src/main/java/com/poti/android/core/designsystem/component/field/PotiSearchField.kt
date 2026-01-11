@@ -138,7 +138,7 @@ fun PotiSearchField(
             .fillMaxWidth(),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FieldLabel(label)
 
@@ -220,7 +220,7 @@ fun PotiSearchField(
 
 enum class SearchType(val maxHeight: Dp) {
     ARTIST(500.dp),
-    PRODUCT(156.dp)
+    PRODUCT(156.dp),
 }
 
 @Preview
@@ -260,7 +260,7 @@ private fun PotiSearchFieldPreview() {
                 .padding(top = 40.dp),
             onSearchClick = { },
             searchType = SearchType.ARTIST,
-            error = "에러 메시지"
+            error = "에러 메시지",
         )
     }
 }

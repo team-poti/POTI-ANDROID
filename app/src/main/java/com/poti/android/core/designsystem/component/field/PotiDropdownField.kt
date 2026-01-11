@@ -102,7 +102,7 @@ fun PotiDropdownField(
             .fillMaxWidth(),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FieldLabel(label)
 
