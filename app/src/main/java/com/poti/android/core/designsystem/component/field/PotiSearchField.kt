@@ -54,8 +54,8 @@ import kotlinx.coroutines.delay
  * @param onItemClick 메뉴에서 아이템 클릭 시 호출되는 콜백으로, 클릭한 아이템 객체를 전달합니다.
  * @param menuItems 메뉴에 노출되는 아이템 데이터 리스트로, 검색 결과를 넣어줍니다.
  * @param selectedIds 메뉴 아이템의 selected 상태 표시에 쓰이며, 외부에서 제어합니다. 선택된 아이템 객체의 id 프로퍼티를 넣어줍니다.
+ * @param searchType 서치 타입에 따라 메뉴 최대 길이가 조정됩니다. 아티스트 검색 시 ARTIST, 상품 등록을 위한 상품명 검색 시 PRODUCT를 사용합니다.
  * @param modifier
- * @param maxHeight 메뉴 아이템이 많은 경우를 대비해 메뉴 최대 높이를 제한할 수 있습니다. 기본값 null로, 미입력 시 모든 아이템 최대로 노출됩니다.
  * @param focusRequester 포커스를 외부에서 제어하고 싶을 때 사용합니다. 예: 화면 진입 시 필드에 포커스 가도록
  * @param scrollState 메뉴 스크롤을 외부에서 제어하고 싶을 때 사용합니다.
  * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
@@ -71,8 +71,8 @@ fun PotiSearchField(
     onItemClick: (FieldMenuItem) -> Unit,
     menuItems: List<FieldMenuItem>,
     selectedIds: Set<String>,
+    searchType: SearchType,
     modifier: Modifier = Modifier,
-    maxHeight: Dp? = null,
     focusRequester: FocusRequester = remember { FocusRequester() },
     scrollState: ScrollState = rememberScrollState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
@@ -171,7 +171,7 @@ fun PotiSearchField(
             offset = offset,
             shape = shape,
             border = border,
-            maxHeight = maxHeight,
+            maxHeight = searchType.maxHeight,
             parentWidth = parentWidth,
         ) {
             menuItems.forEachIndexed { index, item ->
@@ -198,6 +198,11 @@ fun PotiSearchField(
             }
         }
     }
+}
+
+enum class SearchType(val maxHeight: Dp) {
+    ARTIST(500.dp),
+    PRODUCT(156.dp)
 }
 
 @Preview
@@ -235,8 +240,8 @@ private fun PotiSearchFieldPreview() {
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(top = 40.dp),
-            maxHeight = 600.dp,
             onSearchClick = { },
+            searchType = SearchType.ARTIST
         )
     }
 }

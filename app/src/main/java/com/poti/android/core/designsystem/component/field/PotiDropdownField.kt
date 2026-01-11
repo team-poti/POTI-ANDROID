@@ -51,7 +51,7 @@ import com.poti.android.core.designsystem.theme.White
  * @param modifier
  * @param initialOpenState 메뉴의 초기 열림 상태를 설정합니다. 기본값 false로, 열린 상태를 초기값으로 하고 싶을 때에만 true로 설정합니다.
  * @param closeOnItemClick 메뉴 아이템 클릭 시 메뉴를 닫는 옵션입니다. 기본값 true로, 다중 선택 필요하다면 false로 설정합니다.
- * @param maxHeight 메뉴 아이템이 많은 경우를 대비해 메뉴 최대 높이를 제한할 수 있습니다. 기본값 null로, 미입력 시 모든 아이템 최대로 노출됩니다.
+ * @param maxHeight 메뉴 최대 높이를 제한합니다. 기본값 422dp입니다.
  * @param scrollState 메뉴 스크롤을 외부에서 제어하고 싶을 때 사용합니다.
  * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
  * @param shape 메뉴 전체 모양입니다.
@@ -70,7 +70,7 @@ fun PotiDropdownField(
     modifier: Modifier = Modifier,
     initialOpenState: Boolean = false,
     closeOnItemClick: Boolean = true,
-    maxHeight: Dp? = null,
+    maxHeight: Dp? = 422.dp,
     scrollState: ScrollState = rememberScrollState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
