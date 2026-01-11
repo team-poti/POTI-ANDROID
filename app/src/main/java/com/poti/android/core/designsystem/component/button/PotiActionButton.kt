@@ -7,7 +7,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +38,7 @@ fun PotiActionButton(
 
     Row(
         modifier = modifier
-            .height(52.dp)
+            .heightIn(min = 52.dp)
             .clip(RoundedCornerShape(99.dp))
             .background(backgroundColor)
             .then(
@@ -52,7 +52,7 @@ fun PotiActionButton(
                     Modifier
                 },
             )
-            .padding(horizontal = 16.dp, vertical = 15.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
