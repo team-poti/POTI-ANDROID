@@ -24,6 +24,17 @@ inline fun Modifier.noRippleClickable(
     }
 }
 
+fun Modifier.noRippleClickable(
+    interactionSource: MutableInteractionSource,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): Modifier = this.clickable(
+    interactionSource = interactionSource,
+    indication = null,
+    enabled = enabled,
+    onClick = onClick,
+)
+
 fun Modifier.roundedBackgroundWithBorder(
     cornerRadius: Dp,
     backgroundColor: Color,

@@ -1,7 +1,6 @@
 package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -40,11 +40,11 @@ fun PotiChipButton(
             .heightIn(min = 56.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .clickable(
+            .noRippleClickable(
                 interactionSource = interactionSource,
-                indication = null,
                 onClick = onClick,
-            ),
+            )
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {

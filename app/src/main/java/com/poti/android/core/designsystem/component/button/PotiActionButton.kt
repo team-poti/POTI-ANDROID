@@ -1,7 +1,6 @@
 package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -35,22 +35,17 @@ fun PotiActionButton(
     val colors = PotiTheme.colors
     val backgroundColor = type.getBackgroundColor(colors, isPressed)
     val contentColor = type.getContentColor(colors)
+    val isButtonEnabled = enabled && type != ActionButtonType.DEACTIVE_MAIN && type != ActionButtonType.DEACTIVE_SUB
 
     Row(
         modifier = modifier
             .heightIn(min = 52.dp)
             .clip(RoundedCornerShape(99.dp))
             .background(backgroundColor)
-            .then(
-                if (enabled && type != ActionButtonType.DEACTIVE_MAIN && type != ActionButtonType.DEACTIVE_SUB) {
-                    Modifier.clickable(
-                        interactionSource = interactionSource,
-                        indication = null,
-                        onClick = onClick,
-                    )
-                } else {
-                    Modifier
-                },
+            .noRippleClickable(
+                interactionSource = interactionSource,
+                enabled = isButtonEnabled,
+                onClick = onClick,
             )
             .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.Center,

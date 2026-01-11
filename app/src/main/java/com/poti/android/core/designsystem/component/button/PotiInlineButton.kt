@@ -1,7 +1,6 @@
 package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -44,9 +44,8 @@ fun PotiInlineButton(
             .heightIn(min = 48.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
-            .clickable(
+            .noRippleClickable(
                 interactionSource = interactionSource,
-                indication = null,
                 onClick = onClick,
             )
             .padding(12.dp),

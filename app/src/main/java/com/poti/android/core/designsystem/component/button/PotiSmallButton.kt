@@ -26,7 +26,7 @@ fun PotiSmallButton(
     Row(
         modifier = modifier
             .heightIn(min = 48.dp)
-            .noRippleClickable { onClick() }
+            .noRippleClickable(onClick)
             .padding(start = 4.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
