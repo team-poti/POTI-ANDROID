@@ -15,7 +15,6 @@ lifecycleRuntimeCompose = "2.10.0"
 activityCompose = "1.12.2"
 composeBom = "2024.09.00"
 navigationCompose = "2.9.6"
-uiGraphics = "1.10.0"
 
 # --- Dependency Injection (Hilt) ---
 hilt = "2.56.2"
@@ -89,8 +88,6 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
-
 
 [plugins]
 # --- Android & Kotlin ---
