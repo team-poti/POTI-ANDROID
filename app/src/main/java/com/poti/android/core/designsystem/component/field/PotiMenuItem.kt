@@ -28,7 +28,7 @@ fun PotiMenuItem(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val backgroundColor = when {
-        isPressed -> PotiTheme.colors.gray100
+        !disabled && isPressed -> PotiTheme.colors.gray100
         else -> PotiTheme.colors.white
     }
 
@@ -43,7 +43,9 @@ fun PotiMenuItem(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-            ) { onClick() }
+                enabled = !disabled,
+                onClick = onClick
+            )
             .padding(horizontal = 16.dp, vertical = 15.5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
