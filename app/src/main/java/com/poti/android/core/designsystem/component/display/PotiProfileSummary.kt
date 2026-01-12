@@ -5,106 +5,123 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
+import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
 enum class PotiProfileSummarySize(val profilePicSize: Dp) {
     SMALL(profilePicSize = 36.dp),
-    LARGE(profilePicSize = 52.dp)
-}
-@Composable
-fun PotiProfileSummarySize.textStyle(showReview: Boolean): TextStyle {
-    return when (this) {
-        PotiProfileSummarySize.SMALL -> typography.body14m
-        PotiProfileSummarySize.LARGE -> {
-            if (showReview) typography.body14sb
-            else typography.body14m
-        }
-    }
+    LARGE(profilePicSize = 52.dp),
 }
 
 @Composable
 fun PotiProfileSummary(
     profileImageUrl: String,
     nickname: String,
-    size: PotiProfileSummarySize,
+    sizeType: PotiProfileSummarySize,
     rating: String,
     showReview: Boolean,
-    reviewText: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    reviewText: String = "",
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         SubcomposeAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(profileImageUrl)
-                .build(),
+            model = profileImageUrl,
             contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(size.profilePicSize)
+                .size(sizeType.profilePicSize)
                 .clip(RoundedCornerShape(99.dp)),
+            // TODO: [천민재] 에셋 추가시 구현
             loading = {
-                PotiEmptyImagePlaceholder(modifier = Modifier.size(size.profilePicSize))
+                // TODO: [천민재] 임시 이미지
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_member),
+                    tint = Color.Black,
+                    contentDescription = null,
+                )
             },
+            // TODO: [천민재] 에셋 추가시 구현
             error = {
-                PotiEmptyImagePlaceholder(modifier = Modifier.size(size.profilePicSize))
-            }
+            },
         )
-
-        val content: @Composable () -> Unit = {
-            Text(
-                text = nickname,
-                style = size.textStyle(showReview),
-                color = colors.black
-            )
-            PotiRating(rating = rating)
-        }
 
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = if (size == PotiProfileSummarySize.LARGE && showReview) Arrangement.spacedBy(4.dp)
-            else Arrangement.Center
+            verticalArrangement = if (sizeType == PotiProfileSummarySize.LARGE && showReview) {
+                Arrangement.spacedBy(4.dp)
+            } else {
+                Arrangement.Center
+            },
         ) {
-            if (size == PotiProfileSummarySize.LARGE) {
+            if (sizeType == PotiProfileSummarySize.LARGE) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    content()
+                    NameAndRate(
+                        nickname = nickname,
+                        style = if (showReview) {
+                            typography.body14sb
+                        } else {
+                            typography.body14m
+                        },
+                        rating = rating,
+                    )
                 }
             } else {
                 Column {
-                    content()
+                    NameAndRate(
+                        nickname = nickname,
+                        style = typography.body14m,
+                        rating = rating,
+                    )
                 }
             }
 
-            if (showReview && size == PotiProfileSummarySize.LARGE) {
+            if (showReview && sizeType == PotiProfileSummarySize.LARGE) {
                 Text(
                     text = reviewText,
                     style = typography.body14m,
-                    color = colors.gray800
+                    color = colors.gray800,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun NameAndRate(
+    nickname: String,
+    style: TextStyle,
+    rating: String,
+) {
+    Text(
+        text = nickname,
+        style = style,
+        color = colors.black,
+    )
+    PotiRating(rating = rating)
 }
 
 @Preview(showBackground = true)
@@ -113,31 +130,29 @@ private fun PotiProfileSummaryPreview() {
     PotiTheme {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.SMALL,
+                sizeType = PotiProfileSummarySize.SMALL,
                 rating = "4.8",
                 showReview = false,
-                reviewText = "",
             )
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.LARGE,
+                sizeType = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
                 showReview = false,
-                reviewText = "",
             )
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
-                size = PotiProfileSummarySize.LARGE,
+                sizeType = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
                 showReview = true,
-                reviewText = "14개의 평가"
+                reviewText = "14개의 평가",
             )
         }
     }

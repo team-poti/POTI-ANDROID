@@ -39,21 +39,20 @@ fun PotiArtistButton(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(90.dp)
                 .clip(CircleShape)
-                .noRippleClickable(onClick = onClick)
+                .noRippleClickable(onClick = onClick),
         ) {
-
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
@@ -61,39 +60,33 @@ fun PotiArtistButton(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),
-                loading = {
-                    PotiEmptyImagePlaceholder(
-                        modifier = Modifier.matchParentSize()
-                    )
+                loading = { // TODO: [천민재] 추후 에셋 추가시 구현
                 },
-                error = {
-                    PotiEmptyImagePlaceholder(
-                        modifier = Modifier.matchParentSize()
-                    )
-                }
+                error = { // TODO: [천민재] 추후 에셋 추가시 구현
+                },
             )
 
-            if(selected) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(BlackA40)
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_selected),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(48.dp)
-            )
-        }
+            if (selected) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(BlackA40),
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_check_selected),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp),
+                )
             }
+        }
 
         Text(
             text = text,
             style = typography.caption12m,
-            color = if (selected) colors.gray800 else colors.gray700
+            color = if (selected) colors.gray800 else colors.gray700,
         )
     }
 }
@@ -109,7 +102,7 @@ private fun PotiArtistButtonPreview() {
                 imageUrl = "",
                 text = "그룹",
                 selected = selected,
-                onClick = { selected = !selected }
+                onClick = { selected = !selected },
             )
         }
     }

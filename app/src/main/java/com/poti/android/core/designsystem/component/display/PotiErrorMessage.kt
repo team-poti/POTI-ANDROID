@@ -17,22 +17,23 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 fun PotiErrorMessage(
     message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_notice),
             contentDescription = null,
-            modifier = Modifier.size(24.dp), // TODO: [천민재] 20dp vs 24dp
-            tint = PotiTheme.colors.sementicRed
+            modifier = Modifier.size(21.dp),
+            tint = PotiTheme.colors.sementicRed,
         )
+
         Text(
             text = message,
             style = PotiTheme.typography.body14m,
-            color = PotiTheme.colors.sementicRed
+            color = PotiTheme.colors.sementicRed,
         )
     }
 }

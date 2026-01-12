@@ -19,6 +19,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
+// TODO: [천민재] radio 가 되도록 다시 구현
 @Composable
 fun PotiListRadio(
     text: String,
@@ -31,12 +32,12 @@ fun PotiListRadio(
             .fillMaxWidth()
             .noRippleClickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = text,
             style = typography.body16m,
-            color = colors.black
+            color = colors.black,
         )
         if (selected) {
             PotiCheckBox(selected = true, onClick = {})
@@ -55,12 +56,12 @@ private fun PotiListRadioPreview() {
             PotiListRadio(
                 text = "최신순",
                 selected = selectedItem1,
-                onClick = { selectedItem1 = !selectedItem1 }
+                onClick = { selectedItem1 = !selectedItem1 },
             )
             PotiListRadio(
                 text = "인기순",
                 selected = selectedItem2,
-                onClick = { selectedItem2 = !selectedItem2 }
+                onClick = { selectedItem2 = !selectedItem2 },
             )
         }
     }

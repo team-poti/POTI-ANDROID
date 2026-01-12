@@ -18,17 +18,26 @@ import com.poti.android.core.designsystem.theme.PotiTheme.colors
 
 @Composable
 fun PotiPagination(
+    maxSize: Int,
     stage: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+    val index = if (stage > maxSize) {
+        maxSize
+    } else if (stage < 1) {
+        1
+    } else {
+        stage
+    }
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        PaginationDot(isSelected = stage == 1)
-        PaginationDot(isSelected = stage == 2)
-        PaginationDot(isSelected = stage == 3)
+        for (i in 1..maxSize) {
+            PaginationDot(isSelected = index == i)
+        }
     }
 }
 
@@ -41,7 +50,7 @@ private fun PaginationDot(isSelected: Boolean) {
         modifier = Modifier
             .size(width = width, height = 6.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(backgroundColor)
+            .background(backgroundColor),
     )
 }
 
@@ -50,9 +59,11 @@ private fun PaginationDot(isSelected: Boolean) {
 private fun PotiPaginationPreview() {
     PotiTheme {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            PotiPagination(stage = 1)
-            PotiPagination(stage = 2)
-            PotiPagination(stage = 3)
+            PotiPagination(maxSize = 3, stage = 1)
+            PotiPagination(maxSize = 4, stage = 2)
+            PotiPagination(maxSize = 5, stage = 3)
+            PotiPagination(maxSize = 5, stage = 6)
+            PotiPagination(maxSize = 5, stage = -1)
         }
     }
 }

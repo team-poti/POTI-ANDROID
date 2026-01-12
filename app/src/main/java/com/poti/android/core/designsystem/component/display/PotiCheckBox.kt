@@ -3,8 +3,6 @@ package com.poti.android.core.designsystem.component.display
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,21 +30,21 @@ fun PotiCheckBox(
 
     Box(
         modifier = modifier
-            .size(20.dp)
+            .size(24.dp)
+            .padding(2.dp)
             .noRippleClickable(onClick = onClick)
             .clip(RoundedCornerShape(8.dp))
             .background(trackColor),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
                 .size(10.dp)
                 .clip(RoundedCornerShape(99.dp))
-                .background(thumbColor)
+                .background(thumbColor),
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

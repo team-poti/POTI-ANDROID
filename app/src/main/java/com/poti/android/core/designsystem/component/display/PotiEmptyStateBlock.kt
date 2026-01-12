@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,23 +23,24 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun PotiEmptyStateBlock(
     text: String,
     @DrawableRes image: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Icon(
-            painter = painterResource(image),
+            imageVector = ImageVector.vectorResource(id = image),
             contentDescription = null,
+            tint = Color.Unspecified,
             modifier = Modifier.size(180.dp),
         )
         Text(
             text = text,
             style = PotiTheme.typography.body16m,
             color = PotiTheme.colors.gray700,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

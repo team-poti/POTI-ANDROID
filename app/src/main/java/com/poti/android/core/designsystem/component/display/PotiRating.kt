@@ -1,5 +1,6 @@
 package com.poti.android.core.designsystem.component.display
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -18,17 +19,18 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 fun PotiRating(
     rating: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_star),
             contentDescription = null,
             modifier = Modifier.size(21.dp),
-            tint = Gray800
+            tint = Gray800,
         )
         Text(
             text = rating,

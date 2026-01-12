@@ -1,6 +1,5 @@
 package com.poti.android.core.designsystem.component.display
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -23,13 +24,14 @@ import com.poti.android.core.designsystem.theme.PotiTheme.typography
 enum class PotiItemOptionType(val iconResId: Int) {
     MEMBER(R.drawable.ic_member),
     DELIVERY(R.drawable.ic_delivery),
-    PRICE(R.drawable.ic_price);
+    PRICE(R.drawable.ic_price),
 }
 
-enum class PotiItemOptionSize {
-    LARGE,
-    SMALL
+enum class PotiItemOptionSize(val size: Dp) {
+    LARGE(24.dp),
+    SMALL(21.dp),
 }
+
 val PotiItemOptionSize.textStyle: TextStyle
     @Composable get() = when (this) {
         PotiItemOptionSize.LARGE -> typography.body16m
@@ -38,26 +40,28 @@ val PotiItemOptionSize.textStyle: TextStyle
 
 @Composable
 fun PotiItemOption(
-    type: PotiItemOptionType,
-    size: PotiItemOptionSize,
+    optionType: PotiItemOptionType,
+    sizeType: PotiItemOptionSize,
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(id = type.iconResId),
+            imageVector = ImageVector.vectorResource(id = optionType.iconResId),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = colors.gray800
+            modifier = Modifier.size(sizeType.size),
+            tint = colors.gray800,
         )
         Text(
             text = text,
-            style = size.textStyle,
-            color = colors.gray800
+            style = sizeType.textStyle,
+            color = colors.gray800,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -67,13 +71,13 @@ fun PotiItemOption(
 private fun PotiItemOptionPreview() {
     PotiTheme {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.LARGE, text = "멤버명")
-            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.LARGE, text = "배송방법")
-            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.LARGE, text = "9,000원")
+            PotiItemOption(optionType = PotiItemOptionType.MEMBER, sizeType = PotiItemOptionSize.LARGE, text = "멤버명")
+            PotiItemOption(optionType = PotiItemOptionType.DELIVERY, sizeType = PotiItemOptionSize.LARGE, text = "배송방법")
+            PotiItemOption(optionType = PotiItemOptionType.PRICE, sizeType = PotiItemOptionSize.LARGE, text = "9,000원")
 
-            PotiItemOption(type = PotiItemOptionType.MEMBER, size = PotiItemOptionSize.SMALL, text = "멤버명")
-            PotiItemOption(type = PotiItemOptionType.DELIVERY, size = PotiItemOptionSize.SMALL, text = "배송방법")
-            PotiItemOption(type = PotiItemOptionType.PRICE, size = PotiItemOptionSize.SMALL, text = "9,000원")
+            PotiItemOption(optionType = PotiItemOptionType.MEMBER, sizeType = PotiItemOptionSize.SMALL, text = "멤버명")
+            PotiItemOption(optionType = PotiItemOptionType.DELIVERY, sizeType = PotiItemOptionSize.SMALL, text = "배송방법")
+            PotiItemOption(optionType = PotiItemOptionType.PRICE, sizeType = PotiItemOptionSize.SMALL, text = "9,000원")
         }
     }
 }
