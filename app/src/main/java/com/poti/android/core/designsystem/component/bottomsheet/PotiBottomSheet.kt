@@ -58,7 +58,7 @@ fun PotiBottomSheet(
 
     val properties = remember {
         ModalBottomSheetProperties(
-            shouldDismissOnBackPress = shouldDismissOnBackPress
+            shouldDismissOnBackPress = shouldDismissOnBackPress,
         )
     }
 
@@ -70,12 +70,12 @@ fun PotiBottomSheet(
         containerColor = PotiTheme.colors.white,
         scrimColor = PotiTheme.colors.blackA40,
         dragHandle = null,
-        properties = properties
+        properties = properties,
     ) {
         // TODO: [도연] Navigation 컴포넌트 병합 시, header-pager로 대체
         BottomSheetHeader(
             onXIconClick = onDismissRequest,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
         )
 
         content()
@@ -94,7 +94,7 @@ private fun BottomSheetHeader(
         contentDescription = null,
         modifier = modifier
             .noRippleClickable(onClick = onXIconClick)
-            .padding(all = 12.dp)
+            .padding(all = 12.dp),
     )
 }
 
@@ -111,7 +111,7 @@ private fun PotiBottomSheetPreview() {
                     Text(
                         text = "멤버",
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 16.dp),
                     )
 
                     LazyColumn(
@@ -121,7 +121,7 @@ private fun PotiBottomSheetPreview() {
                             Text(
                                 text = "멤버",
                                 modifier = Modifier
-                                    .padding(vertical = 8.dp)
+                                    .padding(vertical = 8.dp),
                             )
                         }
                     }
@@ -134,13 +134,13 @@ private fun PotiBottomSheetPreview() {
                             .padding(horizontal = 16.dp)
                             .padding(top = 4.dp, bottom = 14.dp),
                     )
-                }
+                },
             )
         }
 
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             PotiFloatingButton(
                 onClick = { showBottomSheet = true },
