@@ -19,9 +19,33 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
-// TODO: [천민재] radio 가 되도록 다시 구현
 @Composable
 fun PotiListRadio(
+    // TODO: [천민재] 리컴포지션 최적화를 위한 ImmutableList 도입 검토
+    options: List<String>,
+    selectedOptionIndex: Int,
+    onClick: (index: Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        options.forEachIndexed { index, option ->
+            PotiListRadioItem(
+                text = option,
+                selected = index == selectedOptionIndex,
+                onClick = { onClick(index) },
+            )
+            if (index != options.lastIndex) {
+                PotiDivider(styleType = PotiDividerStyle.SMALL)
+            }
+        }
+    }
+}
+
+@Composable
+fun PotiListRadioItem(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
@@ -40,7 +64,7 @@ fun PotiListRadio(
             color = colors.black,
         )
         if (selected) {
-            PotiCheckBox(selected = true, onClick = {})
+            PotiCheckBox(selected = true)
         }
     }
 }
@@ -48,17 +72,31 @@ fun PotiListRadio(
 @Preview(showBackground = true)
 @Composable
 private fun PotiListRadioPreview() {
+    var selected by remember { mutableStateOf(1) }
+
+    PotiTheme {
+        PotiListRadio(
+            options = listOf("최신순", "인기순", "마감임박순", "평점순"),
+            selectedOptionIndex = selected,
+            onClick = { index -> selected = index },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PotiListRadioItemPreview() {
     var selectedItem1 by remember { mutableStateOf(true) }
     var selectedItem2 by remember { mutableStateOf(false) }
 
     PotiTheme {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            PotiListRadio(
+            PotiListRadioItem(
                 text = "최신순",
                 selected = selectedItem1,
                 onClick = { selectedItem1 = !selectedItem1 },
             )
-            PotiListRadio(
+            PotiListRadioItem(
                 text = "인기순",
                 selected = selectedItem2,
                 onClick = { selectedItem2 = !selectedItem2 },

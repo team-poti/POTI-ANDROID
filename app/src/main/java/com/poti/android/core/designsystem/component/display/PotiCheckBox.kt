@@ -19,11 +19,18 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+/**
+ * Poti 체크박스 UI
+ *
+ * @param selected 체크박스 선택 여부
+ * @param modifier 컴포넌트에 적용할 modifier
+ * @param onClick 체크여부만을 표현하기 위해서 null, 혹은 설정하지 않을 수 있습니다
+ */
 @Composable
 fun PotiCheckBox(
     selected: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
 ) {
     val trackColor = if (selected) PotiTheme.colors.poti200 else PotiTheme.colors.gray300
     val thumbColor = if (selected) PotiTheme.colors.poti600 else PotiTheme.colors.gray700
@@ -32,7 +39,13 @@ fun PotiCheckBox(
         modifier = modifier
             .size(24.dp)
             .padding(2.dp)
-            .noRippleClickable(onClick = onClick)
+            .run {
+                if (onClick != null) {
+                    noRippleClickable(onClick = onClick)
+                } else {
+                    this
+                }
+            }
             .clip(RoundedCornerShape(8.dp))
             .background(trackColor),
         contentAlignment = Alignment.Center,
