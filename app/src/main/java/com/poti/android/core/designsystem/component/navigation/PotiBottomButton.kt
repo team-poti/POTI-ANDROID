@@ -25,7 +25,7 @@ fun PotiBottomButton(
         modifier = modifier
             .background(PotiTheme.colors.white)
             .padding(horizontal = 16.dp)
-            .padding(top = 4.dp, bottom = 14.dp),
+            .padding(top = 4.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (subText != null && onSubClick != null) {
