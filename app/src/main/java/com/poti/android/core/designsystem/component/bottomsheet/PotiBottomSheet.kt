@@ -56,7 +56,7 @@ fun PotiBottomSheet(
         skipPartiallyExpanded = skipPartiallyExpanded,
     )
 
-    val properties = remember {
+    val properties = remember(shouldDismissOnBackPress) {
         ModalBottomSheetProperties(
             shouldDismissOnBackPress = shouldDismissOnBackPress,
         )
