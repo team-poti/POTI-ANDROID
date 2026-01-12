@@ -103,7 +103,7 @@ private fun MainBottomBarItem(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun MainBottomBarPreview() {
     PotiTheme {
@@ -111,6 +111,7 @@ private fun MainBottomBarPreview() {
             visible = true,
             currentTab = MainTab.HOME,
             onTabSelected = {},
+            modifier = Modifier.padding(top = 20.dp),
         )
     }
 }
