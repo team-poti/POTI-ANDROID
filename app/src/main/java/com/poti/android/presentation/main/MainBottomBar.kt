@@ -8,8 +8,8 @@ import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -42,25 +42,19 @@ fun MainBottomBar(
         enter = fadeIn() + slideIn { IntOffset(0, it.height) },
         exit = fadeOut() + slideOut { IntOffset(0, it.height) },
     ) {
-        Box(
+        Row(
             modifier = modifier
                 .fillMaxWidth()
                 .background(PotiTheme.colors.white)
                 .topBorder(1.dp, PotiTheme.colors.gray300)
                 .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             MainTab.entries.forEach { tab ->
-                val tabAlignment = when (tab) {
-                    MainTab.HOME -> Alignment.CenterStart
-                    MainTab.MY_PARTY -> Alignment.Center
-                    MainTab.MYPAGE -> Alignment.CenterEnd
-                }
-
                 MainBottomBarItem(
                     tab = tab,
                     selected = tab == currentTab,
                     onClick = { onTabSelected(tab) },
-                    modifier = Modifier.align(tabAlignment),
                 )
             }
         }
