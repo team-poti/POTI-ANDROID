@@ -27,7 +27,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.common.extension.topBorder
+import com.poti.android.core.common.extension.topRoundedBorder
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -46,7 +46,7 @@ fun MainBottomBar(
             modifier = modifier
                 .fillMaxWidth()
                 .background(PotiTheme.colors.white)
-                .topBorder(1.dp, PotiTheme.colors.gray300)
+                .topRoundedBorder(1.dp, PotiTheme.colors.gray300, 20.dp)
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
