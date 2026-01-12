@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
-import com.poti.android.presentation.history.recruiter.ParticipantMangeRoute
+import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
 import kotlinx.serialization.Serializable
 
@@ -56,6 +56,6 @@ fun NavGraphBuilder.historyNavGraph(
         RecruiterDetailRoute(modifier = Modifier.padding(paddingValues))
     }
     composable<HistoryRoute.ParticipantManage> {
-        ParticipantMangeRoute(modifier = Modifier.padding(paddingValues))
+        ParticipantManageRoute(modifier = Modifier.padding(paddingValues))
     }
 }
