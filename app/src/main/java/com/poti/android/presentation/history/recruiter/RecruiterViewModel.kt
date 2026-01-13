@@ -1,4 +1,4 @@
-package com.poti.android.presentation.myparty.recruiter
+package com.poti.android.presentation.history.recruiter
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
