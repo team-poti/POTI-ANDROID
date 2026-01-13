@@ -2,6 +2,7 @@ package com.poti.android.presentation.auth
 
 import android.content.Context
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
 import com.poti.android.presentation.auth.model.LoginState
@@ -21,26 +22,33 @@ class LoginViewModel @Inject constructor(
 
     fun loginKakao(context: Context) {
         kakaoLoginManager.login(context) { result ->
-            updateState { copy(isLoading = false) }
             result.onSuccess { token ->
-                checkUserRegistration(token.accessToken)
+                requestServerLogin(token.accessToken)
             }
             result.onFailure { error ->
-                Timber.e(error)
+                updateState {
+                    copy(loginState = ApiState.Failure(error.message ?: "카카오 로그인 실패"))
+                }
             }
         }
     }
 
-    private fun checkUserRegistration(kakaoAccessToken: String) = launchScope {
-        val isRegistered = false
-        updateState { copy(isLoading = false, isLoggedIn = true) }
+    private fun requestServerLogin(kakaoToken: String) {
+        launchScope {
+            // TODO: [지현] Repository를 통해 서버에 요청
 
-        if (isRegistered) {
-            Timber.i("기존 회원입니다. 홈으로 이동합니다.")
-            sendEffect(LoginEffect.NavigateToHome)
-        } else {
-            Timber.i("신규 회원입니다. 온보딩으로 이동합니다.")
-            sendEffect(LoginEffect.NavigateToOnboarding)
+            // TODO: [지현] 서버 응답 결과
+            val isRegistered = false
+
+            updateState { copy(loginState = ApiState.Success(Unit)) }
+
+            if (isRegistered) {
+                Timber.i("기존 회원입니다. 홈으로 이동합니다.")
+                sendEffect(LoginEffect.NavigateToHome)
+            } else {
+                Timber.i("신규 회원입니다. 온보딩으로 이동합니다.")
+                sendEffect(LoginEffect.NavigateToOnboarding)
+            }
         }
     }
 }

@@ -3,10 +3,10 @@ package com.poti.android.presentation.auth.model
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
+import com.poti.android.core.common.state.ApiState
 
 data class LoginState(
-    val isLoading: Boolean = false,
-    val isLoggedIn: Boolean = false,
+    val loginState: ApiState<Unit> = ApiState.Init,
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {
