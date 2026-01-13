@@ -1,4 +1,7 @@
-language: "ko-KR"
+language: ko
+
+tone_instructions: "한국어 존댓말로, 안드로이드 최신 권장 사항(Modern Android Development)에 기반하여 리뷰해줘."
+
 reviews:
     high_level_summary: true
     review_status: true
@@ -8,45 +11,45 @@ reviews:
         enabled: true
         drafts: false
 
-    tone_instructions: "한국어 존댓말로, 안드로이드 최신 권장 사항(Modern Android Development)에 기반하여 리뷰해줘."
+    path_instructions:
+        - path: "**/*.kt"
+          instructions: |
+              코드를 리뷰할 때 다음 Kotlin 및 Jetpack Compose 모범 사례를 중점적으로 확인:
 
-    instructions: |
-        코드를 리뷰할 때 다음 Kotlin 및 Jetpack Compose 모범 사례를 중점적으로 확인:
+              1. Jetpack Compose 성능 및 UI 최적화:
+                  - Recomposition 방지: 불필요한 리컴포지션을 유발하는 코드를 지적해줘. 특히 `LazyColumn` 등 리스트에서 `key` 파라미터가 누락되었는지 확인해줘.
+                  - 스마트한 계산: 계산 비용이 높은 로직은 `remember`나 `derivedStateOf`로 감싸져 있는지 확인해줘.
+                  - 안정성(Stability): List나 일반 클래스를 State로 사용할 때, 불필요한 리컴포지션을 막기 위해 `@Immutable`이나 `@Stable` 어노테이션 사용을 제안해줘.
+                  - Modifier 규칙: `Modifier`는 항상 컴포저블 함수의 첫 번째 선택적 파라미터로 받아야 하며, 재사용성을 위해 외부에서 주입받아야 해.
+                  - 리소스 사용: 하드코딩된 값(색상, 크기, 문자열) 대신 `Theme`, `Dimens`, `strings.xml` 리소스를 사용하는지 체크해줘.
+                  - 접근성 예외: Icon이나 Image 컴포저블의 `contentDescription`이 `null`인 경우는 장식용(Decorative) 이미지로 간주하고 지적하지 마.
 
-        1. Jetpack Compose 성능 및 UI 최적화:
-            - Recomposition 방지: 불필요한 리컴포지션을 유발하는 코드를 지적해줘. 특히 `LazyColumn` 등 리스트에서 `key` 파라미터가 누락되었는지 확인해줘.
-            - 스마트한 계산: 계산 비용이 높은 로직은 `remember`나 `derivedStateOf`로 감싸져 있는지 확인해줘.
-            - 안정성(Stability): List나 일반 클래스를 State로 사용할 때, 불필요한 리컴포지션을 막기 위해 `@Immutable`이나 `@Stable` 어노테이션 사용을 제안해줘.
-            - Modifier 규칙: `Modifier`는 항상 컴포저블 함수의 첫 번째 선택적 파라미터로 받아야 하며, 재사용성을 위해 외부에서 주입받아야 해.
-            - 리소스 사용: 하드코딩된 값(색상, 크기, 문자열) 대신 `Theme`, `Dimens`, `strings.xml` 리소스를 사용하는지 체크해줘.
-            - 접근성 예외: Icon이나 Image 컴포저블의 `contentDescription`이 `null`인 경우는 장식용(Decorative) 이미지로 간주하고 지적하지 마.
+              2. MVI (Model-View-Intent) 아키텍처 및 상태 관리:
+                  - 단방향 데이터 흐름(UDF): UI는 상태를 직접 변경할 수 없고, 반드시 `Intent`(또는 Event)를 통해 ViewModel로 요청을 보내야 해.
+                  - 불변 상태(Immutable State): `UiState`는 반드시 `data class` + `val` 프로퍼티로 구성되어야 하며, 상태 업데이트 시 `.copy()`를 사용해야 해.
+                  - Side Effect 분리: 네비게이션, Toast 같은 일회성 이벤트는 UiState가 아닌 `Channel`이나 `SharedFlow`로 처리하여 화면 회전 시 재발생하지 않도록 해야 해.
+                  - 안전한 수집: UI에서 Flow 수집 시 `collectAsStateWithLifecycle()`을 사용하여 생명주기를 준수하는지 확인해줘.
+                  - 상태 노출: `ViewModel` 내부에서 `StateFlow`나 `SharedFlow`를 올바르게 노출하고 있는지 확인해줘.
+                  - 호이스팅(Hoisting): 상태나 UI 이벤트 처리가 적절하게 호이스팅되었는지 확인해줘. UI 로직과 비즈니스 로직을 분리하고, UI가 로직을 직접 수행하지 않도록 확인해줘.
 
-        2. MVI (Model-View-Intent) 아키텍처 및 상태 관리:
-            - 단방향 데이터 흐름(UDF): UI는 상태를 직접 변경할 수 없고, 반드시 `Intent`(또는 Event)를 통해 ViewModel로 요청을 보내야 해.
-            - 불변 상태(Immutable State): `UiState`는 반드시 `data class` + `val` 프로퍼티로 구성되어야 하며, 상태 업데이트 시 `.copy()`를 사용해야 해.
-            - Side Effect 분리: 네비게이션, Toast 같은 일회성 이벤트는 UiState가 아닌 `Channel`이나 `SharedFlow`로 처리하여 화면 회전 시 재발생하지 않도록 해야 해.
-            - 안전한 수집: UI에서 Flow 수집 시 `collectAsStateWithLifecycle()`을 사용하여 생명주기를 준수하는지 확인해줘.
-            - 상태 노출: `ViewModel` 내부에서 `StateFlow`나 `SharedFlow`를 올바르게 노출하고 있는지 확인해줘.
-            - 호이스팅(Hoisting): 상태나 UI 이벤트 처리가 적절하게 호이스팅되었는지 확인해줘. UI 로직과 비즈니스 로직을 분리하고, UI가 로직을 직접 수행하지 않도록 확인해줘.
+              3. Clean Architecture (Dependency Rule) 준수:
+                  - Domain 순수성: Domain 레이어(`domain` 패키지)는 절대로 안드로이드 의존성(`android.*`, `R` 클래스 등)을 가져서는 안 돼. 순수 Kotlin 코드인지 엄격히 확인해줘.
+                  - 데이터 노출 금지: Data 레이어의 DTO(`@Entity`, `@SerializedName`)가 UI나 Domain 레이어로 바로 노출되면 안 돼. 반드시 Mapper를 통해 변환했는지 확인해줘.
+                  - 계층 간 의존성: `UI -> Domain <- Data` 방향이 올바른지, UI가 Data 레이어를 직접 참조하고 있진 않은지 감시해줘.
 
-        3. Clean Architecture (Dependency Rule) 준수:
-            - Domain 순수성: Domain 레이어(`domain` 패키지)는 절대로 안드로이드 의존성(`android.*`, `R` 클래스 등)을 가져서는 안 돼. 순수 Kotlin 코드인지 엄격히 확인해줘.
-            - 데이터 노출 금지: Data 레이어의 DTO(`@Entity`, `@SerializedName`)가 UI나 Domain 레이어로 바로 노출되면 안 돼. 반드시 Mapper를 통해 변환했는지 확인해줘.
-            - 계층 간 의존성: `UI -> Domain <- Data` 방향이 올바른지, UI가 Data 레이어를 직접 참조하고 있진 않은지 감시해줘.
+              4. Kotlin & Coroutines 안전성:
+                  - Scope 사용: `GlobalScope` 사용을 금지하고, `viewModelScope`나 `lifecycleScope` 사용을 권장해줘.
+                  - Dispatcher 주입: `Dispatchers.IO` 등을 하드코딩하지 말고, 테스트 용이성을 위해 생성자를 통해 주입(Injection)받도록 제안해줘.
+                  - 예외 처리: Coroutine 실행 시 `runCatching`이나 `CoroutineExceptionHandler` 등을 통해 예외 처리가 누락되지 않았는지 확인해줘.
+                  - Null-Safety: 불필요한 `!!` 연산자 사용을 지적하고, `?.` (Safe Call)이나 엘비스 연산자(`?:`) 사용을 권장해줘.
 
-        4. Kotlin & Coroutines 안전성:
-            - Scope 사용: `GlobalScope` 사용을 금지하고, `viewModelScope`나 `lifecycleScope` 사용을 권장해줘.
-            - Dispatcher 주입: `Dispatchers.IO` 등을 하드코딩하지 말고, 테스트 용이성을 위해 생성자를 통해 주입(Injection)받도록 제안해줘.
-            - 예외 처리: Coroutine 실행 시 `runCatching`이나 `CoroutineExceptionHandler` 등을 통해 예외 처리가 누락되지 않았는지 확인해줘.
-            - Null-Safety: 불필요한 `!!` 연산자 사용을 지적하고, `?.` (Safe Call)이나 엘비스 연산자(`?:`) 사용을 권장해줘.
+              5. DI (Dependency Injection) 및 컴포넌트 구조:
+                  - Hilt 사용: ViewModel에는 `@HiltViewModel`이, 생성자에는 `@Inject`가 올바르게 붙어있는지 확인해줘.
+                  - UseCase: UseCase는 하나의 비즈니스 로직(SRP)만 수행해야 하며, 클래스 이름은 동사로 시작해야 해 (예: `FetchUserUseCase`).
+                  - Repository: Repository는 Domain의 Interface와 Data의 구현체(Impl)로 잘 분리되어 있는지 확인해줘.
 
-        5. DI (Dependency Injection) 및 컴포넌트 구조:
-            - Hilt 사용: ViewModel에는 `@HiltViewModel`이, 생성자에는 `@Inject`가 올바르게 붙어있는지 확인해줘.
-            - UseCase: UseCase는 하나의 비즈니스 로직(SRP)만 수행해야 하며, 클래스 이름은 동사로 시작해야 해 (예: `FetchUserUseCase`).
-            - Repository: Repository는 Domain의 Interface와 Data의 구현체(Impl)로 잘 분리되어 있는지 확인해줘.
-
-        6. 코드 가독성 및 컨벤션:
-            - 복잡한 `if-else`나 중첩(Nesting)이 깊은 로직은 얼리 리턴(Early Return)이나 함수 분리를 제안해줘.
+              6. 코드 가독성 및 컨벤션:
+                  - 복잡한 `if-else`나 중첩(Nesting)이 깊은 로직은 얼리 리턴(Early Return)이나 함수 분리를 제안해줘.
 
     path_filters:
         - "!**/build/**"
