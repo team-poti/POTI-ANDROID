@@ -3,6 +3,7 @@ package com.poti.android.presentation.auth
 import android.content.Context
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
 import com.poti.android.presentation.auth.model.LoginState
@@ -13,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val kakaoLoginManager: KakaoLoginManager,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
@@ -35,20 +37,25 @@ class LoginViewModel @Inject constructor(
 
     private fun requestServerLogin(kakaoToken: String) {
         launchScope {
-            // TODO: [지현] Repository를 통해 서버에 요청
+            authRepository.login(socialType = "KAKAO", token = kakaoToken)
+                .onSuccess { response ->
+                    val loginData = response
 
-            // TODO: [지현] 서버 응답 결과
-            val isRegistered = false
+                    // TODO: [지현] 토큰 저장
 
-            updateState { copy(loginState = ApiState.Success(Unit)) }
+                    updateState { copy(loginState = ApiState.Success(Unit)) }
 
-            if (isRegistered) {
-                Timber.i("기존 회원입니다. 홈으로 이동합니다.")
-                sendEffect(LoginEffect.NavigateToHome)
-            } else {
-                Timber.i("신규 회원입니다. 온보딩으로 이동합니다.")
-                sendEffect(LoginEffect.NavigateToOnboarding)
-            }
+                    if (loginData.isNewUser) {
+                        Timber.i("신규 회원입니다. 온보딩으로 이동합니다.")
+                        sendEffect(LoginEffect.NavigateToOnboarding)
+                    } else {
+                        Timber.i("기존 회원입니다. 홈으로 이동합니다.")
+                        sendEffect(LoginEffect.NavigateToHome)
+                    }
+                }
+                .onFailure { error ->
+                    updateState { copy(loginState = ApiState.Failure(error.message ?: "Server Error")) }
+                }
         }
     }
 }

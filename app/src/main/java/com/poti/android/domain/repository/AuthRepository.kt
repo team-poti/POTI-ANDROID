@@ -1,0 +1,10 @@
+package com.poti.android.domain.repository
+
+import com.poti.android.domain.model.UserAuth
+
+interface AuthRepository {
+    suspend fun login(
+        socialType: String,
+        token: String,
+    ): Result<UserAuth>
+}
