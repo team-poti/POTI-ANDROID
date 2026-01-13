@@ -32,7 +32,7 @@ fun PotiHeaderPage(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PotiIconButton(
-            iconRes = if (title.isNullOrBlank()) R.drawable.ic_arrow_line_left else R.drawable.ic_x,
+            iconRes = if (title.isNullOrBlank()) R.drawable.ic_x else R.drawable.ic_arrow_line_left,
             onClick = onNavigationClick,
         )
 
