@@ -29,6 +29,7 @@ import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
+import timber.log.Timber
 
 @Composable
 fun LoginRoute(
@@ -43,15 +44,18 @@ fun LoginRoute(
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding
-                is LoginEffect.NavigateToHome -> onNavigateToHome
+                is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
+                is LoginEffect.NavigateToHome -> onNavigateToHome()
             }
         }
     }
 
     LoginScreen(
         modifier = modifier,
-        onKakaoClick = { viewModel.loginKakao(context) },
+        onKakaoClick = {
+            Timber.d("UI: 버튼 클릭됨! ViewModel 호출 시작")
+            viewModel.loginKakao(context)
+        },
     )
 }
 

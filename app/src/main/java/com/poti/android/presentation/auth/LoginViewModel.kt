@@ -18,16 +18,21 @@ class LoginViewModel @Inject constructor(
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
-            is LoginIntent.OnKakaoLoginClick -> {}
+            is LoginIntent.OnKakaoLoginClick -> { }
         }
     }
 
     fun loginKakao(context: Context) {
+        Timber.d("카카오 로그인 실행")
+        updateState { copy(loginState = ApiState.Loading) }
+
         kakaoLoginManager.login(context) { result ->
             result.onSuccess { token ->
+                Timber.d("로그인 성공")
                 requestServerLogin(token.accessToken)
             }
             result.onFailure { error ->
+                Timber.e(error, "로그인 실패 원인: ${error.message}")
                 updateState {
                     copy(loginState = ApiState.Failure(error.message ?: "카카오 로그인 실패"))
                 }
@@ -40,8 +45,6 @@ class LoginViewModel @Inject constructor(
             authRepository.login(socialType = "KAKAO", token = kakaoToken)
                 .onSuccess { response ->
                     val loginData = response
-
-                    // TODO: [지현] 토큰 저장
 
                     updateState { copy(loginState = ApiState.Success(Unit)) }
 
