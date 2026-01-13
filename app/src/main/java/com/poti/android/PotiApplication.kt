@@ -12,6 +12,7 @@ class PotiApplication : Application() {
         super.onCreate()
         setDarkMode()
         setTimber()
+        initKakaoSdk()
     }
 
     private fun setDarkMode() {

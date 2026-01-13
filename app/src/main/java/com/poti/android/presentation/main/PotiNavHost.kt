@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
+import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
 import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
 import com.poti.android.presentation.party.partyNavGraph
@@ -24,7 +25,9 @@ fun PotiNavHost(
         startDestination = navigator.startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
-        authNavGraph()
+        authNavGraph(
+            onNavigateToOnboarding = navigator.navController::navigateToOnboardingGuide,
+        )
         onboardingNavGraph(
             paddingValues = paddingValues,
         )

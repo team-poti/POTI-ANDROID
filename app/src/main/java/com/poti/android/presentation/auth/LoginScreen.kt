@@ -25,12 +25,21 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 
 @Composable
-fun LoginRoute(modifier: Modifier = Modifier) {
-    LoginScreen(modifier = modifier)
+fun LoginRoute(
+    modifier: Modifier = Modifier,
+    onNavigateToOnboarding: () -> Unit,
+) {
+    LoginScreen(
+        modifier = modifier,
+        onKakaoClick = {},
+    )
 }
 
 @Composable
-private fun LoginScreen(modifier: Modifier = Modifier) {
+private fun LoginScreen(
+    modifier: Modifier = Modifier,
+    onKakaoClick: () -> Unit,
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,10 +69,13 @@ private fun LoginScreen(modifier: Modifier = Modifier) {
             LoginButton(
                 iconResId = R.drawable.ic_kakao,
                 background = Color(0xFFFEE500),
+                onClick = onKakaoClick,
             )
+
             LoginButton(
                 iconResId = R.drawable.ic_google,
                 background = Color.White,
+                onClick = {},
             )
         }
 
@@ -75,6 +87,8 @@ private fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginScreenPreview() {
     PotiTheme {
-        LoginScreen()
+        LoginScreen(
+            onKakaoClick = {},
+        )
     }
 }

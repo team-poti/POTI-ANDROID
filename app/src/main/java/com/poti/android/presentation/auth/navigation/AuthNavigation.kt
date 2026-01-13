@@ -11,8 +11,12 @@ sealed interface AuthRoute : Route {
     data object Login : AuthRoute
 }
 
-fun NavGraphBuilder.authNavGraph() {
+fun NavGraphBuilder.authNavGraph(
+    onNavigateToOnboarding: () -> Unit,
+) {
     composable<AuthRoute.Login> {
-        LoginRoute()
+        LoginRoute(
+            onNavigateToOnboarding = onNavigateToOnboarding,
+        )
     }
 }

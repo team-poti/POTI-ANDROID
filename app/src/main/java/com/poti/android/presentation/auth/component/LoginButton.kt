@@ -14,18 +14,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
 
 @Composable
 fun LoginButton(
     @DrawableRes iconResId: Int,
     background: Color,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .size(68.dp)
             .clip(CircleShape)
-            .background(background),
+            .background(background)
+            .noRippleClickable(onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
