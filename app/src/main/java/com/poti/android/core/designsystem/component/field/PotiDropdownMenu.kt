@@ -38,7 +38,7 @@ internal fun PotiDropdownMenu(
     shape: Shape,
     border: BorderStroke,
     maxHeight: Dp?,
-    popupProterties: PopupProperties = PopupProperties(),
+    popupProperties: PopupProperties = PopupProperties(),
     content: LazyListScope.() -> Unit,
 ) {
     if (expandedState.currentState || expandedState.targetState) {
@@ -63,7 +63,7 @@ internal fun PotiDropdownMenu(
         Popup(
             onDismissRequest = onDismissRequest,
             popupPositionProvider = popupPositionProvider,
-            properties = popupProterties,
+            properties = popupProperties,
         ) {
             PotiDropdownMenuContent(
                 expandedState = expandedState,

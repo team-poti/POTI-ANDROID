@@ -151,7 +151,7 @@ fun PotiDropdownField(
             shape = shape,
             border = border,
             maxHeight = if (isCalculateFinished) calculatedMaxHeight else maxHeight,
-            popupProterties = PopupProperties(
+            popupProperties = PopupProperties(
                 focusable = true,
             ),
         ) {
