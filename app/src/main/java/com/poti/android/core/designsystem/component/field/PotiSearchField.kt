@@ -2,7 +2,6 @@ package com.poti.android.core.designsystem.component.field
 
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,7 +83,7 @@ fun PotiSearchField(
     label: String = "",
     error: String = "",
     focusRequester: FocusRequester = remember { FocusRequester() },
-    scrollState: ScrollState = rememberScrollState(),
+    scrollState: LazyListState = rememberLazyListState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
     border: BorderStroke = BorderStroke(1.dp, PotiTheme.colors.gray700),
@@ -194,7 +194,7 @@ fun PotiSearchField(
             maxHeight = searchType.maxHeight,
             parentWidth = parentWidth,
         ) {
-            menuItems.forEachIndexed { index, item ->
+            itemsIndexed(menuItems) { index, item ->
                 PotiMenuItem(
                     option = item.option,
                     onClick = {
@@ -206,15 +206,8 @@ fun PotiSearchField(
                     modifier = Modifier.fillMaxWidth(),
                     price = item.price,
                     disabled = item.disabled,
+                    showBottomBorder = index < menuItems.size,
                 )
-
-                if (index < menuItems.lastIndex) {
-                    // TODO: [도연] Display>Divider-sm로 변경
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = PotiTheme.colors.gray300,
-                    )
-                }
             }
         }
     }

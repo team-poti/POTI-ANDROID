@@ -3,7 +3,6 @@ package com.poti.android.core.designsystem.component.field
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,10 +25,10 @@ import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -39,7 +38,6 @@ import androidx.compose.ui.window.PopupProperties
 import com.poti.android.R
 import com.poti.android.core.designsystem.model.FieldMenuItem
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.core.designsystem.theme.White
 
 /**
  * 필드 하단에 드롭다운 메뉴가 제공되는 컴포넌트입니다.
@@ -76,20 +74,18 @@ fun PotiDropdownField(
     error: String = "",
     initialOpenState: Boolean = false,
     closeOnItemClick: Boolean = true,
-    maxHeight: Dp? = 422.dp,
-    scrollState: ScrollState = rememberScrollState(),
+    maxHeight: Dp = 422.dp,
+    scrollState: LazyListState = rememberLazyListState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
     border: BorderStroke = BorderStroke(1.dp, PotiTheme.colors.gray700),
 ) {
-    val expandedState = remember { MutableTransitionState(false) }
+    val expandedState = remember { MutableTransitionState(initialOpenState) }
     var parentWidth by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        if (initialOpenState) {
-            expandedState.targetState = true
-        }
-    }
+    val density = LocalDensity.current
+    var calculatedMaxHeight by remember { mutableStateOf(0.dp) }
+    var isCalculateFinished by remember { mutableStateOf(false) }
 
     val borderColor = when {
         error.isNotEmpty() -> PotiTheme.colors.sementicRed
@@ -116,11 +112,6 @@ fun PotiDropdownField(
                     .onGloballyPositioned { coordinates ->
                         parentWidth = coordinates.size.width
                     }
-                    .onFocusChanged { focusState ->
-                        if (!focusState.isFocused && expandedState.currentState) {
-                            expandedState.targetState = false
-                        }
-                    }
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -128,7 +119,7 @@ fun PotiDropdownField(
                         expandedState.targetState = !expandedState.currentState
                     },
                 borderColor = borderColor,
-                backgroundColor = White,
+                backgroundColor = PotiTheme.colors.white,
                 trailingIcon = {
                     Crossfade(
                         targetState = expandedState.targetState,
@@ -159,12 +150,12 @@ fun PotiDropdownField(
             offset = offset,
             shape = shape,
             border = border,
-            maxHeight = maxHeight,
+            maxHeight = if (isCalculateFinished) calculatedMaxHeight else maxHeight,
             popupProterties = PopupProperties(
                 focusable = true,
             ),
         ) {
-            menuItems.forEachIndexed { index, item ->
+            itemsIndexed(menuItems) { index, item ->
                 PotiMenuItem(
                     option = item.option,
                     onClick = {
@@ -174,17 +165,24 @@ fun PotiDropdownField(
                         }
                     },
                     isSelected = item.id in selectedIds,
+                    modifier = when (isCalculateFinished) {
+                        true -> Modifier
+                        else ->
+                            Modifier
+                                .onGloballyPositioned { coordinates ->
+                                    val heightPx = coordinates.size.height
+                                    val heightDp = with(density) { heightPx.toDp() }
+                                    if (heightDp + calculatedMaxHeight > maxHeight) {
+                                        isCalculateFinished = true
+                                        return@onGloballyPositioned
+                                    }
+                                    calculatedMaxHeight += heightDp
+                                }
+                    },
                     price = item.price,
                     disabled = item.disabled,
+                    showBottomBorder = index < menuItems.size,
                 )
-
-                if (index < menuItems.lastIndex) {
-                    // TODO: [도연] Display>Divider-sm로 변경
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = PotiTheme.colors.gray300,
-                    )
-                }
             }
         }
     }
@@ -196,7 +194,7 @@ private fun PotiDropdownFieldPreview() {
     var text by remember { mutableStateOf("") }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val menuItems = listOf(
-        FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"),
+        FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션".repeat(50)), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"), FieldMenuItem("옵션"),
     )
 
     PotiTheme {

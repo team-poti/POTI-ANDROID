@@ -1,11 +1,11 @@
 package com.poti.android.core.designsystem.component.field
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +13,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.bottomBorder
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -23,6 +25,7 @@ fun PotiMenuItem(
     modifier: Modifier = Modifier,
     price: String? = null,
     disabled: Boolean = false,
+    showBottomBorder: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -39,14 +42,19 @@ fun PotiMenuItem(
 
     Row(
         modifier = modifier
+            .heightIn(52.dp)
             .background(backgroundColor)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = !disabled,
-                onClick = onClick,
+            .bottomBorder(
+                strokeWidth = 1.dp,
+                color = PotiTheme.colors.gray300,
+                isVisible = showBottomBorder,
             )
-            .padding(horizontal = 16.dp, vertical = 15.5.dp),
+            .noRippleClickable(
+                onClick = onClick,
+                enabled = !disabled,
+                interactionSource = remember { MutableInteractionSource() },
+            )
+            .padding(horizontal = 16.dp, vertical = 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(

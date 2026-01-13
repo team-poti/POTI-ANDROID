@@ -7,12 +7,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,12 +34,12 @@ internal fun PotiDropdownMenu(
     onDismissRequest: () -> Unit,
     parentWidth: Int,
     offset: DpOffset,
-    scrollState: ScrollState,
+    scrollState: LazyListState,
     shape: Shape,
     border: BorderStroke,
     maxHeight: Dp?,
     popupProterties: PopupProperties = PopupProperties(),
-    content: @Composable ColumnScope.() -> Unit,
+    content: LazyListScope.() -> Unit,
 ) {
     if (expandedState.currentState || expandedState.targetState) {
         val density = LocalDensity.current
@@ -82,12 +81,12 @@ internal fun PotiDropdownMenu(
 @Composable
 private fun PotiDropdownMenuContent(
     expandedState: MutableTransitionState<Boolean>,
-    scrollState: ScrollState,
+    scrollState: LazyListState,
     shape: Shape,
     border: BorderStroke?,
     parentWidth: Int,
     maxHeight: Dp?,
-    content: @Composable ColumnScope.() -> Unit,
+    content: LazyListScope.() -> Unit,
 ) {
     val density = LocalDensity.current
 
@@ -108,7 +107,8 @@ private fun PotiDropdownMenuContent(
             shape = shape,
             border = border,
         ) {
-            Column(
+            LazyColumn(
+                state = scrollState,
                 modifier =
                     Modifier
                         .then(
@@ -116,8 +116,7 @@ private fun PotiDropdownMenuContent(
                                 null -> Modifier
                                 else -> Modifier.heightIn(max = maxHeight)
                             },
-                        )
-                        .verticalScroll(scrollState),
+                        ),
                 content = content,
             )
         }
