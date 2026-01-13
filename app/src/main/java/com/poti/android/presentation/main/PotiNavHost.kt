@@ -42,6 +42,7 @@ fun PotiNavHost(
         )
         profileNavGraph(
             paddingValues = paddingValues,
+            onBackClick = { navigator.navController.popBackStack() },
         )
     }
 }

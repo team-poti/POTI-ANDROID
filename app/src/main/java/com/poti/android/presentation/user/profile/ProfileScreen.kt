@@ -30,7 +30,7 @@ data class HistorySummaryUiModel(
 )
 
 @Composable
-fun ProfileRoute(
+fun ProfileScreenRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
