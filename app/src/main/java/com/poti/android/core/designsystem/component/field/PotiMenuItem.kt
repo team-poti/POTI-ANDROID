@@ -1,6 +1,7 @@
 package com.poti.android.core.designsystem.component.field
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -26,8 +27,8 @@ fun PotiMenuItem(
     price: String? = null,
     disabled: Boolean = false,
     showBottomBorder: Boolean = true,
+    interactionSource: InteractionSource = remember { MutableInteractionSource() },
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val backgroundColor = when {
