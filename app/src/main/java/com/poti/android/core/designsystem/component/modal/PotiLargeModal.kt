@@ -56,9 +56,11 @@ fun PotiLargeModal(
     dismissOnClickOutside: Boolean = true,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
+    val hasSubBtn = subBtnText != null && onSubBtnClick != null
+
     PotiModal(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 36.dp),
         dismissOnBackPress = dismissOnBackPress,
         dismissOnClickOutside = dismissOnClickOutside,
     ) {
@@ -66,7 +68,7 @@ fun PotiLargeModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(top = 36.dp, bottom = 12.dp),
+                .padding(top = 36.dp, bottom = if (hasSubBtn) 12.dp else 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -90,8 +92,8 @@ fun PotiLargeModal(
                     painter = painterResource(id = it),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(180.dp)
-                        .padding(vertical = 24.dp),
+                        .padding(vertical = 24.dp)
+                        .size(180.dp),
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -104,7 +106,7 @@ fun PotiLargeModal(
                     type = ModalButtonType.MAIN,
                 )
 
-                if (subBtnText != null && onSubBtnClick != null) {
+                if (hasSubBtn) {
                     PotiModalButton(
                         text = subBtnText,
                         onClick = onSubBtnClick,
@@ -127,8 +129,6 @@ private fun PotiLarge1Preview() {
             text = "작은 내용",
             btnText = "확인",
             onBtnClick = {},
-            modifier = Modifier
-                .padding(horizontal = 32.dp),
             subBtnText = "넘어갈래요",
             onSubBtnClick = {},
         ) {
@@ -150,8 +150,6 @@ private fun PotiLarge2Preview() {
             text = "작은 내용",
             btnText = "확인",
             onBtnClick = {},
-            modifier = Modifier
-                .padding(horizontal = 32.dp),
             image = R.drawable.ic_launcher_background,
         )
     }

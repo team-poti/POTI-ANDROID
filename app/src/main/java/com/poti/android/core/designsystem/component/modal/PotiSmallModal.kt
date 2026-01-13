@@ -51,7 +51,7 @@ fun PotiSmallModal(
 ) {
     PotiModal(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 32.dp),
         dismissOnBackPress = dismissOnBackPress,
         dismissOnClickOutside = dismissOnClickOutside,
     ) {
@@ -115,7 +115,6 @@ private fun PotiSmallModalPreview() {
                 confirmBtnText = "버튼2",
                 onDismissBtnClick = {},
                 onConfirmBtnClick = { },
-                modifier = Modifier.padding(32.dp),
             )
         }
 
