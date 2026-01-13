@@ -9,9 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -37,9 +37,8 @@ fun PotiHeaderPage(
         )
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 4.dp),
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             title?.let {
                 Text(
@@ -52,8 +51,10 @@ fun PotiHeaderPage(
             subTitle?.let {
                 Text(
                     text = subTitle,
-                    style = PotiTheme.typography.caption10m,
-                    color = Color(0xFFB3B3B3), // TODO: [지현] 컬러 시스템 수정
+                    style = PotiTheme.typography.caption10m.copy(
+                        lineHeight = 1.35.em,
+                    ),
+                    color = PotiTheme.colors.gray700,
                 )
             }
         }

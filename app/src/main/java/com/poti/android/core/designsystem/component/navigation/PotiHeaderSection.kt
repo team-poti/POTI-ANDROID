@@ -1,6 +1,7 @@
 package com.poti.android.core.designsystem.component.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
@@ -71,6 +72,7 @@ fun PotiHeaderSection(
                     .padding(vertical = 8.dp)
                     .noRippleClickable { onTabSelected(tabType) },
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 Text(
                     text = count.toString(),
