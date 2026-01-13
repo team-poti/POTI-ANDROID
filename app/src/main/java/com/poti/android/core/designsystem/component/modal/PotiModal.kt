@@ -64,10 +64,7 @@ internal fun PotiModal(
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
 
         SideEffect {
-            dialogWindow?.apply {
-                setDimAmount(0.4f)
-                setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
+            dialogWindow?.setDimAmount(0.4f)
         }
 
         Surface(
