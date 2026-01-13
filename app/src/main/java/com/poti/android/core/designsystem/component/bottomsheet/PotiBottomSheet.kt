@@ -13,12 +13,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,17 +30,16 @@ import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import kotlinx.coroutines.launch
 
 /**
  * 바텀시트 기본 레이아웃입니다.
  *
- * @param onDismissRequest 바텀시트를 닫는 콜백입니다.
  * @param text Main 버튼 텍스트입니다.
  * @param onClick Main 버튼 콜백입니다.
  * @param modifier
  * @param subText Sub 버튼 텍스트입니다. lg 스타일일 때 사용합니다.
  * @param onSubClick Sub 버튼 콜백입니다. lg 스타일일 때 사용합니다.
- * @param skipPartiallyExpanded 바텀시트 content가 길 때, 바텀시트가 부분적으로 열리고, 사용자가 드래그해야 전체 content가 노출되는지 여부를 조정합니다. 기본값 true여서, 기본값 사용 시 바텀시트 열면 모든 content가 한 번에 보이게 됩니다.
  * @param shouldDismissOnBackPress 시스템 뒤로가기 시 바텀시트가 닫히는지 여부입니다. 기본값 true로, 닫히도록 설정되어 있습니다.
  * @param content
  *
@@ -52,15 +53,13 @@ fun PotiBottomSheet(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    sheetState: SheetState = rememberModalBottomSheetState(),
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
-    skipPartiallyExpanded: Boolean = true,
     shouldDismissOnBackPress: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = skipPartiallyExpanded,
-    )
+    val scope = rememberCoroutineScope()
 
     val properties = remember(shouldDismissOnBackPress) {
         ModalBottomSheetProperties(
@@ -79,7 +78,13 @@ fun PotiBottomSheet(
         properties = properties,
     ) {
         PotiHeaderPage(
-            onNavigationClick = onDismissRequest,
+            onNavigationClick = {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        onDismissRequest()
+                    }
+                }
+            },
             modifier = Modifier.padding(top = 4.dp),
         )
 
@@ -87,9 +92,25 @@ fun PotiBottomSheet(
 
         BottomSheetButton(
             text = text,
-            onClick = onClick,
+            onClick = {
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        onClick()
+                        onDismissRequest()
+                    }
+                }
+            },
             subText = subText,
-            onSubClick = onSubClick,
+            onSubClick = {
+                onSubClick?.let {
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            onSubClick()
+                            onDismissRequest()
+                        }
+                    }
+                }
+            },
         )
     }
 }
@@ -127,6 +148,7 @@ private fun BottomSheetButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun PotiBottomSheetPreview() {
