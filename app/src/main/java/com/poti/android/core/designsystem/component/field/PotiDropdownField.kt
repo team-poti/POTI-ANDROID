@@ -62,7 +62,7 @@ import com.poti.android.core.designsystem.theme.White
  * @param border 메뉴 전체 테두리입니다.
  *
  * @author 도연
- * @sample PotiDropdownFieldPreveiw
+ * @sample PotiDropdownFieldPreview
  */
 @Composable
 fun PotiDropdownField(
@@ -108,7 +108,7 @@ fun PotiDropdownField(
 
             PotiBasicField(
                 value = value,
-                onValueChaged = {},
+                onValueChanged = {},
                 placeholder = placeholder,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -192,7 +192,7 @@ fun PotiDropdownField(
 
 @Preview
 @Composable
-private fun PotiDropdownFieldPreveiw() {
+private fun PotiDropdownFieldPreview() {
     var text by remember { mutableStateOf("") }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val menuItems = listOf(
@@ -226,7 +226,7 @@ private fun PotiDropdownFieldPreveiw() {
 
 @Preview
 @Composable
-private fun PotiDropdownFieldWithPriceWithMutlipleSelectPreveiw() {
+private fun PotiDropdownFieldWithPriceWithMutlipleSelectPreview() {
     var text by remember { mutableStateOf("") }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val menuItems = listOf(

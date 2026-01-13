@@ -146,7 +146,7 @@ fun PotiSearchField(
 
             PotiBasicField(
                 value = value,
-                onValueChaged = {
+                onValueChanged = {
                     isTyping = true
                     onValueChange(it)
                 },

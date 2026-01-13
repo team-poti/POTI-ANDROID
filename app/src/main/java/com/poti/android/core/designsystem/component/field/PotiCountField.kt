@@ -40,7 +40,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param enabled 입력 및 포커스, 터치 이벤트 차단하고 싶다면 false로 설정합니다. 기본값 true입니다.
  *
  * @author 도연
- * @sample PotiCountFieldWithLabelPreveiw
+ * @sample PotiCountFieldWithLabelPreview
  */
 @Composable
 fun PotiCountField(
@@ -76,7 +76,7 @@ fun PotiCountField(
 
         PotiBasicField(
             value = value,
-            onValueChaged = onValueChanged,
+            onValueChanged = onValueChanged,
             placeholder = placeholder,
             borderColor = borderColor,
             backgroundColor = PotiTheme.colors.white,
@@ -113,7 +113,7 @@ fun PotiCountField(
 
 @Preview
 @Composable
-private fun PotiCountFieldWithErrorPreveiw() {
+private fun PotiCountFieldWithErrorPreview() {
     var text by remember { mutableStateOf("") }
 
     PotiTheme {
@@ -129,7 +129,7 @@ private fun PotiCountFieldWithErrorPreveiw() {
 
 @Preview
 @Composable
-private fun PotiCountFieldWithLabelPreveiw() {
+private fun PotiCountFieldWithLabelPreview() {
     var text by remember { mutableStateOf("") }
 
     PotiTheme {

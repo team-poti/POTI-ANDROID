@@ -68,7 +68,7 @@ fun PotiShortTextField(
 
         PotiBasicField(
             value = value,
-            onValueChaged = onValueChanged,
+            onValueChanged = onValueChanged,
             placeholder = placeholder,
             borderColor = borderColor,
             backgroundColor = PotiTheme.colors.white,
@@ -96,7 +96,7 @@ fun PotiShortTextField(
 
 @Preview
 @Composable
-private fun PotiShortTextFieldWithErrorPreveiw() {
+private fun PotiShortTextFieldWithErrorPreview() {
     var text by remember { mutableStateOf("") }
 
     PotiTheme {
@@ -111,7 +111,7 @@ private fun PotiShortTextFieldWithErrorPreveiw() {
 
 @Preview
 @Composable
-private fun PotiShortTextFieldWithLabelPreveiw() {
+private fun PotiShortTextFieldWithLabelPreview() {
     var text by remember { mutableStateOf("") }
 
     PotiTheme {

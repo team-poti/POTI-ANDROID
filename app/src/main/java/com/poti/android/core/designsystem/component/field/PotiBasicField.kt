@@ -1,7 +1,6 @@
 package com.poti.android.core.designsystem.component.field
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -32,7 +31,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 internal fun PotiBasicField(
     value: String,
-    onValueChaged: (String) -> Unit,
+    onValueChanged: (String) -> Unit,
     placeholder: String,
     borderColor: Color,
     backgroundColor: Color,
@@ -52,7 +51,7 @@ internal fun PotiBasicField(
 
     BasicTextField(
         value = value,
-        onValueChange = onValueChaged,
+        onValueChange = onValueChanged,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .roundedBackgroundWithBorder(
