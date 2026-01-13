@@ -53,7 +53,7 @@ fun PotiSmallModal(
 ) {
     PotiModal(
         onDismissRequest = onDismissRequest,
-        modifier = modifier.padding(horizontal = 32.dp),
+        modifier = modifier.padding(horizontal = screenWidthDp(32.dp)),
         dismissOnBackPress = dismissOnBackPress,
         dismissOnClickOutside = dismissOnClickOutside,
     ) {
