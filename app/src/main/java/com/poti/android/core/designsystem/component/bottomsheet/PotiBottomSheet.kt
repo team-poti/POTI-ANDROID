@@ -35,9 +35,11 @@ import kotlinx.coroutines.launch
 /**
  * 바텀시트 기본 레이아웃입니다.
  *
+ * @param onDismissRequest 바텀시트를 닫는 콜백입니다.
  * @param text Main 버튼 텍스트입니다.
  * @param onClick Main 버튼 콜백입니다.
  * @param modifier
+ * @param sheetState 바텀시트 상태로 expanded 상태 등을 조정하고 싶을 때 사용합니다.
  * @param subText Sub 버튼 텍스트입니다. lg 스타일일 때 사용합니다.
  * @param onSubClick Sub 버튼 콜백입니다. lg 스타일일 때 사용합니다.
  * @param shouldDismissOnBackPress 시스템 뒤로가기 시 바텀시트가 닫히는지 여부입니다. 기본값 true로, 닫히도록 설정되어 있습니다.
