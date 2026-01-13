@@ -89,7 +89,7 @@ fun PotiBottomSheet(
             text = text,
             onClick = onClick,
             subText = subText,
-            onSubClick = onSubClick
+            onSubClick = onSubClick,
         )
     }
 }
@@ -194,7 +194,7 @@ private fun PotiBottomSheetPreview() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(40.dp),
-            verticalArrangement = Arrangement.SpaceAround
+            verticalArrangement = Arrangement.SpaceAround,
         ) {
             PotiFloatingButton(
                 onClick = { showSmallBottomSheet = true },
