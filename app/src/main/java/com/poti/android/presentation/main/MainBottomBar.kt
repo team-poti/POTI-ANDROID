@@ -5,20 +5,29 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.topRoundedBorder
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -34,14 +43,18 @@ fun MainBottomBar(
         exit = fadeOut() + slideOut { IntOffset(0, it.height) },
     ) {
         Row(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .background(PotiTheme.colors.white)
+                .topRoundedBorder(1.dp, PotiTheme.colors.gray300, 20.dp)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             MainTab.entries.forEach { tab ->
                 MainBottomBarItem(
                     tab = tab,
                     selected = tab == currentTab,
                     onClick = { onTabSelected(tab) },
-                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -55,19 +68,31 @@ private fun MainBottomBarItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val color = if (selected) PotiTheme.colors.poti600 else PotiTheme.colors.gray700
+
     Column(
         modifier = modifier
+            .widthIn(82.dp)
             .selectable(
                 selected = selected,
                 role = Role.Tab,
                 onClick = onClick,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-            ),
+            )
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(tab.iconResId),
+            contentDescription = null,
+            tint = color,
+        )
         Text(
             text = stringResource(tab.label),
+            style = PotiTheme.typography.caption12m,
+            color = color,
         )
     }
 }
@@ -80,6 +105,7 @@ private fun MainBottomBarPreview() {
             visible = true,
             currentTab = MainTab.HOME,
             onTabSelected = {},
+            modifier = Modifier.padding(top = 20.dp),
         )
     }
 }

@@ -16,8 +16,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -103,6 +105,37 @@ fun Modifier.dropShadow(
             canvas.restore()
         }
     }
+}
+
+fun Modifier.topRoundedBorder(
+    strokeWidth: Dp,
+    color: Color,
+    cornerRadius: Dp,
+) = this.drawBehind {
+    val strokeWidthPx = strokeWidth.toPx()
+    val radiusPx = cornerRadius.toPx()
+    val halfStroke = strokeWidthPx / 2
+
+    val path = Path().apply {
+        moveTo(x = halfStroke, y = radiusPx)
+
+        quadraticTo(x1 = halfStroke, y1 = halfStroke, x2 = radiusPx, y2 = halfStroke)
+
+        lineTo(x = size.width - radiusPx, y = halfStroke)
+
+        quadraticBezierTo(
+            x1 = size.width - halfStroke,
+            y1 = halfStroke,
+            x2 = size.width - halfStroke,
+            y2 = radiusPx,
+        )
+    }
+
+    drawPath(
+        path = path,
+        color = color,
+        style = Stroke(width = strokeWidthPx),
+    )
 }
 
 fun Modifier.bottomBorder(
