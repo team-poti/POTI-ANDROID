@@ -1,7 +1,5 @@
 package com.poti.android.core.designsystem.component.modal
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
