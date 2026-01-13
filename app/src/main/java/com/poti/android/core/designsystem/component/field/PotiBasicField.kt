@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.roundedBackgroundWithBorder
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -54,8 +55,12 @@ internal fun PotiBasicField(
         onValueChange = onValueChaged,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
-            .background(backgroundColor)
+            .roundedBackgroundWithBorder(
+                cornerRadius = 8.dp,
+                backgroundColor = backgroundColor,
+                borderColor = borderColor,
+                borderWidth = 1.dp
+            )
             .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
