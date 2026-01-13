@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -87,10 +87,10 @@ fun PotiDropdownField(
     var calculatedMaxHeight by remember { mutableStateOf(0.dp) }
     var isCalculateFinished by remember { mutableStateOf(false) }
 
-    val borderColor = when {
-        error.isNotEmpty() -> PotiTheme.colors.sementicRed
-        expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
-        else -> PotiTheme.colors.gray300
+    val status = when {
+        error.isNotEmpty() -> FieldStatus.ERROR
+        expandedState.targetState -> FieldStatus.FOCUS
+        else -> FieldStatus.DEFAULT
     }
 
     Box(
@@ -108,7 +108,7 @@ fun PotiDropdownField(
                 placeholder = placeholder,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .heightIn(52.dp)
                     .onGloballyPositioned { coordinates ->
                         parentWidth = coordinates.size.width
                     }
@@ -118,7 +118,7 @@ fun PotiDropdownField(
                     ) {
                         expandedState.targetState = !expandedState.currentState
                     },
-                borderColor = borderColor,
+                borderColor = status.borderColor,
                 backgroundColor = PotiTheme.colors.white,
                 trailingIcon = {
                     Crossfade(

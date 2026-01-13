@@ -42,12 +42,15 @@ internal fun PotiBasicField(
     onNextAction: () -> Unit = {},
     onSearchAction: () -> Unit = {},
     onFocusChanged: (Boolean) -> Unit = {},
-    focusRequester: FocusRequester = FocusRequester(),
+    focusRequester: FocusRequester? = null,
     singleLine: Boolean = true,
     trailingIcon: @Composable () -> Unit = {},
     enabled: Boolean = true,
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val requester = remember {
+        focusRequester ?: FocusRequester()
+    }
 
     BasicTextField(
         value = value,
@@ -58,9 +61,9 @@ internal fun PotiBasicField(
                 cornerRadius = 8.dp,
                 backgroundColor = backgroundColor,
                 borderColor = borderColor,
-                borderWidth = 1.dp
+                borderWidth = 1.dp,
             )
-            .focusRequester(focusRequester)
+            .focusRequester(requester)
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
                 onFocusChanged(focusState.isFocused)
@@ -117,3 +120,14 @@ internal fun PotiBasicField(
         },
     )
 }
+
+enum class FieldStatus {
+    DEFAULT, FOCUS, ERROR;
+}
+
+val FieldStatus.borderColor: Color
+    @Composable get() = when (this) {
+        FieldStatus.DEFAULT -> PotiTheme.colors.gray300
+        FieldStatus.FOCUS -> PotiTheme.colors.gray700
+        FieldStatus.ERROR -> PotiTheme.colors.sementicRed
+    }

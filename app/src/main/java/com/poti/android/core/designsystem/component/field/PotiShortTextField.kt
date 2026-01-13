@@ -3,7 +3,7 @@ package com.poti.android.core.designsystem.component.field
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,18 +46,17 @@ fun PotiShortTextField(
     label: String = "",
     error: String = "",
     imeAction: ImeAction = ImeAction.Done,
-    focusRequester: FocusRequester = remember { FocusRequester() },
+    focusRequester: FocusRequester? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    val potiColors = PotiTheme.colors
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val borderColor = when {
-        error.isNotEmpty() -> potiColors.sementicRed
-        isFocused -> potiColors.gray700
-        else -> potiColors.gray300
+    val status = when {
+        error.isNotEmpty() -> FieldStatus.ERROR
+        isFocused -> FieldStatus.FOCUS
+        else -> FieldStatus.DEFAULT
     }
 
     Column(
@@ -70,11 +69,11 @@ fun PotiShortTextField(
             value = value,
             onValueChanged = onValueChanged,
             placeholder = placeholder,
-            borderColor = borderColor,
+            borderColor = status.borderColor,
             backgroundColor = PotiTheme.colors.white,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
+                .heightIn(52.dp),
             keyboardType = keyboardType,
             enabled = enabled,
             imeAction = imeAction,

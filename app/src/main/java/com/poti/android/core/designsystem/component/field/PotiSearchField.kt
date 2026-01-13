@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
@@ -82,7 +82,7 @@ fun PotiSearchField(
     modifier: Modifier = Modifier,
     label: String = "",
     error: String = "",
-    focusRequester: FocusRequester = remember { FocusRequester() },
+    focusRequester: FocusRequester? = null,
     scrollState: LazyListState = rememberLazyListState(),
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
@@ -129,10 +129,10 @@ fun PotiSearchField(
         }
     }
 
-    val borderColor = when {
-        error.isNotEmpty() -> PotiTheme.colors.sementicRed
-        expandedState.currentState || expandedState.targetState -> PotiTheme.colors.gray700
-        else -> PotiTheme.colors.gray300
+    val status = when {
+        error.isNotEmpty() -> FieldStatus.ERROR
+        isFieldFocused -> FieldStatus.FOCUS
+        else -> FieldStatus.DEFAULT
     }
 
     Box(
@@ -153,12 +153,12 @@ fun PotiSearchField(
                 placeholder = placeholder,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
+                    .heightIn(52.dp)
                     .onGloballyPositioned { coordinates ->
                         parentWidth = coordinates.size.width
                     },
                 onFocusChanged = { isFieldFocused = it },
-                borderColor = borderColor,
+                borderColor = status.borderColor,
                 backgroundColor = White,
                 imeAction = ImeAction.Search,
                 onSearchAction = { onSearch() },

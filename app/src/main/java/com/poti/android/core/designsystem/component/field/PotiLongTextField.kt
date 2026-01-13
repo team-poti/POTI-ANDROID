@@ -45,15 +45,14 @@ fun PotiLongTextField(
     enabled: Boolean = true,
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    val potiColors = PotiTheme.colors
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val borderColor = when {
-        error.isNotEmpty() -> potiColors.sementicRed
-        isFocused -> potiColors.gray700
-        else -> potiColors.gray300
+    val status = when {
+        error.isNotEmpty() -> FieldStatus.ERROR
+        isFocused -> FieldStatus.FOCUS
+        else -> FieldStatus.DEFAULT
     }
 
     Column(
@@ -66,7 +65,7 @@ fun PotiLongTextField(
             value = value,
             onValueChanged = onValueChanged,
             placeholder = placeholder,
-            borderColor = borderColor,
+            borderColor = status.borderColor,
             backgroundColor = PotiTheme.colors.white,
             modifier = Modifier
                 .fillMaxWidth()
