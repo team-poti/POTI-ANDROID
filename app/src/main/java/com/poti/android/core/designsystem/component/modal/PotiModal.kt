@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,17 +61,14 @@ internal fun PotiModal(
         onDismissRequest = onDismissRequest,
         properties = dialogProperties,
     ) {
-        val dialogWindow = (LocalView.current.parent as DialogWindowProvider).window
+        val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
 
-        dialogWindow.setDimAmount(0.4f)
-
-        dialogWindow.decorView.setBackgroundColor(
-            Color.parseColor("#000000"),
-        )
-
-        dialogWindow.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT),
-        )
+        SideEffect {
+            dialogWindow?.apply {
+                setDimAmount(0.4f)
+                setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+        }
 
         Surface(
             modifier = modifier,
