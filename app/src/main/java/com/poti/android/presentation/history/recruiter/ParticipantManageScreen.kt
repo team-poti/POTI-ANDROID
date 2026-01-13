@@ -1,10 +1,10 @@
-package com.poti.android.presentation.myparty.recruiter
+package com.poti.android.presentation.history.recruiter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ParticipantMangeRoute(modifier: Modifier = Modifier) {
+fun ParticipantManageRoute(modifier: Modifier = Modifier) {
     ParticipantManageScreen(modifier = modifier)
 }
 

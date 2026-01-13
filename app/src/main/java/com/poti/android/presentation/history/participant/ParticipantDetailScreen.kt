@@ -1,4 +1,4 @@
-package com.poti.android.presentation.myparty.participant
+package com.poti.android.presentation.history.participant
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
