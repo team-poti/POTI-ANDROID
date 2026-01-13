@@ -52,6 +52,7 @@ internal fun PotiModal(
         DialogProperties(
             dismissOnBackPress = dismissOnBackPress,
             dismissOnClickOutside = dismissOnClickOutside,
+            usePlatformDefaultWidth = false
         )
     }
 
@@ -72,6 +73,7 @@ internal fun PotiModal(
         )
 
         Surface(
+            modifier = modifier,
             shape = RoundedCornerShape(12.dp),
             color = PotiTheme.colors.white,
         ) {
@@ -88,7 +90,7 @@ private fun PotiModalPreview() {
     PotiTheme {
         if (showModal) {
             PotiModal(
-                modifier = Modifier.padding(32.dp),
+                modifier = Modifier.padding(10.dp),
                 onDismissRequest = { showModal = false },
             ) {
                 Column(
