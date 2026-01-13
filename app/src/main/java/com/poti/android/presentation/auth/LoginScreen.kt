@@ -10,28 +10,48 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
+import com.poti.android.presentation.auth.model.LoginEffect
 
 @Composable
 fun LoginRoute(
-    modifier: Modifier = Modifier,
     onNavigateToOnboarding: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding
+                is LoginEffect.NavigateToHome -> onNavigateToHome
+            }
+        }
+    }
+
     LoginScreen(
         modifier = modifier,
-        onKakaoClick = {},
+        onKakaoClick = { viewModel.loginKakao(context) },
     )
 }
 

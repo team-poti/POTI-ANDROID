@@ -13,10 +13,12 @@ sealed interface AuthRoute : Route {
 
 fun NavGraphBuilder.authNavGraph(
     onNavigateToOnboarding: () -> Unit,
+    onNavigateToHome: () -> Unit,
 ) {
     composable<AuthRoute.Login> {
         LoginRoute(
             onNavigateToOnboarding = onNavigateToOnboarding,
+            onNavigateToHome = onNavigateToHome,
         )
     }
 }
