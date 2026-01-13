@@ -122,7 +122,9 @@ internal fun PotiBasicField(
 }
 
 enum class FieldStatus {
-    DEFAULT, FOCUS, ERROR;
+    DEFAULT,
+    FOCUS,
+    ERROR,
 }
 
 val FieldStatus.borderColor: Color
