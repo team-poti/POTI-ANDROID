@@ -1,0 +1,58 @@
+package com.poti.android.core.designsystem.component.display
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.designsystem.theme.PotiTheme.typography
+import com.poti.android.core.designsystem.theme.SementicRed
+import com.poti.android.core.designsystem.theme.White
+
+enum class PotiTagSize {
+    SMALL,
+    LARGE,
+}
+
+val PotiTagSize.textStyle: TextStyle
+    @Composable get() = when (this) {
+        PotiTagSize.SMALL -> typography.caption10m
+        PotiTagSize.LARGE -> typography.caption12m
+    }
+
+@Composable
+fun PotiSecondaryTag(
+    text: String,
+    sizeType: PotiTagSize,
+    modifier: Modifier = Modifier,
+) {
+    val textStyle = sizeType.textStyle
+
+    Text(
+        text = text,
+        style = textStyle,
+        color = SementicRed,
+        modifier = modifier
+            .clip(RoundedCornerShape(99.dp))
+            .background(White)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
+}
+
+@Preview
+@Composable
+private fun PotiSecondaryTagPreview() {
+    PotiTheme {
+        Column {
+            PotiSecondaryTag(text = "인기", sizeType = PotiTagSize.SMALL)
+            PotiSecondaryTag(text = "인기", sizeType = PotiTagSize.LARGE)
+        }
+    }
+}

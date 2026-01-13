@@ -93,6 +93,7 @@ dependencies {
 
     // --- Utils ---
     implementation(libs.timber)
+    implementation(libs.immutable)
 
     // --- Testing ---
     testImplementation(libs.junit)
