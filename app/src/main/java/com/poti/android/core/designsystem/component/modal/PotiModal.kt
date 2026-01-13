@@ -52,7 +52,7 @@ internal fun PotiModal(
         DialogProperties(
             dismissOnBackPress = dismissOnBackPress,
             dismissOnClickOutside = dismissOnClickOutside,
-            usePlatformDefaultWidth = false
+            usePlatformDefaultWidth = false,
         )
     }
 
