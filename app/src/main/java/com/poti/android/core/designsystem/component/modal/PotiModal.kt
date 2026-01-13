@@ -1,8 +1,7 @@
 package com.poti.android.core.designsystem.component.modal
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import com.poti.android.core.common.extension.noRippleClickable
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiModalButton
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -42,47 +41,41 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @sample PotiModalPreview
  */
 @Composable
-fun PotiModal(
+internal fun PotiModal(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     dismissOnBackPress: Boolean = true,
     dismissOnClickOutside: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val popupProperties = remember(dismissOnBackPress) {
-        PopupProperties(
-            focusable = true,
+    val dialogProperties = remember(dismissOnBackPress, dismissOnClickOutside) {
+        DialogProperties(
             dismissOnBackPress = dismissOnBackPress,
-            dismissOnClickOutside = false,
-            excludeFromSystemGesture = true,
+            dismissOnClickOutside = dismissOnClickOutside,
         )
     }
 
-    Popup(
+    Dialog(
         onDismissRequest = onDismissRequest,
-        properties = popupProperties,
+        properties = dialogProperties,
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(PotiTheme.colors.blackA40)
-                .noRippleClickable(
-                    onClick = onDismissRequest,
-                    enabled = dismissOnClickOutside,
-                    interactionSource = remember { MutableInteractionSource() },
-                ),
+        val dialogWindow = (LocalView.current.parent as DialogWindowProvider).window
+
+        dialogWindow.setDimAmount(0.4f)
+
+        dialogWindow.decorView.setBackgroundColor(
+            Color.parseColor("#000000"),
+        )
+
+        dialogWindow.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT),
+        )
+
+        Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = PotiTheme.colors.white,
         ) {
-            Surface(
-                color = PotiTheme.colors.white,
-                shape = RoundedCornerShape(12.dp),
-                modifier = modifier
-                    .pointerInput(Unit) {
-                        detectTapGestures { }
-                    },
-            ) {
-                content()
-            }
+            content()
         }
     }
 }
