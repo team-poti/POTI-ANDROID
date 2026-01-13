@@ -1,4 +1,4 @@
-package com.poti.android.presentation.myparty.recruiter
+package com.poti.android.presentation.history.recruiter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

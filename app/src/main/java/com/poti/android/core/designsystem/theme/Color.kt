@@ -20,6 +20,7 @@ val SementicRed = Color(0xFFFF634B)
 val Black = Color(0xFF303030)
 val BlackA40 = Color(0x66303030)
 val White = Color(0xFFFAFAFC)
+val WhiteA80 = Color(0xCCFAFAFC)
 
 @Immutable
 data class PotiColors(
@@ -37,6 +38,7 @@ data class PotiColors(
     val black: Color,
     val blackA40: Color,
     val white: Color,
+    val whiteA80: Color,
 )
 
 val defaultPotiColors = PotiColors(
@@ -54,6 +56,7 @@ val defaultPotiColors = PotiColors(
     black = Black,
     blackA40 = BlackA40,
     white = White,
+    whiteA80 = WhiteA80,
 )
 
 val LocalPotiColorsProvider = staticCompositionLocalOf { defaultPotiColors }
