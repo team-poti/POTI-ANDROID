@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
@@ -61,8 +60,7 @@ fun PotiSmallModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    vertical = screenHeightDp(16.dp),
-                    horizontal = screenWidthDp(16.dp),
+                    all = screenWidthDp(16.dp),
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -83,7 +81,7 @@ fun PotiSmallModal(
             Row(
                 modifier = Modifier
                     .padding(top = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(screenWidthDp(8.dp)),
             ) {
                 PotiModalButton(
                     text = dismissBtnText,

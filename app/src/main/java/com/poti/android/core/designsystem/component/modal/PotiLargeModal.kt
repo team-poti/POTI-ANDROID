@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.heightForScreenPercentage
-import com.poti.android.core.common.extension.widthForScreenPercentage
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.button.PotiModalButton
@@ -96,7 +96,7 @@ fun PotiLargeModal(
                     modifier = Modifier
                         .padding(vertical = 24.dp)
                         .heightForScreenPercentage(180.dp)
-                        .widthForScreenPercentage(180.dp),
+                        .aspectRatio(1f),
                     contentScale = ContentScale.Crop,
                 )
             }
