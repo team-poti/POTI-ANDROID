@@ -19,7 +19,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme.typography
 @Composable
 fun PotiStateGuide(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
@@ -32,7 +32,7 @@ fun PotiStateGuide(
             style = typography.body14sb,
             color = colors.poti600,
             modifier = Modifier
-                .padding(vertical = 12.dp)
+                .padding(vertical = 12.dp),
         )
     }
 }
@@ -41,7 +41,9 @@ fun PotiStateGuide(
 @Composable
 private fun PotiStateGuidePreview() {
     PotiTheme {
-        PotiStateGuide(text = "상태 메세지를 입력하세요",
-            modifier = Modifier.width(343.dp))
+        PotiStateGuide(
+            text = "상태 메세지를 입력하세요",
+            modifier = Modifier.width(343.dp),
+        )
     }
 }

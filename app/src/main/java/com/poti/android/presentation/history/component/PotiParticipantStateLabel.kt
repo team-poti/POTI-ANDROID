@@ -2,7 +2,6 @@ package com.poti.android.presentation.history.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +14,9 @@ import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
 enum class ParticipantStateLabelColor {
-    RED, BLUE, GRAY;
+    RED,
+    BLUE,
+    GRAY,
 }
 
 val ParticipantStateLabelColor.color: Color
@@ -27,7 +28,7 @@ val ParticipantStateLabelColor.color: Color
 
 enum class ParticipantStateLabelSize {
     LARGE,
-    SMALL
+    SMALL,
 }
 
 val ParticipantStateLabelSize.style: TextStyle
@@ -41,13 +42,13 @@ fun PotiParticipantStateLabel(
     text: String,
     sizeType: ParticipantStateLabelSize,
     colorType: ParticipantStateLabelColor,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = text,
         style = sizeType.style,
         color = colorType.color,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -56,22 +57,22 @@ fun PotiParticipantStateLabel(
 private fun PotiParticipantStateLabelPreview() {
     PotiTheme {
         Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             PotiParticipantStateLabel(
                 text = "입금 대기",
                 sizeType = ParticipantStateLabelSize.LARGE,
-                colorType = ParticipantStateLabelColor.RED
+                colorType = ParticipantStateLabelColor.RED,
             )
             PotiParticipantStateLabel(
                 text = "입금 완료",
                 sizeType = ParticipantStateLabelSize.SMALL,
-                colorType = ParticipantStateLabelColor.GRAY
+                colorType = ParticipantStateLabelColor.GRAY,
             )
             PotiParticipantStateLabel(
                 text = "모집 완료",
                 sizeType = ParticipantStateLabelSize.SMALL,
-                colorType = ParticipantStateLabelColor.BLUE
+                colorType = ParticipantStateLabelColor.BLUE,
             )
         }
     }
