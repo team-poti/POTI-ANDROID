@@ -1,6 +1,5 @@
 package com.poti.android.core.designsystem.component.display
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +21,6 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 fun PotiEmptyStateBlock(
     text: String,
-    @DrawableRes image: Int,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -31,7 +29,8 @@ fun PotiEmptyStateBlock(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(id = image),
+            // TODO: [천민재] 빈 이미지 추가 필요
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delivery),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier.size(180.dp),
@@ -49,7 +48,6 @@ fun PotiEmptyStateBlock(
 @Composable
 private fun PotiEmptyStateBlockPreview() {
     PotiTheme {
-        // TODO: [천민재] 빈 이미지 추가 필요
-        PotiEmptyStateBlock(text = "텍스트", image = R.drawable.ic_delivery)
+        PotiEmptyStateBlock(text = "텍스트")
     }
 }

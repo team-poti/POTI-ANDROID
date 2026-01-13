@@ -3,8 +3,10 @@ package com.poti.android.core.designsystem.component.display
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,9 +38,8 @@ fun PotiProfileSummary(
     nickname: String,
     sizeType: PotiProfileSummarySize,
     rating: String,
-    showReview: Boolean,
     modifier: Modifier = Modifier,
-    reviewText: String = "",
+    reviewText: String? = null,
 ) {
     Row(
         modifier = modifier,
@@ -66,44 +67,37 @@ fun PotiProfileSummary(
             },
         )
 
-        Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = if (sizeType == PotiProfileSummarySize.LARGE && showReview) {
-                Arrangement.spacedBy(4.dp)
-            } else {
-                Arrangement.Center
-            },
-        ) {
-            if (sizeType == PotiProfileSummarySize.LARGE) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+        when (sizeType) {
+            PotiProfileSummarySize.LARGE -> {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     NameAndRate(
                         nickname = nickname,
-                        style = if (showReview) {
+                        style = if (reviewText != null) {
                             typography.body14sb
                         } else {
                             typography.body14m
                         },
                         rating = rating,
+                        isVertical = false,
                     )
-                }
-            } else {
-                Column {
-                    NameAndRate(
-                        nickname = nickname,
-                        style = typography.body14m,
-                        rating = rating,
-                    )
+                    if (reviewText != null) {
+                        Text(
+                            text = reviewText,
+                            style = typography.body14m,
+                            color = colors.gray800,
+                        )
+                    }
                 }
             }
 
-            if (showReview && sizeType == PotiProfileSummarySize.LARGE) {
-                Text(
-                    text = reviewText,
+            PotiProfileSummarySize.SMALL -> {
+                NameAndRate(
+                    nickname = nickname,
                     style = typography.body14m,
-                    color = colors.gray800,
+                    rating = rating,
+                    isVertical = true,
                 )
             }
         }
@@ -115,13 +109,35 @@ private fun NameAndRate(
     nickname: String,
     style: TextStyle,
     rating: String,
+    isVertical: Boolean = false,
 ) {
-    Text(
-        text = nickname,
-        style = style,
-        color = colors.black,
-    )
-    PotiRating(rating = rating)
+    if (isVertical) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Row {
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = nickname,
+                    style = style,
+                    color = colors.black,
+                )
+            }
+            PotiRating(rating = rating)
+        }
+    } else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = nickname,
+                style = style,
+                color = colors.black,
+            )
+            PotiRating(rating = rating)
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -137,21 +153,18 @@ private fun PotiProfileSummaryPreview() {
                 nickname = "닉네임",
                 sizeType = PotiProfileSummarySize.SMALL,
                 rating = "4.8",
-                showReview = false,
             )
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
                 sizeType = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
-                showReview = false,
             )
             PotiProfileSummary(
                 profileImageUrl = "",
                 nickname = "닉네임",
                 sizeType = PotiProfileSummarySize.LARGE,
                 rating = "4.8",
-                showReview = true,
                 reviewText = "14개의 평가",
             )
         }

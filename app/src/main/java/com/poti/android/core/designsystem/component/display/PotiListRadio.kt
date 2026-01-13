@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,15 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PotiListRadio(
-    // TODO: [천민재] 리컴포지션 최적화를 위한 ImmutableList 도입 검토
-    options: List<String>,
+    options: ImmutableList<String>,
     selectedOptionIndex: Int,
     onClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -54,7 +55,12 @@ fun PotiListRadioItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .noRippleClickable(onClick = onClick),
+            .selectable(
+                selected = selected,
+                interactionSource = null,
+                indication = null,
+                onClick = onClick,
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -76,7 +82,7 @@ private fun PotiListRadioPreview() {
 
     PotiTheme {
         PotiListRadio(
-            options = listOf("최신순", "인기순", "마감임박순", "평점순"),
+            options = persistentListOf("최신순", "인기순", "마감임박순", "평점순"),
             selectedOptionIndex = selected,
             onClick = { index -> selected = index },
         )

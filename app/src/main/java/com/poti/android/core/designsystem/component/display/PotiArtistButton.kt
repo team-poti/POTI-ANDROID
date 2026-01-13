@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
@@ -53,17 +53,17 @@ fun PotiArtistButton(
                 .clip(CircleShape)
                 .noRippleClickable(onClick = onClick),
         ) {
-            SubcomposeAsyncImage(
+            AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize(),
-                loading = { // TODO: [천민재] 추후 에셋 추가시 구현
-                },
-                error = { // TODO: [천민재] 추후 에셋 추가시 구현
-                },
+                // TODO: [천민재] 에셋 추가시 변경
+                placeholder = null,
+                // TODO: [천민재] 에셋 추가시 변경
+                error = null,
             )
 
             if (selected) {

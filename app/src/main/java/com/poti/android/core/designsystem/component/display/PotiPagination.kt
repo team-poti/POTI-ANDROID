@@ -44,11 +44,10 @@ fun PotiPagination(
 @Composable
 private fun PaginationDot(isSelected: Boolean) {
     val backgroundColor = if (isSelected) colors.poti200 else colors.gray300
-    val width = if (isSelected) 16.dp else 6.dp
 
     Box(
         modifier = Modifier
-            .size(width = width, height = 6.dp)
+            .size(width = 6.dp, height = 6.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor),
     )
