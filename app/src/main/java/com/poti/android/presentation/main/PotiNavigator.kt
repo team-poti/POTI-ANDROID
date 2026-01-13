@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.poti.android.presentation.party.PartyGraph
+import com.poti.android.presentation.auth.navigation.AuthRoute
 
 class PotiNavigator(
     val navController: NavHostController,
@@ -17,7 +17,7 @@ class PotiNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = PartyGraph
+    val startDestination = AuthRoute.Login
 
     val currentTab: MainTab?
         @Composable get() = MainTab.entries.find { tab ->

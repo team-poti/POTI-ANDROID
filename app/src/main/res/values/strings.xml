@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">poti</string>
 
+    <!-- LoginScreen -->
+    <string name="login_poti_description">굿즈 분철을 더 간편하게</string>
+
+    <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
     <string name="bottom_nav_history">분철 내역</string>
     <string name="bottom_nav_my_page">마이페이지</string>
 
+    <!-- PotiHeaderSection -->
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
 </resources>

@@ -24,9 +24,7 @@ fun PotiNavHost(
         startDestination = navigator.startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
-        authNavGraph(
-            paddingValues = paddingValues,
-        )
+        authNavGraph()
         onboardingNavGraph(
             paddingValues = paddingValues,
         )
