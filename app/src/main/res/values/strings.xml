@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">poti</string>
 
+    <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
     <string name="bottom_nav_history">분철 내역</string>
     <string name="bottom_nav_my_page">마이페이지</string>
 
+    <!-- Navigation Component -->
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_Guide_label">공동구매부터 분철 정산까지\n한 번에 관리해요</string>
 </resources>
