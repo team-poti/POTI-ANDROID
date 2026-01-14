@@ -22,6 +22,31 @@ import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+enum class ModalButtonType {
+    MAIN,
+    SUB_1,
+    SUB_2,
+    ;
+
+    fun getBackgroundColor(
+        colors: PotiColors,
+        isPressed: Boolean,
+    ): Color =
+        when (this) {
+            MAIN -> if (isPressed) colors.poti800 else colors.poti600
+            SUB_1 -> if (isPressed) colors.gray300 else colors.gray100
+            SUB_2 -> Color.Transparent
+        }
+
+    fun getContentColor(colors: PotiColors): Color {
+        return when (this) {
+            MAIN -> colors.white
+            SUB_1 -> colors.gray900
+            SUB_2 -> colors.poti600
+        }
+    }
+}
+
 @Composable
 fun PotiModalButton(
     text: String,
@@ -55,31 +80,6 @@ fun PotiModalButton(
             color = contentColor,
             style = PotiTheme.typography.button16sb,
         )
-    }
-}
-
-enum class ModalButtonType {
-    MAIN,
-    SUB_1,
-    SUB_2,
-    ;
-
-    fun getBackgroundColor(
-        colors: PotiColors,
-        isPressed: Boolean,
-    ): Color =
-        when (this) {
-            MAIN -> if (isPressed) colors.poti800 else colors.poti600
-            SUB_1 -> if (isPressed) colors.gray300 else colors.gray100
-            SUB_2 -> Color.Transparent
-        }
-
-    fun getContentColor(colors: PotiColors): Color {
-        return when (this) {
-            MAIN -> colors.white
-            SUB_1 -> colors.gray900
-            SUB_2 -> colors.poti600
-        }
     }
 }
 
