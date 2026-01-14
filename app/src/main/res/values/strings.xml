@@ -8,7 +8,20 @@
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
 
+    <!-- Party -->
+    <string name="party_recruit_deadline">모집 기한</string>
+
     <!-- PartyDetail -->
-    <string name="party_detail_title">%1s의 팟</string>
+    <string name="party_detail_title">%s의 팟</string>
+    <string name="party_detail_price">%s원~</string>
     <string name="party_detail_price_per_person">/ 인</string>
+    <string name="party_detail_deadline">%s 까지</string>
+    <string name="party_detail_shipping_price">배송비</string>
+    <string name="party_detail_shipping_price_format">%1s %2s원</string>
+    <string name="party_detail_uploader">모집자</string>
+    <string name="party_detail_participants">참여자</string>
+    <string name="party_detail_review_count">%d개의 평가</string>
+    <string name="party_detail_participants_count">%1d/%2d</string>
+    <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
+    <string name="party_detail_join_party">분철팟 참여하기</string>
 </resources>

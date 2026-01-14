@@ -14,17 +14,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.PartyDetail
+import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyDetailHeaderInfo(
-    artist: String,
-    goodsName: String,
-    price: String,
-    time: String,
-    isFavorite: Boolean,
-    onFavoriteClick: () -> Unit,
+    partyDetail: PartyDetail,
+    onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -33,7 +32,7 @@ fun PartyDetailHeaderInfo(
     ) {
         Column {
             Text(
-                text = artist,
+                text = partyDetail.artist,
                 style = PotiTheme.typography.body14m,
                 color = PotiTheme.colors.gray800,
                 maxLines = 1,
@@ -41,20 +40,21 @@ fun PartyDetailHeaderInfo(
                 modifier = Modifier.padding(bottom = 4.dp),
             )
             Text(
-                text = goodsName,
+                text = partyDetail.title,
                 style = PotiTheme.typography.title18sb,
                 color = PotiTheme.colors.black,
-                maxLines = 1,
+                minLines = 2,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
+                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             ) {
                 Text(
-                    text = price,
+                    text = stringResource(R.string.party_detail_price, partyDetail.price.toMoneyString()),
                     style = PotiTheme.typography.display20b,
                     color = PotiTheme.colors.black,
                 )
@@ -66,7 +66,7 @@ fun PartyDetailHeaderInfo(
             }
 
             Text(
-                text = time,
+                text = partyDetail.uploadTime,
                 style = PotiTheme.typography.body14m,
                 color = PotiTheme.colors.gray800,
             )
@@ -74,8 +74,7 @@ fun PartyDetailHeaderInfo(
 
         PotiIconButton(
             iconRes = R.drawable.ic_heart,
-            onClick = onFavoriteClick,
-            // TODO: [지현] 색 연결하기
+            onClick = onLikeClick,
         )
     }
 }
@@ -85,12 +84,8 @@ fun PartyDetailHeaderInfo(
 private fun PartyDetailHeaderInfoPreview() {
     PotiTheme {
         PartyDetailHeaderInfo(
-            artist = "IVE(아이브)",
-            goodsName = "러브다이브 위드뮤",
-            price = "5,000원~",
-            time = "4시간 전",
-            isFavorite = false,
-            onFavoriteClick = {},
+            partyDetail = dummyPartyDetail,
+            onLikeClick = {},
         )
     }
 }
