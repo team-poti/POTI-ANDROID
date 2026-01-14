@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -17,31 +18,27 @@ import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
 @Composable
-fun PotiStateGuide(
+fun HistoryStateGuide(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Text(
+        text = text,
+        style = typography.body14sb,
+        color = colors.poti600,
+        textAlign = TextAlign.Center,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(colors.poti200),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            style = typography.body14sb,
-            color = colors.poti600,
-            modifier = Modifier
-                .padding(vertical = 12.dp),
-        )
-    }
+            .background(colors.poti200)
+            .padding(vertical = 12.dp),
+    )
 }
 
 @Preview
 @Composable
-private fun PotiStateGuidePreview() {
+private fun HistoryStateGuidePreview() {
     PotiTheme {
-        PotiStateGuide(
+        HistoryStateGuide(
             text = "상태 메세지를 입력하세요",
             modifier = Modifier.width(343.dp),
         )

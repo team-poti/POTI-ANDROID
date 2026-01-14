@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +25,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import kotlinx.coroutines.launch
 
 @Composable
-fun PotiCalloutInfo(
+fun HistoryCalloutInfo(
     text: String,
     modifier: Modifier = Modifier,
     copyable: Boolean = true,
@@ -77,9 +75,9 @@ fun PotiCalloutInfo(
 
 @Preview
 @Composable
-private fun PotiCalloutInfoPreview() {
+private fun HistoryCalloutInfoPreview() {
     PotiTheme {
-        PotiCalloutInfo(
+        HistoryCalloutInfo(
             text = "정보",
             copyable = true,
         )
@@ -88,9 +86,9 @@ private fun PotiCalloutInfoPreview() {
 
 @Preview
 @Composable
-private fun PotiCalloutInfoNoCopyPreview() {
+private fun HistoryCalloutInfoNoCopyPreview() {
     PotiTheme {
-        PotiCalloutInfo(
+        HistoryCalloutInfo(
             text = "정보 (복사 불가능)",
             copyable = false,
         )
