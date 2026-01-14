@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -19,13 +20,13 @@ enum class ParticipantStateLabelSize {
     SMALL,
 }
 
-enum class ParticipantStateLabelStage(val text: Int) {
+enum class ParticipantStateLabelStage(@StringRes val text: Int) {
     DEPOSIT(R.string.history_participant_stage_deposit),
     DELIVERY(R.string.history_participant_stage_delivery),
     RECRUIT(R.string.history_participant_stage_recruit),
 }
 
-enum class ParticipantStateLabelStatus(val text: Int) {
+enum class ParticipantStateLabelStatus(@StringRes val text: Int) {
     WAIT(R.string.history_participant_stage_wait),
     CHECK(R.string.history_participant_stage_check),
     START(R.string.history_participant_stage_start),
@@ -56,7 +57,11 @@ private fun getTextInfo(
     stageType: ParticipantStateLabelStage,
     statusType: ParticipantStateLabelStatus,
 ): Triple<String, TextStyle, Color> {
-    val text = stringResource(stageType.text) + " " + stringResource(statusType.text)
+    val text = stringResource(
+        id = R.string.history_participant_stage_and_status_format,
+        stringResource(stageType.text),
+        stringResource(statusType.text),
+    )
 
     val style = when (sizeType) {
         ParticipantStateLabelSize.LARGE -> PotiTheme.typography.body16sb
