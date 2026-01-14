@@ -12,6 +12,11 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
+        val url = originalRequest.url.toString()
+
+        if (shouldIgnoreUrl(url)) {
+            return chain.proceed(originalRequest)
+        }
 
         val accessToken = runBlocking {
             preferenceDataSource.accessToken.first()
@@ -26,5 +31,12 @@ class AuthInterceptor @Inject constructor(
             .build()
 
         return chain.proceed(newRequest)
+    }
+
+    private fun shouldIgnoreUrl(url: String): Boolean {
+        return url.contains("/api/v1/auth/sign-in") ||
+            url.contains("/api/v1/auth/sign-up") ||
+            url.contains("/api/v1/university/search") ||
+            url.contains("/api/v1/major/search")
     }
 }

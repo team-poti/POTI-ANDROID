@@ -42,13 +42,19 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(authInterceptor)
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .build()
+    ): OkHttpClient = OkHttpClient.Builder().apply {
+        connectTimeout(10, TimeUnit.SECONDS)
+        writeTimeout(10, TimeUnit.SECONDS)
+        readTimeout(10, TimeUnit.SECONDS)
+        addInterceptor(authInterceptor)
+        addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Accept", "*/*")
+                .build()
+            chain.proceed(request)
+        }
+        addInterceptor(loggingInterceptor)
+    }.build()
 
     @Provides
     @Singleton
