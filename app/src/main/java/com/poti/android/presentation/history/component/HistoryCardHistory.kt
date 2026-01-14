@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.R
-import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
