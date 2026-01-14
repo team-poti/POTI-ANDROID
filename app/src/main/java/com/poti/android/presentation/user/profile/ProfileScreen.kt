@@ -15,11 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.R
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.presentation.user.component.HistoryItemUiModel
 import com.poti.android.presentation.user.component.HistorySummaryCard
+import com.poti.android.presentation.user.component.HistorySummaryType
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
@@ -65,6 +68,24 @@ private fun ProfileScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val historyItems = listOf(
+        HistoryItemUiModel(
+            type = HistorySummaryType.ALL,
+            titleRes = R.string.user_history_all,
+            count = uiState.recruitHistory.totalCount,
+        ),
+        HistoryItemUiModel(
+            type = HistorySummaryType.IN_PROGRESS,
+            titleRes = R.string.user_history_ongoing,
+            count = uiState.recruitHistory.inProgressCount,
+        ),
+        HistoryItemUiModel(
+            type = HistorySummaryType.FINISHED,
+            titleRes = R.string.user_history_ended,
+            count = uiState.recruitHistory.finishedCount,
+        ),
+    )
+
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -106,9 +127,8 @@ private fun ProfileScreen(
 
             HistorySummaryCard(
                 title = "모집 내역",
-                totalCount = uiState.recruitHistory.totalCount,
-                inProgressCount = uiState.recruitHistory.inProgressCount,
-                finishedCount = uiState.recruitHistory.finishedCount,
+                items = historyItems,
+                onItemClick = { type -> },
                 modifier = Modifier.fillMaxWidth(),
             )
         }

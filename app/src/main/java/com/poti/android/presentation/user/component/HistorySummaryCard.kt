@@ -29,22 +29,26 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
+import kotlin.collections.forEachIndexed
+import kotlin.collections.lastIndex
 
 enum class HistorySummaryType {
-    PARTICIPATED_ALL,
-    PARTICIPATED_IN_PROGRESS,
-    PARTICIPATED_FINISHED,
-    RECRUITED_ALL,
-    RECRUITED_IN_PROGRESS,
-    RECRUITED_FINISHED,
+    ALL,
+    IN_PROGRESS,
+    FINISHED,
 }
+
+data class HistoryItemUiModel(
+    val type: HistorySummaryType,
+    val titleRes: Int,
+    val count: Int,
+)
 
 @Composable
 fun HistorySummaryCard(
     title: String,
-    totalCount: Int,
-    inProgressCount: Int,
-    finishedCount: Int,
+    items: List<HistoryItemUiModel>,
+    onItemClick: (HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -69,42 +73,25 @@ fun HistorySummaryCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            HistoryItem(
-                title = stringResource(R.string.user_history_all),
-                count = totalCount,
-                onClick = { },
-                modifier = Modifier.weight(1f),
-            )
+            items.forEachIndexed { index, item ->
 
-            VerticalDivider(
-                modifier = Modifier
-                    .height(56.dp)
-                    .clip(CircleShape),
-                thickness = 1.dp,
-                color = PotiTheme.colors.gray300,
-            )
+                HistoryItem(
+                    title = stringResource(item.titleRes),
+                    count = item.count,
+                    onClick = { onItemClick(item.type) },
+                    modifier = Modifier.weight(1f),
+                )
 
-            HistoryItem(
-                title = stringResource(R.string.user_history_ongoing),
-                count = inProgressCount,
-                onClick = { },
-                modifier = Modifier.weight(1f),
-            )
-
-            VerticalDivider(
-                modifier = Modifier
-                    .height(56.dp)
-                    .clip(CircleShape),
-                thickness = 1.dp,
-                color = PotiTheme.colors.gray300,
-            )
-
-            HistoryItem(
-                title = stringResource(R.string.user_history_ended),
-                count = finishedCount,
-                onClick = { },
-                modifier = Modifier.weight(1f),
-            )
+                if (index != items.lastIndex) {
+                    VerticalDivider(
+                        modifier = Modifier
+                            .height(56.dp)
+                            .clip(CircleShape),
+                        thickness = 1.dp,
+                        color = PotiTheme.colors.gray300,
+                    )
+                }
+            }
         }
     }
 }
@@ -151,6 +138,24 @@ private fun HistoryItem(
 @Preview(showBackground = true)
 @Composable
 private fun HistorySummaryCardPreview() {
+    val items = listOf(
+        HistoryItemUiModel(
+            type = HistorySummaryType.ALL,
+            titleRes = R.string.user_history_all,
+            count = 3,
+        ),
+        HistoryItemUiModel(
+            type = HistorySummaryType.IN_PROGRESS,
+            titleRes = R.string.user_history_ongoing,
+            count = 2,
+        ),
+        HistoryItemUiModel(
+            type = HistorySummaryType.FINISHED,
+            titleRes = R.string.user_history_ended,
+            count = 1,
+        ),
+    )
+
     PotiTheme {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -158,17 +163,15 @@ private fun HistorySummaryCardPreview() {
         ) {
             HistorySummaryCard(
                 title = "참여 내역",
-                totalCount = 3,
-                inProgressCount = 2,
-                finishedCount = 1,
+                items = items,
+                onItemClick = {},
                 modifier = Modifier.width(328.dp),
             )
 
             HistorySummaryCard(
                 title = "참여 내역",
-                totalCount = 3,
-                inProgressCount = 2,
-                finishedCount = 1,
+                items = items,
+                onItemClick = {},
                 modifier = Modifier,
             )
         }
