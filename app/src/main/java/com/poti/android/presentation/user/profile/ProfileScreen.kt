@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -85,15 +84,12 @@ private fun ProfileScreen(
                 imageUrl = imageUrl,
                 nickname = nickname,
                 email = email,
-                modifier = Modifier,
             )
 
             Spacer(Modifier.height(24.dp))
 
             RatingBadge(
                 rating = rating,
-                onClick = {},
-                modifier = Modifier.width(71.dp),
             )
 
             Spacer(Modifier.height(24.dp))
