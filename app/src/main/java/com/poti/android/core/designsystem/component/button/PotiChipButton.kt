@@ -22,6 +22,28 @@ import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+enum class ChipButtonType {
+    DEFAULT,
+    SELECTED,
+    ;
+
+    fun getBackgroundColor(
+        colors: PotiColors,
+        isPressed: Boolean,
+    ): Color =
+        when (this) {
+            DEFAULT -> if (isPressed) colors.gray300 else colors.gray100
+            SELECTED -> if (isPressed) colors.poti800 else colors.poti600
+        }
+
+    fun getContentColor(colors: PotiColors): Color {
+        return when (this) {
+            DEFAULT -> colors.gray800
+            SELECTED -> colors.white
+        }
+    }
+}
+
 @Composable
 fun PotiChipButton(
     text: String,
@@ -53,28 +75,6 @@ fun PotiChipButton(
             color = contentColor,
             style = PotiTheme.typography.button16sb,
         )
-    }
-}
-
-enum class ChipButtonType {
-    DEFAULT,
-    SELECTED,
-    ;
-
-    fun getBackgroundColor(
-        colors: PotiColors,
-        isPressed: Boolean,
-    ): Color =
-        when (this) {
-            DEFAULT -> if (isPressed) colors.gray300 else colors.gray100
-            SELECTED -> if (isPressed) colors.poti800 else colors.poti600
-        }
-
-    fun getContentColor(colors: PotiColors): Color {
-        return when (this) {
-            DEFAULT -> colors.gray800
-            SELECTED -> colors.white
-        }
     }
 }
 
