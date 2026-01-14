@@ -20,13 +20,17 @@ enum class ParticipantStateLabelSize {
     SMALL,
 }
 
-enum class ParticipantStateLabelStage(@StringRes val text: Int) {
+enum class ParticipantStateLabelStage(
+    @StringRes val text: Int,
+) {
     DEPOSIT(R.string.history_participant_stage_deposit),
     DELIVERY(R.string.history_participant_stage_delivery),
     RECRUIT(R.string.history_participant_stage_recruit),
 }
 
-enum class ParticipantStateLabelStatus(@StringRes val text: Int) {
+enum class ParticipantStateLabelStatus(
+    @StringRes val text: Int,
+) {
     WAIT(R.string.history_participant_stage_wait),
     CHECK(R.string.history_participant_stage_check),
     START(R.string.history_participant_stage_start),
