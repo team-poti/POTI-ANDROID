@@ -47,18 +47,12 @@ fun HistoryParticipantStateLabel(
     colorType: ParticipantStateLabelColor,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier
-            .height(24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = text,
-            style = sizeType.style,
-            color = colorType.color,
-            modifier = modifier,
-        )
-    }
+    Text(
+        text = text,
+        style = sizeType.style,
+        color = colorType.color,
+        modifier = modifier,
+    )
 }
 
 @Preview(showBackground = true)
