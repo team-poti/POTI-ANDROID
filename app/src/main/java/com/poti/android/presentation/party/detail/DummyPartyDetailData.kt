@@ -1,10 +1,10 @@
 package com.poti.android.presentation.party.detail
 
-import com.poti.android.domain.model.DeliveryOption
+import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.Participant
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyImage
-import com.poti.android.domain.model.party.UserSummary
+import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.PartyStatusType
 
 val dummyPartyDetail = PartyDetail(

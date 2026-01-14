@@ -8,7 +8,6 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.partyCreateNavGraph
 import com.poti.android.presentation.party.detail.navigation.partyDetailNavGraph
 import com.poti.android.presentation.party.goodsfilter.navigation.goodsFilterNavGraph
-import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
 import com.poti.android.presentation.party.home.navigation.HomeRoute
 import com.poti.android.presentation.party.home.navigation.homeNavGraph
 import kotlinx.serialization.Serializable
@@ -25,7 +24,7 @@ fun NavGraphBuilder.partyNavGraph(
     ) {
         homeNavGraph(
             paddingValues = paddingValues,
-            onNavigateToGoodsCategory = navController::navigateToGoodsCategory,
+            navController = navController,
         )
         goodsFilterNavGraph(
             paddingValues = paddingValues,

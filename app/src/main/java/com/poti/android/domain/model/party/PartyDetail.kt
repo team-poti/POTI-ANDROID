@@ -1,6 +1,7 @@
 package com.poti.android.domain.model.party
 
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.PartyStatusType
 
 data class PartyDetail(

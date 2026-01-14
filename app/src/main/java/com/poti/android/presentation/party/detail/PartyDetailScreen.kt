@@ -34,10 +34,10 @@ import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 
 @Composable
 fun PartyDetailRoute(
-    modifier: Modifier = Modifier,
     onPopBackStack: () -> Unit,
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: PartyDetailViewModel = hiltViewModel(),
 ) {
     PartyDetailScreen(

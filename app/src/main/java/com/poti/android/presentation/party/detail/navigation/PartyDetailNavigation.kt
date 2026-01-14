@@ -34,10 +34,10 @@ fun NavGraphBuilder.partyDetailNavGraph(
 ) {
     composable<PartyDetailRoute.Detail> {
         PartyDetailRoute(
-            modifier = Modifier.padding(paddingValues),
             onPopBackStack = navController::popBackStack,
             onNavigateToJoin = navController::navigateToPartyJoin,
             onNavigateToProfile = navController::navigateToProfile,
+            modifier = Modifier.padding(paddingValues),
         )
     }
     composable<PartyDetailRoute.Join> {
