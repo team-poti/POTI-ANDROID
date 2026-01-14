@@ -36,19 +36,22 @@ fun ProfileScreenRoute(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val recruitHistory = HistorySummaryUiModel(
-        totalCount = 7,
-        inProgressCount = 2,
-        finishedCount = 5,
-    )
 
-    ProfileScreen(
+    val uiState = ProfileUiState(
         imageUrl = "",
         nickname = "포티포티포티",
         email = "poti@app.jam",
         rating = "4.8",
         infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
-        recruitHistory = recruitHistory,
+        recruitHistory = HistorySummaryUiModel(
+            totalCount = 7,
+            inProgressCount = 2,
+            finishedCount = 5,
+        ),
+    )
+
+    ProfileScreen(
+        uiState = uiState,
         scrollState = scrollState,
         onBackClick = onBackClick,
         modifier = modifier,
@@ -57,12 +60,7 @@ fun ProfileScreenRoute(
 
 @Composable
 private fun ProfileScreen(
-    imageUrl: String,
-    nickname: String,
-    email: String,
-    rating: String,
-    infoList: List<String>,
-    recruitHistory: HistorySummaryUiModel,
+    uiState: ProfileUiState,
     scrollState: ScrollState,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -86,21 +84,21 @@ private fun ProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             UserProfile(
-                imageUrl = imageUrl,
-                nickname = nickname,
-                email = email,
+                imageUrl = uiState.imageUrl,
+                nickname = uiState.nickname,
+                email = uiState.email,
             )
 
             Spacer(Modifier.height(24.dp))
 
             RatingBadge(
-                rating = rating,
+                rating = uiState.rating,
             )
 
             Spacer(Modifier.height(24.dp))
 
             UserInfo(
-                infoList = infoList,
+                infoList = uiState.infoList,
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -108,9 +106,9 @@ private fun ProfileScreen(
 
             HistorySummaryCard(
                 title = "모집 내역",
-                totalCount = recruitHistory.totalCount,
-                inProgressCount = recruitHistory.inProgressCount,
-                finishedCount = recruitHistory.finishedCount,
+                totalCount = uiState.recruitHistory.totalCount,
+                inProgressCount = uiState.recruitHistory.inProgressCount,
+                finishedCount = uiState.recruitHistory.finishedCount,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -121,20 +119,19 @@ private fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     val scrollState = rememberScrollState()
-    val recruitHistory = HistorySummaryUiModel(
-        totalCount = 7,
-        inProgressCount = 2,
-        finishedCount = 5,
+
+    val uiState = ProfileUiState(
+        imageUrl = "",
+        nickname = "포티포티포티",
+        email = "poti@app.jam",
+        rating = "4.8",
+        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
+        recruitHistory = HistorySummaryUiModel(7, 2, 5),
     )
 
     PotiTheme {
         ProfileScreen(
-            imageUrl = "",
-            nickname = "포티포티포티",
-            email = "poti@app.jam",
-            rating = "4.8",
-            infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
-            recruitHistory = recruitHistory,
+            uiState = uiState,
             scrollState = scrollState,
             onBackClick = {},
             modifier = Modifier,
