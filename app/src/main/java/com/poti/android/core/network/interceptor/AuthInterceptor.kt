@@ -26,17 +26,22 @@ class AuthInterceptor @Inject constructor(
             return chain.proceed(originalRequest)
         }
 
-        val newRequest = originalRequest.newBuilder()
-            .addHeader("Authorization", "Bearer $accessToken")
-            .build()
+        val builder = originalRequest.newBuilder()
 
-        return chain.proceed(newRequest)
+        val isAuthorization = url.contains("/api/v1/users/onboarding") ||
+            url.contains("api/v1/users/mypage") ||
+            url.contains("/api/v1/users/nickname/duplicate")
+
+        if (isAuthorization) {
+            builder.addHeader("Authorization", "Bearer $accessToken")
+        } else {
+            builder.addHeader("Access-Token", accessToken)
+        }
+
+        return chain.proceed(builder.build())
     }
 
     private fun shouldIgnoreUrl(url: String): Boolean {
-        return url.contains("/api/v1/auth/sign-in") ||
-            url.contains("/api/v1/auth/sign-up") ||
-            url.contains("/api/v1/university/search") ||
-            url.contains("/api/v1/major/search")
+        return url.contains("/api/v1/auth/login")
     }
 }
