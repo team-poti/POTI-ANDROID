@@ -21,7 +21,7 @@ import com.poti.android.presentation.party.detail.dummyPartyDetail
 @Composable
 fun PartyUploaderInfo(
     uploader: Uploader,
-    onClick: () -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -46,7 +46,7 @@ fun PartyUploaderInfo(
 
             PotiIconButton(
                 iconRes = R.drawable.ic_arrow_right_lg,
-                onClick = onClick,
+                onClick = { onClick(uploader.userId) },
                 tint = PotiTheme.colors.gray700,
             )
         }

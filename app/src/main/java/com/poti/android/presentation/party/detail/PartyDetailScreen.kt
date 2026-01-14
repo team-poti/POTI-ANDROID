@@ -35,14 +35,16 @@ import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 @Composable
 fun PartyDetailRoute(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    onPopBackStack: () -> Unit,
+    onNavigateToJoin: () -> Unit,
+    onNavigateToProfile: (Long) -> Unit,
     viewModel: PartyDetailViewModel = hiltViewModel(),
 ) {
     PartyDetailScreen(
         partyDetail = dummyPartyDetail,
-        onBackClick = onBackClick,
-        onNavigateToJoin = {},
-        onUploaderClick = {},
+        onBackClick = onPopBackStack,
+        onJoinClick = onNavigateToJoin,
+        onUploaderClick = onNavigateToProfile,
         modifier = modifier,
     )
 }
@@ -51,8 +53,8 @@ fun PartyDetailRoute(
 private fun PartyDetailScreen(
     partyDetail: PartyDetail,
     onBackClick: () -> Unit,
-    onNavigateToJoin: () -> Unit,
-    onUploaderClick: () -> Unit,
+    onJoinClick: () -> Unit,
+    onUploaderClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -60,7 +62,7 @@ private fun PartyDetailScreen(
         bottomBar = {
             PotiBottomButton(
                 text = stringResource(R.string.party_detail_join_party),
-                onClick = onNavigateToJoin,
+                onClick = onJoinClick,
             )
         },
     ) { innerPadding ->
@@ -145,7 +147,7 @@ private fun PartyDetailScreenPreview() {
         PartyDetailScreen(
             partyDetail = dummyPartyDetail,
             onBackClick = {},
-            onNavigateToJoin = {},
+            onJoinClick = {},
             onUploaderClick = {},
         )
     }

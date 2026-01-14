@@ -32,7 +32,7 @@ fun NavGraphBuilder.partyNavGraph(
         )
         partyDetailNavGraph(
             paddingValues = paddingValues,
-            onBackClick = navController::popBackStack,
+            navController = navController,
         )
         partyCreateNavGraph(
             paddingValues = paddingValues,

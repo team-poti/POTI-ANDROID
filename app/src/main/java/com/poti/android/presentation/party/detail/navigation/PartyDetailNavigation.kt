@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.detail.PartyDetailRoute
 import com.poti.android.presentation.party.detail.PartyJoinRoute
+import com.poti.android.presentation.user.profile.navigation.navigateToProfile
 import kotlinx.serialization.Serializable
 
 sealed interface PartyDetailRoute : Route {
@@ -29,12 +30,14 @@ fun NavController.navigateToPartyJoin() {
 
 fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
-    onBackClick: () -> Unit,
+    navController: NavController,
 ) {
     composable<PartyDetailRoute.Detail> {
         PartyDetailRoute(
             modifier = Modifier.padding(paddingValues),
-            onBackClick = onBackClick,
+            onPopBackStack = navController::popBackStack,
+            onNavigateToJoin = navController::navigateToPartyJoin,
+            onNavigateToProfile = navController::navigateToProfile,
         )
     }
     composable<PartyDetailRoute.Join> {
