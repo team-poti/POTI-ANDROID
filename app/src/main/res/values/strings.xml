@@ -1,10 +1,21 @@
 <resources>
     <string name="app_name">poti</string>
 
+    <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
     <string name="bottom_nav_history">분철 내역</string>
     <string name="bottom_nav_my_page">마이페이지</string>
 
+    <!-- Navigation Component -->
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
+
+    <!-- Button Component -->
+    <string name="action_button_next">다음</string>
+    <string name="action_button_skip">건너뛰기</string>
+    <string name="action_button_start">시작하기</string>
+    <string name="action_button_reset">초기화</string>
+    <string name="action_button_done">완료</string>
+    <string name="action_button_continue">계속</string>
+    <string name="action_button_select_all">전체 선택</string>
 </resources>
