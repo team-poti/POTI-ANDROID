@@ -1,7 +1,9 @@
 package com.poti.android.presentation.party.detail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -74,12 +76,14 @@ private fun PartyDetailScreen(
 
             HorizontalPager(
                 state = rememberPagerState(pageCount = { partyDetail.images.size }),
-                modifier = Modifier.height(268.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(375f / 268f),
             ) { page ->
                 AsyncImage(
                     model = partyDetail.images[page].url,
                     contentDescription = null,
-                    modifier = Modifier.height(268.dp),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                 )
             }
