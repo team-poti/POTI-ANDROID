@@ -29,13 +29,17 @@ fun NavController.navigateToPartyJoin() {
 
 fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
+    onBackClick: () -> Unit,
 ) {
     composable<PartyDetailRoute.Detail> {
         PartyDetailRoute(
             modifier = Modifier.padding(paddingValues),
+            onBackClick = onBackClick,
         )
     }
     composable<PartyDetailRoute.Join> {
-        PartyJoinRoute(modifier = Modifier.padding(paddingValues))
+        PartyJoinRoute(
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }

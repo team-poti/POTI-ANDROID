@@ -7,4 +7,8 @@
 
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
+
+    <!-- PartyDetail -->
+    <string name="party_detail_title">%1s의 팟</string>
+    <string name="party_detail_price_per_person">/ 인</string>
 </resources>
