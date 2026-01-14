@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -41,7 +42,7 @@ fun UserProfile(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(98.dp)
+                .size(screenWidthDp(98.dp))
                 .clip(CircleShape)
                 .background(PotiTheme.colors.gray100),
         )
@@ -53,6 +54,8 @@ fun UserProfile(
             color = PotiTheme.colors.black,
             style = PotiTheme.typography.body16sb,
         )
+
+        Spacer(Modifier.height(2.dp))
 
         Text(
             text = email,
