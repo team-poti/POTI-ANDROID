@@ -26,7 +26,7 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.PartyDetail
+import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
@@ -73,7 +73,7 @@ private fun PartyDetailScreen(
         ) {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title, partyDetail.uploader.nickname),
+                title = stringResource(R.string.party_detail_title, partyDetail.userSummary.nickname),
             )
 
             HorizontalPager(
@@ -83,7 +83,7 @@ private fun PartyDetailScreen(
                     .aspectRatio(375f / 268f),
             ) { page ->
                 AsyncImage(
-                    model = partyDetail.images[page].url,
+                    model = partyDetail.images[page].imageUrl,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
@@ -109,7 +109,7 @@ private fun PartyDetailScreen(
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
             PartyUploaderInfo(
-                uploader = partyDetail.uploader,
+                userSummary = partyDetail.userSummary,
                 onClick = onUploaderClick,
                 modifier = Modifier.padding(start = screenWidthDp(16.dp), top = 20.dp, end = screenWidthDp(4.dp)),
             )

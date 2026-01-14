@@ -3,7 +3,7 @@ package com.poti.android.presentation.party.detail.model
 
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.PartyDetail
+import com.poti.android.domain.model.party.PartyDetail
 
 data class PartyDetailUiState(
     val partyDetail: ApiState<PartyDetail> = ApiState.Loading,

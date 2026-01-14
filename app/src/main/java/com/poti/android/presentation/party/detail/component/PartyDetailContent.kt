@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.PartyDetail
+import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
@@ -70,14 +70,14 @@ fun PartyDetailContent(
                     modifier = Modifier.height(IntrinsicSize.Min),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    partyDetail.shippingOptions.forEachIndexed { index, option ->
+                    partyDetail.deliveryOptions.forEachIndexed { index, option ->
                         Text(
                             text = stringResource(R.string.party_detail_shipping_price_format, option.name, option.price.toMoneyString()),
                             style = PotiTheme.typography.body14m,
                             color = PotiTheme.colors.black,
                         )
 
-                        if (index < partyDetail.shippingOptions.lastIndex) {
+                        if (index < partyDetail.deliveryOptions.lastIndex) {
                             VerticalDivider(
                                 thickness = 1.dp,
                                 color = PotiTheme.colors.gray800,

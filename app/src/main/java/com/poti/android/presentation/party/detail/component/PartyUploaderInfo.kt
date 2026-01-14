@@ -15,12 +15,12 @@ import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.component.display.PotiProfileSummary
 import com.poti.android.core.designsystem.component.display.PotiProfileSummarySize
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.Uploader
+import com.poti.android.domain.model.party.UserSummary
 import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyUploaderInfo(
-    uploader: Uploader,
+    userSummary: UserSummary,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -36,17 +36,17 @@ fun PartyUploaderInfo(
 
         Row {
             PotiProfileSummary(
-                profileImageUrl = uploader.profileImage,
-                nickname = uploader.nickname,
+                profileImageUrl = userSummary.profileImage,
+                nickname = userSummary.nickname,
                 sizeType = PotiProfileSummarySize.LARGE,
-                rating = uploader.rating.toString(),
-                reviewText = stringResource(R.string.party_detail_review_count, uploader.reviewCount),
+                rating = userSummary.rating.toString(),
+                reviewText = stringResource(R.string.party_detail_review_count, userSummary.reviewCount),
                 modifier = Modifier.weight(1f),
             )
 
             PotiIconButton(
                 iconRes = R.drawable.ic_arrow_right_lg,
-                onClick = { onClick(uploader.userId) },
+                onClick = { onClick(userSummary.userId) },
                 tint = PotiTheme.colors.gray700,
             )
         }
@@ -58,7 +58,7 @@ fun PartyUploaderInfo(
 private fun PartyUploaderInfoPreview() {
     PotiTheme {
         PartyUploaderInfo(
-            uploader = dummyPartyDetail.uploader,
+            userSummary = dummyPartyDetail.userSummary,
             onClick = {},
         )
     }

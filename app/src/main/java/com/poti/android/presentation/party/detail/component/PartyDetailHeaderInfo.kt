@@ -17,7 +17,7 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.PartyDetail
+import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
