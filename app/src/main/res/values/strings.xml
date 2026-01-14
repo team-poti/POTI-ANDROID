@@ -16,4 +16,6 @@
     <string name="history_participant_stage_check">확인 중</string>
     <string name="history_participant_stage_start">시작</string>
     <string name="history_participant_stage_done">완료</string>
+
+    <string name="history_callout_copy">복사</string>
 </resources>

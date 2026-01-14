@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
@@ -55,7 +57,7 @@ fun HistoryCalloutInfo(
 
             if (copyable) {
                 Text(
-                    text = "복사",
+                    text = stringResource(R.string.history_callout_copy),
                     style = PotiTheme.typography.body14m.copy(textDecoration = TextDecoration.Underline),
                     color = colors.gray700,
                     modifier = Modifier
