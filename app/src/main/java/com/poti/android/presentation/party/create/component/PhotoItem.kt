@@ -1,9 +1,7 @@
 package com.poti.android.presentation.party.create.component
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -48,7 +46,7 @@ fun PhotoItem(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .offset(x = 8.dp, y = (-8).dp),
-            type = DeleteButtonType.LIGHT
+            type = DeleteButtonType.LIGHT,
         )
     }
 }
