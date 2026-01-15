@@ -67,6 +67,11 @@
     <!-- Create Component -->
     <string name="create_label_won">원</string>
     <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
-
+    <string name="create_title_member_setting">멤버 설정</string>
+    <string name="create_msg_need_member">멤버를 1명 이상 추가해주세요</string>
+    <string name="create_msg_need_price">모든 멤버에 가격을 설정해주세요</string>
+    <string name="create_placeholder_need_artist">아티스트를 먼저 선택해주세요</string>
+    <string name="create_placeholder_need_member">선택한 멤버가 없어요</string>
+    <string name="create_btn_member_edit">멤버 편집</string>
 
 </resources>
