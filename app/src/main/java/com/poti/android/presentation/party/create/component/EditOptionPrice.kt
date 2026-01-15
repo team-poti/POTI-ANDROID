@@ -41,15 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.poti.android.R
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.display.PotiCheckBox
 import com.poti.android.core.designsystem.theme.PotiTheme
-import java.text.DecimalFormat
-
-// TODO: [도연] feat/#35-party-detail-ui 병합 후 삭제
-private fun Int.addComma(): String {
-    val decimalFormat = DecimalFormat("#,###")
-    return decimalFormat.format(this)
-}
 
 private const val MAX_LENGTH = 9
 
@@ -189,7 +183,7 @@ private class PriceVisualTransformation : VisualTransformation {
 
         val textWithComma = when (text.length) {
             0 -> text
-            else -> text.toInt().addComma()
+            else -> text.toInt().toMoneyString()
         }
 
         val offsetMapping = object : OffsetMapping {
