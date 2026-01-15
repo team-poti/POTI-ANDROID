@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
@@ -41,6 +42,16 @@ private fun OnboardingGuideScreen(
             style = PotiTheme.typography.title18sb,
             color = PotiTheme.colors.black,
             modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OnboardingGuideScreenPreview() {
+    PotiTheme {
+        OnboardingGuideScreen(
+            onNavigateToLogin = {},
         )
     }
 }
