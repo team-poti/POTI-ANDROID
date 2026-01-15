@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,18 +45,18 @@ fun HistoryParticipantDropdown(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(PotiTheme.colors.white)
+            .background(PotiTheme.colors.white),
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 20.dp, horizontal = 16.dp)
+                .padding(vertical = 20.dp, horizontal = 16.dp),
         ) {
             ParticipantDropdownHeader(
                 name = userName,
                 stageType = stageType,
                 statusType = statusType,
                 expanded = isExpanded,
-                onToggle = { onToggle() }
+                onToggle = { onToggle() },
             )
             AnimatedVisibility(visible = isExpanded) {
                 Column {
@@ -66,7 +65,7 @@ fun HistoryParticipantDropdown(
                         userName = userName,
                         userImageUrl = userImageUrl,
                         depositItems = depositItems,
-                        detailState = detailState
+                        detailState = detailState,
                     )
                 }
             }
@@ -80,32 +79,36 @@ private fun ParticipantDropdownHeader(
     stageType: ParticipantStateLabelStage,
     statusType: ParticipantStateLabelStatus,
     expanded: Boolean,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .noRippleClickable { onToggle() },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = name,
             style = PotiTheme.typography.body16m,
             color = PotiTheme.colors.black,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
         HistoryParticipantStateLabel(
             sizeType = ParticipantStateLabelSize.SMALL,
             stageType = stageType,
-            statusType = statusType
+            statusType = statusType,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             painter = painterResource(
-                id = if (expanded) R.drawable.ic_arrow_up_lg
-                    else R.drawable.ic_arrow_down_lg),
+                id = if (expanded) {
+                    R.drawable.ic_arrow_up_lg
+                } else {
+                    R.drawable.ic_arrow_down_lg
+                },
+            ),
             contentDescription = null,
-            tint = PotiTheme.colors.gray700
+            tint = PotiTheme.colors.gray700,
         )
     }
 }
@@ -117,28 +120,28 @@ fun HistoryParticipantDropdownPreview() {
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버1",
-            price = 2000000000
+            price = 2000000000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 10000
+            price = 10000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000
+            price = 320000000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000
+            price = 320000000,
         ),
         DepositItem(
             type = PotiItemOptionType.DELIVERY,
             name = "등기등기등기등기둥기둥",
-            price = 320000000
-        )
+            price = 320000000,
+        ),
     )
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -151,7 +154,7 @@ fun HistoryParticipantDropdownPreview() {
                 name = "어쩌구",
                 delivery = "(01234) 서울특별시 솝트구 다솝로 456",
                 contact = "010-xxxx-xxxx",
-                invoice = "우체국 37249720348093"
+                invoice = "우체국 37249720348093",
             ),
             stageType = ParticipantStateLabelStage.DELIVERY,
             statusType = ParticipantStateLabelStatus.DONE,

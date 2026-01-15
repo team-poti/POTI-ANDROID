@@ -5,9 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,14 +38,13 @@ import java.util.Locale
 data class DepositItem(
     val type: PotiItemOptionType,
     val name: String,
-    val price: Int
+    val price: Int,
 )
 
 sealed interface DetailState {
     val fields: List<Pair<FieldType, String>>
     val onClickLabelId: Int?
     val onConfirmClick: (() -> Unit)?
-
 
     data object Default : DetailState {
         override val fields: List<Pair<FieldType, String>> = emptyList()
@@ -57,10 +54,10 @@ sealed interface DetailState {
 
     data class DepositCheck(
         val deposit: String,
-        override val onConfirmClick: () -> Unit
+        override val onConfirmClick: () -> Unit,
     ) : DetailState {
         override val fields = listOf(
-            FieldType.DEPOSIT to deposit
+            FieldType.DEPOSIT to deposit,
         )
         override val onClickLabelId: Int =
             R.string.history_participant_field_deposit_label
@@ -70,12 +67,12 @@ sealed interface DetailState {
         val name: String,
         val delivery: String,
         val contact: String,
-        override val onConfirmClick: () -> Unit
+        override val onConfirmClick: () -> Unit,
     ) : DetailState {
         override val fields = listOf(
             FieldType.NAME to name,
             FieldType.DELIVERY to delivery,
-            FieldType.CONTACT to contact
+            FieldType.CONTACT to contact,
         )
         override val onClickLabelId: Int =
             R.string.history_participant_field_delivery_label
@@ -85,35 +82,37 @@ sealed interface DetailState {
         val name: String,
         val delivery: String,
         val contact: String,
-        val invoice: String
+        val invoice: String,
     ) : DetailState {
         override val fields = listOf(
             FieldType.NAME to name,
             FieldType.DELIVERY to delivery,
             FieldType.CONTACT to contact,
-            FieldType.INVOICE to invoice
+            FieldType.INVOICE to invoice,
         )
         override val onConfirmClick: (() -> Unit)? = null
         override val onClickLabelId: Int? = null
     }
 
     data class Finished(
-        val invoice: String
+        val invoice: String,
     ) : DetailState {
         override val fields = listOf(
-            FieldType.INVOICE to invoice
+            FieldType.INVOICE to invoice,
         )
         override val onConfirmClick: (() -> Unit)? = null
         override val onClickLabelId: Int? = null
     }
 }
 
-enum class FieldType(@StringRes val labelId: Int) {
+enum class FieldType(
+    @StringRes val labelId: Int,
+) {
     NAME(R.string.history_participant_field_type_name),
     DEPOSIT(R.string.history_participant_field_type_deposit),
     DELIVERY(R.string.history_participant_field_type_delivery),
     CONTACT(R.string.history_participant_field_type_contact),
-    INVOICE(R.string.history_participant_field_type_invoice)
+    INVOICE(R.string.history_participant_field_type_invoice),
 }
 
 @Composable
@@ -122,7 +121,7 @@ fun HistoryParticipantDetail(
     userImageUrl: String,
     depositItems: List<DepositItem>,
     detailState: DetailState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -130,12 +129,12 @@ fun HistoryParticipantDetail(
             .clip(RoundedCornerShape(12.dp))
             .background(colors.gray100)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = userImageUrl,
@@ -143,7 +142,7 @@ fun HistoryParticipantDetail(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(RoundedCornerShape(99.dp))
+                    .clip(RoundedCornerShape(99.dp)),
             )
 
             Text(
@@ -152,57 +151,57 @@ fun HistoryParticipantDetail(
                 color = colors.black,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 2.dp)
+                    .padding(vertical = 2.dp),
             )
         }
 
         PotiDivider(
             styleType = PotiDividerStyle.SMALL,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = "입금 금액",
                 style = typography.body14sb,
-                color = colors.black
+                color = colors.black,
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 depositItems.forEach { item ->
                     PotiListOptionPrice(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
                         priceText = priceText(item.price),
-                        sizeType = PotiListOptionPriceSize.SMALL
+                        sizeType = PotiListOptionPriceSize.SMALL,
                     )
                 }
 
                 PotiDivider(
                     styleType = PotiDividerStyle.SMALL,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     PotiItemOption(
                         optionType = PotiItemOptionType.PRICE,
                         sizeType = PotiItemOptionSize.SMALL,
-                        text = "총 입금 금액"
+                        text = "총 입금 금액",
                     )
 
                     Text(
                         text = priceText(depositItems.sumOf { it.price }),
                         style = typography.body16sb,
-                        color = colors.black
+                        color = colors.black,
                     )
                 }
             }
@@ -212,35 +211,34 @@ fun HistoryParticipantDetail(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             detailState.fields.forEach { (field, value) ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         text = stringResource(field.labelId),
                         style = typography.body14sb,
-                        color = colors.black
+                        color = colors.black,
                     )
                     Text(
                         text = value,
                         style = typography.body14sb,
-                        color = colors.black
+                        color = colors.black,
                     )
                 }
             }
-
         }
-        if(detailState.onConfirmClick != null && detailState.onClickLabelId != null) {
+        if (detailState.onConfirmClick != null && detailState.onClickLabelId != null) {
             PotiInlineButton(
                 text = stringResource(detailState.onClickLabelId!!),
                 onClick = detailState.onConfirmClick!!,
                 showIcon = false,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             )
         }
     }
@@ -249,7 +247,9 @@ fun HistoryParticipantDetail(
 // TODO: [천민재] 임시 함수
 private fun priceText(price: Int) = String.format(
     locale = Locale.KOREA,
-    format = "%,d원", price)
+    format = "%,d원",
+    price,
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -258,28 +258,28 @@ private fun HistoryParticipantDetailPreview() {
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버1",
-            price = 2000000000
+            price = 2000000000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 10000
+            price = 10000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000
+            price = 320000000,
         ),
         DepositItem(
             type = PotiItemOptionType.PRICE,
             name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000
+            price = 320000000,
         ),
         DepositItem(
             type = PotiItemOptionType.DELIVERY,
             name = "등기등기등기등기둥기둥",
-            price = 320000000
-        )
+            price = 320000000,
+        ),
     )
 
     PotiTheme {
@@ -291,9 +291,9 @@ private fun HistoryParticipantDetailPreview() {
                 name = "이포티",
                 delivery = "(01234) 서울특별시 솝트구 다솝로 456",
                 contact = "010-1111-1111",
-                invoice = "우체국 37249720348093"
+                invoice = "우체국 37249720348093",
             ),
-            modifier = Modifier.width(311.dp)
+            modifier = Modifier.width(311.dp),
         )
     }
 }
