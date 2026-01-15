@@ -25,6 +25,7 @@ fun OnboardingScaffold(
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
     isButtonVisible: Boolean = true,
+    enabled: Boolean = true,
     onSkip: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -39,6 +40,7 @@ fun OnboardingScaffold(
                     PotiBottomButton(
                         text = stringResource(R.string.action_button_next),
                         onClick = onNextClick,
+                        enabled = enabled,
                     )
                 } else {
                     PotiBottomButton(

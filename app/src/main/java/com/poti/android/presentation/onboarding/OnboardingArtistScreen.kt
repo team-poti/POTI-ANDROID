@@ -12,10 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
-import com.poti.android.core.common.state.onSuccess
+import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -29,8 +28,8 @@ import com.poti.android.presentation.onboarding.model.OnboardingUiState
 fun OnboardingArtistRoute(
     onPopBackStack: () -> Unit,
     onNavigateToHome: () -> Unit,
+    viewModel: OnboardingViewModel,
     modifier: Modifier = Modifier,
-    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

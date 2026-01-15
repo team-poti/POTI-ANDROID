@@ -25,6 +25,8 @@
     <string name="onboarding_nickname_label">포티에서 사용할 닉네임을\n입력해주세요</string>
     <string name="onboarding_nickname_field_placeholder">닉네임을 입력해주세요</string>
     <string name="onboarding_artist_label">%s님의 최애 그룹 한 팀을 선택해주세요</string>
+    <string name="onboarding_nickname_error_special_characters">사용할 수 없는 문자가 있어요</string>
+    <string name="onboarding_nickname_error_min_length">2글자 이상 적어주세요</string>
 
 
     <!-- Party -->

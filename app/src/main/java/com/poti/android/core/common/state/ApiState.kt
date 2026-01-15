@@ -15,9 +15,3 @@ sealed interface ApiState<out T> {
 
     data object Init : ApiState<Nothing>
 }
-
-inline fun <T> ApiState<T>.onSuccess(block: (T) -> Unit) {
-    if (this is ApiState.Success) {
-        block(data)
-    }
-}

@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -17,8 +16,8 @@ import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
 fun OnboardingGuideRoute(
     onPopBackStack: () -> Unit,
     onNavigateToOnboardingNickname: () -> Unit,
+    viewModel: OnboardingViewModel,
     modifier: Modifier = Modifier,
-    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {

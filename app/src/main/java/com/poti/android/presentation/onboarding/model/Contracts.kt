@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 data class OnboardingUiState(
     val nickname: String = "",
-    val nicknameError: String = "",
+    val nicknameError: ErrorText? = null,
     val isNicknameValid: Boolean = false,
     val artists: ApiState<ImmutableList<Artist>> = ApiState.Loading,
     val selectedArtistId: Long = 0,

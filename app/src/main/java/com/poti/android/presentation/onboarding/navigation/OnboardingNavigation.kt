@@ -6,11 +6,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.onboarding.OnboardingArtistRoute
 import com.poti.android.presentation.onboarding.OnboardingGuideRoute
 import com.poti.android.presentation.onboarding.OnboardingNicknameRoute
+import com.poti.android.presentation.onboarding.OnboardingViewModel
 import kotlinx.serialization.Serializable
+
+@Serializable
+object OnboardingGraph : Route
 
 sealed interface OnboardingRoute : Route {
     @Serializable
@@ -40,25 +46,35 @@ fun NavGraphBuilder.onboardingNavGraph(
     paddingValues: PaddingValues,
     onNavigateToHome: () -> Unit,
 ) {
-    composable<OnboardingRoute.Guide> {
-        OnboardingGuideRoute(
-            onPopBackStack = navController::popBackStack,
-            onNavigateToOnboardingNickname = navController::navigateToOnboardingNickname,
-            modifier = Modifier.padding(paddingValues),
-        )
-    }
-    composable<OnboardingRoute.Nickname> {
-        OnboardingNicknameRoute(
-            onPopBackStack = navController::popBackStack,
-            onNavigateToOnboardingArtist = navController::navigateToOnboardingArtist,
-            modifier = Modifier.padding(paddingValues),
-        )
-    }
-    composable<OnboardingRoute.Artist> {
-        OnboardingArtistRoute(
-            onPopBackStack = navController::popBackStack,
-            onNavigateToHome = onNavigateToHome,
-            modifier = Modifier.padding(paddingValues),
-        )
+    navigation<OnboardingGraph>(
+        startDestination = OnboardingRoute.Guide,
+    ) {
+        composable<OnboardingRoute.Guide> { entry ->
+            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
+            OnboardingGuideRoute(
+                onPopBackStack = navController::popBackStack,
+                onNavigateToOnboardingNickname = navController::navigateToOnboardingNickname,
+                viewModel = viewModel,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+        composable<OnboardingRoute.Nickname> { entry ->
+            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
+            OnboardingNicknameRoute(
+                onPopBackStack = navController::popBackStack,
+                onNavigateToOnboardingArtist = navController::navigateToOnboardingArtist,
+                viewModel = viewModel,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
+        composable<OnboardingRoute.Artist> { entry ->
+            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
+            OnboardingArtistRoute(
+                onPopBackStack = navController::popBackStack,
+                onNavigateToHome = onNavigateToHome,
+                viewModel = viewModel,
+                modifier = Modifier.padding(paddingValues),
+            )
+        }
     }
 }

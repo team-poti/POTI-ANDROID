@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
@@ -23,15 +22,15 @@ import com.poti.android.presentation.onboarding.model.OnboardingUiState
 fun OnboardingNicknameRoute(
     onPopBackStack: () -> Unit,
     onNavigateToOnboardingArtist: () -> Unit,
+    viewModel: OnboardingViewModel,
     modifier: Modifier = Modifier,
-    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             OnboardingUiEffect.NavigateToBack -> onPopBackStack()
-            OnboardingUiEffect.NavigateToHome -> onNavigateToOnboardingArtist()
+            OnboardingUiEffect.NavigateToArtist -> onNavigateToOnboardingArtist()
             else -> {}
         }
     }
@@ -59,6 +58,7 @@ private fun OnboardingNicknameScreen(
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingArtist,
         modifier = modifier,
+        enabled = uiState.isNicknameValid,
     ) {
         PotiCountField(
             value = uiState.nickname,
@@ -66,7 +66,7 @@ private fun OnboardingNicknameScreen(
             placeholder = stringResource(R.string.onboarding_nickname_field_placeholder),
             maxLength = 10,
             modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
-            error = "", // TODO: [지현] 에러 처리
+            error = uiState.nicknameError?.asString() ?: "",
         )
     }
 }
