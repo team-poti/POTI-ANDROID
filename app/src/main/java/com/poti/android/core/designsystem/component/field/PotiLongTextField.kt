@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 /**
@@ -84,7 +85,9 @@ fun PotiLongTextField(
             singleLine = false,
         )
 
-        FieldErrorMessage(error)
+        if (error.isNotBlank()) {
+            PotiErrorMessage(message = error)
+        }
     }
 }
 
