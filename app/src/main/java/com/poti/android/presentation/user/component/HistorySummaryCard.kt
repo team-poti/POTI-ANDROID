@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.HistorySummaryItem
 import kotlin.collections.forEachIndexed
 import kotlin.collections.lastIndex
 
@@ -38,16 +39,10 @@ enum class HistorySummaryType {
     FINISHED,
 }
 
-data class HistoryItemUiModel(
-    val type: HistorySummaryType,
-    val titleRes: Int,
-    val count: Int,
-)
-
 @Composable
 fun HistorySummaryCard(
     title: String,
-    items: List<HistoryItemUiModel>,
+    items: List<HistorySummaryItem>,
     onItemClick: (HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,17 +134,17 @@ private fun HistoryItem(
 @Composable
 private fun HistorySummaryCardPreview() {
     val items = listOf(
-        HistoryItemUiModel(
+        HistorySummaryItem(
             type = HistorySummaryType.ALL,
             titleRes = R.string.user_history_all,
             count = 3,
         ),
-        HistoryItemUiModel(
+        HistorySummaryItem(
             type = HistorySummaryType.IN_PROGRESS,
             titleRes = R.string.user_history_ongoing,
             count = 2,
         ),
-        HistoryItemUiModel(
+        HistorySummaryItem(
             type = HistorySummaryType.FINISHED,
             titleRes = R.string.user_history_ended,
             count = 1,

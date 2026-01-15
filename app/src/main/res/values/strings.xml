@@ -8,6 +8,9 @@
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
 
+    <!-- User Component -->
+    <string name="user_history_recruit">모집 내역</string>
+    <string name="user_history_participate">참여 내역</string>
     <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>

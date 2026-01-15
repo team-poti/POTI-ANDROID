@@ -1,6 +1,5 @@
 package com.poti.android.presentation.user.profile
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -20,25 +20,36 @@ import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.user.component.HistoryItemUiModel
+import com.poti.android.domain.model.HistorySummaryItem
 import com.poti.android.presentation.user.component.HistorySummaryCard
 import com.poti.android.presentation.user.component.HistorySummaryType
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
-
-data class HistorySummaryUiModel(
-    val totalCount: Int,
-    val inProgressCount: Int,
-    val finishedCount: Int,
-)
+import com.poti.android.presentation.user.profile.model.ProfileUiState
 
 @Composable
 fun ProfileScreenRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
+    val historyItems = listOf(
+        HistorySummaryItem(
+            type = HistorySummaryType.ALL,
+            titleRes = R.string.user_history_all,
+            count = 7,
+        ),
+        HistorySummaryItem(
+            type = HistorySummaryType.IN_PROGRESS,
+            titleRes = R.string.user_history_ongoing,
+            count = 2,
+        ),
+        HistorySummaryItem(
+            type = HistorySummaryType.FINISHED,
+            titleRes = R.string.user_history_ended,
+            count = 5,
+        ),
+    )
 
     val uiState = ProfileUiState(
         imageUrl = "",
@@ -46,16 +57,11 @@ fun ProfileScreenRoute(
         email = "poti@app.jam",
         rating = "4.8",
         infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
-        recruitHistory = HistorySummaryUiModel(
-            totalCount = 7,
-            inProgressCount = 2,
-            finishedCount = 5,
-        ),
+        recruitHistoryItems = historyItems,
     )
 
     ProfileScreen(
         uiState = uiState,
-        scrollState = scrollState,
         onBackClick = onBackClick,
         modifier = modifier,
     )
@@ -64,27 +70,10 @@ fun ProfileScreenRoute(
 @Composable
 private fun ProfileScreen(
     uiState: ProfileUiState,
-    scrollState: ScrollState,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val historyItems = listOf(
-        HistoryItemUiModel(
-            type = HistorySummaryType.ALL,
-            titleRes = R.string.user_history_all,
-            count = uiState.recruitHistory.totalCount,
-        ),
-        HistoryItemUiModel(
-            type = HistorySummaryType.IN_PROGRESS,
-            titleRes = R.string.user_history_ongoing,
-            count = uiState.recruitHistory.inProgressCount,
-        ),
-        HistoryItemUiModel(
-            type = HistorySummaryType.FINISHED,
-            titleRes = R.string.user_history_ended,
-            count = uiState.recruitHistory.finishedCount,
-        ),
-    )
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -126,8 +115,8 @@ private fun ProfileScreen(
             Spacer(Modifier.height(24.dp))
 
             HistorySummaryCard(
-                title = "모집 내역",
-                items = historyItems,
+                title = stringResource(R.string.user_history_recruit),
+                items = uiState.recruitHistoryItems,
                 onItemClick = { type -> },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -138,7 +127,23 @@ private fun ProfileScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
-    val scrollState = rememberScrollState()
+    val historyItems = listOf(
+        HistorySummaryItem(
+            type = HistorySummaryType.ALL,
+            titleRes = R.string.user_history_all,
+            count = 7,
+        ),
+        HistorySummaryItem(
+            type = HistorySummaryType.IN_PROGRESS,
+            titleRes = R.string.user_history_ongoing,
+            count = 2,
+        ),
+        HistorySummaryItem(
+            type = HistorySummaryType.FINISHED,
+            titleRes = R.string.user_history_ended,
+            count = 5,
+        ),
+    )
 
     val uiState = ProfileUiState(
         imageUrl = "",
@@ -146,13 +151,12 @@ private fun ProfileScreenPreview() {
         email = "poti@app.jam",
         rating = "4.8",
         infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
-        recruitHistory = HistorySummaryUiModel(7, 2, 5),
+        recruitHistoryItems = historyItems,
     )
 
     PotiTheme {
         ProfileScreen(
             uiState = uiState,
-            scrollState = scrollState,
             onBackClick = {},
             modifier = Modifier,
         )
