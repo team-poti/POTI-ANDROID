@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -43,23 +45,23 @@ data class DepositItem(
 
 sealed interface DetailState {
     val fields: List<Pair<FieldType, String>>
-    val onClickLabelId: Int?
-    val onConfirmClick: (() -> Unit)?
+    val buttonLabelId: Int?
+    val onButtonClick: (() -> Unit)?
 
     data object Default : DetailState {
         override val fields: List<Pair<FieldType, String>> = emptyList()
-        override val onClickLabelId: Int? = null
-        override val onConfirmClick: (() -> Unit)? = null
+        override val buttonLabelId: Int? = null
+        override val onButtonClick: (() -> Unit)? = null
     }
 
     data class DepositCheck(
         val deposit: String,
-        override val onConfirmClick: () -> Unit,
+        override val onButtonClick: () -> Unit,
     ) : DetailState {
         override val fields = listOf(
             FieldType.DEPOSIT to deposit,
         )
-        override val onClickLabelId: Int =
+        override val buttonLabelId: Int =
             R.string.history_participant_field_deposit_label
     }
 
@@ -67,14 +69,14 @@ sealed interface DetailState {
         val name: String,
         val delivery: String,
         val contact: String,
-        override val onConfirmClick: () -> Unit,
+        override val onButtonClick: () -> Unit,
     ) : DetailState {
         override val fields = listOf(
             FieldType.NAME to name,
             FieldType.DELIVERY to delivery,
             FieldType.CONTACT to contact,
         )
-        override val onClickLabelId: Int =
+        override val buttonLabelId: Int =
             R.string.history_participant_field_delivery_label
     }
 
@@ -90,8 +92,8 @@ sealed interface DetailState {
             FieldType.CONTACT to contact,
             FieldType.INVOICE to invoice,
         )
-        override val onConfirmClick: (() -> Unit)? = null
-        override val onClickLabelId: Int? = null
+        override val onButtonClick: (() -> Unit)? = null
+        override val buttonLabelId: Int? = null
     }
 
     data class Finished(
@@ -100,8 +102,8 @@ sealed interface DetailState {
         override val fields = listOf(
             FieldType.INVOICE to invoice,
         )
-        override val onConfirmClick: (() -> Unit)? = null
-        override val onClickLabelId: Int? = null
+        override val onButtonClick: (() -> Unit)? = null
+        override val buttonLabelId: Int? = null
     }
 }
 
@@ -142,13 +144,15 @@ fun HistoryParticipantDetail(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(RoundedCornerShape(99.dp)),
+                    .clip(CircleShape),
             )
 
             Text(
                 text = userName,
                 style = typography.body14m,
                 color = colors.black,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = 2.dp),
@@ -157,7 +161,6 @@ fun HistoryParticipantDetail(
 
         PotiDivider(
             styleType = PotiDividerStyle.SMALL,
-            modifier = Modifier.fillMaxWidth(),
         )
 
         Column(
@@ -165,7 +168,7 @@ fun HistoryParticipantDetail(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "입금 금액",
+                text = stringResource(R.string.history_participant_detail_deposit_label),
                 style = typography.body14sb,
                 color = colors.black,
             )
@@ -195,7 +198,7 @@ fun HistoryParticipantDetail(
                     PotiItemOption(
                         optionType = PotiItemOptionType.PRICE,
                         sizeType = PotiItemOptionSize.SMALL,
-                        text = "총 입금 금액",
+                        text = stringResource(R.string.history_participant_detail_total_deposit_label),
                     )
 
                     Text(
@@ -226,16 +229,16 @@ fun HistoryParticipantDetail(
                     )
                     Text(
                         text = value,
-                        style = typography.body14sb,
+                        style = typography.body14m,
                         color = colors.black,
                     )
                 }
             }
         }
-        if (detailState.onConfirmClick != null && detailState.onClickLabelId != null) {
+        if (detailState.onButtonClick != null && detailState.buttonLabelId != null) {
             PotiInlineButton(
-                text = stringResource(detailState.onClickLabelId!!),
-                onClick = detailState.onConfirmClick!!,
+                text = stringResource(detailState.buttonLabelId!!),
+                onClick = detailState.onButtonClick!!,
                 showIcon = false,
                 modifier = Modifier
                     .fillMaxWidth(),

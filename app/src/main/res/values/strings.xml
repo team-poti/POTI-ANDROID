@@ -33,6 +33,9 @@
     <string name="history_participant_field_deposit_label">입금 확인</string>
     <string name="history_participant_field_delivery_label">송장 번호 입력</string>
 
+    <string name="history_participant_detail_deposit_label">입금 금액</string>
+    <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
+
     <!-- Button Component -->
     <string name="action_button_next">다음</string>
     <string name="action_button_skip">건너뛰기</string>

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -59,15 +59,13 @@ fun HistoryParticipantDropdown(
                 onToggle = { onToggle() },
             )
             AnimatedVisibility(visible = isExpanded) {
-                Column {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    HistoryParticipantDetail(
-                        userName = userName,
-                        userImageUrl = userImageUrl,
-                        depositItems = depositItems,
-                        detailState = detailState,
-                    )
-                }
+                HistoryParticipantDetail(
+                    userName = userName,
+                    userImageUrl = userImageUrl,
+                    depositItems = depositItems,
+                    detailState = detailState,
+                    modifier = Modifier.padding(top = 20.dp),
+                )
             }
         }
     }
@@ -84,19 +82,24 @@ private fun ParticipantDropdownHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .noRippleClickable { onToggle() },
+            .noRippleClickable(onClick = onToggle),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = name,
             style = PotiTheme.typography.body16m,
             color = PotiTheme.colors.black,
-            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 12.dp),
         )
         HistoryParticipantStateLabel(
             sizeType = ParticipantStateLabelSize.SMALL,
             stageType = stageType,
             statusType = statusType,
+            modifier = Modifier.padding(vertical = 2.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
@@ -147,7 +150,7 @@ fun HistoryParticipantDropdownPreview() {
 
     PotiTheme {
         HistoryParticipantDropdown(
-            userName = "어쩌구",
+            userName = "어쩌구저쩌구".repeat(20),
             userImageUrl = "",
             depositItems = depositItems,
             detailState = DetailState.AfterDelivery(
@@ -160,6 +163,9 @@ fun HistoryParticipantDropdownPreview() {
             statusType = ParticipantStateLabelStatus.DONE,
             isExpanded = isExpanded,
             onToggle = { isExpanded = !isExpanded },
+            modifier = Modifier
+                .width(375.dp)
+                .padding(20.dp),
         )
     }
 }
