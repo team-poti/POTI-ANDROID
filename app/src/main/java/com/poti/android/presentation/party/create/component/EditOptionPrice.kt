@@ -187,15 +187,15 @@ private class PriceVisualTransformation : VisualTransformation {
                     return textWithComma.length
                 }
 
-                val numbersAferCursor = text.length - offset
+                val numbersAtferCursor = text.length - offset
 
-                val commasAferCursor = if (numbersAferCursor % 3 == 0) {
-                    numbersAferCursor / 3 - 1
+                val commasAfterCursor = if (numbersAtferCursor % 3 == 0) {
+                    numbersAtferCursor / 3 - 1
                 } else {
-                    numbersAferCursor / 3
+                    numbersAtferCursor / 3
                 }
 
-                return textWithComma.length - numbersAferCursor - commasAferCursor
+                return textWithComma.length - numbersAtferCursor - commasAfterCursor
             }
 
             override fun transformedToOriginal(offset: Int): Int {
