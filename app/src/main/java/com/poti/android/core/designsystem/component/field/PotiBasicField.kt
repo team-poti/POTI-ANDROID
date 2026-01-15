@@ -44,7 +44,7 @@ internal fun PotiBasicField(
     onFocusChanged: (Boolean) -> Unit = {},
     focusRequester: FocusRequester? = null,
     singleLine: Boolean = true,
-    trailingIcon: @Composable () -> Unit = {},
+    trailingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -115,7 +115,8 @@ internal fun PotiBasicField(
                         )
                     }
                 }
-                trailingIcon()
+
+                trailingIcon?.invoke()
             }
         },
     )

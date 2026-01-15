@@ -47,7 +47,7 @@ fun PotiShortTextField(
     enabled: Boolean = true,
     label: String = "",
     error: String = "",
-    trailingIcon: @Composable (() -> Unit) = {},
+    trailingIcon: (@Composable () -> Unit)? = null,
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
 ) {
