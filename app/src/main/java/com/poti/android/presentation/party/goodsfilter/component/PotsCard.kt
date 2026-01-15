@@ -4,13 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -87,23 +88,29 @@ fun PotsCard(
                     style = PotiTheme.typography.body16sb,
                 )
             } else {
-                Text(
-                    text = stringResource(R.string.pots_card_current_count, currentCount),
-                    color = PotiTheme.colors.sementicRed,
-                    style = PotiTheme.typography.display18b,
-                )
-                Text(
-                    text = stringResource(R.string.pots_card_total_count, totalCount),
-                    color = PotiTheme.colors.sementicRed,
-                    style = PotiTheme.typography.body16sb,
-                )
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    Text(
+                        text = stringResource(R.string.pots_card_current_count, currentCount),
+                        color = PotiTheme.colors.sementicRed,
+                        style = PotiTheme.typography.display18b,
+                    )
+                    Text(
+                        text = stringResource(R.string.pots_card_total_count, totalCount),
+                        color = PotiTheme.colors.sementicRed,
+                        style = PotiTheme.typography.body16sb,
+                    )
+                }
             }
         }
 
         PotiDivider(styleType = PotiDividerStyle.SMALL)
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Top,
         ) {
@@ -139,7 +146,6 @@ fun PotsCard(
 
                     Text(
                         text = stringResource(R.string.pots_card_per_person),
-                        modifier = Modifier,
                         color = PotiTheme.colors.gray800,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
@@ -156,7 +162,8 @@ fun PotsCard(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(75.dp)
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .background(PotiTheme.colors.gray300),
             )
