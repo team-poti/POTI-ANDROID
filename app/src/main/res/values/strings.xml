@@ -46,5 +46,12 @@
     <string name="history_participant_stage_done">완료</string>
     <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
     <string name="history_callout_copy">복사</string>
+  
+    <!-- Exploration Component -->
+    <string name="goods_card_party_count">팟 %1$d개</string>
+    <string name="pots_card_closed">마감</string>
+    <string name="pots_card_current_count">%1$d</string>
+    <string name="pots_card_total_count">/%1$d</string>
+    <string name="pots_card_per_person">/ 인</string>
 
 </resources>
