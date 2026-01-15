@@ -27,7 +27,7 @@ sealed interface OnboardingUiIntent : UiIntent {
 
     data class OnArtistSelect(val artistId: Long) : OnboardingUiIntent
 
-    data object OnArtistNextClick : OnboardingUiIntent
+    data object OnStartClick : OnboardingUiIntent
 
     data object OnSkipClick : OnboardingUiIntent
 }

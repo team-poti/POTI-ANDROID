@@ -56,7 +56,7 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
                 }
             }
             is OnboardingUiIntent.OnArtistSelect -> handleArtistSelect(intent.artistId)
-            OnboardingUiIntent.OnArtistNextClick -> {
+            OnboardingUiIntent.OnStartClick -> {
                 // TODO: [지현] 서버에 데이터 보내는 로직 추가
                 updateState { copy(isButtonVisible = false) }
                 sendEffect(OnboardingUiEffect.NavigateToHome)

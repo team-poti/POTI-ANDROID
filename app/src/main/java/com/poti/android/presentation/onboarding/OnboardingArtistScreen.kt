@@ -44,7 +44,8 @@ fun OnboardingArtistRoute(
         uiState = uiState,
         onArtistClick = { viewModel.processIntent(OnboardingUiIntent.OnArtistSelect(it)) },
         onPopBackStack = { viewModel.processIntent(OnboardingUiIntent.OnBackClick) },
-        onNavigateToHome = { viewModel.processIntent(OnboardingUiIntent.OnArtistNextClick) },
+        onStartClick = { viewModel.processIntent(OnboardingUiIntent.OnStartClick) },
+        onSkipClick = { viewModel.processIntent(OnboardingUiIntent.OnSkipClick) },
         modifier = modifier,
     )
 }
@@ -54,17 +55,18 @@ private fun OnboardingArtistScreen(
     uiState: OnboardingUiState,
     onArtistClick: (Long) -> Unit,
     onPopBackStack: () -> Unit,
-    onNavigateToHome: () -> Unit,
+    onStartClick: () -> Unit,
+    onSkipClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OnboardingScaffold(
         currentStep = 3,
         title = stringResource(R.string.onboarding_artist_label, uiState.nickname),
         onBackClick = onPopBackStack,
-        onNextClick = onNavigateToHome,
+        onNextClick = onStartClick,
         modifier = modifier,
         isButtonVisible = uiState.isButtonVisible,
-        onSkip = {},
+        onSkip = onSkipClick,
     ) {
         uiState.artists.onSuccess { artists ->
             LazyVerticalGrid(
@@ -101,7 +103,8 @@ private fun OnboardingArtistScreenPreview() {
             uiState = OnboardingUiState(),
             onArtistClick = {},
             onPopBackStack = {},
-            onNavigateToHome = {},
+            onStartClick = {},
+            onSkipClick = {},
         )
     }
 }
