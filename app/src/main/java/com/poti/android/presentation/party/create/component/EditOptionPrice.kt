@@ -39,9 +39,19 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiCheckBox
 import com.poti.android.core.designsystem.theme.PotiTheme
+import java.text.DecimalFormat
+
+// TODO: [도연] feat/#35-party-detail-ui 병합 후 삭제
+private fun Int.addComma(): String {
+    val decimalFormat = DecimalFormat("#,###")
+    return decimalFormat.format(this)
+}
+
+private const val MAX_LENGTH = 9
 
 @Composable
 fun EditOptionPrice(
@@ -99,7 +109,12 @@ fun EditOptionPrice(
         ) {
             OptionTextField(
                 value = value,
-                onValueChanged = onValueChanged,
+                onValueChanged = { newValue ->
+                    if (!newValue.isDigitsOnly()) return@OptionTextField
+                    if (newValue.length > MAX_LENGTH) return@OptionTextField
+
+                    onValueChanged(newValue)
+                },
                 imeAction = imeAction,
                 transformation = transformation,
                 textStyle = textStyle,
@@ -172,13 +187,9 @@ private class PriceVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val text = text.text
 
-        val textWithComma = buildString {
-            for (i in text.indices) {
-                append(text[i])
-                if (i != text.length - 1 && (text.length - 1 - i) % 3 == 0) {
-                    append(',')
-                }
-            }
+        val textWithComma = when (text.length) {
+            0 -> text
+            else -> text.toInt().addComma()
         }
 
         val offsetMapping = object : OffsetMapping {
@@ -199,7 +210,15 @@ private class PriceVisualTransformation : VisualTransformation {
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                val commasBeforeCursor = textWithComma.take(offset).count { it == ',' }
+                var commasBeforeCursor = 0
+
+                textWithComma.forEachIndexed { index, char ->
+                    if (index >= offset) return@forEachIndexed
+
+                    if (char == ',') {
+                        commasBeforeCursor += 1
+                    }
+                }
 
                 return offset - commasBeforeCursor
             }
