@@ -20,11 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTag
@@ -40,6 +42,7 @@ fun GoodsSmallCard(
     artist: String,
     goodsType: String,
     partyCount: Int,
+    tag: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,13 +75,15 @@ fun GoodsSmallCard(
                 modifier = Modifier.fillMaxSize(),
             )
 
-            PotiSecondaryTag(
-                text = "인기",
-                sizeType = PotiTagSize.SMALL,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(12.dp),
-            )
+            if (tag.isNotBlank()) {
+                PotiSecondaryTag(
+                    text = tag,
+                    sizeType = PotiTagSize.SMALL,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(12.dp),
+                )
+            }
         }
 
         Column(
@@ -107,7 +112,7 @@ fun GoodsSmallCard(
             Spacer(Modifier.height(8.dp))
 
             PotiPrimaryTag(
-                text = "팟 ${partyCount}개",
+                text = stringResource(R.string.goods_card_party_count, partyCount),
                 sizeType = PotiPrimaryTagSize.LARGE,
                 colorType = PotiPrimaryTagColor.WHITE,
             )
@@ -128,6 +133,7 @@ private fun GoodsSmallCardPreview() {
                 artist = "아티스트명",
                 goodsType = "상품 종류명",
                 partyCount = 3,
+                tag = "인기",
                 onClick = {},
                 modifier = Modifier,
             )
@@ -137,6 +143,7 @@ private fun GoodsSmallCardPreview() {
                 artist = "아티스트명 아티스트명 아티스트명 아티스트명 ",
                 goodsType = "상품 종류명 상품 종류명 상품 종류명 ",
                 partyCount = 3,
+                tag = "인기",
                 onClick = {},
                 modifier = Modifier,
             )

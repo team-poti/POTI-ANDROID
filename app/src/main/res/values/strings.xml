@@ -7,4 +7,14 @@
 
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
+
+    <!-- Exploration Component -->
+    <string name="goods_card_party_count">팟 %1$d개</string>
+    <string name="pots_card_closed">마감</string>
+    <string name="pots_card_current_count">%1$d</string>
+    <string name="pots_card_total_count">/%1$d</string>
+    <string name="pots_card_per_person">/ 인</string>
+
+
+
 </resources>

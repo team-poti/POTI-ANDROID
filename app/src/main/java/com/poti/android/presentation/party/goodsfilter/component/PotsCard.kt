@@ -20,13 +20,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiProfileSummary
@@ -34,7 +35,7 @@ import com.poti.android.core.designsystem.component.display.PotiProfileSummarySi
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun PostsCard(
+fun PotsCard(
     profileImageUrl: String,
     nickname: String,
     rating: String,
@@ -51,7 +52,6 @@ fun PostsCard(
 
     Column(
         modifier = modifier
-            .width(screenWidthDp(328.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.white)
             .border(
@@ -82,18 +82,18 @@ fun PostsCard(
 
             if (isClosed) {
                 Text(
-                    text = "마감",
+                    text = stringResource(R.string.pots_card_closed),
                     color = PotiTheme.colors.gray800,
                     style = PotiTheme.typography.body16sb,
                 )
             } else {
                 Text(
-                    text = "$currentCount",
+                    text = stringResource(R.string.pots_card_current_count, currentCount),
                     color = PotiTheme.colors.sementicRed,
                     style = PotiTheme.typography.display18b,
                 )
                 Text(
-                    text = "/$totalCount",
+                    text = stringResource(R.string.pots_card_total_count, totalCount),
                     color = PotiTheme.colors.sementicRed,
                     style = PotiTheme.typography.body16sb,
                 )
@@ -138,7 +138,7 @@ fun PostsCard(
                     )
 
                     Text(
-                        text = "/ 인",
+                        text = stringResource(R.string.pots_card_per_person),
                         modifier = Modifier,
                         color = PotiTheme.colors.gray800,
                         overflow = TextOverflow.Ellipsis,
@@ -166,13 +166,13 @@ fun PostsCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun PostsCardPreview() {
+private fun PotsCardPreview() {
     PotiTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PostsCard(
+            PotsCard(
                 profileImageUrl = "",
                 nickname = "닉네임",
                 rating = "4.8",
@@ -182,10 +182,10 @@ private fun PostsCardPreview() {
                 onClick = {},
                 currentCount = 6,
                 totalCount = 7,
-                modifier = Modifier,
+                modifier = Modifier.fillMaxWidth(),
             )
 
-            PostsCard(
+            PotsCard(
                 profileImageUrl = "",
                 nickname = "닉네임",
                 rating = "4.8",
@@ -195,7 +195,7 @@ private fun PostsCardPreview() {
                 onClick = {},
                 currentCount = 7,
                 totalCount = 7,
-                modifier = Modifier,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
