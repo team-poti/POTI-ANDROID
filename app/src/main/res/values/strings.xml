@@ -54,4 +54,9 @@
     <string name="pots_card_total_count">/%1$d</string>
     <string name="pots_card_per_person">/ 인</string>
 
+    <!-- Create Component -->
+    <string name="create_label_won">원</string>
+    <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
+
+
 </resources>
