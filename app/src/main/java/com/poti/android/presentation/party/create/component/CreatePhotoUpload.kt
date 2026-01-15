@@ -6,16 +6,16 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -47,41 +47,50 @@ fun CreatePhotoUpload(
     onImageChanged: (List<Uri>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
+    val lazyListState = rememberLazyListState()
 
     val remaining = MAX_ITEMS - imageUris.size
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = when {
             remaining <= 1 -> ActivityResultContracts.PickVisualMedia()
-            else -> ActivityResultContracts.PickMultipleVisualMedia(remaining)
+            else -> ActivityResultContracts.PickMultipleVisualMedia(remaining.coerceIn(2, 5))
         },
     ) { result ->
         when (result) {
             is Uri -> {
-                onImageChanged(imageUris + result)
+                onImageChanged((imageUris + result).distinct())
             }
 
             is List<*> -> {
                 val uris = result.filterIsInstance<Uri>()
-                onImageChanged(imageUris + uris)
+                onImageChanged((imageUris + uris).distinct())
             }
         }
     }
 
-    Row(
+    LazyRow(
+        state = lazyListState,
         modifier = modifier
-            .padding(vertical = 8.dp)
-            .horizontalScroll(scrollState),
+            .padding(vertical = 8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (imageUris.size < MAX_ITEMS) {
-            UploadButton(
-                onClick = { photoPickerLauncher.launch(PickVisualMediaRequest()) },
-            )
+            item {
+                UploadButton(
+                    onClick = {
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest.Builder()
+                                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                .build()
+                        )
+                    },
+                )
+            }
         }
 
-        imageUris.forEachIndexed { index, uri ->
+        itemsIndexed(imageUris) { index, uri ->
             PhotoItem(
                 image = uri,
                 onXClick = {
@@ -158,7 +167,6 @@ private fun CreatePhotoUploadPreview() {
             imageUris = imageUris,
             onImageChanged = { imageUris = it },
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(top = 100.dp),
         )
     }
