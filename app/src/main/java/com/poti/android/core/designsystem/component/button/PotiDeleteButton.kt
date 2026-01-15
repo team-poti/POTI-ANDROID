@@ -20,6 +20,19 @@ import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+enum class DeleteButtonType {
+    DARK,
+    LIGHT,
+    ;
+
+    fun getBackgroundColor(colors: PotiColors): Color {
+        return when (this) {
+            DARK -> colors.gray300
+            LIGHT -> colors.white
+        }
+    }
+}
+
 @Composable
 fun PotiDeleteButton(
     onClick: () -> Unit,
@@ -40,19 +53,6 @@ fun PotiDeleteButton(
             .background(backgroundColor),
         tint = PotiTheme.colors.gray700,
     )
-}
-
-enum class DeleteButtonType {
-    DARK,
-    LIGHT,
-    ;
-
-    fun getBackgroundColor(colors: PotiColors): Color {
-        return when (this) {
-            DARK -> colors.gray300
-            LIGHT -> colors.white
-        }
-    }
 }
 
 @Preview(showBackground = true)

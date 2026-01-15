@@ -22,6 +22,38 @@ import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiColors
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+enum class ActionButtonType {
+    PRIMARY_MAIN,
+    PRIMARY_SUB,
+    SECONDARY_MAIN,
+    SECONDARY_SUB,
+    DEACTIVE_MAIN,
+    DEACTIVE_SUB,
+    ;
+
+    fun getBackgroundColor(
+        colors: PotiColors,
+        isPressed: Boolean,
+    ): Color =
+        when (this) {
+            PRIMARY_MAIN -> if (isPressed) colors.poti800 else colors.poti600
+            PRIMARY_SUB -> if (isPressed) colors.gray300 else colors.gray100
+            SECONDARY_MAIN -> if (isPressed) colors.gray900 else colors.black
+            SECONDARY_SUB -> if (isPressed) colors.gray300 else colors.gray100
+            DEACTIVE_MAIN -> colors.gray700
+            DEACTIVE_SUB -> colors.gray100
+        }
+
+    fun getContentColor(colors: PotiColors): Color {
+        return when (this) {
+            PRIMARY_MAIN, SECONDARY_MAIN, DEACTIVE_MAIN -> colors.white
+            PRIMARY_SUB -> colors.poti600
+            SECONDARY_SUB -> colors.gray900
+            DEACTIVE_SUB -> colors.gray700
+        }
+    }
+}
+
 @Composable
 fun PotiActionButton(
     text: String,
@@ -56,38 +88,6 @@ fun PotiActionButton(
             color = contentColor,
             style = PotiTheme.typography.button16sb,
         )
-    }
-}
-
-enum class ActionButtonType {
-    PRIMARY_MAIN,
-    PRIMARY_SUB,
-    SECONDARY_MAIN,
-    SECONDARY_SUB,
-    DEACTIVE_MAIN,
-    DEACTIVE_SUB,
-    ;
-
-    fun getBackgroundColor(
-        colors: PotiColors,
-        isPressed: Boolean,
-    ): Color =
-        when (this) {
-            PRIMARY_MAIN -> if (isPressed) colors.poti800 else colors.poti600
-            PRIMARY_SUB -> if (isPressed) colors.gray300 else colors.gray100
-            SECONDARY_MAIN -> if (isPressed) colors.gray900 else colors.black
-            SECONDARY_SUB -> if (isPressed) colors.gray300 else colors.gray100
-            DEACTIVE_MAIN -> colors.gray700
-            DEACTIVE_SUB -> colors.gray100
-        }
-
-    fun getContentColor(colors: PotiColors): Color {
-        return when (this) {
-            PRIMARY_MAIN, SECONDARY_MAIN, DEACTIVE_MAIN -> colors.white
-            PRIMARY_SUB -> colors.poti600
-            SECONDARY_SUB -> colors.gray900
-            DEACTIVE_SUB -> colors.gray700
-        }
     }
 }
 
