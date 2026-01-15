@@ -8,11 +8,10 @@ import com.poti.android.core.common.extension.noRippleClickable
 @Composable
 fun HomeRoute(
     onNavigateToGoodsCategory: () -> Unit,
-    onNavigateToPartyDetail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScreen(
-        onClick = onNavigateToPartyDetail,
+        onClick = onNavigateToGoodsCategory,
         modifier = modifier,
     )
 }
