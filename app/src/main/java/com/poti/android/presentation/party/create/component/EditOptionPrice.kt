@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,11 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -36,9 +39,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiCheckBox
-import com.poti.android.core.designsystem.component.display.PotiDivider
-import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -67,35 +69,34 @@ fun EditOptionPrice(
         }
     }
 
-    var wonWidth by remember { mutableStateOf(0.dp) }
-
-    Column(
+    Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Row {
-            isChecked?.let {
-                PotiCheckBox(
-                    selected = isChecked,
-                    onClick = onCheckboxClick,
-                )
-
-                Spacer(Modifier.width(8.dp))
-            }
-
-            Text(
-                text = option,
-                modifier = Modifier
-                    .weight(1f),
-                color = PotiTheme.colors.black,
-                style = PotiTheme.typography.body16m,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
+        isChecked?.let {
+            PotiCheckBox(
+                selected = isChecked,
+                onClick = onCheckboxClick,
             )
 
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(8.dp))
+        }
 
+        Text(
+            text = option,
+            modifier = Modifier
+                .weight(1f),
+            color = PotiTheme.colors.black,
+            style = PotiTheme.typography.body16m,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+        )
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.End,
+        ) {
             OptionTextField(
                 value = value,
                 onValueChanged = onValueChanged,
@@ -105,25 +106,22 @@ fun EditOptionPrice(
                 modifier = Modifier.width(textWidth),
             )
 
-            Spacer(Modifier.width(4.dp))
-
-            Text(
-                text = "원",
+            HorizontalDivider(
                 modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        wonWidth = with(density) { coordinates.size.width.toDp() }
-                    },
-                color = PotiTheme.colors.black,
-                style = PotiTheme.typography.body16m,
+                    .widthIn(min = 42.dp)
+                    .width(textWidth)
+                    .clip(CircleShape),
+                thickness = 2.dp,
+                color = PotiTheme.colors.gray300,
             )
         }
 
-        PotiDivider(
-            styleType = PotiDividerStyle.SMALL,
-            modifier = Modifier
-                .padding(end = wonWidth + 4.dp)
-                .widthIn(min = 42.dp)
-                .width(textWidth),
+        Spacer(Modifier.width(4.dp))
+
+        Text(
+            text = stringResource(R.string.create_label_won),
+            color = PotiTheme.colors.black,
+            style = PotiTheme.typography.body16m,
         )
     }
 }

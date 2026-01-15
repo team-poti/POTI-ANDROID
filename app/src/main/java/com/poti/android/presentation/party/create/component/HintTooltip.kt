@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.create.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -40,7 +42,7 @@ private const val VISUAL_GAP_PX = 1
 @Composable
 fun HintToolTip(
     modifier: Modifier = Modifier,
-    text: String = "모집자 본인이 보유할 멤버는 꼭 제외해주세요!",
+    @StringRes text: Int = R.string.create_msg_hint,
     yOffset: Dp = 9.dp,
 ) {
     val density = LocalDensity.current
@@ -84,7 +86,7 @@ fun HintToolTip(
             )
 
             Text(
-                text = text,
+                text = stringResource(text),
                 modifier = Modifier
                     .padding(top = screenHeightDp(11.dp)),
                 color = PotiTheme.colors.poti600,
