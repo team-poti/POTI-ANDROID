@@ -55,9 +55,19 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
                     sendEffect(OnboardingUiEffect.NavigateToArtist)
                 }
             }
-            is OnboardingUiIntent.OnArtistClick -> handleArtistSelect(intent.artistId)
+            is OnboardingUiIntent.OnArtistSelect -> handleArtistSelect(intent.artistId)
             OnboardingUiIntent.OnArtistNextClick -> {
+                // TODO: [지현] 서버에 데이터 보내는 로직 추가
                 updateState { copy(isButtonVisible = false) }
+                sendEffect(OnboardingUiEffect.NavigateToHome)
+            }
+            OnboardingUiIntent.OnSkipClick -> {
+                updateState {
+                    copy(
+                        selectedArtistId = null,
+                        isButtonVisible = false,
+                    )
+                }
                 sendEffect(OnboardingUiEffect.NavigateToHome)
             }
         }
@@ -110,6 +120,14 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
     }
 
     private fun handleArtistSelect(artistId: Long) {
-        updateState { copy(selectedArtistId = artistId) }
+        val currentSelectedId = uiState.value.selectedArtistId
+
+        val newSelectedId = if (currentSelectedId == artistId) {
+            null
+        } else {
+            artistId
+        }
+
+        updateState { copy(selectedArtistId = newSelectedId) }
     }
 }

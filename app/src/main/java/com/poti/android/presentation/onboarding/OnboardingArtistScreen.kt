@@ -42,7 +42,7 @@ fun OnboardingArtistRoute(
 
     OnboardingArtistScreen(
         uiState = uiState,
-        onArtistClick = { viewModel.processIntent(OnboardingUiIntent.OnArtistClick(it)) },
+        onArtistClick = { viewModel.processIntent(OnboardingUiIntent.OnArtistSelect(it)) },
         onPopBackStack = { viewModel.processIntent(OnboardingUiIntent.OnBackClick) },
         onNavigateToHome = { viewModel.processIntent(OnboardingUiIntent.OnArtistNextClick) },
         modifier = modifier,

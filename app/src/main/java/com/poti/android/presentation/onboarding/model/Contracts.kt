@@ -12,7 +12,7 @@ data class OnboardingUiState(
     val nicknameError: ErrorText? = null,
     val isNicknameValid: Boolean = false,
     val artists: ApiState<ImmutableList<Artist>> = ApiState.Loading,
-    val selectedArtistId: Long = 0,
+    val selectedArtistId: Long? = null,
     val isButtonVisible: Boolean = true,
 ) : UiState
 
@@ -25,9 +25,11 @@ sealed interface OnboardingUiIntent : UiIntent {
 
     data object OnNicknameNextClick : OnboardingUiIntent
 
-    data class OnArtistClick(val artistId: Long) : OnboardingUiIntent
+    data class OnArtistSelect(val artistId: Long) : OnboardingUiIntent
 
     data object OnArtistNextClick : OnboardingUiIntent
+
+    data object OnSkipClick : OnboardingUiIntent
 }
 
 sealed interface OnboardingUiEffect : UiEffect {
