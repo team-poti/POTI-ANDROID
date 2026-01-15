@@ -73,5 +73,6 @@
     <string name="create_placeholder_need_artist">아티스트를 먼저 선택해주세요</string>
     <string name="create_placeholder_need_member">선택한 멤버가 없어요</string>
     <string name="create_btn_member_edit">멤버 편집</string>
+    <string name="create_notice">판매자한테 안내해야 되는 내용...\n어쩌꾸 저쩌꾸\n어ㅓ어아어ㅏㅓㅏㅏㅏㅇ\n우우우우우</string>
 
 </resources>
