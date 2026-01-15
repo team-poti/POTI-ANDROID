@@ -179,7 +179,7 @@ fun PotiSearchField(
                 focusRequester = focusRequester,
             )
 
-            if (error.isNotEmpty()) {
+            if (error.isNotBlank()) {
                 PotiErrorMessage(message = error)
             }
         }

@@ -93,7 +93,7 @@ fun PotiShortTextField(
             trailingIcon = trailingIcon,
         )
 
-        if (error.isNotEmpty()) {
+        if (error.isNotBlank()) {
             PotiErrorMessage(message = error)
         }
     }

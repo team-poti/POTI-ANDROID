@@ -137,7 +137,7 @@ fun PotiDropdownField(
                 enabled = false,
             )
 
-            if (error.isNotEmpty()) {
+            if (error.isNotBlank()) {
                 PotiErrorMessage(message = error)
             }
         }

@@ -106,7 +106,7 @@ fun PotiCountField(
             enabled = enabled,
         )
 
-        if (error.isNotEmpty()) {
+        if (error.isNotBlank()) {
             PotiErrorMessage(message = error)
         }
     }

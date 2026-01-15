@@ -85,7 +85,7 @@ fun PotiLongTextField(
             singleLine = false,
         )
 
-        if (error.isNotEmpty()) {
+        if (error.isNotBlank()) {
             PotiErrorMessage(message = error)
         }
     }
