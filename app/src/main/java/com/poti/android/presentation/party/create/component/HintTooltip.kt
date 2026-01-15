@@ -58,7 +58,7 @@ fun HintToolTip(
                 popupContentSize: IntSize,
             ): IntOffset {
                 return IntOffset(
-                    x = windowSize.width / 2,
+                    x = (windowSize.width - popupContentSize.width) / 2,
                     y = anchorBounds.top - popupContentSize.height - offsetYPx,
                 )
             }
