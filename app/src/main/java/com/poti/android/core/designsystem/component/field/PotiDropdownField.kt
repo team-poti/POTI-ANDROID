@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.poti.android.R
+import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.model.FieldMenuItem
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -136,8 +137,9 @@ fun PotiDropdownField(
                 enabled = false,
             )
 
-            // TODO: [도연] Display>errorMessage로 대체
-            FieldErrorMessage(error)
+            if (error.isNotBlank()) {
+                PotiErrorMessage(message = error)
+            }
         }
 
         PotiDropdownMenu(
