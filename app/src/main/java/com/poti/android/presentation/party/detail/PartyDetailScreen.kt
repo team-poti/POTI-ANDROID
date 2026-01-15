@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -23,7 +22,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
-import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.common.state.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -48,27 +48,22 @@ fun PartyDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { effect ->
-            when (effect) {
-                PartyDetailEffect.NavigateBack -> onPopBackStack()
-                PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
-                is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
-            }
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            PartyDetailEffect.NavigateBack -> onPopBackStack()
+            PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
+            is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
         }
     }
 
-    when (val state = uiState.partyDetail) {
-        is ApiState.Success -> {
-            PartyDetailScreen(
-                partyDetail = state.data,
-                onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
-                onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnJoinClick) },
-                onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
-                modifier = modifier,
-            )
-        }
-        else -> {}
+    uiState.partyDetail.onSuccess { partyDetail ->
+        PartyDetailScreen(
+            partyDetail = partyDetail,
+            onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
+            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnJoinClick) },
+            onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
+            modifier = modifier,
+        )
     }
 }
 
