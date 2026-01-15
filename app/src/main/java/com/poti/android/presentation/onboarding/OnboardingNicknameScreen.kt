@@ -13,10 +13,14 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 
 @Composable
-fun OnboardingNicknameRoute(modifier: Modifier = Modifier) {
+fun OnboardingNicknameRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToOnboardingArtist: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     OnboardingNicknameScreen(
-        onPopBackStack = {},
-        onNavigateToOnboardingArtist = {},
+        onPopBackStack = onPopBackStack,
+        onNavigateToOnboardingArtist = onNavigateToOnboardingArtist,
         modifier = modifier,
     )
 }

@@ -10,6 +10,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.onboarding.OnboardingArtistRoute
 import com.poti.android.presentation.onboarding.OnboardingGuideRoute
 import com.poti.android.presentation.onboarding.OnboardingNicknameRoute
+import com.poti.android.presentation.party.home.navigation.navigateToHome
 import kotlinx.serialization.Serializable
 
 sealed interface OnboardingRoute : Route {
@@ -36,15 +37,28 @@ fun NavController.navigateToOnboardingArtist() {
 }
 
 fun NavGraphBuilder.onboardingNavGraph(
+    navController: NavController,
     paddingValues: PaddingValues,
 ) {
     composable<OnboardingRoute.Guide> {
-        OnboardingGuideRoute(modifier = Modifier.padding(paddingValues))
+        OnboardingGuideRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToOnboardingNickname = navController::navigateToOnboardingNickname,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
     composable<OnboardingRoute.Nickname> {
-        OnboardingNicknameRoute(modifier = Modifier.padding(paddingValues))
+        OnboardingNicknameRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToOnboardingArtist = navController::navigateToOnboardingArtist,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
     composable<OnboardingRoute.Artist> {
-        OnboardingArtistRoute(modifier = Modifier.padding(paddingValues))
+        OnboardingArtistRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToHome = navController::navigateToHome,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }

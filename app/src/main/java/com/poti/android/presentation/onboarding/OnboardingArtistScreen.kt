@@ -18,11 +18,15 @@ import com.poti.android.presentation.onboarding.component.ArtistItem
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 
 @Composable
-fun OnboardingArtistRoute(modifier: Modifier = Modifier) {
+fun OnboardingArtistRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     OnboardingArtistScreen(
         artists = dummyArtists,
-        onPopBackStack = {},
-        onNavigateToHome = {},
+        onPopBackStack = onPopBackStack,
+        onNavigateToHome = onNavigateToHome,
         modifier = modifier,
     )
 }
@@ -35,7 +39,7 @@ private fun OnboardingArtistScreen(
     modifier: Modifier = Modifier,
 ) {
     OnboardingScaffold(
-        currentStep = 1,
+        currentStep = 3,
         title = stringResource(R.string.onboarding_artist_label, "포티"), // TODO: [지현] 닉네임 연결
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToHome,

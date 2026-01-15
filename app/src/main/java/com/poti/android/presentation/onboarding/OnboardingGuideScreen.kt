@@ -9,10 +9,14 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 
 @Composable
-fun OnboardingGuideRoute(modifier: Modifier = Modifier) {
+fun OnboardingGuideRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToOnboardingNickname: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     OnboardingGuideScreen(
-        onPopBackStack = {},
-        onNavigateToOnboardingNickname = {},
+        onPopBackStack = onPopBackStack,
+        onNavigateToOnboardingNickname = onNavigateToOnboardingNickname,
         modifier = modifier,
     )
 }
@@ -29,7 +33,7 @@ private fun OnboardingGuideScreen(
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingNickname,
         modifier = modifier,
-        content = {},
+        content = {}, // TODO: [지현] 디자인 나오면 수정
     )
 }
 

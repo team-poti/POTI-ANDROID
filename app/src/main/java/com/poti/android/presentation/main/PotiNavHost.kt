@@ -28,6 +28,7 @@ fun PotiNavHost(
             paddingValues = paddingValues,
         )
         onboardingNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
         )
         partyNavGraph(
