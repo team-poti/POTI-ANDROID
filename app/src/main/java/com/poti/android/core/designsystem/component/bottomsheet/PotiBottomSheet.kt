@@ -29,6 +29,7 @@ import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.component.navigation.PotiHeaderPageType
 import com.poti.android.core.designsystem.theme.PotiTheme
 import kotlinx.coroutines.launch
 
@@ -87,6 +88,7 @@ fun PotiBottomSheet(
                     }
                 }
             },
+            potiHeaderPageType = PotiHeaderPageType.CLOSE,
             modifier = Modifier.padding(top = 4.dp),
         )
 

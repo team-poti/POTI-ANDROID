@@ -1,5 +1,6 @@
 package com.poti.android.core.designsystem.component.navigation
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,10 +17,18 @@ import com.poti.android.R
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+enum class PotiHeaderPageType(
+    @DrawableRes val iconResId: Int,
+) {
+    BACK(R.drawable.ic_arrow_line_left),
+    CLOSE(R.drawable.ic_x),
+}
+
 @Composable
 fun PotiHeaderPage(
     onNavigationClick: () -> Unit,
     modifier: Modifier = Modifier,
+    potiHeaderPageType: PotiHeaderPageType = PotiHeaderPageType.BACK,
     title: String? = null,
     subTitle: String? = null,
     onTrailingIconClick: (() -> Unit)? = null,
@@ -32,7 +41,7 @@ fun PotiHeaderPage(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PotiIconButton(
-            iconRes = if (title.isNullOrBlank()) R.drawable.ic_x else R.drawable.ic_arrow_line_left,
+            iconRes = potiHeaderPageType.iconResId,
             onClick = onNavigationClick,
         )
 
@@ -73,6 +82,11 @@ fun PotiHeaderPage(
 private fun PotiHeaderPagePreview() {
     PotiTheme {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            PotiHeaderPage(
+                onNavigationClick = {},
+                potiHeaderPageType = PotiHeaderPageType.CLOSE,
+            )
+
             PotiHeaderPage(
                 onNavigationClick = {},
             )
