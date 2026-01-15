@@ -32,6 +32,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param enabled 입력 및 포커스, 터치 이벤트 차단하고 싶다면 false로 설정합니다. 기본값 true입니다.
  * @param label 필드 상단에 표시됩니다.
  * @param error 에러가 emptyString이 아닌 경우에만 필드 하단에 표시되며, borderColor가 red로 변경됩니다.
+ * @param
  * @param imeAction 키보드 액션 타입으로, 기본값은 Done 입니다. Next 설정 시 아래 위치한 필드로 포커스 이동시킬 수 있습니다.
  * @param focusRequester 필드 포커스를 외부에서 제어하고 싶을 때 사용합니다.
  */
@@ -45,6 +46,7 @@ fun PotiShortTextField(
     enabled: Boolean = true,
     label: String = "",
     error: String = "",
+    trailingIcon: @Composable (() -> Unit) = {},
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
 ) {
@@ -87,6 +89,7 @@ fun PotiShortTextField(
             onFocusChanged = { isFocused = it },
             focusRequester = focusRequester,
             singleLine = true,
+            trailingIcon = trailingIcon,
         )
 
         FieldErrorMessage(error)
