@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 /**
@@ -105,8 +106,9 @@ fun PotiCountField(
             enabled = enabled,
         )
 
-        // TODO: [도연] Display>ErrorMessage으로 대체
-        FieldErrorMessage(error)
+        if (error.isNotEmpty()) {
+            PotiErrorMessage(message = error)
+        }
     }
 }
 

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.model.FieldMenuItem
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.White
@@ -178,8 +179,9 @@ fun PotiSearchField(
                 focusRequester = focusRequester,
             )
 
-            // TODO: [도연] Display>errorMessage로 대체
-            FieldErrorMessage(error)
+            if (error.isNotEmpty()) {
+                PotiErrorMessage(message = error)
+            }
         }
 
         PotiDropdownMenu(
