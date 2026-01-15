@@ -59,7 +59,8 @@ fun HistoryParticipantOverview(
                 sizeType = ParticipantStateLabelSize.SMALL,
                 stageType = participantStageType,
                 statusType = participantStatusType,
-            )        }
+            )
+        }
 
         Text(
             text = "$userName\n$address\n$phone",
@@ -76,8 +77,10 @@ fun HistoryParticipantOverview(
                 optionType = PotiItemOptionType.PRICE,
                 sizeType = PotiItemOptionSize.SMALL,
                 text = priceText(price),
-            )        }
-    }}
+            )
+        }
+    } 
+}
 
 // TODO: [천민재] 임시 util 함수
 private fun priceText(price: Int) = String.format("%,d원", price)
@@ -97,5 +100,6 @@ private fun HistoryParticipantOverviewPreview() {
             participantStageType = ParticipantStateLabelStage.DEPOSIT,
             participantStatusType = ParticipantStateLabelStatus.CHECK,
             modifier = Modifier.width(375.dp),
-        )    }
+        )
+    }
 }
