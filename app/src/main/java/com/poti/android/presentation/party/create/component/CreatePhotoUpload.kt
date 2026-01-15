@@ -83,7 +83,7 @@ fun CreatePhotoUpload(
                         photoPickerLauncher.launch(
                             PickVisualMediaRequest.Builder()
                                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                .build()
+                                .build(),
                         )
                     },
                 )
