@@ -8,20 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
@@ -34,7 +32,7 @@ enum class PotiProfileSummarySize(val profilePicSize: Dp) {
 
 @Composable
 fun PotiProfileSummary(
-    profileImageUrl: String,
+    profileImageUrl: String?,
     nickname: String,
     sizeType: PotiProfileSummarySize,
     rating: String,
@@ -46,25 +44,15 @@ fun PotiProfileSummary(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SubcomposeAsyncImage(
+        AsyncImage(
             model = profileImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(sizeType.profilePicSize)
                 .clip(RoundedCornerShape(99.dp)),
-            // TODO: [천민재] 에셋 추가시 구현
-            loading = {
-                // TODO: [천민재] 임시 이미지
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_member),
-                    tint = Color.Black,
-                    contentDescription = null,
-                )
-            },
-            // TODO: [천민재] 에셋 추가시 구현
-            error = {
-            },
+            placeholder = painterResource(id = R.drawable.ic_member),
+            error = painterResource(id = R.drawable.ic_member),
         )
 
         when (sizeType) {

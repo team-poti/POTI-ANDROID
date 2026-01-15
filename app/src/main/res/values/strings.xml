@@ -1,20 +1,57 @@
 <resources>
     <string name="app_name">poti</string>
 
+    <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
     <string name="bottom_nav_history">분철 내역</string>
     <string name="bottom_nav_my_page">마이페이지</string>
 
+    <!-- Navigation Component -->
     <string name="header_section_ongoing">진행 중</string>
     <string name="header_section_ended">종료</string>
 
+    <!-- Button Component -->
+    <string name="action_button_next">다음</string>
+    <string name="action_button_skip">건너뛰기</string>
+    <string name="action_button_start">시작하기</string>
+    <string name="action_button_reset">초기화</string>
+    <string name="action_button_done">완료</string>
+    <string name="action_button_continue">계속</string>
+    <string name="action_button_select_all">전체 선택</string>
+
+    <!-- Party -->
+    <string name="party_recruit_deadline">모집 기한</string>
+
+    <!-- PartyDetail -->
+    <string name="party_detail_title">%s의 팟</string>
+    <string name="party_detail_price">%s원~</string>
+    <string name="party_detail_price_per_person">/ 인</string>
+    <string name="party_detail_deadline">%s 까지</string>
+    <string name="party_detail_shipping_price">배송비</string>
+    <string name="party_detail_shipping_price_format">%1$s %2$s원</string>
+    <string name="party_detail_uploader">모집자</string>
+    <string name="party_detail_participants">참여자</string>
+    <string name="party_detail_review_count">%d개의 평가</string>
+    <string name="party_detail_participants_count">%1$d/%2$d</string>
+    <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
+    <string name="party_detail_join_party">분철팟 참여하기</string>
+
+    <!-- History Component -->
+    <string name="history_participant_stage_deposit">입금</string>
+    <string name="history_participant_stage_delivery">배송</string>
+    <string name="history_participant_stage_recruit">모집</string>
+    <string name="history_participant_stage_wait">대기</string>
+    <string name="history_participant_stage_check">확인 중</string>
+    <string name="history_participant_stage_start">시작</string>
+    <string name="history_participant_stage_done">완료</string>
+    <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
+    <string name="history_callout_copy">복사</string>
+  
     <!-- Exploration Component -->
     <string name="goods_card_party_count">팟 %1$d개</string>
     <string name="pots_card_closed">마감</string>
     <string name="pots_card_current_count">%1$d</string>
     <string name="pots_card_total_count">/%1$d</string>
     <string name="pots_card_per_person">/ 인</string>
-
-
 
 </resources>
