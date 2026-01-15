@@ -96,7 +96,6 @@ fun HintToolTip(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun HintToolTipPreview() {
