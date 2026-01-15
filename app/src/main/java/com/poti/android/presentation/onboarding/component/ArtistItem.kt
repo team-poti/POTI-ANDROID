@@ -17,12 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.Artist
 
 @Composable
 fun ArtistItem(
     artist: Artist,
+    isSelected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -36,7 +39,8 @@ fun ArtistItem(
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(CircleShape)
-                .background(PotiTheme.colors.gray100),
+                .background(if (isSelected) PotiTheme.colors.gray300 else PotiTheme.colors.gray100)
+                .noRippleClickable(onClick),
             contentScale = ContentScale.Crop,
         )
 

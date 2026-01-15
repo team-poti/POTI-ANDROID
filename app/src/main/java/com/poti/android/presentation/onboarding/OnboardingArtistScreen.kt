@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +42,7 @@ fun OnboardingArtistRoute(
 
     OnboardingArtistScreen(
         uiState = uiState,
+        onArtistClick = { viewModel.processIntent(OnboardingUiIntent.OnArtistClick(it)) },
         onPopBackStack = { viewModel.processIntent(OnboardingUiIntent.OnBackClick) },
         onNavigateToHome = { viewModel.processIntent(OnboardingUiIntent.OnArtistNextClick) },
         modifier = modifier,
@@ -52,6 +52,7 @@ fun OnboardingArtistRoute(
 @Composable
 private fun OnboardingArtistScreen(
     uiState: OnboardingUiState,
+    onArtistClick: (Long) -> Unit,
     onPopBackStack: () -> Unit,
     onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
@@ -63,6 +64,7 @@ private fun OnboardingArtistScreen(
         onNextClick = onNavigateToHome,
         modifier = modifier,
         isButtonVisible = uiState.isButtonVisible,
+        onSkip = {},
     ) {
         uiState.artists.onSuccess { artists ->
             LazyVerticalGrid(
@@ -74,13 +76,17 @@ private fun OnboardingArtistScreen(
                     bottom = 40.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(25.dp),
+                horizontalArrangement = Arrangement.spacedBy(screenWidthDp(25.dp)),
             ) {
                 items(
                     items = artists,
                     key = { artist -> artist.artistId },
                 ) { artist ->
-                    ArtistItem(artist)
+                    ArtistItem(
+                        artist = artist,
+                        isSelected = (uiState.selectedArtistId == artist.artistId),
+                        onClick = { onArtistClick(artist.artistId) },
+                    )
                 }
             }
         }
@@ -93,6 +99,7 @@ private fun OnboardingArtistScreenPreview() {
     PotiTheme {
         OnboardingArtistScreen(
             uiState = OnboardingUiState(),
+            onArtistClick = {},
             onPopBackStack = {},
             onNavigateToHome = {},
         )

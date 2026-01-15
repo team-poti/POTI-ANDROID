@@ -1,8 +1,9 @@
 package com.poti.android.presentation.onboarding
 
 import com.poti.android.domain.model.artist.Artist
+import kotlinx.collections.immutable.persistentListOf
 
-val dummyArtists = listOf(
+val dummyArtists = persistentListOf(
     Artist(
         artistId = 1,
         name = "아티스트",

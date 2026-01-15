@@ -3,6 +3,7 @@ package com.poti.android.presentation.onboarding
 import androidx.lifecycle.viewModelScope
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
@@ -40,6 +41,8 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
                     checkNicknameDuplication(nickname)
                 }
         }
+
+        fetchArtists()
     }
 
     override fun processIntent(intent: OnboardingUiIntent) {
@@ -52,12 +55,16 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
                     sendEffect(OnboardingUiEffect.NavigateToArtist)
                 }
             }
-            is OnboardingUiIntent.OnArtistSelect -> handleArtistSelect(intent.artistId)
+            is OnboardingUiIntent.OnArtistClick -> handleArtistSelect(intent.artistId)
             OnboardingUiIntent.OnArtistNextClick -> {
                 updateState { copy(isButtonVisible = false) }
                 sendEffect(OnboardingUiEffect.NavigateToHome)
             }
         }
+    }
+
+    private fun fetchArtists() = launchScope {
+        updateState { copy(artists = ApiState.Success(dummyArtists)) }
     }
 
     private fun handleNicknameChange(value: String) {
