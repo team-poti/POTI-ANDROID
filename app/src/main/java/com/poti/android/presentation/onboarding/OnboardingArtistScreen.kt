@@ -6,6 +6,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,12 +42,18 @@ private fun OnboardingArtistScreen(
     onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isButtonVisible by remember { mutableStateOf(true) }
+
     OnboardingScaffold(
         currentStep = 3,
         title = stringResource(R.string.onboarding_artist_label, "포티"), // TODO: [지현] 닉네임 연결
         onBackClick = onPopBackStack,
-        onNextClick = onNavigateToHome,
+        onNextClick = {
+            isButtonVisible = false
+            onNavigateToHome()
+        },
         modifier = modifier,
+        isButtonVisible = isButtonVisible,
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),

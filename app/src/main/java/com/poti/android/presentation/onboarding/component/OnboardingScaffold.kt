@@ -24,6 +24,7 @@ fun OnboardingScaffold(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isButtonVisible: Boolean = true,
     onSkip: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -33,18 +34,20 @@ fun OnboardingScaffold(
             PotiHeaderPage(onNavigationClick = onBackClick)
         },
         bottomBar = {
-            if (onSkip == null) {
-                PotiBottomButton(
-                    text = stringResource(R.string.action_button_next),
-                    onClick = onNextClick,
-                )
-            } else {
-                PotiBottomButton(
-                    text = stringResource(R.string.action_button_start),
-                    onClick = onNextClick,
-                    subText = stringResource(R.string.action_button_skip),
-                    onSubClick = onSkip,
-                )
+            if (isButtonVisible) {
+                if (onSkip == null) {
+                    PotiBottomButton(
+                        text = stringResource(R.string.action_button_next),
+                        onClick = onNextClick,
+                    )
+                } else {
+                    PotiBottomButton(
+                        text = stringResource(R.string.action_button_start),
+                        onClick = onNextClick,
+                        subText = stringResource(R.string.action_button_skip),
+                        onSubClick = onSkip,
+                    )
+                }
             }
         },
     ) { innerPadding ->
