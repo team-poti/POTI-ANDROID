@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,7 +51,6 @@ fun PostsCard(
 
     Column(
         modifier = modifier
-            .heightIn(min = 181.dp)
             .width(screenWidthDp(328.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.white)
@@ -62,15 +60,14 @@ fun PostsCard(
                 shape = RoundedCornerShape(12.dp),
             )
             .noRippleClickable(onClick)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+            .padding(16.dp)
+            .alpha(contentAlpha),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier
-                .heightIn(min = 42.dp)
-                .fillMaxWidth()
-                .alpha(contentAlpha),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.Top,
         ) {
@@ -103,19 +100,10 @@ fun PostsCard(
             }
         }
 
-        Spacer(Modifier.height(16.dp))
-
-        PotiDivider(
-            styleType = PotiDividerStyle.SMALL,
-            modifier = Modifier.alpha(contentAlpha),
-        )
-
-        Spacer(Modifier.height(16.dp))
+        PotiDivider(styleType = PotiDividerStyle.SMALL)
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .alpha(contentAlpha),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Top,
         ) {
@@ -128,7 +116,6 @@ fun PostsCard(
             ) {
                 Text(
                     text = members,
-                    modifier = Modifier,
                     color = PotiTheme.colors.gray800,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
@@ -138,19 +125,18 @@ fun PostsCard(
                 Spacer(Modifier.height(14.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.Bottom,
                 ) {
                     Text(
                         text = price,
-                        modifier = Modifier,
                         color = PotiTheme.colors.black,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                         style = PotiTheme.typography.display18b,
                     )
+
                     Text(
                         text = "/ 인",
                         modifier = Modifier,
@@ -172,8 +158,7 @@ fun PostsCard(
                 modifier = Modifier
                     .size(75.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(PotiTheme.colors.gray300)
-                    .alpha(contentAlpha),
+                    .background(PotiTheme.colors.gray300),
             )
         }
     }

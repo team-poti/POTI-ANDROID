@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTag
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagColor
@@ -46,7 +45,6 @@ fun GoodsSmallCard(
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = screenHeightDp(225.dp))
             .width(screenWidthDp(192.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.gray100)
@@ -61,7 +59,8 @@ fun GoodsSmallCard(
     ) {
         Box(
             modifier = Modifier
-                .height(screenHeightDp(128.dp)),
+                .fillMaxWidth()
+                .aspectRatio(192f / 128f),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -82,41 +81,37 @@ fun GoodsSmallCard(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Text(
+                text = artist,
+                modifier = Modifier.fillMaxWidth(),
+                color = PotiTheme.colors.gray800,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = PotiTheme.typography.caption12m,
+            )
 
-        Text(
-            text = artist,
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .fillMaxWidth(),
-            color = PotiTheme.colors.gray800,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            style = PotiTheme.typography.caption12m,
-        )
+            Text(
+                text = goodsType,
+                modifier = Modifier.fillMaxWidth(),
+                color = PotiTheme.colors.black,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = PotiTheme.typography.body14m,
+            )
 
-        Text(
-            text = goodsType,
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .fillMaxWidth(),
-            color = PotiTheme.colors.black,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            style = PotiTheme.typography.body14m,
-        )
+            Spacer(Modifier.height(8.dp))
 
-        Spacer(Modifier.height(8.dp))
-
-        PotiPrimaryTag(
-            text = "팟 ${partyCount}개",
-            sizeType = PotiPrimaryTagSize.LARGE,
-            colorType = PotiPrimaryTagColor.WHITE,
-            modifier = Modifier
-                .padding(horizontal = 12.dp),
-        )
-
-        Spacer(Modifier.height(12.dp))
+            PotiPrimaryTag(
+                text = "팟 ${partyCount}개",
+                sizeType = PotiPrimaryTagSize.LARGE,
+                colorType = PotiPrimaryTagColor.WHITE,
+            )
+        }
     }
 }
 

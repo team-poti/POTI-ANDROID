@@ -6,10 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTag
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagColor
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagSize
@@ -44,7 +42,6 @@ fun GoodsLargeCard(
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = screenHeightDp(221.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.gray100)
             .border(
@@ -58,7 +55,8 @@ fun GoodsLargeCard(
     ) {
         Box(
             modifier = Modifier
-                .height(screenHeightDp(128.dp)),
+                .fillMaxWidth()
+                .aspectRatio(343f / 128f),
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -108,6 +106,7 @@ fun GoodsLargeCard(
                     color = PotiTheme.colors.black,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
+                    minLines = 2,
                     style = PotiTheme.typography.body14m,
                 )
             }
@@ -140,8 +139,8 @@ private fun GoodsLargeCardPreview() {
 
             GoodsLargeCard(
                 imageUrl = "",
-                artist = "아티스트명 아티스트명 아티스트명 아티스트명 아티스트명 아티스트명 아티스트명 아티스트명 ",
-                goodsType = "상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 상품 종류명 ",
+                artist = "아티스트명 ".repeat(10),
+                goodsType = "상품 종류명 ".repeat(10),
                 partyCount = 3,
                 onClick = {},
                 modifier = Modifier.fillMaxWidth(),
