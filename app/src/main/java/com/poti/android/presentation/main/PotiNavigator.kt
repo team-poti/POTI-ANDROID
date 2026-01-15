@@ -36,6 +36,15 @@ class PotiNavigator(
         navController.navigate(tab.route, navOptions)
     }
 
+    fun navigateToHome() {
+        navController.navigate(MainTab.HOME.route) {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    }
+
     @Composable
     fun shouldShowBottomBar() = currentTab != null
 }

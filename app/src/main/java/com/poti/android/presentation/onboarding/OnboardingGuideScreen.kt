@@ -1,22 +1,36 @@
 package com.poti.android.presentation.onboarding
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.poti.android.R
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
+import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
+import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
 
 @Composable
 fun OnboardingGuideRoute(
     onPopBackStack: () -> Unit,
     onNavigateToOnboardingNickname: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            OnboardingUiEffect.NavigateToBack -> onPopBackStack()
+            OnboardingUiEffect.NavigateToNickname -> onNavigateToOnboardingNickname()
+            else -> {}
+        }
+    }
+
     OnboardingGuideScreen(
-        onPopBackStack = onPopBackStack,
-        onNavigateToOnboardingNickname = onNavigateToOnboardingNickname,
+        onPopBackStack = { viewModel.processIntent(OnboardingUiIntent.OnBackClick) },
+        onNavigateToOnboardingNickname = { viewModel.processIntent(OnboardingUiIntent.OnGuideNextClick) },
         modifier = modifier,
     )
 }

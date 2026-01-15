@@ -30,6 +30,7 @@ fun PotiNavHost(
         onboardingNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
+            onNavigateToHome = navigator::navigateToHome,
         )
         partyNavGraph(
             paddingValues = paddingValues,

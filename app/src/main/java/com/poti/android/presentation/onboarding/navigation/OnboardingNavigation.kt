@@ -10,7 +10,6 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.onboarding.OnboardingArtistRoute
 import com.poti.android.presentation.onboarding.OnboardingGuideRoute
 import com.poti.android.presentation.onboarding.OnboardingNicknameRoute
-import com.poti.android.presentation.party.home.navigation.navigateToHome
 import kotlinx.serialization.Serializable
 
 sealed interface OnboardingRoute : Route {
@@ -39,6 +38,7 @@ fun NavController.navigateToOnboardingArtist() {
 fun NavGraphBuilder.onboardingNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
+    onNavigateToHome: () -> Unit,
 ) {
     composable<OnboardingRoute.Guide> {
         OnboardingGuideRoute(
@@ -57,7 +57,7 @@ fun NavGraphBuilder.onboardingNavGraph(
     composable<OnboardingRoute.Artist> {
         OnboardingArtistRoute(
             onPopBackStack = navController::popBackStack,
-            onNavigateToHome = navController::navigateToHome,
+            onNavigateToHome = onNavigateToHome,
             modifier = Modifier.padding(paddingValues),
         )
     }
