@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,17 @@ fun PartyDetailContent(
     partyDetail: PartyDetail,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+    val textStyle = PotiTheme.typography.body14m
+
+    val textHeightDp = with(density) {
+        if (textStyle.lineHeight.isSp) {
+            textStyle.lineHeight.toDp()
+        } else {
+            textStyle.fontSize.toDp()
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -81,7 +93,7 @@ fun PartyDetailContent(
                             VerticalDivider(
                                 thickness = 1.dp,
                                 color = PotiTheme.colors.gray800,
-                                modifier = Modifier.height(21.dp),
+                                modifier = Modifier.height(textHeightDp),
                             )
                         }
                     }

@@ -28,11 +28,11 @@
     <string name="party_detail_price_per_person">/ 인</string>
     <string name="party_detail_deadline">%s 까지</string>
     <string name="party_detail_shipping_price">배송비</string>
-    <string name="party_detail_shipping_price_format">%1s %2s원</string>
+    <string name="party_detail_shipping_price_format">%1$s %2$s원</string>
     <string name="party_detail_uploader">모집자</string>
     <string name="party_detail_participants">참여자</string>
     <string name="party_detail_review_count">%d개의 평가</string>
-    <string name="party_detail_participants_count">%1d/%2d</string>
+    <string name="party_detail_participants_count">%1$d/%2$d</string>
     <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
     <string name="party_detail_join_party">분철팟 참여하기</string>
 

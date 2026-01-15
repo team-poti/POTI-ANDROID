@@ -59,6 +59,12 @@ private fun PartyDetailScreen(
 ) {
     Scaffold(
         modifier = modifier,
+        topBar = {
+            PotiHeaderPage(
+                onNavigationClick = onBackClick,
+                title = stringResource(R.string.party_detail_title, partyDetail.userSummary.nickname),
+            )
+        },
         bottomBar = {
             PotiBottomButton(
                 text = stringResource(R.string.party_detail_join_party),
@@ -71,11 +77,6 @@ private fun PartyDetailScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            PotiHeaderPage(
-                onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title, partyDetail.userSummary.nickname),
-            )
-
             HorizontalPager(
                 state = rememberPagerState(pageCount = { partyDetail.images.size }),
                 modifier = Modifier

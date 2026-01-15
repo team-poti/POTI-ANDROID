@@ -44,7 +44,6 @@ fun PartyDetailHeaderInfo(
                 style = PotiTheme.typography.title18sb,
                 color = PotiTheme.colors.black,
                 minLines = 2,
-                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
 

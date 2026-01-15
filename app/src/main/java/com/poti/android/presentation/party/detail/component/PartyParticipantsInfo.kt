@@ -29,7 +29,9 @@ fun PartyParticipantsInfo(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
                 text = stringResource(R.string.party_detail_participants),
                 style = PotiTheme.typography.body16sb,
