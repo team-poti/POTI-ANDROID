@@ -37,7 +37,7 @@ private fun OnboardingNicknameScreen(
         PotiCountField(
             value = "", // TODO: [지현] value 연결
             onValueChanged = {}, // TODO: [지현] 람다 연결
-            placeholder = stringResource(R.string.onboarding_field_placeholder),
+            placeholder = stringResource(R.string.onboarding_nickname_field_placeholder),
             maxLength = 10,
             modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
             error = "", // TODO: [지현] 에러 처리

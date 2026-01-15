@@ -22,7 +22,8 @@
     <!-- Onboarding -->
     <string name="onboarding_guide_label">공동구매부터 분철 정산까지\n한 번에 관리해요</string>
     <string name="onboarding_nickname_label">포티에서 사용할 닉네임을\n입력해주세요</string>
-    <string name="onboarding_field_placeholder">닉네임을 입력해주세요</string>
+    <string name="onboarding_nickname_field_placeholder">닉네임을 입력해주세요</string>
+    <string name="onboarding_artist_label">%s님의 최애 그룹 한 팀을 선택해주세요</string>
 
     <!-- History Component -->
     <string name="history_participant_stage_deposit">입금</string>
