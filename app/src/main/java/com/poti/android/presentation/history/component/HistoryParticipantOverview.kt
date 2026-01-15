@@ -79,7 +79,7 @@ fun HistoryParticipantOverview(
                 text = priceText(price),
             )
         }
-    } 
+    }
 }
 
 // TODO: [천민재] 임시 util 함수
