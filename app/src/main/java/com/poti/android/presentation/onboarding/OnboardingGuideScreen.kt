@@ -11,7 +11,7 @@ import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 @Composable
 fun OnboardingGuideRoute(modifier: Modifier = Modifier) {
     OnboardingGuideScreen(
-        onNavigateToLogin = {},
+        onPopBackStack = {},
         onNavigateToOnboardingNickname = {},
         modifier = modifier,
     )
@@ -19,14 +19,14 @@ fun OnboardingGuideRoute(modifier: Modifier = Modifier) {
 
 @Composable
 private fun OnboardingGuideScreen(
-    onNavigateToLogin: () -> Unit,
+    onPopBackStack: () -> Unit,
     onNavigateToOnboardingNickname: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     OnboardingScaffold(
         currentStep = 1,
-        title = stringResource(R.string.onboarding_Guide_label),
-        onBackClick = onNavigateToLogin,
+        title = stringResource(R.string.onboarding_guide_label),
+        onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingNickname,
         modifier = modifier,
         content = {},
@@ -38,7 +38,7 @@ private fun OnboardingGuideScreen(
 private fun OnboardingGuideScreenPreview() {
     PotiTheme {
         OnboardingGuideScreen(
-            onNavigateToLogin = {},
+            onPopBackStack = {},
             onNavigateToOnboardingNickname = {},
         )
     }
