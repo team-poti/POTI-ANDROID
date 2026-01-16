@@ -56,7 +56,7 @@ fun CreateDeliverySetting(
 
 @Preview
 @Composable
-private fun CreateDeliverySettingPreivew() {
+private fun CreateDeliverySettingPreview() {
     val deliveryOptions = listOf(
         DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
         DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
