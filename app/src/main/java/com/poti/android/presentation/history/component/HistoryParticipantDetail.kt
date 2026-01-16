@@ -45,6 +45,7 @@ data class DepositItem(
 
 sealed interface DetailState {
     val fields: List<Pair<FieldType, String>>
+
     @get:StringRes
     val buttonLabelId: Int?
     val onButtonClick: (() -> Unit)?
@@ -156,7 +157,7 @@ fun HistoryParticipantDetail(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
             )
         }
 

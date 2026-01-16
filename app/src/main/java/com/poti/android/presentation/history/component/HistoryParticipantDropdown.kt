@@ -52,8 +52,10 @@ fun HistoryParticipantDropdown(
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 20.dp,
-                    horizontal = screenWidthDp(16.dp)),
+                .padding(
+                    vertical = 20.dp,
+                    horizontal = screenWidthDp(16.dp),
+                ),
         ) {
             ParticipantDropdownHeader(
                 name = userName,
@@ -109,7 +111,7 @@ private fun ParticipantDropdownHeader(
         Spacer(modifier = Modifier.width(8.dp))
 
         Crossfade(
-            targetState = expanded
+            targetState = expanded,
         ) { expand ->
             Icon(
                 painter = painterResource(
