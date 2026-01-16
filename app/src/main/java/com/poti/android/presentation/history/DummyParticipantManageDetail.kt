@@ -2,13 +2,13 @@ package com.poti.android.presentation.history
 
 import com.poti.android.domain.model.history.ArtistInfo
 import com.poti.android.domain.model.history.ParticipantInfo
-import com.poti.android.domain.model.history.ParticipantManageDetail
+import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.model.history.ProgressInfo
 import com.poti.android.domain.type.ParticipantStatusType
 
 object DummyParticipantManageDetail {
-    val recruitStep = ParticipantManageDetail(
-        recruitId = 1,
+    val recruitStep = RecruiterDetail(
+        partyId = 1,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "IVE(아이브)",
@@ -31,8 +31,8 @@ object DummyParticipantManageDetail {
         )
     )
 
-    val depositStep = ParticipantManageDetail(
-        recruitId = 2,
+    val depositStep = RecruiterDetail(
+        partyId = 2,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "aespa(에스파)",
@@ -71,8 +71,8 @@ object DummyParticipantManageDetail {
         )
     )
 
-    val deliveryDoneStep = ParticipantManageDetail(
-        recruitId = 3,
+    val deliveryDoneStep = RecruiterDetail(
+        partyId = 3,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "NewJeans",
