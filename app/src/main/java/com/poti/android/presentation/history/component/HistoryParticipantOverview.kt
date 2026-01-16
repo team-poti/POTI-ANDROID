@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
@@ -79,14 +80,11 @@ fun HistoryParticipantOverview(
             PotiItemOption(
                 optionType = PotiItemOptionType.PRICE,
                 sizeType = PotiItemOptionSize.SMALL,
-                text = priceText(price),
+                text = price.toMoneyString(),
             )
         }
     }
 }
-
-// TODO: [천민재] 임시 util 함수
-private fun priceText(price: Int) = String.format("%,d원", price)
 
 @Preview(showBackground = true)
 @Composable
