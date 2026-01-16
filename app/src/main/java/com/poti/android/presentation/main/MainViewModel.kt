@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.presentation.auth.navigation.AuthRoute
-import com.poti.android.presentation.onboarding.navigation.OnboardingRoute
+import com.poti.android.presentation.onboarding.navigation.OnboardingGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -20,7 +20,7 @@ class MainViewModel @Inject constructor(
             when {
                 authState.accessToken.isNullOrBlank() -> AuthRoute.Login
 
-                !authState.isOnboardingFinished -> OnboardingRoute.Guide
+                !authState.isOnboardingFinished -> OnboardingGraph
 
                 else -> MainTab.HOME.route
             }

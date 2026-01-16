@@ -10,7 +10,6 @@ import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
-import com.poti.android.presentation.party.home.navigation.navigateToHome
 import com.poti.android.presentation.party.partyNavGraph
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
@@ -29,7 +28,7 @@ fun MainNavHost(
     ) {
         authNavGraph(
             onNavigateToOnboarding = navigator.navController::navigateToOnboardingGuide,
-            onNavigateToHome = navigator.navController::navigateToHome,
+            onNavigateToHome = navigator::navigateToHome,
         )
         onboardingNavGraph(
             navController = navigator.navController,
