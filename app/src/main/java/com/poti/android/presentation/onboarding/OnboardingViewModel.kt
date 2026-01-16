@@ -26,27 +26,10 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
             OnboardingUiIntent.OnBackClick -> sendEffect(OnboardingUiEffect.NavigateToBack)
             OnboardingUiIntent.OnGuideNextClick -> sendEffect(OnboardingUiEffect.NavigateToNickname)
             is OnboardingUiIntent.OnNicknameChange -> handleNicknameChange(intent.value)
-            OnboardingUiIntent.OnNicknameNextClick -> {
-                val currentState = uiState.value
-                if (currentState.nicknameError == null && currentState.nickname.length >= 2) {
-                    checkNicknameDuplication(currentState.nickname)
-                }
-            }
+            OnboardingUiIntent.OnNicknameNextClick -> handleNicknameNextClick()
             is OnboardingUiIntent.OnArtistSelect -> handleArtistSelect(intent.artistId)
-            OnboardingUiIntent.OnStartClick -> {
-                // TODO: [지현] 서버에 데이터 보내는 로직 추가
-                updateState { copy(isButtonVisible = false) }
-                sendEffect(OnboardingUiEffect.NavigateToHome)
-            }
-            OnboardingUiIntent.OnSkipClick -> {
-                updateState {
-                    copy(
-                        selectedArtistId = null,
-                        isButtonVisible = false,
-                    )
-                }
-                sendEffect(OnboardingUiEffect.NavigateToHome)
-            }
+            OnboardingUiIntent.OnStartClick -> handleStartClick()
+            OnboardingUiIntent.OnSkipClick -> handleSkipClick()
         }
     }
 
@@ -93,9 +76,37 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
         }
     }
 
+    private fun handleNicknameNextClick() {
+        val currentState = uiState.value
+
+        if (currentState.nicknameError == null && currentState.nickname.length >= 2) {
+            checkNicknameDuplication(currentState.nickname)
+        } else if (currentState.nickname.length < 2) {
+            updateState {
+                copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_min_length))
+            }
+        }
+    }
+
     private fun handleArtistSelect(artistId: Long) {
         val currentSelectedId = uiState.value.selectedArtistId
         val newSelectedId = if (currentSelectedId == artistId) null else artistId
         updateState { copy(selectedArtistId = newSelectedId) }
+    }
+
+    private fun handleStartClick() {
+        // TODO: [지현] 나중에 여기에 서버 API 호출 로직 추가
+        updateState { copy(isButtonVisible = false) }
+        sendEffect(OnboardingUiEffect.NavigateToHome)
+    }
+
+    private fun handleSkipClick() {
+        updateState {
+            copy(
+                selectedArtistId = null,
+                isButtonVisible = false,
+            )
+        }
+        sendEffect(OnboardingUiEffect.NavigateToHome)
     }
 }
