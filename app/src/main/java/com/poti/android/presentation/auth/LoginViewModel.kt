@@ -3,6 +3,7 @@ package com.poti.android.presentation.auth
 import android.content.Context
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val kakaoLoginManager: KakaoLoginManager,
     private val authRepository: AuthRepository,
+    private val preferenceDataSource: PreferenceDataSource,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
@@ -44,19 +46,25 @@ class LoginViewModel @Inject constructor(
         launchScope {
             authRepository.login(socialType = "KAKAO", token = kakaoToken)
                 .onSuccess { response ->
-                    val loginData = response
+                    preferenceDataSource.saveTokens(
+                        accessToken = response.accessToken,
+                        refreshToken = response.refreshToken,
+                    )
 
-                    updateState { copy(loginState = ApiState.Success(Unit)) }
-
-                    if (loginData.isNewUser) {
-                        Timber.i("신규 회원입니다. 온보딩으로 이동합니다.")
+                    if (response.isNewUser) {
+                        Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
+                        preferenceDataSource.saveOnboardingState(false)
+                        updateState { copy(loginState = ApiState.Success(Unit)) }
                         sendEffect(LoginEffect.NavigateToOnboarding)
                     } else {
-                        Timber.i("기존 회원입니다. 홈으로 이동합니다.")
+                        Timber.i("기존 회원입니다. 온보딩 상태: 완료(true)로 저장 -> 홈으로 이동")
+                        preferenceDataSource.saveOnboardingState(true)
+                        updateState { copy(loginState = ApiState.Success(Unit)) }
                         sendEffect(LoginEffect.NavigateToHome)
                     }
                 }
                 .onFailure { error ->
+                    Timber.e(error, "서버 로그인 실패")
                     updateState { copy(loginState = ApiState.Failure(error.message ?: "Server Error")) }
                 }
         }
