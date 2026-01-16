@@ -2,6 +2,7 @@ package com.poti.android.data.local.datasource
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,15 @@ class PreferenceDataSource @Inject constructor(
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("REFRESH_TOKEN")
+        private val IS_ONBOARDING_FINISHED_KEY = booleanPreferencesKey("IS_ONBOARDING_FINISHED")
+    }
+
+    val accessToken: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[ACCESS_TOKEN_KEY]
+    }
+
+    val refreshToken: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[REFRESH_TOKEN_KEY]
     }
 
     suspend fun saveAccessToken(accessToken: String) = dataStore.edit { prefs ->
@@ -36,12 +46,20 @@ class PreferenceDataSource @Inject constructor(
         prefs[REFRESH_TOKEN_KEY] = refreshToken
     }
 
-    val accessToken: Flow<String?> = dataStore.data.map { prefs ->
-        prefs[ACCESS_TOKEN_KEY]
+    suspend fun saveOnboardingState(isFinished: Boolean) = dataStore.edit { prefs ->
+        prefs[IS_ONBOARDING_FINISHED_KEY] = isFinished
     }
 
-    val refreshToken: Flow<String?> = dataStore.data.map { prefs ->
-        prefs[REFRESH_TOKEN_KEY]
+    data class AuthState(
+        val accessToken: String?,
+        val isOnboardingFinished: Boolean,
+    )
+
+    val authState: Flow<AuthState> = dataStore.data.map { prefs ->
+        AuthState(
+            accessToken = prefs[ACCESS_TOKEN_KEY],
+            isOnboardingFinished = prefs[IS_ONBOARDING_FINISHED_KEY] == true,
+        )
     }
 
     suspend fun clear() {

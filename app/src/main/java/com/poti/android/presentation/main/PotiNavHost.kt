@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
@@ -18,12 +19,13 @@ import com.poti.android.presentation.user.profile.navigation.profileNavGraph
 @Composable
 fun PotiNavHost(
     navigator: PotiNavigator,
+    startDestination: Route,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navigator.navController,
-        startDestination = navigator.startDestination,
+        startDestination = startDestination,
         modifier = modifier.fillMaxSize(),
     ) {
         authNavGraph(
