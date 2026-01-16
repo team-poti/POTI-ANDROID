@@ -35,14 +35,14 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val potiNavigator: PotiNavigator = rememberPotiNavigator()
+            val mainNavigator: MainNavigator = rememberPotiNavigator()
             val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
             PotiTheme {
                 startDestination?.let { destination ->
                     MainScreen(
                         startDestination = destination,
-                        navigator = potiNavigator,
+                        navigator = mainNavigator,
                     )
                 }
             }

@@ -9,7 +9,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 
-class PotiNavigator(
+class MainNavigator(
     val navController: NavHostController,
 ) {
     private val currentDestination: NavDestination?
@@ -40,6 +40,6 @@ class PotiNavigator(
 @Composable
 fun rememberPotiNavigator(
     navController: NavHostController = rememberNavController(),
-): PotiNavigator = remember(navController) {
-    PotiNavigator(navController)
+): MainNavigator = remember(navController) {
+    MainNavigator(navController)
 }

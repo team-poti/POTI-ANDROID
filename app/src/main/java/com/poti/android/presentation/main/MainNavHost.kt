@@ -17,8 +17,8 @@ import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
 
 @Composable
-fun PotiNavHost(
-    navigator: PotiNavigator,
+fun MainNavHost(
+    navigator: MainNavigator,
     startDestination: Route,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
