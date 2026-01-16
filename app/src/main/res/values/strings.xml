@@ -74,5 +74,8 @@
     <string name="create_placeholder_need_member">선택한 멤버가 없어요</string>
     <string name="create_btn_member_edit">멤버 편집</string>
     <string name="create_notice">판매자한테 안내해야 되는 내용...\n어쩌꾸 저쩌꾸\n어ㅓ어아어ㅏㅓㅏㅏㅏㅇ\n우우우우우</string>
+    <string name="create_placeholder_product">상품 종류를 입력해주세요</string>
+    <string name="create_label_product">상품 종류</string>
+    <string name="create_label_delivery">배송 설정</string>
 
 </resources>

@@ -56,8 +56,9 @@ fun EditOptionPrice(
     modifier: Modifier = Modifier,
     isChecked: Boolean? = null,
     onCheckboxClick: (() -> Unit)? = null,
-    onFocusChanged: (Boolean) -> Unit,
+    onFocusChanged: ((Boolean) -> Unit) = {},
     imeAction: ImeAction = ImeAction.Done,
+    enabled: Boolean = true,
 ) {
     val density = LocalDensity.current
     val measurer = rememberTextMeasurer()
@@ -115,6 +116,7 @@ fun EditOptionPrice(
                 transformation = transformation,
                 textStyle = textStyle,
                 onFocusChanged = onFocusChanged,
+                enabled = enabled,
                 modifier = Modifier.width(textWidth),
             )
 
@@ -146,6 +148,7 @@ private fun OptionTextField(
     transformation: VisualTransformation,
     textStyle: TextStyle,
     onFocusChanged: (Boolean) -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -181,6 +184,7 @@ private fun OptionTextField(
         decorationBox = { innerTextField ->
             innerTextField()
         },
+        enabled = enabled,
     )
 }
 

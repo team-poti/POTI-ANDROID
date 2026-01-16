@@ -50,6 +50,7 @@ fun PotiShortTextField(
     trailingIcon: (@Composable () -> Unit)? = null,
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
+    onFocusChanged: ((Boolean) -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -87,7 +88,10 @@ fun PotiShortTextField(
             onNextAction = {
                 focusManager.moveFocus(FocusDirection.Down)
             },
-            onFocusChanged = { isFocused = it },
+            onFocusChanged = {focused ->
+                isFocused = focused
+                onFocusChanged?.invoke(focused)
+            },
             focusRequester = focusRequester,
             singleLine = true,
             trailingIcon = trailingIcon,
