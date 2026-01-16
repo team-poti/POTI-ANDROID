@@ -21,11 +21,11 @@ fun NavController.navigateToProfile(userId: Long) {
 
 fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
-    onBackClick: () -> Unit,
+    onPopBackStack: () -> Unit,
 ) {
     composable<ProfileRoute.Profile> {
         ProfileScreenRoute(
-            onPopBackStack = onBackClick,
+            onPopBackStack = onPopBackStack,
             modifier = Modifier.padding(paddingValues),
         )
     }

@@ -8,67 +8,55 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.user.HistorySummary
+import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.presentation.user.component.HistorySummaryCard
-import com.poti.android.presentation.user.component.HistorySummaryItem
-import com.poti.android.presentation.user.component.HistorySummaryType
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
-import com.poti.android.presentation.user.profile.model.ProfileUiState
-import kotlinx.collections.immutable.toImmutableList
+import com.poti.android.presentation.user.profile.model.ProfileUiEffect
 
 @Composable
 fun ProfileScreenRoute(
     onPopBackStack: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
-    val historyItems = listOf(
-        HistorySummaryItem(
-            type = HistorySummaryType.ALL,
-            titleRes = R.string.user_history_all,
-            count = 7,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.IN_PROGRESS,
-            titleRes = R.string.user_history_ongoing,
-            count = 2,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.FINISHED,
-            titleRes = R.string.user_history_ended,
-            count = 5,
-        ),
-    ).toImmutableList()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val uiState = ProfileUiState(
-        imageUrl = "",
-        nickname = "포티포티포티",
-        email = "poti@app.jam",
-        rating = "4.8",
-        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
-        recruitHistoryItems = historyItems,
-    )
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            ProfileUiEffect.NavigateBack -> onPopBackStack()
+        }
+    }
 
-    ProfileScreen(
-        uiState = uiState,
-        onBackClick = onPopBackStack,
-        modifier = modifier,
-    )
+    uiState.userProfileLoadState.onSuccess { userProfile ->
+        ProfileScreen(
+            userProfile = userProfile,
+            onBackClick = onPopBackStack,
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
 private fun ProfileScreen(
-    uiState: ProfileUiState,
+    userProfile: UserProfile,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -93,23 +81,24 @@ private fun ProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             UserProfile(
-                imageUrl = uiState.imageUrl,
-                nickname = uiState.nickname,
-                email = uiState.email,
+                imageUrl = userProfile.profileImageUrl,
+                nickname = userProfile.nickname,
+                email = userProfile.email,
             )
 
             RatingBadge(
-                rating = uiState.rating,
+                rating = userProfile.ratingAvg.toString(),
             )
 
             UserInfo(
-                infoList = uiState.infoList,
+                activityMessage = userProfile.activityMessage,
+                joinedAt = userProfile.joinedAt,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_recruit),
-                items = uiState.recruitHistoryItems,
+                summary = userProfile.recruitSummary,
                 onItemClick = { type -> },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -120,37 +109,24 @@ private fun ProfileScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
-    val historyItems = listOf(
-        HistorySummaryItem(
-            type = HistorySummaryType.ALL,
-            titleRes = R.string.user_history_all,
-            count = 7,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.IN_PROGRESS,
-            titleRes = R.string.user_history_ongoing,
-            count = 2,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.FINISHED,
-            titleRes = R.string.user_history_ended,
-            count = 5,
-        ),
-    ).toImmutableList()
-
-    val uiState = ProfileUiState(
-        imageUrl = "",
-        nickname = "포티포티포티",
-        email = "poti@app.jam",
-        rating = "4.8",
-        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
-        recruitHistoryItems = historyItems,
-    )
-
     PotiTheme {
         ProfileScreen(
-            uiState = uiState,
-            onBackClick = {},
+            userProfile = UserProfile(
+                userId = 1L,
+                email = "akkma@app.jam",
+                nickname = "분철의 악마",
+                profileImageUrl = "",
+                ratingAvg = 4.8,
+                activityMessage = "최근 3일 이내 활동",
+                joinedAt = "2025-12-28",
+                hasFavoriteArtist = true,
+                recruitSummary = HistorySummary(
+                    total = 7,
+                    inProgress = 2,
+                    completed = 5,
+                ),
+            ),
+            onBackClick = { },
             modifier = Modifier,
         )
     }

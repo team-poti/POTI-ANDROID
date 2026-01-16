@@ -21,11 +21,13 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
-import kotlinx.collections.immutable.toImmutableList
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun UserInfo(
-    infoList: List<String>,
+    activityMessage: String,
+    joinedAt: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -36,12 +38,14 @@ fun UserInfo(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        infoList.forEach { info ->
-            UserInfoItem(
-                infoContent = info,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+        UserInfoItem(
+            infoContent = activityMessage,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        UserInfoItem(
+            infoContent = formatJoinedDate(joinedAt),
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -69,6 +73,16 @@ private fun UserInfoItem(
     }
 }
 
+private fun formatJoinedDate(joinedAt: String): String {
+    return try {
+        val date = LocalDate.parse(joinedAt)
+        val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
+        "${date.format(formatter)} 가입"
+    } catch (e: Exception) {
+        joinedAt
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun UserInfoCardPreview() {
@@ -78,7 +92,8 @@ private fun UserInfoCardPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserInfo(
-                infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
+                activityMessage = "최근 3일 이내 활동",
+                joinedAt = "2025-12-28",
                 modifier = Modifier.width(328.dp),
             )
         }

@@ -1,6 +1,6 @@
 package com.poti.android.domain.model.user
 
-data class Profile(
+data class UserProfile(
     val userId: Long,
     val email: String,
     val nickname: String,
@@ -9,10 +9,10 @@ data class Profile(
     val activityMessage: String,
     val joinedAt: String,
     val hasFavoriteArtist: Boolean,
-    val recruitSummary: RecruitSummary,
+    val recruitSummary: HistorySummary,
 )
 
-data class RecruitSummary(
+data class HistorySummary(
     val total: Int,
     val inProgress: Int,
     val completed: Int,

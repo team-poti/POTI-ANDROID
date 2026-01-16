@@ -1,6 +1,5 @@
 package com.poti.android.presentation.user.component
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -29,10 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlin.collections.forEachIndexed
-import kotlin.collections.lastIndex
+import com.poti.android.domain.model.user.HistorySummary
 
 enum class HistorySummaryType {
     ALL,
@@ -40,16 +36,10 @@ enum class HistorySummaryType {
     FINISHED,
 }
 
-data class HistorySummaryItem(
-    val type: HistorySummaryType,
-    @StringRes val titleRes: Int,
-    val count: Int,
-)
-
 @Composable
 fun HistorySummaryCard(
     title: String,
-    items: ImmutableList<HistorySummaryItem>,
+    summary: HistorySummary,
     onItemClick: (HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -75,25 +65,42 @@ fun HistorySummaryCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            items.forEachIndexed { index, item ->
+            HistoryItem(
+                title = stringResource(R.string.user_history_all),
+                count = summary.total,
+                onClick = { onItemClick(HistorySummaryType.ALL) },
+                modifier = Modifier.weight(1f),
+            )
 
-                HistoryItem(
-                    title = stringResource(item.titleRes),
-                    count = item.count,
-                    onClick = { onItemClick(item.type) },
-                    modifier = Modifier.weight(1f),
-                )
+            VerticalDivider(
+                modifier = Modifier
+                    .height(56.dp)
+                    .clip(CircleShape),
+                thickness = 1.dp,
+                color = PotiTheme.colors.gray300,
+            )
 
-                if (index != items.lastIndex) {
-                    VerticalDivider(
-                        modifier = Modifier
-                            .height(56.dp)
-                            .clip(CircleShape),
-                        thickness = 1.dp,
-                        color = PotiTheme.colors.gray300,
-                    )
-                }
-            }
+            HistoryItem(
+                title = stringResource(R.string.user_history_ongoing),
+                count = summary.inProgress,
+                onClick = { onItemClick(HistorySummaryType.IN_PROGRESS) },
+                modifier = Modifier.weight(1f),
+            )
+
+            VerticalDivider(
+                modifier = Modifier
+                    .height(56.dp)
+                    .clip(CircleShape),
+                thickness = 1.dp,
+                color = PotiTheme.colors.gray300,
+            )
+
+            HistoryItem(
+                title = stringResource(R.string.user_history_ended),
+                count = summary.completed,
+                onClick = { onItemClick(HistorySummaryType.FINISHED) },
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
@@ -138,23 +145,11 @@ private fun HistoryItem(
 @Preview(showBackground = true)
 @Composable
 private fun HistorySummaryCardPreview() {
-    val items = listOf(
-        HistorySummaryItem(
-            type = HistorySummaryType.ALL,
-            titleRes = R.string.user_history_all,
-            count = 3,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.IN_PROGRESS,
-            titleRes = R.string.user_history_ongoing,
-            count = 2,
-        ),
-        HistorySummaryItem(
-            type = HistorySummaryType.FINISHED,
-            titleRes = R.string.user_history_ended,
-            count = 1,
-        ),
-    ).toImmutableList()
+    val summary = HistorySummary(
+        total = 7,
+        inProgress = 2,
+        completed = 5,
+    )
 
     PotiTheme {
         Column(
@@ -163,16 +158,15 @@ private fun HistorySummaryCardPreview() {
         ) {
             HistorySummaryCard(
                 title = "참여 내역",
-                items = items,
+                summary = summary,
                 onItemClick = {},
                 modifier = Modifier.width(328.dp),
             )
 
             HistorySummaryCard(
                 title = "참여 내역",
-                items = items,
+                summary = summary,
                 onItemClick = {},
-                modifier = Modifier,
             )
         }
     }
