@@ -48,7 +48,7 @@ fun CreateMemberSetting(
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
 
-    val screenHeight = remember (configuration.screenHeightDp){
+    val screenHeight = remember(configuration.screenHeightDp) {
         with(density) {
             configuration.screenHeightDp.dp.roundToPx()
         }

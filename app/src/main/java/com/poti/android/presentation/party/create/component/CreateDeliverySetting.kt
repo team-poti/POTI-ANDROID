@@ -29,7 +29,7 @@ fun CreateDeliverySetting(
                 horizontal = screenWidthDp(16.dp),
                 vertical = 24.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Text(
             text = stringResource(R.string.create_label_delivery),
@@ -38,7 +38,7 @@ fun CreateDeliverySetting(
         )
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             deliveryOptions.forEach { option ->
                 EditOptionPrice(

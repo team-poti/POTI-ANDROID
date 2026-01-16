@@ -88,7 +88,7 @@ fun PotiShortTextField(
             onNextAction = {
                 focusManager.moveFocus(FocusDirection.Down)
             },
-            onFocusChanged = {focused ->
+            onFocusChanged = { focused ->
                 isFocused = focused
                 onFocusChanged?.invoke(focused)
             },

@@ -64,7 +64,7 @@ fun CreateProductDropdownField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = screenWidthDp(16.dp)),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         PotiShortTextField(
             value = value,
@@ -75,7 +75,7 @@ fun CreateProductDropdownField(
                 .zIndex(1f),
             label = stringResource(R.string.create_label_product),
             error = fieldErrorMsg,
-            onFocusChanged = { isFocused = it }
+            onFocusChanged = { isFocused = it },
         )
 
         AnimatedVisibility(
@@ -133,13 +133,13 @@ private fun CreateProductDropdownFieldPrev() {
             value = text,
             onValueChanged = { text = it },
             searchResults = when (text) {
-                    "옵션" -> searchResults2
-                    "옵션2" -> searchResults3
-                    else -> searchResults1
+                "옵션" -> searchResults2
+                "옵션2" -> searchResults3
+                else -> searchResults1
             },
             onItemClick = { text = it },
             fieldErrorMsg = "에러 메시지",
-            modifier = Modifier.padding(top = 100.dp)
+            modifier = Modifier.padding(top = 100.dp),
         )
     }
 }
