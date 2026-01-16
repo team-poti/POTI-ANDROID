@@ -46,7 +46,7 @@
     <string name="history_participant_stage_done">완료</string>
     <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
     <string name="history_callout_copy">복사</string>
-  
+
     <!-- Exploration Component -->
     <string name="goods_card_party_count">팟 %1$d개</string>
     <string name="pots_card_closed">마감</string>
@@ -58,5 +58,9 @@
     <string name="create_label_won">원</string>
     <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
 
+    <!-- Home -->
+    <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
+    <string name="home_other_goods">다른 굿즈 구경하기</string>
+    <string name="home_more">더보기</string>
 
 </resources>
