@@ -19,8 +19,23 @@
     <string name="action_button_continue">계속</string>
     <string name="action_button_select_all">전체 선택</string>
 
+    <!-- Onboarding -->
+    <string name="onboarding_guide_label">공동구매부터 분철 정산까지\n한 번에 관리해요</string>
+    <string name="onboarding_nickname_label">포티에서 사용할 닉네임을\n입력해주세요</string>
+    <string name="onboarding_nickname_field_placeholder">닉네임을 입력해주세요</string>
+    <string name="onboarding_artist_label">%s님의 최애 그룹 한 팀을 선택해주세요</string>
+    <string name="onboarding_nickname_error_special_characters">사용할 수 없는 문자가 있어요</string>
+    <string name="onboarding_nickname_error_min_length">2글자 이상 적어주세요</string>
+
     <!-- Party -->
     <string name="party_recruit_deadline">모집 기한</string>
+
+    <!-- Exploration -->
+    <string name="goods_card_party_count">팟 %1$d개</string>
+    <string name="pots_card_closed">마감</string>
+    <string name="pots_card_current_count">%1$d</string>
+    <string name="pots_card_total_count">/%1$d</string>
+    <string name="pots_card_per_person">/ 인</string>
 
     <!-- PartyDetail -->
     <string name="party_detail_title">%s의 팟</string>
@@ -36,7 +51,11 @@
     <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
     <string name="party_detail_join_party">분철팟 참여하기</string>
 
-    <!-- History Component -->
+    <!-- PartyCreate -->
+    <string name="create_label_won">원</string>
+    <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
+
+    <!-- History -->
     <string name="history_participant_stage_deposit">입금</string>
     <string name="history_participant_stage_delivery">배송</string>
     <string name="history_participant_stage_recruit">모집</string>
@@ -46,17 +65,23 @@
     <string name="history_participant_stage_done">완료</string>
     <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
     <string name="history_callout_copy">복사</string>
+    <string name="history_participant_field_type_name">이름</string>
+    <string name="history_participant_field_type_deposit">입금 정보</string>
+    <string name="history_participant_field_type_delivery">배송 정보</string>
+    <string name="history_participant_field_type_contact">연락처</string>
+    <string name="history_participant_field_type_invoice">송장 번호</string>
+    <string name="history_participant_field_deposit_label">입금 확인</string>
+    <string name="history_participant_field_delivery_label">송장 번호 입력</string>
+    <string name="history_participant_detail_deposit_label">입금 금액</string>
+    <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
+    <string name="history_participant_detail_won_unit_format">%s원</string>
 
-    <!-- Exploration Component -->
-    <string name="goods_card_party_count">팟 %1$d개</string>
-    <string name="pots_card_closed">마감</string>
-    <string name="pots_card_current_count">%1$d</string>
-    <string name="pots_card_total_count">/%1$d</string>
-    <string name="pots_card_per_person">/ 인</string>
-
-    <!-- Create Component -->
-    <string name="create_label_won">원</string>
-    <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
+    <!-- User Component -->
+    <string name="user_history_recruit">모집 내역</string>
+    <string name="user_history_participate">참여 내역</string>
+    <string name="user_history_all">전체</string>
+    <string name="user_history_ongoing">진행중</string>
+    <string name="user_history_ended">종료</string>
 
     <!-- Home -->
     <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>

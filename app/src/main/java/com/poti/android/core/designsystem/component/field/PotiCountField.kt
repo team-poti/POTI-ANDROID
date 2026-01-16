@@ -51,7 +51,7 @@ fun PotiCountField(
     maxLength: Int,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
-    label: String = "",
+    label: String? = null,
     error: String = "",
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
@@ -72,11 +72,13 @@ fun PotiCountField(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        FieldLabel(label)
+        label?.let { FieldLabel(it) }
 
         PotiBasicField(
             value = value,
-            onValueChanged = onValueChanged,
+            onValueChanged = { newValue ->
+                onValueChanged(newValue.take(maxLength))
+            },
             placeholder = placeholder,
             borderColor = status.borderColor,
             backgroundColor = PotiTheme.colors.white,

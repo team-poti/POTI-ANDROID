@@ -27,7 +27,9 @@ fun PotiNavHost(
             paddingValues = paddingValues,
         )
         onboardingNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
+            onNavigateToHome = navigator::navigateToHome,
         )
         partyNavGraph(
             navController = navigator.navController,
@@ -41,6 +43,7 @@ fun PotiNavHost(
         )
         profileNavGraph(
             paddingValues = paddingValues,
+            onPopBackStack = navigator.navController::popBackStack,
         )
     }
 }

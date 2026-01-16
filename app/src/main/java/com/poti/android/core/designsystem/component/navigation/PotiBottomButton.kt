@@ -19,6 +19,7 @@ fun PotiBottomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
 ) {
@@ -41,7 +42,8 @@ fun PotiBottomButton(
         PotiActionButton(
             text = text,
             onClick = onClick,
-            type = ActionButtonType.PRIMARY_MAIN,
+            type = if (enabled) ActionButtonType.PRIMARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
+            enabled = enabled,
             modifier = Modifier.weight(216f),
         )
     }

@@ -16,10 +16,6 @@ sealed interface HomeRoute : Route {
     data object Home : HomeRoute
 }
 
-fun NavController.navigateToHome() {
-    navigate(HomeRoute.Home)
-}
-
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
