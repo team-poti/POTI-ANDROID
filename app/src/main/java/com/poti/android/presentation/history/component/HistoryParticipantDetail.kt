@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.R
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -34,7 +35,6 @@ import com.poti.android.core.designsystem.component.display.PotiListOptionPriceS
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
-import java.util.Locale
 
 // TODO [천민재] 맵핑 확장함수 추후 구현
 data class DepositItem(
@@ -134,7 +134,6 @@ fun HistoryParticipantDetail(
             .clip(RoundedCornerShape(12.dp))
             .background(colors.gray100)
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -163,6 +162,7 @@ fun HistoryParticipantDetail(
 
         PotiDivider(
             styleType = PotiDividerStyle.SMALL,
+            modifier = Modifier.padding(vertical = 16.dp),
         )
 
         Column(
@@ -181,7 +181,7 @@ fun HistoryParticipantDetail(
                     PotiListOptionPrice(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
-                        priceText = priceText(item.price),
+                        priceText = item.price.toMoneyString(),
                         sizeType = PotiListOptionPriceSize.SMALL,
                     )
                 }
@@ -203,7 +203,7 @@ fun HistoryParticipantDetail(
                     )
 
                     Text(
-                        text = priceText(totalPrice),
+                        text = totalPrice.toMoneyString(),
                         style = typography.body16sb,
                         color = colors.black,
                     )
@@ -211,49 +211,47 @@ fun HistoryParticipantDetail(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            detailState.fields.forEach { (field, value) ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Text(
-                        text = stringResource(field.labelId),
-                        style = typography.body14sb,
-                        color = colors.black,
-                    )
-                    Text(
-                        text = value,
-                        style = typography.body14m,
-                        color = colors.black,
-                    )
+        if (detailState !is DetailState.Default) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                detailState.fields.forEach { (field, value) ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Text(
+                            text = stringResource(field.labelId),
+                            style = typography.body14sb,
+                            color = colors.black,
+                        )
+                        Text(
+                            text = value,
+                            style = typography.body14m,
+                            color = colors.black,
+                        )
+                    }
                 }
             }
-        }
-        if (detailState.onButtonClick != null && detailState.buttonLabelId != null) {
-            PotiInlineButton(
-                text = stringResource(detailState.buttonLabelId!!),
-                onClick = detailState.onButtonClick!!,
-                showIcon = false,
-                modifier = Modifier
-                    .fillMaxWidth(),
-            )
+
+            val onButtonClick = detailState.onButtonClick
+            val buttonLabelId = detailState.buttonLabelId
+            if (onButtonClick != null && buttonLabelId != null) {
+                PotiInlineButton(
+                    text = stringResource(buttonLabelId),
+                    onClick = onButtonClick,
+                    showIcon = false,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
         }
     }
 }
-
-// TODO: [천민재] 임시 함수
-private fun priceText(price: Int) = String.format(
-    locale = Locale.KOREA,
-    format = "%,d원",
-    price,
-)
 
 @Preview(showBackground = true)
 @Composable

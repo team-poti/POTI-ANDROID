@@ -3,7 +3,6 @@ package com.poti.android.presentation.history.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,36 +43,32 @@ fun HistoryParticipantDropdown(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(PotiTheme.colors.white),
+            .background(PotiTheme.colors.white)
+            .padding(
+                vertical = 20.dp,
+                horizontal = screenWidthDp(16.dp),
+            ),
     ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    vertical = 20.dp,
-                    horizontal = screenWidthDp(16.dp),
-                ),
-        ) {
-            ParticipantDropdownHeader(
-                name = userName,
-                stageType = stageType,
-                statusType = statusType,
-                expanded = isExpanded,
-                onToggle = { onToggle() },
+        ParticipantDropdownHeader(
+            name = userName,
+            stageType = stageType,
+            statusType = statusType,
+            expanded = isExpanded,
+            onToggle = { onToggle() },
+        )
+        AnimatedVisibility(visible = isExpanded) {
+            HistoryParticipantDetail(
+                userName = userName,
+                userImageUrl = userImageUrl,
+                depositItems = depositItems,
+                detailState = detailState,
+                totalPrice = depositTotalPrice,
+                modifier = Modifier.padding(top = 20.dp),
             )
-            AnimatedVisibility(visible = isExpanded) {
-                HistoryParticipantDetail(
-                    userName = userName,
-                    userImageUrl = userImageUrl,
-                    depositItems = depositItems,
-                    detailState = detailState,
-                    totalPrice = depositTotalPrice,
-                    modifier = Modifier.padding(top = 20.dp),
-                )
-            }
         }
     }
 }
