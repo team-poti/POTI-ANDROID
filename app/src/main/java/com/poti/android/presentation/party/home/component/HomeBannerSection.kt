@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -21,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.core.designsystem.component.display.PotiPagination
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.party.home.model.BannerUiModel
+import com.poti.android.domain.model.home.Banner
 
 @Composable
 fun HomeBannerSection(
-    banners: List<BannerUiModel>,
+    banners: List<Banner>,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState { banners.size }
@@ -63,16 +64,14 @@ fun HomeBannerSection(
 
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .matchParentSize()
-                .clip(RoundedCornerShape(12.dp)),
+            modifier = Modifier.matchParentSize(),
         ) { page ->
             AsyncImage(
                 model = banners[page].imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .matchParentSize()
-                    // .clip(RoundedCornerShape(12.dp))
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(12.dp))
                     .background(PotiTheme.colors.gray100),
                 contentScale = ContentScale.Crop,
             )
@@ -81,7 +80,7 @@ fun HomeBannerSection(
         PotiPagination(
             maxSize = banners.size,
             stage = pagerState.currentPage + 1,
-            modifier = Modifier.padding(bottom = 22.dp),
+            modifier = Modifier.padding(bottom = 10.dp),
         )
     }
 }
@@ -97,9 +96,9 @@ private fun HomeBannerSectionPreview() {
         ) {
             HomeBannerSection(
                 banners = listOf(
-                    BannerUiModel(1, ""),
-                    BannerUiModel(2, ""),
-                    BannerUiModel(3, ""),
+                    Banner(1, "https://cdn.womansense.co.kr/news/photo/202507/60429_201513_4257.jpg"),
+                    Banner(2, "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/dn/2024/01/06/news_1704518501_1314695_m_1.jpeg"),
+                    Banner(3, "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/201706/07/bbcf94e4-b533-4a5e-82c8-b7bc576cd8a0.jpg"),
                 ),
                 modifier = Modifier,
             )

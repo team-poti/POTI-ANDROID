@@ -20,28 +20,28 @@ import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.home.Banner
+import com.poti.android.domain.model.home.GroupItem
+import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
-import com.poti.android.presentation.party.home.model.BannerUiModel
-import com.poti.android.presentation.party.home.model.GroupItemUiModel
-import com.poti.android.presentation.party.home.model.HomeUiState
 
 val fakeMyGroupItems = listOf(
-    GroupItemUiModel(
+    GroupItem(
         postTitle = "2026 시즌 콘서트 후드",
         artist = "아이유",
         postImage = "",
         postCount = 3,
         tag = "인기",
     ),
-    GroupItemUiModel(
+    GroupItem(
         postTitle = "공식 응원봉 Ver.2",
         artist = "아이유",
         postImage = "",
         postCount = 12,
         tag = "NEW",
     ),
-    GroupItemUiModel(
+    GroupItem(
         postTitle = "월드투어 포토북",
         artist = "아이유",
         postImage = "",
@@ -56,12 +56,12 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
 ) {
     HomeScreen(
-        uiState = HomeUiState(
+        uiState = HomeContent(
             nickname = "포티",
             banners = listOf(
-                BannerUiModel(1, ""),
-                BannerUiModel(2, ""),
-                BannerUiModel(3, ""),
+                Banner(1, ""),
+                Banner(2, ""),
+                Banner(3, ""),
             ),
             myGroupItems = fakeMyGroupItems,
             otherGroupItems = fakeMyGroupItems,
@@ -74,7 +74,7 @@ fun HomeRoute(
 
 @Composable
 private fun HomeScreen(
-    uiState: HomeUiState,
+    uiState: HomeContent,
     onCardClick: () -> Unit,
     onFloatingClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -142,12 +142,12 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     PotiTheme {
         HomeScreen(
-            uiState = HomeUiState(
+            uiState = HomeContent(
                 nickname = "포티",
                 banners = listOf(
-                    BannerUiModel(1, ""),
-                    BannerUiModel(2, ""),
-                    BannerUiModel(3, ""),
+                    Banner(1, ""),
+                    Banner(2, ""),
+                    Banner(3, ""),
                 ),
                 myGroupItems = fakeMyGroupItems,
                 otherGroupItems = fakeMyGroupItems,

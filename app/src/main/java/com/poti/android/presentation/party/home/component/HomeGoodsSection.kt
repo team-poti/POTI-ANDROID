@@ -20,14 +20,14 @@ import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiTextButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.home.GroupItem
 import com.poti.android.presentation.party.home.fakeMyGroupItems
-import com.poti.android.presentation.party.home.model.GroupItemUiModel
 
 @Composable
 fun HomeGoodsSection(
     @StringRes title: Int,
     nickname: String,
-    groupItems: List<GroupItemUiModel>,
+    groupItems: List<GroupItem>,
     onCardClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +70,7 @@ fun HomeGoodsSection(
                     partyCount = item.postCount.toInt(),
                     tag = item.tag,
                     onClick = {
-                        // TODO: 상세 이동
+                        // TODO: [예림] 상세 이동
                         onCardClick
                     },
                 )
