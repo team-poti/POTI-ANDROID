@@ -56,6 +56,16 @@
     <string name="history_participant_detail_deposit_label">입금 금액</string>
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
     <string name="history_participant_detail_won_unit_format">%s원</string>
+    <string name="history_step_recruit_complete">모집 완료</string>
+    <string name="history_step_deposit_complete">입금 완료</string>
+    <string name="history_step_delivery_start">배송 시작</string>
+    <string name="history_step_delivery_complete">배송 완료</string>
+    <string name="history_ongoing_title">진행 중인 분철</string>
+    <string name="history_recruit_number">모집번호 %s</string>
+    <string name="history_progress_status_title">진행 상황</string>
+    <string name="history_state_guide_waiting">참여자들을 기다리고 있어요</string>
+    <string name="history_participant_management_title">참여자 관리 (%d)</string>
+    <string name="history_no_participants">아직 참여자가 없어요</string>
 
     <!-- Exploration Component -->
     <string name="goods_card_party_count">팟 %1$d개</string>
@@ -67,6 +77,4 @@
     <!-- Create Component -->
     <string name="create_label_won">원</string>
     <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
-
-
 </resources>

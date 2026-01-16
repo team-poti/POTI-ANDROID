@@ -56,6 +56,6 @@ fun NavGraphBuilder.historyNavGraph(
         RecruiterDetailRoute(modifier = Modifier.padding(paddingValues))
     }
     composable<HistoryRoute.ParticipantManage> {
-        ParticipantManageRoute(modifier = Modifier.padding(paddingValues))
+        ParticipantManageRoute(modifier = Modifier.padding(paddingValues), onBackClick = {} )
     }
 }
