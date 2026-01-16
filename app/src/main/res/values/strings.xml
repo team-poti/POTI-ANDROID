@@ -68,6 +68,15 @@
     <string name="history_participant_stage_done">완료</string>
     <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
     <string name="history_callout_copy">복사</string>
-
+    <string name="history_participant_field_type_name">이름</string>
+    <string name="history_participant_field_type_deposit">입금 정보</string>
+    <string name="history_participant_field_type_delivery">배송 정보</string>
+    <string name="history_participant_field_type_contact">연락처</string>
+    <string name="history_participant_field_type_invoice">송장 번호</string>
+    <string name="history_participant_field_deposit_label">입금 확인</string>
+    <string name="history_participant_field_delivery_label">송장 번호 입력</string>
+    <string name="history_participant_detail_deposit_label">입금 금액</string>
+    <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
+    <string name="history_participant_detail_won_unit_format">%s원</string>
 
 </resources>
