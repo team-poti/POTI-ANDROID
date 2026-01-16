@@ -2,6 +2,8 @@ package com.poti.android.presentation.party.create.model
 
 import android.net.Uri
 import android.view.MenuItem
+import androidx.annotation.StringRes
+import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
@@ -17,15 +19,15 @@ enum class MemberSettingStatus {
 }
 
 enum class FieldError(
-    val message: String,
+    @get:StringRes val message: Int,
 ) {
-    IMAGE_ERROR("사진을 1장 이상 등록해주세요"),
-    ARTIST_ERROR("아티스트를 선택해주세요"),
-    PRODUCT_ERROR("상품 종류를 입력해주세요"),
-    DEADLINE_ERROR("모집 기한을 선택해주세요"),
-    DESCRIPTION_ERROR("설명을 입력해주세요"),
-    ACCOUNT_NUMBER_ERROR("계좌번호를 입력해주세요"),
-    BANK_ERROR("은행 정보를 입력해주세요"),
+    IMAGE_ERROR(R.string.create_error_need_image),
+    ARTIST_ERROR(R.string.create_error_need_artist),
+    PRODUCT_ERROR(R.string.create_error_need_product),
+    DEADLINE_ERROR(R.string.create_error_need_deadline),
+    DESCRIPTION_ERROR(R.string.create_error_need_description),
+    ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
+    BANK_ERROR(R.string.create_error_need_bank),
 }
 
 data class CreateUiState(

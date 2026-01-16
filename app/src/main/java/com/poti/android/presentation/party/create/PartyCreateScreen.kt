@@ -142,7 +142,7 @@ private fun PartyCreateScreen(
 
                 uiState.imageError?.let { error ->
                     PotiErrorMessage(
-                        message = error.message,
+                        message = stringResource(error.message),
                         modifier = Modifier
                             .padding(horizontal = screenWidthDp(16.dp)),
                     )
@@ -160,7 +160,7 @@ private fun PartyCreateScreen(
                         .padding(bottom = 28.dp),
                     enabled = false,
                     label = stringResource(R.string.create_label_artist),
-                    error = uiState.artistError?.message ?: "",
+                    error = uiState.artistError?.let { stringResource(it.message) } ?: "",
                     trailingIcon = {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_search),
@@ -180,7 +180,7 @@ private fun PartyCreateScreen(
                     onItemClick = onProductSearchItemClick,
                     modifier = Modifier
                         .padding(bottom = 28.dp),
-                    fieldErrorMsg = uiState.productError?.message ?: "",
+                    fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
                 )
             }
 
@@ -193,7 +193,7 @@ private fun PartyCreateScreen(
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_deadline),
-                    error = uiState.deadlineError?.message ?: "",
+                    error = uiState.deadlineError?.let { stringResource(it.message) } ?: "",
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next,
                 )
@@ -208,7 +208,7 @@ private fun PartyCreateScreen(
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_description),
-                    error = uiState.descriptionError?.message ?: "",
+                    error = uiState.descriptionError?.let { stringResource(it.message) } ?: "",
                 )
             }
 
@@ -216,12 +216,12 @@ private fun PartyCreateScreen(
                 PotiShortTextField(
                     value = uiState.accountNumber,
                     onValueChanged = onAccountNumberChanged,
-                    placeholder = "계좌번호를 정확히 입력해주세요",
+                    placeholder = stringResource(R.string.create_placeholder_account_number),
                     modifier = Modifier
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
-                    label = "계좌번호",
-                    error = uiState.accountNumberError?.message ?: "",
+                    label = stringResource(R.string.create_label_account_number),
+                    error = uiState.accountNumberError?.let { stringResource(it.message) } ?: "",
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next,
                 )
@@ -236,7 +236,7 @@ private fun PartyCreateScreen(
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 24.dp),
                     label = stringResource(R.string.create_label_bank),
-                    error = uiState.bankError?.message ?: "",
+                    error = uiState.bankError?.let { stringResource(it.message) } ?: "",
                 )
             }
 
