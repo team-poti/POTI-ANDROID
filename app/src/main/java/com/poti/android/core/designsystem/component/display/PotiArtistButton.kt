@@ -28,6 +28,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.BlackA40
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
@@ -49,7 +50,7 @@ fun PotiArtistButton(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(90.dp)
+                .size(screenWidthDp(90.dp))
                 .clip(CircleShape)
                 .noRippleClickable(onClick = onClick),
         ) {
