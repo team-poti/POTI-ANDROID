@@ -2,8 +2,8 @@ package com.poti.android.domain.model.history
 
 import com.poti.android.domain.type.ParticipantStatusType
 
-data class ParticipantManage(
-    val recruitId: String,
+data class ParticipantManageDetail(
+    val recruitId: Int,
     val artistInfo: ArtistInfo,
     val progressInfo: ProgressInfo,
     val participantInfoList: List<ParticipantInfo>,
@@ -23,9 +23,10 @@ data class ProgressInfo(
 )
 
 data class ParticipantInfo(
-    val artist: String,
+    val userId: Int,
+    val memberNames: String,
     val participantState: ParticipantStatusType,
     val userInfo: String,
-    val deliveryOption: String,
+    val deliveryMethod: String,
     val deliveryPrice: Int
 )
