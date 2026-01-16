@@ -58,7 +58,6 @@ private fun OnboardingNicknameScreen(
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingArtist,
         modifier = modifier,
-        enabled = uiState.isNicknameValid,
     ) {
         Text(
             text = stringResource(R.string.onboarding_nickname_label),
