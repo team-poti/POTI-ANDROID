@@ -46,11 +46,6 @@ class LoginViewModel @Inject constructor(
         launchScope {
             authRepository.login(socialType = "KAKAO", token = kakaoToken)
                 .onSuccess { response ->
-                    preferenceDataSource.saveTokens(
-                        accessToken = response.accessToken,
-                        refreshToken = response.refreshToken,
-                    )
-
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
                         preferenceDataSource.saveOnboardingState(false)

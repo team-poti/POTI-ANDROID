@@ -1,4 +1,4 @@
-package com.poti.android.core.network.interceptor
+package com.poti.android.data.network
 
 import com.poti.android.core.network.model.AuthType
 import com.poti.android.data.local.datasource.PreferenceDataSource
@@ -17,7 +17,7 @@ class AuthInterceptor @Inject constructor(
         val authType = originalRequest.header("Auth-Type")
         val url = originalRequest.url.toString()
 
-        Timber.tag("AuthInterceptor").d("Intercepting: $url | AuthType: ${authType ?: "None"}")
+        Timber.Forest.tag("AuthInterceptor").d("Intercepting: $url | AuthType: ${authType ?: "None"}")
 
         if (authType == null || authType == AuthType.NO_AUTH) {
             val newRequest = originalRequest.newBuilder()
@@ -31,7 +31,7 @@ class AuthInterceptor @Inject constructor(
         }
 
         if (accessToken.isNullOrBlank()) {
-            Timber.tag("AuthInterceptor").w("AccessToken is empty. Proceeding without header.")
+            Timber.Forest.tag("AuthInterceptor").w("AccessToken is empty. Proceeding without header.")
             val newRequest = originalRequest.newBuilder()
                 .removeHeader("Auth-Type")
                 .build()
@@ -44,15 +44,15 @@ class AuthInterceptor @Inject constructor(
 
         when (authType) {
             AuthType.BEARER -> {
-                Timber.tag("AuthInterceptor").d("Injecting Bearer Token")
+                Timber.Forest.tag("AuthInterceptor").d("Injecting Bearer Token")
                 builder.addHeader("Authorization", "Bearer $accessToken")
             }
             AuthType.RAW -> {
-                Timber.tag("AuthInterceptor").d("Injecting Raw Token")
+                Timber.Forest.tag("AuthInterceptor").d("Injecting Raw Token")
                 builder.addHeader("Authorization", accessToken)
             }
             AuthType.ACCESS_TOKEN -> {
-                Timber.tag("AuthInterceptor").d("Injecting Access-Token Header")
+                Timber.Forest.tag("AuthInterceptor").d("Injecting Access-Token Header")
                 builder.addHeader("Access-Token", accessToken)
             }
             else -> {

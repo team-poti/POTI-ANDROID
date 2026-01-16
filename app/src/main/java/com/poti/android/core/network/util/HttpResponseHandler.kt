@@ -36,8 +36,10 @@ class HttpResponseHandler @Inject constructor(
         }.getOrNull()
 
         val serverMsg = errorResponse?.message ?: e.message()
+        val serverCode = errorResponse?.code
+
         return when (e.code()) {
-            400 -> NetworkError.BadRequest(serverMsg)
+            400 -> NetworkError.BadRequest(serverCode, serverMsg)
             401 -> NetworkError.Unauthorized(serverMsg)
             403 -> NetworkError.Forbidden(serverMsg)
             404 -> NetworkError.NotFound(serverMsg)

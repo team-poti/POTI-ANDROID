@@ -30,6 +30,8 @@
     <string name="onboarding_artist_label">%s님의 최애 그룹 한 팀을 선택해주세요</string>
     <string name="onboarding_nickname_error_special_characters">사용할 수 없는 문자가 있어요</string>
     <string name="onboarding_nickname_error_min_length">2글자 이상 적어주세요</string>
+    <string name="onboarding_nickname_error_duplicate">사용중인 닉네임이에요</string>
+    <string name="onboarding_nickname_error_server">잠시후 다시 시도해주세요</string>
 
 
     <!-- Party -->

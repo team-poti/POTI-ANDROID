@@ -1,8 +1,8 @@
-package com.poti.android.core.network.di
+package com.poti.android.data.di
 
 import com.poti.android.BuildConfig
-import com.poti.android.core.network.interceptor.AuthInterceptor
-import com.poti.android.core.network.interceptor.TokenAuthenticator
+import com.poti.android.data.network.AuthInterceptor
+import com.poti.android.data.network.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

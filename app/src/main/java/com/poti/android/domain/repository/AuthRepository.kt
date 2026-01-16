@@ -1,6 +1,6 @@
 package com.poti.android.domain.repository
 
-import com.poti.android.domain.model.UserAuth
+import com.poti.android.domain.model.auth.UserAuth
 
 interface AuthRepository {
     suspend fun login(

@@ -3,6 +3,8 @@ package com.poti.android.presentation.onboarding
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.network.model.NetworkError
+import com.poti.android.domain.repository.UserRepository
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
@@ -14,9 +16,11 @@ import javax.inject.Inject
 private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
-    initialState = OnboardingUiState(),
-) {
+class OnboardingViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+) : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
+        initialState = OnboardingUiState(),
+    ) {
     init {
         fetchArtists()
     }
@@ -58,22 +62,30 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
     private fun checkNicknameDuplication(nickname: String) = launchScope {
         Timber.d("닉네임 중복 및 비속어 확인 요청: $nickname")
 
-        val isDuplicate = false
-        val isProfanity = false
-
-        if (isDuplicate) {
-            // TODO: [지현] 닉네임 중복 처리
-        } else if (isProfanity) {
-            // TODO: [지현] 비속어 처리
-        } else {
-            updateState {
-                copy(
-                    nicknameError = null,
-                    isNicknameValid = true,
-                )
+        userRepository.postNicknameDuplicate(nickname)
+            .onSuccess { isDuplicated ->
+                updateState {
+                    copy(
+                        nicknameError = null,
+                        isNicknameValid = true,
+                    )
+                }
+                sendEffect(OnboardingUiEffect.NavigateToArtist)
             }
-            sendEffect(OnboardingUiEffect.NavigateToArtist)
-        }
+            .onFailure { error ->
+                if (error is NetworkError.BadRequest) {
+                    when (error.code) {
+                        40003 -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) } 
+                        }
+                        else -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
+                        }
+                    }
+                } else {
+                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+                }
+            }
     }
 
     private fun handleNicknameNextClick() {

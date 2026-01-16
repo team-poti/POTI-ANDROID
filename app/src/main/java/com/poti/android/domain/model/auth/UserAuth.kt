@@ -1,4 +1,4 @@
-package com.poti.android.domain.model
+package com.poti.android.domain.model.auth
 
 data class UserAuth(
     val accessToken: String,
