@@ -1,18 +1,163 @@
 package com.poti.android.presentation.user.mypage
 
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.poti.android.R
+import com.poti.android.core.common.util.screenHeightDp
+import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
+import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.user.HistorySummary
+import com.poti.android.domain.model.user.UserMyPage
+import com.poti.android.presentation.user.component.BadgeButton
+import com.poti.android.presentation.user.component.HistorySummaryCard
+import com.poti.android.presentation.user.component.RatingBadge
+import com.poti.android.presentation.user.component.UserInfo
+import com.poti.android.presentation.user.component.UserProfile
 
 @Composable
-fun MyPageRoute(modifier: Modifier = Modifier) {
-    MyPageScreen(modifier = modifier)
+fun MyPageRoute(
+    modifier: Modifier = Modifier,
+) {
+    MyPageScreen(
+        userMyPage = UserMyPage(
+            userId = 1L,
+            nickname = "분철의 악마",
+            email = "akkma@app.jam",
+            profileImageUrl = "",
+            ratingAvg = 4.8,
+            activityMessage = "최근 3일 이내 활동",
+            joinedAt = "2025-12-28",
+            hasFavoriteArtist = true,
+            favoriteArtistName = "아이브(ive)",
+            participationSummary = HistorySummary(
+                total = 12,
+                inProgress = 3,
+                completed = 9,
+            ),
+            recruitSummary = HistorySummary(
+                total = 7,
+                inProgress = 2,
+                completed = 5,
+            ),
+        ),
+        modifier = modifier,
+    )
 }
 
 @Composable
-private fun MyPageScreen(modifier: Modifier = Modifier) {
-    Text(
-        text = "마이페이지",
-        modifier = modifier,
-    )
+private fun MyPageScreen(
+    userMyPage: UserMyPage,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        PotiHeaderPrimary(
+            title = "마이",
+            firstIconRes = R.drawable.ic_setting,
+            onFirstIconClick = {},
+            secondIconRes = R.drawable.ic_alarm,
+            onSecondIconClick = {},
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(
+                    horizontal = screenWidthDp(16.dp),
+                    vertical = screenHeightDp(20.dp),
+                ),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            UserProfile(
+                imageUrl = userMyPage.profileImageUrl,
+                nickname = userMyPage.nickname,
+                email = userMyPage.email,
+            )
+
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RatingBadge(
+                    rating = userMyPage.ratingAvg.toString(),
+                )
+
+                BadgeButton(
+                    bias = userMyPage.favoriteArtistName,
+                    onClick = {},
+                    modifier = Modifier,
+                )
+            }
+
+            UserInfo(
+                activityMessage = userMyPage.activityMessage,
+                joinedAt = userMyPage.joinedAt,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            HistorySummaryCard(
+                title = stringResource(R.string.user_history_participate),
+                summary = userMyPage.participationSummary,
+                onItemClick = { type -> },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            HistorySummaryCard(
+                title = stringResource(R.string.user_history_recruit),
+                summary = userMyPage.recruitSummary,
+                onItemClick = { type -> },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProfileScreenPreview() {
+    PotiTheme {
+        MyPageScreen(
+            userMyPage = UserMyPage(
+                userId = 1L,
+                nickname = "분철의 악마",
+                email = "akkma@app.jam",
+                profileImageUrl = "",
+                ratingAvg = 4.8,
+                activityMessage = "최근 3일 이내 활동",
+                joinedAt = "2025-12-28",
+                hasFavoriteArtist = true,
+                favoriteArtistName = "아이브(ive)",
+                participationSummary = HistorySummary(
+                    total = 12,
+                    inProgress = 3,
+                    completed = 9,
+                ),
+                recruitSummary = HistorySummary(
+                    total = 7,
+                    inProgress = 2,
+                    completed = 5,
+                ),
+            ),
+            modifier = Modifier,
+        )
+    }
 }
