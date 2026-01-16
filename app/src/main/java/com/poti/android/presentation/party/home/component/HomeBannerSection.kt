@@ -64,14 +64,15 @@ fun HomeBannerSection(
 
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier
+                .matchParentSize()
+                .clip(RoundedCornerShape(12.dp)),
         ) { page ->
             AsyncImage(
                 model = banners[page].imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(12.dp))
                     .background(PotiTheme.colors.gray100),
                 contentScale = ContentScale.Crop,
             )
