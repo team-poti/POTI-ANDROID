@@ -58,7 +58,6 @@ private fun OnboardingNicknameScreen(
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingArtist,
         modifier = modifier,
-        enabled = uiState.isNicknameValid,
     ) {
         PotiCountField(
             value = uiState.nickname,

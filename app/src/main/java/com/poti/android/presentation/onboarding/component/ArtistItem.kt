@@ -2,13 +2,12 @@ package com.poti.android.presentation.onboarding.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +36,7 @@ fun ArtistItem(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         Box(
             modifier = Modifier
@@ -61,12 +61,10 @@ fun ArtistItem(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
-
         Text(
             text = artist.name,
             style = PotiTheme.typography.caption12m,
-            color = PotiTheme.colors.gray700,
+            color = if (isSelected) PotiTheme.colors.gray800 else PotiTheme.colors.gray700,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
