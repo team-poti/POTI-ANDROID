@@ -64,7 +64,8 @@ class PreferenceDataSource @Inject constructor(
 
     suspend fun clear() {
         dataStore.edit { prefs ->
-            prefs.clear()
+            prefs.remove(ACCESS_TOKEN_KEY)
+            prefs.remove(REFRESH_TOKEN_KEY)
         }
     }
 }

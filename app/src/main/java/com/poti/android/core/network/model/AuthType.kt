@@ -1,4 +1,4 @@
-package com.poti.android.core.network.interceptor
+package com.poti.android.core.network.model
 
 object AuthType {
     const val NO_AUTH = "No-Auth" // 인증 불필요

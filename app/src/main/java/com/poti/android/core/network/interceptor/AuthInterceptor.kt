@@ -1,5 +1,6 @@
 package com.poti.android.core.network.interceptor
 
+import com.poti.android.core.network.model.AuthType
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
