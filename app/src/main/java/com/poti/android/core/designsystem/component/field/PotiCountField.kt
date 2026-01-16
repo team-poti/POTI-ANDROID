@@ -76,7 +76,9 @@ fun PotiCountField(
 
         PotiBasicField(
             value = value,
-            onValueChanged = onValueChanged,
+            onValueChanged = { newValue ->
+                onValueChanged(newValue.take(maxLength))
+            },
             placeholder = placeholder,
             borderColor = status.borderColor,
             backgroundColor = PotiTheme.colors.white,
