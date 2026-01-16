@@ -16,6 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,13 +30,7 @@ import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.create.MemberOption
-
-enum class MemberSettingStatus {
-    DEFAULT,
-    IN_PROGRESS,
-    ERROR_NO_MEMBER,
-    ERROR_NO_PRICE,
-}
+import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable
 fun CreateMemberSetting(
@@ -40,11 +38,20 @@ fun CreateMemberSetting(
     selectedMembersOption: List<MemberOption>,
     onPriceChange: (MemberOption) -> Unit,
     onEditBtnClick: () -> Unit,
-    isEditBtnInScreen: Boolean,
     modifier: Modifier = Modifier,
 ) {
     var showHint by remember(status) {
         mutableStateOf(status != MemberSettingStatus.DEFAULT)
+    }
+
+    var isEditBtnInScreen by remember { mutableStateOf(false) }
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = remember (configuration.screenHeightDp){
+        with(density) {
+            configuration.screenHeightDp.dp.roundToPx()
+        }
     }
 
     Column(
@@ -110,7 +117,12 @@ fun CreateMemberSetting(
                         showHint = false
                         onEditBtnClick()
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onGloballyPositioned { coordinates ->
+                            val buttonTop = coordinates.positionInWindow().y
+                            isEditBtnInScreen = buttonTop < screenHeight
+                        },
                 )
 
                 if (showHint && isEditBtnInScreen) {
@@ -139,7 +151,6 @@ private fun CreateMemberSettingPreview() {
                 selectedMembersOption = emptyList(),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                isEditBtnInScreen = true,
             )
 
             CreateMemberSetting(
@@ -147,7 +158,6 @@ private fun CreateMemberSettingPreview() {
                 selectedMembersOption = emptyList(),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                isEditBtnInScreen = true,
             )
 
             CreateMemberSetting(
@@ -159,7 +169,6 @@ private fun CreateMemberSettingPreview() {
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                isEditBtnInScreen = false,
             )
 
             CreateMemberSetting(
@@ -167,7 +176,6 @@ private fun CreateMemberSettingPreview() {
                 selectedMembersOption = emptyList(),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                isEditBtnInScreen = false,
             )
 
             CreateMemberSetting(
@@ -179,7 +187,6 @@ private fun CreateMemberSettingPreview() {
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                isEditBtnInScreen = false,
             )
         }
     }
