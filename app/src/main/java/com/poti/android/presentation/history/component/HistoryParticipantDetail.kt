@@ -45,6 +45,7 @@ data class DepositItem(
 
 sealed interface DetailState {
     val fields: List<Pair<FieldType, String>>
+    @get:StringRes
     val buttonLabelId: Int?
     val onButtonClick: (() -> Unit)?
 
@@ -122,6 +123,7 @@ fun HistoryParticipantDetail(
     userName: String,
     userImageUrl: String,
     depositItems: List<DepositItem>,
+    totalPrice: Int,
     detailState: DetailState,
     modifier: Modifier = Modifier,
 ) {
@@ -155,7 +157,6 @@ fun HistoryParticipantDetail(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 2.dp),
             )
         }
 
@@ -173,7 +174,6 @@ fun HistoryParticipantDetail(
                 color = colors.black,
             )
             Column(
-                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 depositItems.forEach { item ->
@@ -202,7 +202,7 @@ fun HistoryParticipantDetail(
                     )
 
                     Text(
-                        text = priceText(depositItems.sumOf { it.price }),
+                        text = priceText(totalPrice),
                         style = typography.body16sb,
                         color = colors.black,
                     )
@@ -296,6 +296,7 @@ private fun HistoryParticipantDetailPreview() {
                 contact = "010-1111-1111",
                 invoice = "우체국 37249720348093",
             ),
+            totalPrice = depositItems.sumOf { it.price },
             modifier = Modifier.width(311.dp),
         )
     }
