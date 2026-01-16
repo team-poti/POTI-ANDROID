@@ -2,6 +2,7 @@ package com.poti.android.core.network.di
 
 import com.poti.android.BuildConfig
 import com.poti.android.core.network.interceptor.AuthInterceptor
+import com.poti.android.core.network.interceptor.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,11 +43,13 @@ object NetworkModule {
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
     ): OkHttpClient = OkHttpClient.Builder().apply {
         connectTimeout(10, TimeUnit.SECONDS)
         writeTimeout(10, TimeUnit.SECONDS)
         readTimeout(10, TimeUnit.SECONDS)
         addInterceptor(authInterceptor)
+        authenticator(tokenAuthenticator)
         addInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader("Accept", "*/*")

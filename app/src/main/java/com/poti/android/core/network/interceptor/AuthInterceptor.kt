@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
@@ -12,10 +13,16 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
+        val authType = originalRequest.header("Auth-Type")
         val url = originalRequest.url.toString()
 
-        if (shouldIgnoreUrl(url)) {
-            return chain.proceed(originalRequest)
+        Timber.tag("AuthInterceptor").d("Intercepting: $url | AuthType: ${authType ?: "None"}")
+
+        if (authType == null || authType == AuthType.NO_AUTH) {
+            val newRequest = originalRequest.newBuilder()
+                .removeHeader("Auth-Type")
+                .build()
+            return chain.proceed(newRequest)
         }
 
         val accessToken = runBlocking {
@@ -23,25 +30,35 @@ class AuthInterceptor @Inject constructor(
         }
 
         if (accessToken.isNullOrBlank()) {
-            return chain.proceed(originalRequest)
+            Timber.tag("AuthInterceptor").w("AccessToken is empty. Proceeding without header.")
+            val newRequest = originalRequest.newBuilder()
+                .removeHeader("Auth-Type")
+                .build()
+            return chain.proceed(newRequest)
         }
 
         val builder = originalRequest.newBuilder()
+        builder.tag(String::class.java, authType)
+        builder.removeHeader("Auth-Type")
 
-        val isAuthorization = url.contains("/api/v1/users/onboarding") ||
-            url.contains("api/v1/users/mypage") ||
-            url.contains("/api/v1/users/nickname/duplicate")
-
-        if (isAuthorization) {
-            builder.addHeader("Authorization", "Bearer $accessToken")
-        } else {
-            builder.addHeader("Access-Token", accessToken)
+        when (authType) {
+            AuthType.BEARER -> {
+                Timber.tag("AuthInterceptor").d("Injecting Bearer Token")
+                builder.addHeader("Authorization", "Bearer $accessToken")
+            }
+            AuthType.RAW -> {
+                Timber.tag("AuthInterceptor").d("Injecting Raw Token")
+                builder.addHeader("Authorization", accessToken)
+            }
+            AuthType.ACCESS_TOKEN -> {
+                Timber.tag("AuthInterceptor").d("Injecting Access-Token Header")
+                builder.addHeader("Access-Token", accessToken)
+            }
+            else -> {
+                builder.addHeader("Authorization", "Bearer $accessToken")
+            }
         }
 
         return chain.proceed(builder.build())
-    }
-
-    private fun shouldIgnoreUrl(url: String): Boolean {
-        return url.contains("/api/v1/auth/login")
     }
 }
