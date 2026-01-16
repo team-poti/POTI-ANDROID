@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.R
-import com.poti.android.core.common.extension.toMoneyString
+import com.poti.android.core.common.extension.원String
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -36,7 +36,6 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
 
-// TODO [천민재] 맵핑 확장함수 추후 구현
 data class DepositItem(
     val type: PotiItemOptionType,
     val name: String,
@@ -181,7 +180,7 @@ fun HistoryParticipantDetail(
                     PotiListOptionPrice(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
-                        priceText = item.price.toMoneyString(),
+                        priceText = item.price.toMoneyString() + "원",
                         sizeType = PotiListOptionPriceSize.SMALL,
                     )
                 }
@@ -203,7 +202,7 @@ fun HistoryParticipantDetail(
                     )
 
                     Text(
-                        text = totalPrice.toMoneyString(),
+                        text = totalPrice.toMoneyString() + "",
                         style = typography.body16sb,
                         color = colors.black,
                     )
