@@ -53,6 +53,8 @@
     <string name="history_participant_field_type_invoice">송장 번호</string>
     <string name="history_participant_field_deposit_label">입금 확인</string>
     <string name="history_participant_field_delivery_label">송장 번호 입력</string>
+    <string name="history_participant_detail_deposit_label">입금 금액</string>
+    <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
 
     <!-- Exploration Component -->
     <string name="goods_card_party_count">팟 %1$d개</string>
