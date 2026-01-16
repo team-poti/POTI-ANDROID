@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.util.screenHeightDp
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -23,21 +25,21 @@ import com.poti.android.core.designsystem.theme.PotiTheme.colors
 
 @Composable
 fun HistoryParticipantOverview(
-    modifier: Modifier = Modifier,
-    memberList: List<String>,
-    userName: String,
-    address: String,
-    phone: String,
+    memberList: String,
+    userInfo: String,
     deliveryMethod: String,
     price: Int,
     participantStageType: ParticipantStateLabelStage,
     participantStatusType: ParticipantStateLabelStatus,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(colors.white)
-            .padding(16.dp),
+            .padding(
+                horizontal = ( 16.dp),
+                vertical = screenHeightDp(16.dp)),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start,
     ) {
@@ -46,7 +48,7 @@ fun HistoryParticipantOverview(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = memberList.joinToString(", "),
+                text = memberList,
                 style = PotiTheme.typography.body16m,
                 color = colors.black,
                 maxLines = 1,
@@ -63,10 +65,11 @@ fun HistoryParticipantOverview(
         }
 
         Text(
-            text = "$userName\n$address\n$phone",
+            text = userInfo,
             style = PotiTheme.typography.body14m,
             color = colors.gray800,
         )
+
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             PotiItemOption(
                 optionType = PotiItemOptionType.DELIVERY,
@@ -89,12 +92,15 @@ private fun priceText(price: Int) = String.format("%,d원", price)
 @Composable
 private fun HistoryParticipantOverviewPreview() {
     PotiTheme {
+        val members = listOf("멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명")
+        val userName = "이포티"
+        val zipcode = "01234"
+        val address = "서울특별시 솝트구 다솝로 456"
+        val phone = "010-2345-2345"
+
         HistoryParticipantOverview(
-            memberList =
-                listOf("멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명"),
-            address = "(01234) 서울특별시 솝트구 다솝로 456",
-            userName = "이포티",
-            phone = "010-2345-2345",
+            memberList = members.joinToString(", "),
+            userInfo = "$userName\n($zipcode) $address\n$phone",
             deliveryMethod = "준등기",
             price = 12800,
             participantStageType = ParticipantStateLabelStage.DEPOSIT,

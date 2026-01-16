@@ -1,6 +1,7 @@
 package com.poti.android.presentation.history.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -34,6 +36,7 @@ fun HistoryParticipantDropdown(
     userName: String,
     userImageUrl: String,
     depositItems: List<DepositItem>,
+    depositTotalPrice: Int,
     detailState: DetailState,
     stageType: ParticipantStateLabelStage,
     statusType: ParticipantStateLabelStatus,
@@ -49,7 +52,8 @@ fun HistoryParticipantDropdown(
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 20.dp, horizontal = 16.dp),
+                .padding(vertical = 20.dp,
+                    horizontal = screenWidthDp(16.dp)),
         ) {
             ParticipantDropdownHeader(
                 name = userName,
@@ -64,6 +68,7 @@ fun HistoryParticipantDropdown(
                     userImageUrl = userImageUrl,
                     depositItems = depositItems,
                     detailState = detailState,
+                    totalPrice = depositTotalPrice,
                     modifier = Modifier.padding(top = 20.dp),
                 )
             }
@@ -102,17 +107,22 @@ private fun ParticipantDropdownHeader(
             modifier = Modifier.padding(vertical = 2.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            painter = painterResource(
-                id = if (expanded) {
-                    R.drawable.ic_arrow_up_lg
-                } else {
-                    R.drawable.ic_arrow_down_lg
-                },
-            ),
-            contentDescription = null,
-            tint = PotiTheme.colors.gray700,
-        )
+
+        Crossfade(
+            targetState = expanded
+        ) { expand ->
+            Icon(
+                painter = painterResource(
+                    id = if (expand) {
+                        R.drawable.ic_arrow_up_lg
+                    } else {
+                        R.drawable.ic_arrow_down_lg
+                    },
+                ),
+                contentDescription = null,
+                tint = PotiTheme.colors.gray700,
+            )
+        }
     }
 }
 
@@ -153,6 +163,7 @@ fun HistoryParticipantDropdownPreview() {
             userName = "어쩌구저쩌구".repeat(20),
             userImageUrl = "",
             depositItems = depositItems,
+            depositTotalPrice = depositItems.sumOf { it.price },
             detailState = DetailState.AfterDelivery(
                 name = "어쩌구",
                 delivery = "(01234) 서울특별시 솝트구 다솝로 456",
