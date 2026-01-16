@@ -12,11 +12,11 @@ import kotlinx.serialization.Serializable
 
 sealed interface ProfileRoute : Route {
     @Serializable
-    data object Profile : ProfileRoute
+    data class Profile(val userId: Long) : ProfileRoute
 }
 
-fun NavController.navigateToProfile() {
-    navigate(ProfileRoute.Profile)
+fun NavController.navigateToProfile(userId: Long) {
+    navigate(ProfileRoute.Profile(userId))
 }
 
 fun NavGraphBuilder.profileNavGraph(

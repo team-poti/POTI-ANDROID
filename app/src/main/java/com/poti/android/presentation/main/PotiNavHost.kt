@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
-import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
 import com.poti.android.presentation.party.partyNavGraph
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
@@ -31,8 +30,8 @@ fun PotiNavHost(
             paddingValues = paddingValues,
         )
         partyNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
-            onNavigateToGoodsCategory = navigator.navController::navigateToGoodsCategory,
         )
         historyNavGraph(
             paddingValues = paddingValues,

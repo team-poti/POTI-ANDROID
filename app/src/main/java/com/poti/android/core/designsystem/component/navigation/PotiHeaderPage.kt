@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import com.poti.android.R
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -27,12 +28,12 @@ fun PotiHeaderPage(
     Row(
         modifier = modifier
             .background(PotiTheme.colors.white)
-            .padding(4.dp),
+            .padding(horizontal = screenWidthDp(4.dp), vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PotiIconButton(
-            iconRes = if (title.isNullOrBlank()) R.drawable.ic_arrow_line_left else R.drawable.ic_x,
+            iconRes = if (title.isNullOrBlank()) R.drawable.ic_x else R.drawable.ic_arrow_line_left,
             onClick = onNavigationClick,
         )
 

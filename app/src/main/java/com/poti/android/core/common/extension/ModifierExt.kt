@@ -1,10 +1,13 @@
 package com.poti.android.core.common.extension
 
+import android.annotation.SuppressLint
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -12,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
@@ -20,9 +24,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
+private val figmaScreenWidth = 360.dp
+private val figmaScreenHeight = 800.dp
 
 inline fun Modifier.noRippleClickable(
     crossinline onClick: () -> Unit,
@@ -135,4 +143,41 @@ fun Modifier.topRoundedBorder(
         color = color,
         style = Stroke(width = strokeWidthPx),
     )
+}
+
+fun Modifier.bottomBorder(
+    strokeWidth: Dp,
+    color: Color,
+    isVisible: Boolean = true,
+): Modifier {
+    if (!isVisible) return this
+
+    return this.drawBehind {
+        val strokeWidthPx = strokeWidth.toPx()
+        val width = size.width
+        val height = size.height - strokeWidthPx / 2
+
+        drawLine(
+            color = color,
+            start = Offset(x = 0f, y = height),
+            end = Offset(x = width, y = height),
+            strokeWidth = strokeWidthPx,
+        )
+    }
+}
+
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+fun Modifier.heightForScreenPercentage(height: Dp): Modifier {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val ratio = screenHeight / figmaScreenHeight
+    return this.height(height * ratio)
+}
+
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+fun Modifier.widthForScreenPercentage(width: Dp): Modifier {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val ratio = screenWidth / figmaScreenWidth
+    return this.width(width * ratio)
 }
