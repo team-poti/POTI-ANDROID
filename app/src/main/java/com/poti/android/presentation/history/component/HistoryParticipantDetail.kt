@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.R
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -179,7 +180,9 @@ fun HistoryParticipantDetail(
                     PotiListOptionPrice(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
-                        priceText = item.price.toMoneyString() + "원",
+                        priceText = stringResource(
+                            R.string.history_participant_detail_won_unit_format,
+                            item.price.toMoneyString()),
                         sizeType = PotiListOptionPriceSize.SMALL,
                     )
                 }
@@ -201,7 +204,9 @@ fun HistoryParticipantDetail(
                     )
 
                     Text(
-                        text = totalPrice.toMoneyString() + "",
+                        text = stringResource(
+                            R.string.history_participant_detail_won_unit_format,
+                            totalPrice.toMoneyString()),
                         style = typography.body16sb,
                         color = colors.black,
                     )
