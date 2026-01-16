@@ -1,5 +1,7 @@
 package com.poti.android.presentation.history.mapper
 
+import com.poti.android.core.designsystem.component.display.PotiItemOptionType
+import com.poti.android.domain.model.history.DepositItem
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.component.ParticipantStateLabelStage
 import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
@@ -23,4 +25,9 @@ fun ParticipantStatusType.toUiState(): Pair<ParticipantStateLabelStage, Particip
         ParticipantStatusType.DELIVERY_DONE ->
             ParticipantStateLabelStage.DELIVERY to ParticipantStateLabelStatus.DONE
     }
+}
+
+fun DepositItem.toUiState() = when(this) {
+    is DepositItem.DeliveryItem -> PotiItemOptionType.DELIVERY
+    is DepositItem.MemberItem -> PotiItemOptionType.MEMBER
 }
