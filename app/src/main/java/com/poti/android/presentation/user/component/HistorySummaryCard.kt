@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.HistorySummaryItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.collections.forEachIndexed
 import kotlin.collections.lastIndex
 
@@ -39,10 +40,16 @@ enum class HistorySummaryType {
     FINISHED,
 }
 
+data class HistorySummaryItem(
+    val type: HistorySummaryType,
+    @StringRes val titleRes: Int,
+    val count: Int,
+)
+
 @Composable
 fun HistorySummaryCard(
     title: String,
-    items: List<HistorySummaryItem>,
+    items: ImmutableList<HistorySummaryItem>,
     onItemClick: (HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -104,7 +111,6 @@ private fun HistoryItem(
 
     Column(
         modifier = modifier
-            .heightIn(88.dp)
             .widthIn(92.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
@@ -112,16 +118,15 @@ private fun HistoryItem(
                 interactionSource = interactionSource,
                 onClick = onClick,
             )
-            .padding(vertical = 8.dp),
+            .padding(vertical = 18.5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = count.toString(),
             color = PotiTheme.colors.poti600,
             style = PotiTheme.typography.title18sb,
         )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = title,
             color = PotiTheme.colors.gray800,
@@ -149,7 +154,7 @@ private fun HistorySummaryCardPreview() {
             titleRes = R.string.user_history_ended,
             count = 1,
         ),
-    )
+    ).toImmutableList()
 
     PotiTheme {
         Column(

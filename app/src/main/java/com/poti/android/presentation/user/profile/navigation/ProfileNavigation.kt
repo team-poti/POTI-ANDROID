@@ -25,7 +25,7 @@ fun NavGraphBuilder.profileNavGraph(
 ) {
     composable<ProfileRoute.Profile> {
         ProfileScreenRoute(
-            onBackClick = onBackClick,
+            onPopBackStack = onBackClick,
             modifier = Modifier.padding(paddingValues),
         )
     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun UserInfo(
@@ -77,7 +78,7 @@ private fun UserInfoCardPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserInfo(
-                infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
+                infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
                 modifier = Modifier.width(328.dp),
             )
         }

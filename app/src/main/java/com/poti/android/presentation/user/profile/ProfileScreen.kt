@@ -2,10 +2,8 @@ package com.poti.android.presentation.user.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,17 +18,18 @@ import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.HistorySummaryItem
 import com.poti.android.presentation.user.component.HistorySummaryCard
+import com.poti.android.presentation.user.component.HistorySummaryItem
 import com.poti.android.presentation.user.component.HistorySummaryType
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
 import com.poti.android.presentation.user.profile.model.ProfileUiState
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun ProfileScreenRoute(
-    onBackClick: () -> Unit,
+    onPopBackStack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val historyItems = listOf(
@@ -49,20 +48,20 @@ fun ProfileScreenRoute(
             titleRes = R.string.user_history_ended,
             count = 5,
         ),
-    )
+    ).toImmutableList()
 
     val uiState = ProfileUiState(
         imageUrl = "",
         nickname = "포티포티포티",
         email = "poti@app.jam",
         rating = "4.8",
-        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
+        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
         recruitHistoryItems = historyItems,
     )
 
     ProfileScreen(
         uiState = uiState,
-        onBackClick = onBackClick,
+        onBackClick = onPopBackStack,
         modifier = modifier,
     )
 }
@@ -90,7 +89,7 @@ private fun ProfileScreen(
                     horizontal = screenWidthDp(16.dp),
                     vertical = screenHeightDp(20.dp),
                 ),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             UserProfile(
@@ -99,20 +98,14 @@ private fun ProfileScreen(
                 email = uiState.email,
             )
 
-            Spacer(Modifier.height(24.dp))
-
             RatingBadge(
                 rating = uiState.rating,
             )
-
-            Spacer(Modifier.height(24.dp))
 
             UserInfo(
                 infoList = uiState.infoList,
                 modifier = Modifier.fillMaxWidth(),
             )
-
-            Spacer(Modifier.height(24.dp))
 
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_recruit),
@@ -143,14 +136,14 @@ private fun ProfileScreenPreview() {
             titleRes = R.string.user_history_ended,
             count = 5,
         ),
-    )
+    ).toImmutableList()
 
     val uiState = ProfileUiState(
         imageUrl = "",
         nickname = "포티포티포티",
         email = "poti@app.jam",
         rating = "4.8",
-        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입"),
+        infoList = listOf("최근 3일 이내 활동", "2025년 12월 28일 가입").toImmutableList(),
         recruitHistoryItems = historyItems,
     )
 
