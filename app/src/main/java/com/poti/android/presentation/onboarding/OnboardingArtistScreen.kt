@@ -2,9 +2,12 @@ package com.poti.android.presentation.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,8 +19,8 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.display.PotiArtistButton
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.onboarding.component.ArtistItem
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
@@ -61,7 +64,6 @@ private fun OnboardingArtistScreen(
 ) {
     OnboardingScaffold(
         currentStep = 3,
-        title = stringResource(R.string.onboarding_artist_label, uiState.nickname),
         onBackClick = onPopBackStack,
         onNextClick = onStartClick,
         modifier = modifier,
@@ -73,20 +75,29 @@ private fun OnboardingArtistScreen(
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(
                     start = screenWidthDp(16.dp),
-                    top = 18.dp,
                     end = screenWidthDp(16.dp),
                     bottom = 40.dp,
                 ),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(screenWidthDp(25.dp)),
             ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = stringResource(R.string.onboarding_artist_label, uiState.nickname),
+                        style = PotiTheme.typography.title18sb,
+                        color = PotiTheme.colors.black,
+                        modifier = Modifier.padding(top = 24.dp, bottom = 26.dp),
+                    )
+                }
+
                 items(
                     items = artists,
                     key = { artist -> artist.artistId },
                 ) { artist ->
-                    ArtistItem(
-                        artist = artist,
-                        isSelected = (uiState.selectedArtistId == artist.artistId),
+                    PotiArtistButton(
+                        imageUrl = artist.logoImageUrl,
+                        text = artist.name,
+                        selected = (uiState.selectedArtistId == artist.artistId),
                         onClick = { onArtistClick(artist.artistId) },
                     )
                 }

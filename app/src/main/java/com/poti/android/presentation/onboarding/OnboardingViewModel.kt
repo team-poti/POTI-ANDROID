@@ -8,8 +8,6 @@ import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
 import com.poti.android.presentation.onboarding.model.OnboardingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,12 +17,6 @@ private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
     initialState = OnboardingUiState(),
 ) {
-    private val nicknameInputChannel = MutableSharedFlow<String>(
-        replay = 0,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
-
     init {
         fetchArtists()
     }

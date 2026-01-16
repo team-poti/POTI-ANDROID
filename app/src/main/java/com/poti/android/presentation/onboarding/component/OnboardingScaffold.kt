@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,12 +14,10 @@ import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiStepper
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
-import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun OnboardingScaffold(
     currentStep: Int,
-    title: String,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -59,13 +56,6 @@ fun OnboardingScaffold(
             PotiStepper(
                 step = currentStep,
                 modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
-            )
-
-            Text(
-                text = title,
-                style = PotiTheme.typography.title18sb,
-                color = PotiTheme.colors.black,
-                modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
             )
 
             content()

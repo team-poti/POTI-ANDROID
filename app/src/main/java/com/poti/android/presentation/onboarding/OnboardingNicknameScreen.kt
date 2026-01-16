@@ -1,6 +1,7 @@
 package com.poti.android.presentation.onboarding
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -54,11 +55,17 @@ private fun OnboardingNicknameScreen(
 ) {
     OnboardingScaffold(
         currentStep = 2,
-        title = stringResource(R.string.onboarding_nickname_label),
         onBackClick = onPopBackStack,
         onNextClick = onNavigateToOnboardingArtist,
         modifier = modifier,
     ) {
+        Text(
+            text = stringResource(R.string.onboarding_nickname_label),
+            style = PotiTheme.typography.title18sb,
+            color = PotiTheme.colors.black,
+            modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
+        )
+
         PotiCountField(
             value = uiState.nickname,
             onValueChanged = onNicknameChange,
