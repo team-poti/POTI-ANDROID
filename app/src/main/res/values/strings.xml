@@ -66,6 +66,13 @@
     <string name="history_state_guide_waiting">참여자들을 기다리고 있어요</string>
     <string name="history_participant_management_title">참여자 관리 (%d)</string>
     <string name="history_no_participants">아직 참여자가 없어요</string>
+    <string name="history_participant_detail_title">참여자 정보 상세</string>
+    <string name="action_confirm_deposit_done">입금 확인 완료</string>
+    <string name="history_participation_number">참여번호 %s</string>
+    <string name="history_deposit_info_title">입금 정보</string>
+    <string name="history_total_deposit_amount">총 입금 금액</string>
+    <string name="history_shipping_info_title">배송 정보</string>
+    <string name="history_shipping_info_format">%1$s\n(%2$s)%3$s%4$s</string>
 
     <!-- Exploration Component -->
     <string name="goods_card_party_count">팟 %1$d개</string>
