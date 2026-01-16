@@ -79,4 +79,11 @@
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
     <string name="history_participant_detail_won_unit_format">%s원</string>
 
+    <!-- User Component -->
+    <string name="user_history_recruit">모집 내역</string>
+    <string name="user_history_participate">참여 내역</string>
+    <string name="user_history_all">전체</string>
+    <string name="user_history_ongoing">진행중</string>
+    <string name="user_history_ended">종료</string>
+
 </resources>
