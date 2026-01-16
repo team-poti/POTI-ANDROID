@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
 import com.poti.android.presentation.party.home.HomeRoute
 import kotlinx.serialization.Serializable
 
@@ -15,17 +16,13 @@ sealed interface HomeRoute : Route {
     data object Home : HomeRoute
 }
 
-fun NavController.navigateToHome() {
-    navigate(HomeRoute.Home)
-}
-
 fun NavGraphBuilder.homeNavGraph(
     paddingValues: PaddingValues,
-    onNavigateToGoodsCategory: () -> Unit,
+    navController: NavController,
 ) {
     composable<HomeRoute.Home> {
         HomeRoute(
-            onNavigateToGoodsCategory = onNavigateToGoodsCategory,
+            onNavigateToGoodsCategory = navController::navigateToGoodsCategory,
             modifier = Modifier.padding(paddingValues),
         )
     }

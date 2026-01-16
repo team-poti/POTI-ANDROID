@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -18,13 +19,14 @@ fun PotiBottomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
             .background(PotiTheme.colors.white)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = screenWidthDp(16.dp))
             .padding(top = 4.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -40,7 +42,8 @@ fun PotiBottomButton(
         PotiActionButton(
             text = text,
             onClick = onClick,
-            type = ActionButtonType.PRIMARY_MAIN,
+            type = if (enabled) ActionButtonType.PRIMARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
+            enabled = enabled,
             modifier = Modifier.weight(216f),
         )
     }

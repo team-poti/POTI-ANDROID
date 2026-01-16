@@ -10,7 +10,6 @@ import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
-import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
 import com.poti.android.presentation.party.home.navigation.navigateToHome
 import com.poti.android.presentation.party.partyNavGraph
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
@@ -33,11 +32,13 @@ fun MainNavHost(
             onNavigateToHome = navigator.navController::navigateToHome,
         )
         onboardingNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
+            onNavigateToHome = navigator::navigateToHome,
         )
         partyNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
-            onNavigateToGoodsCategory = navigator.navController::navigateToGoodsCategory,
         )
         historyNavGraph(
             paddingValues = paddingValues,

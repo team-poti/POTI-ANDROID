@@ -1,6 +1,7 @@
 package com.poti.android.presentation.main
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideIn
@@ -39,8 +40,8 @@ fun MainBottomBar(
 ) {
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) },
+        enter = fadeIn(animationSpec = tween(300)) + slideIn(animationSpec = tween(300)) { IntOffset(0, it.height) },
+        exit = fadeOut(animationSpec = tween(300)) + slideOut(animationSpec = tween(300)) { IntOffset(0, it.height) },
     ) {
         Row(
             modifier = modifier
