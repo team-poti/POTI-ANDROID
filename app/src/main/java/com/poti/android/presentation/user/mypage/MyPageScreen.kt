@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,6 @@ fun MyPageRoute(
 ) {
     MyPageScreen(
         userMyPage = UserMyPage(
-            userId = 1L,
             nickname = "분철의 악마",
             email = "akkma@app.jam",
             profileImageUrl = "",
@@ -63,21 +63,25 @@ private fun MyPageScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val biasText = userMyPage.favoriteArtistName ?: stringResource(R.string.user_select_favorite_artist)
 
-    Column(
+    Scaffold(
         modifier = modifier.fillMaxSize(),
-    ) {
-        PotiHeaderPrimary(
-            title = "마이",
-            firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = {},
-            secondIconRes = R.drawable.ic_alarm,
-            onSecondIconClick = {},
-        )
+        topBar = {
+            PotiHeaderPrimary(
+                title = stringResource(R.string.user_my_page_title),
+                firstIconRes = R.drawable.ic_setting,
+                onFirstIconClick = {},
+                secondIconRes = R.drawable.ic_alarm,
+                onSecondIconClick = {},
+            )
+        },
+    ) { innerPadding ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .verticalScroll(scrollState)
                 .padding(
                     horizontal = screenWidthDp(16.dp),
@@ -102,7 +106,7 @@ private fun MyPageScreen(
                 )
 
                 BadgeButton(
-                    bias = userMyPage.favoriteArtistName,
+                    bias = biasText,
                     onClick = {},
                     modifier = Modifier,
                 )
@@ -137,7 +141,6 @@ private fun ProfileScreenPreview() {
     PotiTheme {
         MyPageScreen(
             userMyPage = UserMyPage(
-                userId = 1L,
                 nickname = "분철의 악마",
                 email = "akkma@app.jam",
                 profileImageUrl = "",
@@ -146,6 +149,36 @@ private fun ProfileScreenPreview() {
                 joinedAt = "2025-12-28",
                 hasFavoriteArtist = true,
                 favoriteArtistName = "아이브(ive)",
+                participationSummary = HistorySummary(
+                    total = 12,
+                    inProgress = 3,
+                    completed = 9,
+                ),
+                recruitSummary = HistorySummary(
+                    total = 7,
+                    inProgress = 2,
+                    completed = 5,
+                ),
+            ),
+            modifier = Modifier,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ProfileScreenPreview2() {
+    PotiTheme {
+        MyPageScreen(
+            userMyPage = UserMyPage(
+                nickname = "분철의 악마",
+                email = "akkma@app.jam",
+                profileImageUrl = "",
+                ratingAvg = 4.8,
+                activityMessage = "최근 3일 이내 활동",
+                joinedAt = "2025-12-28",
+                hasFavoriteArtist = true,
+                favoriteArtistName = null,
                 participationSummary = HistorySummary(
                     total = 12,
                     inProgress = 3,

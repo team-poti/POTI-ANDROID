@@ -24,10 +24,10 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun UserProfile(
-    imageUrl: String,
     nickname: String,
     email: String,
     modifier: Modifier = Modifier,
+    imageUrl: String? = "",
 ) {
     Column(
         modifier = modifier,
@@ -74,7 +74,6 @@ private fun UserProfilePreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserProfile(
-                imageUrl = "",
                 nickname = "포티포티포티",
                 email = "poti@app.jam",
                 modifier = Modifier,

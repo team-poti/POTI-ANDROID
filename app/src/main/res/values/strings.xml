@@ -80,6 +80,8 @@
     <string name="history_participant_detail_won_unit_format">%s원</string>
 
     <!-- User Component -->
+    <string name="user_my_page_title">마이</string>
+    <string name="user_select_favorite_artist">나의 최애 선택하기</string>
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
     <string name="user_history_all">전체</string>
