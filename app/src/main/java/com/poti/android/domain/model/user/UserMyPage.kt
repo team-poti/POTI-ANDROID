@@ -4,7 +4,7 @@ data class UserMyPage(
     val nickname: String,
     val email: String,
     val profileImageUrl: String?,
-    val ratingAvg: Double,
+    val ratingAvg: String,
     val activityMessage: String,
     val joinedAt: String,
     val hasFavoriteArtist: Boolean,

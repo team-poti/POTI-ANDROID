@@ -37,7 +37,7 @@ fun MyPageRoute(
             nickname = "분철의 악마",
             email = "akkma@app.jam",
             profileImageUrl = "",
-            ratingAvg = 4.8,
+            ratingAvg = "4.8",
             activityMessage = "최근 3일 이내 활동",
             joinedAt = "2025-12-28",
             hasFavoriteArtist = true,
@@ -102,7 +102,7 @@ private fun MyPageScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RatingBadge(
-                    rating = userMyPage.ratingAvg.toString(),
+                    rating = userMyPage.ratingAvg,
                 )
 
                 BadgeButton(
@@ -144,7 +144,7 @@ private fun ProfileScreenPreview() {
                 nickname = "분철의 악마",
                 email = "akkma@app.jam",
                 profileImageUrl = "",
-                ratingAvg = 4.8,
+                ratingAvg = "4.8",
                 activityMessage = "최근 3일 이내 활동",
                 joinedAt = "2025-12-28",
                 hasFavoriteArtist = true,
@@ -174,7 +174,7 @@ private fun ProfileScreenPreview2() {
                 nickname = "분철의 악마",
                 email = "akkma@app.jam",
                 profileImageUrl = "",
-                ratingAvg = 4.8,
+                ratingAvg = "4.8",
                 activityMessage = "최근 3일 이내 활동",
                 joinedAt = "2025-12-28",
                 hasFavoriteArtist = true,
