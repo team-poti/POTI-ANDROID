@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,8 +19,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.designsystem.component.display.PotiEmptyStateBlock
+import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderSection
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
@@ -132,17 +130,10 @@ private fun HistoryListScreen(
             )
 
             if (uiState.items.isEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = screenHeightDp(64.dp)),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    PotiEmptyStateBlock(
-                        text = stringResource(emptyTextRes),
-                    )
-                }
+                PotiEmptyStateInline(
+                    text = stringResource(emptyTextRes),
+                    modifier = Modifier.fillMaxWidth(),
+                )
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
