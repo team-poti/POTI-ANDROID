@@ -61,7 +61,7 @@ fun PartyDetailRoute(
             partyDetail = partyDetail,
             isJoinEnable = uiState.isJoinEnable,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
-            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnJoinClick) },
+            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
             modifier = modifier,
         )

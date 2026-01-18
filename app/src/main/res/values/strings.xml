@@ -31,6 +31,7 @@
 
     <!-- Party -->
     <string name="party_recruit_deadline">모집 기한</string>
+    <string name="party_option_price_won">%s원</string>
 
     <!-- Exploration -->
     <string name="goods_card_party_count">팟 %1$d개</string>
@@ -53,6 +54,11 @@
     <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
+    <string name="party_join_option_member_label">멤버</string>
+    <string name="party_join_option_member_placeholder">분철 받을 멤버를 선택하세요</string>
+    <string name="party_join_option_delivery_label">배송 방법</string>
+    <string name="party_join_option_delivery_placeholder">배송 방법을 선택하세요</string>
+    <string name="party_join_total_price">총 입금 예정 금액</string>
 
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>
@@ -78,7 +84,6 @@
     <string name="history_participant_field_delivery_label">송장 번호 입력</string>
     <string name="history_participant_detail_deposit_label">입금 금액</string>
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
-    <string name="history_participant_detail_won_unit_format">%s원</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

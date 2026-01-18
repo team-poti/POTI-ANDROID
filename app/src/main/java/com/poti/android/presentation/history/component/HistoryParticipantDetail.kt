@@ -181,7 +181,7 @@ fun HistoryParticipantDetail(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
                         priceText = stringResource(
-                            R.string.history_participant_detail_won_unit_format,
+                            R.string.party_option_price_won,
                             item.price.toMoneyString(),
                         ),
                         sizeType = PotiListOptionPriceSize.SMALL,
@@ -206,7 +206,7 @@ fun HistoryParticipantDetail(
 
                     Text(
                         text = stringResource(
-                            R.string.history_participant_detail_won_unit_format,
+                            R.string.party_option_price_won,
                             totalPrice.toMoneyString(),
                         ),
                         style = typography.body16sb,

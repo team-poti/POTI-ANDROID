@@ -37,8 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
-import com.poti.android.core.designsystem.model.FieldMenuItem
 import com.poti.android.core.designsystem.theme.PotiTheme
+import java.util.UUID
+
+data class FieldMenuItem(
+    val option: String,
+    val price: String? = null,
+    val disabled: Boolean = false,
+    val id: String = UUID.randomUUID().toString(),
+)
 
 /**
  * 필드 하단에 드롭다운 메뉴가 제공되는 컴포넌트입니다.
