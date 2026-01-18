@@ -132,7 +132,7 @@ private fun GoodsFilteredPartyListScreen(
 
             items(potsInfo.potSummaries) { pot ->
                 PotsCard(
-                    potId = 1L,
+                    potId = pot.potId,
                     profileImageUrl = pot.profileImageUrl ?: "",
                     nickname = pot.nickname,
                     rating = pot.rating,
