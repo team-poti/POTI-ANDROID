@@ -237,7 +237,8 @@ private fun ParticipantDetailScreen(
                         enabled = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 14.dp),
                     )
                 }
             }
