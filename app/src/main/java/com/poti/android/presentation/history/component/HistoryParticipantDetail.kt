@@ -261,7 +261,6 @@ fun HistoryParticipantDetail(
     }
 }
 
-
 @Preview(showBackground = true, heightDp = 2000)
 @Composable
 private fun HistoryParticipantDetailAllStatesPreview() {
@@ -276,29 +275,25 @@ private fun HistoryParticipantDetailAllStatesPreview() {
     // 2. 각 상태별 데이터 정의
     val states = listOf(
         "1. Default (기본 상태)" to DetailState.Default,
-
         "2. DepositCheck (입금 확인 중)" to DetailState.DepositCheck(
             deposit = "2024.01.01 14:30 / 홍길동",
-            onButtonClick = {}
+            onButtonClick = {},
         ),
-
         "3. Delivery (배송 정보 입력 완료/대기)" to DetailState.Delivery(
             name = "김철수",
             delivery = "(06234) 서울 강남구 테헤란로 123",
             contact = "010-1234-5678",
-            onButtonClick = {}
+            onButtonClick = {},
         ),
-
         "4. AfterDelivery (배송 후 - 운송장 입력됨)" to DetailState.AfterDelivery(
             name = "김철수",
             delivery = "(06234) 서울 강남구 테헤란로 123",
             contact = "010-1234-5678",
-            invoice = "GS택배 1234-5678-9012"
+            invoice = "GS택배 1234-5678-9012",
         ),
-
         "5. Finished (거래 종료)" to DetailState.Finished(
-            invoice = "GS택배 1234-5678-9012"
-        )
+            invoice = "GS택배 1234-5678-9012",
+        ),
     )
 
     PotiTheme {
@@ -307,14 +302,14 @@ private fun HistoryParticipantDetailAllStatesPreview() {
                 .padding(16.dp)
                 .width(340.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             states.forEach { (title, state) ->
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = title,
                         style = PotiTheme.typography.body16sb,
-                        color = PotiTheme.colors.poti800
+                        color = PotiTheme.colors.poti800,
                     )
 
                     // 컴포넌트 렌더링
@@ -324,7 +319,7 @@ private fun HistoryParticipantDetailAllStatesPreview() {
                         depositItems = dummyItems,
                         totalPrice = dummyTotal,
                         detailState = state,
-                        modifier = Modifier
+                        modifier = Modifier,
                     )
                 }
             }

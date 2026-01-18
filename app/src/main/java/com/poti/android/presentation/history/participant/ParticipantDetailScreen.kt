@@ -53,8 +53,11 @@ import com.poti.android.presentation.history.model.participant.ParticipantDetail
 
 private sealed interface ParticipantDetailModalState {
     data object None : ParticipantDetailModalState
+
     data object DepositInput : ParticipantDetailModalState
+
     data object DeliveryConfirm : ParticipantDetailModalState
+
     data class DeliveryReview(
         val recruiterName: String,
         val recruiterProfileUrl: String,
@@ -263,7 +266,7 @@ private fun ParticipantDetailScreen(
                     modalState = ParticipantDetailModalState.DeliveryReview(
                         recruiterName = detail.recruiterName,
                         recruiterProfileUrl = detail.recruiterProfileUrl,
-                        recruiterRating = detail.recruiterRating
+                        recruiterRating = detail.recruiterRating,
                     )
                     onDeliveryConfirm()
                 },

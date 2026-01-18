@@ -11,7 +11,7 @@ data class ParticipantDetail(
     val shippingInfo: ParticipantShippingInfo,
     val recruiterName: String,
     val recruiterProfileUrl: String,
-    val recruiterRating: String
+    val recruiterRating: String,
 )
 
 data class ParticipantDepositInfo(
