@@ -43,6 +43,7 @@ fun PartyJoinBottomSheet(
     onDeliverySelect: (FieldMenuItem) -> Unit,
     hasSelectedOptions: Boolean,
     totalPrice: String,
+    isNextEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,6 +58,7 @@ fun PartyJoinBottomSheet(
         onDismissRequest = onDismissRequest,
         text = stringResource(R.string.action_button_continue),
         onClick = onNextClick,
+        isButtonEnabled = isNextEnabled,
         sheetState = sheetState,
         modifier = modifier,
     ) {
@@ -158,6 +160,7 @@ private fun PartyJoinBottomSheetPreview() {
             },
             hasSelectedOptions = false,
             totalPrice = "11,000",
+            isNextEnabled = true,
             onDismissRequest = {},
             onNextClick = {},
         )

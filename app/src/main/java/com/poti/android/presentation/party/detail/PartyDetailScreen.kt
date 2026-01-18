@@ -78,6 +78,7 @@ fun PartyDetailRoute(
                 selectedDeliveryId = uiState.selectedDeliveryId,
                 hasSelectedOptions = uiState.hasSelectedOptions,
                 totalPrice = uiState.totalPrice,
+                isNextEnabled = uiState.isBottomSheetButtonEnable,
                 onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
                 onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },
                 onDeliverySelect = { viewModel.processIntent(PartyDetailIntent.OnDeliverySelect(it)) },
