@@ -74,7 +74,7 @@ sealed interface GoodsFilterUiIntent : UiIntent {
 
     data object OnFloatingClick : GoodsFilterUiIntent
 
-    data class OnPartyClick(val userId: Long) : GoodsFilterUiIntent
+    data class OnPartyClick(val potId: Long) : GoodsFilterUiIntent
 
     data object OnMemberFilterClick : GoodsFilterUiIntent
 

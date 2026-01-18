@@ -14,7 +14,7 @@ class GoodsFilterViewModel @Inject constructor() :
         initialState = GoodsFilterUiState(),
     ) {
         init {
-            processIntent(GoodsFilterUiIntent.LoadGoodsPots)
+            loadGoodsPots()
         }
 
         override fun processIntent(intent: GoodsFilterUiIntent) {
@@ -23,7 +23,7 @@ class GoodsFilterViewModel @Inject constructor() :
                 GoodsFilterUiIntent.OnBackClick -> sendEffect(GoodsFilterUiEffect.NavigateBack)
                 GoodsFilterUiIntent.OnFloatingClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyCreate)
                 is GoodsFilterUiIntent.OnPartyClick ->
-                    sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.userId))
+                    sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.potId))
                 GoodsFilterUiIntent.OnMemberFilterClick -> {
                     // TODO: [예림] 바텀시트 open
                 }
