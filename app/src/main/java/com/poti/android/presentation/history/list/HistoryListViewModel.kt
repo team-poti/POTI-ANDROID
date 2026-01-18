@@ -80,23 +80,14 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                     ),
                 )
             } else {
-                listOf(
-                    HistoryItem(
-                        id = 3L,
-                        imageUrl = "",
-                        artist = "ive(아이브)",
-                        title = "러브다이브 위드뮤",
-                        stageType = ParticipantStateLabelStage.DELIVERY,
-                        statusType = ParticipantStateLabelStatus.DONE,
-                    ),
-                )
+                listOf()
             }
 
             updateState {
                 copy(
                     isLoading = false,
                     ongoingCount = 2,
-                    endedCount = 5,
+                    endedCount = 0,
                     items = dummyItems,
                 )
             }

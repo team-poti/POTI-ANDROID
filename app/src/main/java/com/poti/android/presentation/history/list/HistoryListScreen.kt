@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +20,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.common.util.screenHeightDp
+import com.poti.android.core.designsystem.component.display.PotiEmptyStateBlock
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderSection
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
@@ -89,6 +93,22 @@ private fun HistoryListScreen(
         HistoryMode.PARTICIPATION -> R.string.user_history_participate
     }
 
+    val emptyTextRes = when (uiState.mode) {
+        HistoryMode.RECRUIT -> {
+            when (uiState.selectedTab) {
+                PotiHeaderTabType.ONGOING -> R.string.history_empty_recruit_ongoing
+                PotiHeaderTabType.ENDED -> R.string.history_empty_recruit_ended
+            }
+        }
+
+        HistoryMode.PARTICIPATION -> {
+            when (uiState.selectedTab) {
+                PotiHeaderTabType.ONGOING -> R.string.history_empty_participation_ongoing
+                PotiHeaderTabType.ENDED -> R.string.history_empty_participation_ended
+            }
+        }
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -111,28 +131,42 @@ private fun HistoryListScreen(
                 onTabSelected = onTabSelected,
             )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 12.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                items(
-                    items = uiState.items,
-                    key = { it.id },
-                ) { item ->
-
-                    HistoryCardItem(
-                        sizeType = CardHistorySize.SMALL,
-                        imageUrl = item.imageUrl,
-                        artist = item.artist,
-                        title = item.title,
-                        participantStageType = item.stageType,
-                        participantStatusType = item.statusType,
-                        onClick = { onCardClick(item.id) },
+            if (uiState.items.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = screenHeightDp(64.dp)),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    PotiEmptyStateBlock(
+                        text = stringResource(emptyTextRes),
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = 12.dp,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    items(
+                        items = uiState.items,
+                        key = { it.id },
+                    ) { item ->
+
+                        HistoryCardItem(
+                            sizeType = CardHistorySize.SMALL,
+                            imageUrl = item.imageUrl,
+                            artist = item.artist,
+                            title = item.title,
+                            participantStageType = item.stageType,
+                            participantStatusType = item.statusType,
+                            onClick = { onCardClick(item.id) },
+                        )
+                    }
                 }
             }
         }
@@ -183,17 +217,8 @@ private fun HistoryListScreenPreview_Ended() {
             uiState = HistoryListUiState(
                 selectedTab = PotiHeaderTabType.ENDED,
                 ongoingCount = 2,
-                endedCount = 5,
-                items = listOf(
-                    HistoryItem(
-                        id = 3L,
-                        imageUrl = "",
-                        artist = "ive(아이브)",
-                        title = "러브다이브 위드뮤",
-                        stageType = ParticipantStateLabelStage.DELIVERY,
-                        statusType = ParticipantStateLabelStatus.DONE,
-                    ),
-                ),
+                endedCount = 0,
+                items = listOf(),
             ),
             onBackClick = {},
             onSwitchModeClick = {},
