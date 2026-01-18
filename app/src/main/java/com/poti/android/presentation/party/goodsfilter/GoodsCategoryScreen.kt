@@ -10,23 +10,52 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.GoodsCategory
+import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 
 @Composable
 fun GoodsCategoryRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToPartyCreate: () -> Unit,
+    onNavigateToGoodsFilter: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: GoodsCategoryViewModel = hiltViewModel(),
 ) {
-//    GoodsCategoryScreen(modifier = modifier)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
+            GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
+            GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsFilter()
+        }
+    }
+
+    uiState.goodsCategoryLoadState.onSuccess { goodsCategory ->
+        GoodsCategoryScreen(
+            goodsCategory = goodsCategory,
+            onBackClick = onPopBackStack,
+            onFloatingClick = onNavigateToPartyCreate,
+            onSortFilterClick = {},
+            onCardClick = onNavigateToGoodsFilter,
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
@@ -49,7 +78,7 @@ private fun GoodsCategoryScreen(
         },
         floatingActionButton = {
             PotiFloatingButton(
-                onClick = onFloatingClick, // 아티스트 입력 상태로 등록 화면 이동
+                onClick = onFloatingClick, // 아티스트 입력 상태로 등록 화면 이동, 아티스트 아이디?
             )
         },
     ) { innerPadding ->
@@ -76,7 +105,7 @@ private fun GoodsCategoryScreen(
                     title = groupItem.postTitle,
                     partyCount = groupItem.postCount,
                     tag = groupItem.tag,
-                    onClick = onCardClick, // 상세 화면 이동
+                    onClick = onCardClick, // 굿즈별 페이지로 이동 타이틀, 아티스트 아이디?
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),

@@ -11,9 +11,19 @@ data class GoodsCategoryUiState(
 ) : UiState
 
 sealed interface GoodsCategoryUiIntent : UiIntent {
+    data object OnBackClick : GoodsCategoryUiIntent
+
+    data object OnFloatingClick : GoodsCategoryUiIntent
+
+    data object OnSortFilterClick : GoodsCategoryUiIntent
+
     data object OnCardClick : GoodsCategoryUiIntent
 }
 
 sealed interface GoodsCategoryUiEffect : UiEffect {
     data object NavigateBack : GoodsCategoryUiEffect
+
+    data object NavigateToPartyCreate : GoodsCategoryUiEffect
+
+    data object NavigateToGoodsFilter : GoodsCategoryUiEffect
 }
