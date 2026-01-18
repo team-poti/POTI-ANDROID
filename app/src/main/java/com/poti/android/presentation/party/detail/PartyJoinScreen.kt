@@ -90,9 +90,9 @@ private fun PartyJoinScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = modifier
-                .verticalScroll(rememberScrollState())
-                .padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
         ) {
             Column(
                 modifier = Modifier

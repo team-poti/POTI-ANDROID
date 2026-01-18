@@ -53,7 +53,7 @@ fun PartyJoinBottomSheet(
     val selectedMembers = memberOptions.filter { it.id in selectedMemberIds }
     val selectedDelivery = deliveryOptions.find { it.id in selectedDeliveryId }
 
-    PotiBottomSheet(
+    PotiBottomSheet( // TODO: [지현] 버튼 수정
         onDismissRequest = onDismissRequest,
         text = stringResource(R.string.action_button_continue),
         onClick = onNextClick,

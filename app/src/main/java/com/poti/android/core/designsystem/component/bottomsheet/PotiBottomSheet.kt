@@ -124,6 +124,7 @@ private fun BottomSheetButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
 ) {
@@ -148,6 +149,7 @@ private fun BottomSheetButton(
             onClick = onClick,
             type = ActionButtonType.SECONDARY_MAIN,
             modifier = Modifier.weight(216f),
+            enabled = enabled,
         )
     }
 }
