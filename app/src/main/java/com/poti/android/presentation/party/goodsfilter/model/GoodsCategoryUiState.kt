@@ -7,7 +7,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.party.GoodsCategory
 
 data class GoodsCategoryUiState(
-    val potsInfo: ApiState<GoodsCategory> = ApiState.Loading,
+    val goodsCategoryLoadState: ApiState<GoodsCategory> = ApiState.Loading,
 ) : UiState
 
 sealed interface GoodsCategoryUiIntent : UiIntent {
