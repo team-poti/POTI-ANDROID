@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.goodsfilter.GoodsCategoryRoute
 import com.poti.android.presentation.party.goodsfilter.GoodsFilteredPartyListRoute
@@ -16,15 +17,17 @@ sealed interface GoodsRoute : Route {
     data object GoodsList : GoodsRoute
 
     @Serializable
-    data object GoodsPartyList : GoodsRoute
+    data class GoodsPartyList(
+        val artistId: Long,
+    ) : GoodsRoute
 }
 
 fun NavController.navigateToGoodsList() {
     navigate(GoodsRoute.GoodsList)
 }
 
-fun NavController.navigateToGoodsPartyList() {
-    navigate(GoodsRoute.GoodsPartyList)
+fun NavController.navigateToGoodsPartyList(artistId: Long) {
+    navigate(GoodsRoute.GoodsPartyList(artistId))
 }
 
 fun NavController.navigateToGoodsCategory() {
@@ -39,8 +42,11 @@ fun NavGraphBuilder.goodsFilterNavGraph(
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<GoodsRoute.GoodsPartyList> {
+    composable<GoodsRoute.GoodsPartyList> {backStackEntry ->
+        val artistId = backStackEntry.toRoute<GoodsRoute.GoodsPartyList>().artistId
+
         GoodsFilteredPartyListRoute(
+            artistId = artistId,
             modifier = Modifier.padding(paddingValues),
         )
     }
