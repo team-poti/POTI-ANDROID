@@ -1,9 +1,6 @@
 package com.poti.android.presentation.history.participant
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,41 +8,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
-import com.poti.android.core.common.extension.toMoneyString
-import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
-import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
-import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.DepositItem
-import com.poti.android.domain.model.history.DepositStatus
-import com.poti.android.domain.model.history.ParticipantDepositInfo
 import com.poti.android.domain.model.history.ParticipantDetail
-import com.poti.android.domain.model.history.ParticipantShippingInfo
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.DummyParticipantManageDetail
+import com.poti.android.presentation.history.component.DepositInfoSection
 import com.poti.android.presentation.history.component.HistoryCalloutInfo
+import com.poti.android.presentation.history.component.HistoryDeliveryConfirmModal
+import com.poti.android.presentation.history.component.HistoryDeliveryReviewModal
 import com.poti.android.presentation.history.component.HistoryDepositBottomSheet
 import com.poti.android.presentation.history.component.HistoryParticipantStateLabel
 import com.poti.android.presentation.history.component.ParticipantStateLabelSize
@@ -53,14 +46,20 @@ import com.poti.android.presentation.history.component.ParticipantStateLabelStag
 import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
+import com.poti.android.presentation.history.component.ShippingInfoSection
 import com.poti.android.presentation.history.mapper.toUiState
+import com.poti.android.presentation.history.model.participant.ParticipantDetailUiEffect
+import com.poti.android.presentation.history.model.participant.ParticipantDetailUiIntent
 
 private sealed interface ParticipantDetailModalState {
     data object None : ParticipantDetailModalState
-
     data object DepositInput : ParticipantDetailModalState
-
     data object DeliveryConfirm : ParticipantDetailModalState
+    data class DeliveryReview(
+        val recruiterName: String,
+        val recruiterProfileUrl: String,
+        val recruiterRating: String,
+    ) : ParticipantDetailModalState
 }
 
 @Composable
@@ -68,15 +67,42 @@ fun ParticipantDetailRoute(
     onBackClick: () -> Unit,
     onNavigateToPartyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ParticipantViewModel = hiltViewModel(),
 ) {
-    ParticipantDetailScreen(
-        modifier = modifier,
-        detail = DummyParticipantManageDetail.participantDetailWaitDeposit,
-        onDetailClick = onNavigateToPartyDetail,
-        onBackClick = onBackClick,
-        // ViewModel 에서 처리
-        onDepositSubmit = { i, j -> },
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                ParticipantDetailUiEffect.NavigateBack -> onBackClick()
+                is ParticipantDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.recruitId)
+            }
+        }
+    }
+
+    when (val state = uiState.participantDetail) {
+        is ApiState.Success -> {
+            ParticipantDetailScreen(
+                modifier = modifier,
+                detail = state.data,
+                onDetailClick = { viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick) },
+                onBackClick = { viewModel.processIntent(ParticipantDetailUiIntent.OnBackClick) },
+                onDepositSubmit = { depositor, time ->
+                    viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, time))
+                },
+                onDeliveryConfirm = {
+                    viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery)
+                },
+                onReviewSubmit = { rating ->
+                    viewModel.processIntent(ParticipantDetailUiIntent.SubmitReview(rating))
+                },
+                onReviewSkip = {
+                    viewModel.processIntent(ParticipantDetailUiIntent.SkipReview)
+                },
+            )
+        }
+        else -> Unit
+    }
 }
 
 @Composable
@@ -85,6 +111,9 @@ private fun ParticipantDetailScreen(
     onBackClick: () -> Unit,
     onDetailClick: (Long) -> Unit,
     onDepositSubmit: (depositor: String, depositTime: String) -> Unit,
+    onDeliveryConfirm: () -> Unit,
+    onReviewSubmit: (Int) -> Unit,
+    onReviewSkip: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var modalState by remember { mutableStateOf<ParticipantDetailModalState>(ParticipantDetailModalState.None) }
@@ -107,7 +136,7 @@ private fun ParticipantDetailScreen(
         ) {
             item {
                 PartyInfoSection(
-                    partyId = detail.partyId,
+                    recruitId = detail.recruitId,
                     artistInfo = detail.artistInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -155,9 +184,11 @@ private fun ParticipantDetailScreen(
                 if (stage == ParticipantStateLabelStage.DELIVERY) {
                     if (state == ParticipantStateLabelStatus.START) {
                         HistoryCalloutInfo(
-                            text = detail.depositInfo.depositStatus.accountNumber,
+                            text = detail.shippingInfo.trackingNumber ?: "",
                             copyable = true,
-                            modifier = Modifier.padding(top = 20.dp),
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .padding(horizontal = 16.dp),
                         )
                     }
 
@@ -177,9 +208,11 @@ private fun ParticipantDetailScreen(
                         statusType = state,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(end = 16.dp)
                             .wrapContentWidth(Alignment.End),
                     )
                 }
+
                 Spacer(Modifier.height(24.dp))
             }
 
@@ -224,158 +257,44 @@ private fun ParticipantDetailScreen(
         }
 
         ParticipantDetailModalState.DeliveryConfirm -> {
-        }
-    }
-}
-
-@Composable
-private fun DepositInfoSection(
-    info: ParticipantDepositInfo,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = screenWidthDp(16.dp)),
-    ) {
-        Text(
-            text = stringResource(id = R.string.history_deposit_info_title),
-            style = PotiTheme.typography.body16sb,
-            color = PotiTheme.colors.black,
-            modifier = Modifier.padding(bottom = 20.dp),
-        )
-
-        PriceDetail(items = info.items, totalAmount = info.totalAmount)
-
-        val depositStatus = info.depositStatus
-        if (depositStatus is DepositStatus.DepositCheck ||
-            depositStatus is DepositStatus.DepositWait
-        ) {
-            HistoryCalloutInfo(
-                text = depositStatus.accountNumber,
-                copyable = true,
-                modifier = Modifier.padding(top = 28.dp, bottom = 8.dp),
-            )
-
-            HistoryCalloutInfo(
-                text = depositStatus.dueDate,
-                copyable = false,
-                modifier = Modifier.padding(bottom = 28.dp),
-            )
-
-            val (stage, status) = depositStatus.toUiState()
-
-            HistoryParticipantStateLabel(
-                sizeType = ParticipantStateLabelSize.LARGE,
-                stageType = stage,
-                statusType = status,
-                modifier = Modifier.align(Alignment.End),
-            )
-        }
-    }
-}
-
-@Composable
-private fun PriceDetail(
-    items: List<DepositItem>,
-    totalAmount: Int,
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items.forEach { item ->
-            val optionType = item.toUiState()
-            PotiListOptionPrice(
-                itemOptionType = optionType,
-                itemOptionText = item.name,
-                priceText = stringResource(
-                    R.string.history_participant_detail_won_unit_format,
-                    item.price.toMoneyString(),
-                ),
-                sizeType = PotiListOptionPriceSize.SMALL,
+            HistoryDeliveryConfirmModal(
+                onConfirm = {
+                    modalState = ParticipantDetailModalState.DeliveryReview(
+                        recruiterName = detail.recruiterName,
+                        recruiterProfileUrl = detail.recruiterProfileUrl,
+                        recruiterRating = detail.recruiterRating
+                    )
+                    onDeliveryConfirm()
+                },
+                onDismiss = { modalState = ParticipantDetailModalState.None },
             )
         }
 
-        PotiDivider(styleType = PotiDividerStyle.SMALL)
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(id = R.string.history_total_deposit_amount),
-                style = PotiTheme.typography.body14m,
-                color = PotiTheme.colors.gray800,
+        is ParticipantDetailModalState.DeliveryReview -> {
+            val deliveryReview = (modalState as ParticipantDetailModalState.DeliveryReview)
+            HistoryDeliveryReviewModal(
+                partnerNickname = deliveryReview.recruiterName,
+                partnerProfileUrl = deliveryReview.recruiterProfileUrl,
+                partnerRating = deliveryReview.recruiterRating,
+                onConfirm = { rating ->
+                    modalState = ParticipantDetailModalState.None
+                    onReviewSubmit(rating)
+                },
+                onSkip = {
+                    modalState = ParticipantDetailModalState.None
+                    onReviewSkip()
+                },
+                onDismissRequest = { modalState = ParticipantDetailModalState.None },
             )
-
-            Text(
-                text = stringResource(
-                    R.string.history_participant_detail_won_unit_format,
-                    totalAmount.toMoneyString(),
-                ),
-                style = PotiTheme.typography.body16sb,
-                color = PotiTheme.colors.black,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ShippingInfoSection(
-    info: ParticipantShippingInfo,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = stringResource(id = R.string.history_shipping_info_title),
-            style = PotiTheme.typography.body16sb,
-            color = PotiTheme.colors.black,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(
-                text = stringResource(
-                    R.string.history_shipping_info_format,
-                    info.recipient,
-                    info.zipcode,
-                    info.address,
-                    info.phone,
-                ),
-                style = PotiTheme.typography.body14m,
-                color = PotiTheme.colors.black,
-                lineHeight = PotiTheme.typography.body14m.fontSize * 1.5,
-            )
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_delivery),
-                    contentDescription = "Delivery Method",
-                    tint = PotiTheme.colors.gray800,
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = info.deliveryMethod,
-                    style = PotiTheme.typography.body14m,
-                    color = PotiTheme.colors.gray800,
-                )
-            }
         }
     }
 }
 
 class ParticipantDetailPreviewProvider : PreviewParameterProvider<ParticipantDetail> {
     override val values: Sequence<ParticipantDetail> = sequenceOf(
-        DummyParticipantManageDetail.participantDetailWaitDeposit, // 1. 입금 대기 (버튼: 입금 완료)
-        DummyParticipantManageDetail.participantDetailCheckDeposit, // 2. 입금 확인 (버튼 없음)
-        DummyParticipantManageDetail.participantDetailDeliveryStart, // 3. 배송 시작 (버튼: 수령 완료)
+        DummyParticipantManageDetail.participantDetailWaitDeposit,
+        DummyParticipantManageDetail.participantDetailCheckDeposit,
+        DummyParticipantManageDetail.participantDetailDeliveryStart,
     )
 }
 
@@ -390,8 +309,10 @@ private fun ParticipantDetailScreenPreview(
             onBackClick = {},
             onDetailClick = {},
             onDepositSubmit = { _, _ -> },
-            modifier = Modifier
-                .fillMaxSize(),
+            onDeliveryConfirm = {},
+            onReviewSubmit = {},
+            onReviewSkip = {},
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

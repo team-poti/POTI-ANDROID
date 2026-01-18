@@ -33,7 +33,7 @@ import com.poti.android.presentation.history.component.ParticipantManagementHead
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.mapper.toUiState
-import com.poti.android.presentation.history.model.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
 
 @Composable
 fun RecruiterDetailRoute(
@@ -49,8 +49,8 @@ fun RecruiterDetailRoute(
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 RecruiterDetailUiEffect.NavigateBack -> onNavigateToMypageRecruit()
-                is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(sideEffect.partyId)
-                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(sideEffect.partyId)
+                is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(sideEffect.recruitId)
+                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(sideEffect.recruitId)
             }
         }
     }
@@ -93,7 +93,7 @@ private fun RecruiterDetailScreen(
         ) {
             item {
                 PartyInfoSection(
-                    partyId = detail.partyId,
+                    recruitId = detail.recruitId,
                     artistInfo = detail.artistInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(
@@ -118,7 +118,7 @@ private fun RecruiterDetailScreen(
 
             item {
                 ParticipantManagementHeader(
-                    partyId = detail.partyId,
+                    recruitId = detail.recruitId,
                     participantCount = detail.participantCount,
                     onHeaderClick = onParticipantManageDetailClick,
                 )

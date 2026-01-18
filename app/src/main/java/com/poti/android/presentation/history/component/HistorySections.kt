@@ -32,14 +32,14 @@ import com.poti.android.presentation.history.mapper.toUiState
 
 @Composable
 fun PartyInfoSection(
-    partyId: Long,
+    recruitId: Long,
     artistInfo: ArtistInfo,
     onDetailClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
-            text = stringResource(id = R.string.history_recruit_number, partyId),
+            text = stringResource(id = R.string.history_recruit_number, recruitId),
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
             modifier = Modifier.padding(start = screenWidthDp(8.dp)),
@@ -54,7 +54,7 @@ fun PartyInfoSection(
             title = artistInfo.title,
             participantStageType = partyStage,
             participantStatusType = partyState,
-            onClick = { onDetailClick(partyId) },
+            onClick = { onDetailClick(recruitId) },
         )
     }
 }
@@ -94,7 +94,7 @@ fun ProgressStatusSection(
 
 @Composable
 fun ParticipantManagementHeader(
-    partyId: Long,
+    recruitId: Long,
     participantCount: Int,
     onHeaderClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -115,7 +115,7 @@ fun ParticipantManagementHeader(
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
         )
-        IconButton(onClick = { onHeaderClick(partyId) }) {
+        IconButton(onClick = { onHeaderClick(recruitId) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right_lg),
                 contentDescription = null,
@@ -142,7 +142,7 @@ fun getStepIndicatorDrawable(step: Int): Int {
 private fun PartyInfoSectionPreview() {
     PotiTheme {
         PartyInfoSection(
-            partyId = 1L,
+            recruitId = 1L,
             artistInfo = participantDetailWaitDeposit.artistInfo,
             onDetailClick = {},
         )
@@ -176,7 +176,7 @@ private fun ProgressStatusSectionPreview_Step2() {
 private fun ParticipantManagementHeaderPreview_Empty() {
     PotiTheme {
         ParticipantManagementHeader(
-            partyId = 1L,
+            recruitId = 1L,
             participantCount = 0,
             onHeaderClick = {},
         )
@@ -188,7 +188,7 @@ private fun ParticipantManagementHeaderPreview_Empty() {
 private fun ParticipantManagementHeaderPreview_WithItems() {
     PotiTheme {
         ParticipantManagementHeader(
-            partyId = 1L,
+            recruitId = 1L,
             participantCount = 5,
             onHeaderClick = {},
         )

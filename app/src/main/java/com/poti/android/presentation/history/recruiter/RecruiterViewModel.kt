@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.presentation.history.DummyParticipantManageDetail
-import com.poti.android.presentation.history.model.RecruiterDetailUiEffect
-import com.poti.android.presentation.history.model.RecruiterDetailUiIntent
-import com.poti.android.presentation.history.model.RecruiterDetailUiState
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiIntent
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

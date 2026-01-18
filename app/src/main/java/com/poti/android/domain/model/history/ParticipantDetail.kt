@@ -3,12 +3,15 @@ package com.poti.android.domain.model.history
 import com.poti.android.domain.type.ParticipantStatusType
 
 data class ParticipantDetail(
-    val partyId: Long,
+    val recruitId: Long,
     val userState: ParticipantStatusType,
     val artistInfo: ArtistInfo,
     val progressInfo: ProgressInfo,
     val depositInfo: ParticipantDepositInfo,
     val shippingInfo: ParticipantShippingInfo,
+    val recruiterName: String,
+    val recruiterProfileUrl: String,
+    val recruiterRating: String
 )
 
 data class ParticipantDepositInfo(

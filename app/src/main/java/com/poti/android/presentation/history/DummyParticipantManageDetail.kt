@@ -35,7 +35,7 @@ object DummyParticipantManageDetail {
 
     // Step 0: 모집 중/완료 단계
     val recruiterRecruitStep = RecruiterDetail(
-        partyId = 1,
+        recruitId = 1,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "IVE(아이브)",
@@ -60,7 +60,7 @@ object DummyParticipantManageDetail {
 
     // Step 1: 입금 진행/확인 단계
     val recruiterDepositStep = RecruiterDetail(
-        partyId = 2,
+        recruitId = 2,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "aespa(에스파)",
@@ -101,7 +101,7 @@ object DummyParticipantManageDetail {
 
     // Step 2: 배송/종료 단계
     val recruiterDeliveryDoneStep = RecruiterDetail(
-        partyId = 3,
+        recruitId = 3,
         artistInfo = ArtistInfo(
             imageUrl = "",
             artist = "NewJeans",
@@ -141,7 +141,7 @@ object DummyParticipantManageDetail {
      * - 액션: 하단 [입금 완료] 버튼 노출
      */
     val participantDetailWaitDeposit = ParticipantDetail(
-        partyId = 1001L,
+        recruitId = 1001L,
         artistInfo = commonArtistInfo,
         progressInfo = ProgressInfo(
             guideText = "입금을 진행해주세요.",
@@ -157,6 +157,10 @@ object DummyParticipantManageDetail {
         ),
         shippingInfo = commonShippingInfo,
         userState = ParticipantStatusType.RECRUIT_DONE,
+        // [추가된 필드]
+        recruiterName = "포티 총대",
+        recruiterProfileUrl = "https://picsum.photos/id/64/200",
+        recruiterRating = "4.8"
     )
 
     /**
@@ -164,7 +168,7 @@ object DummyParticipantManageDetail {
      * - 액션: 버튼 없음 (총대 확인 대기)
      */
     val participantDetailCheckDeposit = ParticipantDetail(
-        partyId = 1002L,
+        recruitId = 1002L,
         artistInfo = commonArtistInfo,
         progressInfo = ProgressInfo(
             guideText = "총대가 입금을 확인하고 있습니다.",
@@ -180,6 +184,10 @@ object DummyParticipantManageDetail {
         ),
         shippingInfo = commonShippingInfo,
         userState = ParticipantStatusType.DEPOSIT_CHECK,
+        // [추가된 필드]
+        recruiterName = "포티 총대",
+        recruiterProfileUrl = "https://picsum.photos/id/64/200",
+        recruiterRating = "4.8"
     )
 
     /**
@@ -188,7 +196,7 @@ object DummyParticipantManageDetail {
      * - 특징: 운송장 번호 존재
      */
     val participantDetailDeliveryStart = ParticipantDetail(
-        partyId = 1003L,
+        recruitId = 1003L,
         artistInfo = commonArtistInfo,
         progressInfo = ProgressInfo(
             guideText = "배송이 시작되었습니다.",
@@ -203,5 +211,9 @@ object DummyParticipantManageDetail {
             trackingNumber = "1234-5678-9012",
         ),
         userState = ParticipantStatusType.DELIVERY_START,
+        // [추가된 필드]
+        recruiterName = "포티 총대",
+        recruiterProfileUrl = "https://picsum.photos/id/64/200",
+        recruiterRating = "4.8"
     )
 }

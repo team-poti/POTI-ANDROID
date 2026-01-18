@@ -14,14 +14,14 @@ import kotlinx.serialization.Serializable
 
 sealed interface PartyDetailRoute : Route {
     @Serializable
-    data class Detail(val partyId: Long) : PartyDetailRoute
+    data class Detail(val recruitId: Long) : PartyDetailRoute
 
     @Serializable
     data object Join : PartyDetailRoute
 }
 
-fun NavController.navigateToPartyDetail(partyId: Long) {
-    navigate(PartyDetailRoute.Detail(partyId))
+fun NavController.navigateToPartyDetail(recruitId: Long) {
+    navigate(PartyDetailRoute.Detail(recruitId))
 }
 
 fun NavController.navigateToPartyJoin() {
