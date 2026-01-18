@@ -11,10 +11,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
@@ -24,14 +29,53 @@ import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PotSummary
 import com.poti.android.domain.model.party.Pots
 import com.poti.android.presentation.party.goodsfilter.component.PotsCard
+import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
+import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.SortFilter
 
 @Composable
 fun GoodsFilteredPartyListRoute(
     artistId: Long,
+    onPopBackStack: () -> Unit,
+    onNavigateToPartyCreate: () -> Unit,
+    onNavigateToPartyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: GoodsFilterViewModel = hiltViewModel(),
 ) {
-//    GoodsFilteredPartyListScreen(modifier = modifier)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            GoodsFilterUiEffect.NavigateBack -> onPopBackStack()
+            GoodsFilterUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
+            is GoodsFilterUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.userId)
+        }
+    }
+
+    uiState.potsInfo.onSuccess { potsInfo ->
+        GoodsFilteredPartyListScreen(
+            potsInfo = potsInfo,
+            selectedMember = uiState.selectedMember,
+            sortFilter = uiState.goodsSortFilter,
+            memberFilterText = uiState.memberFilterText,
+            onBackClick = {
+                viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
+            },
+            onFloatingClick = {
+                viewModel.processIntent(GoodsFilterUiIntent.OnFloatingClick)
+            },
+            onMemberFilterClick = {
+                viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterClick)
+            },
+            onSortFilterClick = {
+                viewModel.processIntent(GoodsFilterUiIntent.OnSortFilterClick)
+            },
+            onCardClick = { potId ->
+                viewModel.processIntent(GoodsFilterUiIntent.OnPartyClick(potId))
+            },
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
@@ -40,6 +84,11 @@ private fun GoodsFilteredPartyListScreen(
     selectedMember: List<Member>,
     sortFilter: SortFilter,
     memberFilterText: String,
+    onBackClick: () -> Unit,
+    onFloatingClick: () -> Unit,
+    onMemberFilterClick: () -> Unit,
+    onSortFilterClick: () -> Unit,
+    onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -47,14 +96,14 @@ private fun GoodsFilteredPartyListScreen(
         containerColor = PotiTheme.colors.white,
         topBar = {
             PotiHeaderPage(
-                onNavigationClick = {},
+                onNavigationClick = onBackClick,
                 title = potsInfo.postTitle,
                 subTitle = potsInfo.artistName,
             )
         },
         floatingActionButton = {
             PotiFloatingButton(
-                onClick = {},
+                onClick = onFloatingClick, // TODO: [예림] 등록 화면(PartyCreateScreen)에 (아티스트 + 굿즈명) 넘겨주기
             )
         },
     ) { innerPadding ->
@@ -71,18 +120,19 @@ private fun GoodsFilteredPartyListScreen(
                 ) {
                     PotiSmallButton(
                         text = memberFilterText,
-                        onClick = {},
+                        onClick = onMemberFilterClick,
                     )
 
                     PotiSmallButton(
                         text = stringResource(sortFilter.displayRes),
-                        onClick = {},
+                        onClick = onSortFilterClick,
                     )
                 }
             }
 
             items(potsInfo.potSummaries) { pot ->
                 PotsCard(
+                    potId = 1L,
                     profileImageUrl = pot.profileImageUrl ?: "",
                     nickname = pot.nickname,
                     rating = pot.rating,
@@ -91,7 +141,7 @@ private fun GoodsFilteredPartyListScreen(
                     price = pot.price,
                     currentCount = pot.currentCount,
                     totalCount = pot.totalCount,
-                    onClick = {},
+                    onClick = onCardClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
@@ -140,5 +190,10 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
         selectedMember = emptyList(),
         sortFilter = SortFilter.LATEST,
         memberFilterText = "",
+        onBackClick = {},
+        onFloatingClick = {},
+        onMemberFilterClick = {},
+        onSortFilterClick = {},
+        onCardClick = {},
     )
 }

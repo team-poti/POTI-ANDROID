@@ -68,15 +68,27 @@ data class GoodsFilterUiState(
 }
 
 sealed interface GoodsFilterUiIntent : UiIntent {
-    data object OnMemberFilterClick
+    data object LoadGoodsPots : GoodsFilterUiIntent
 
-    data class OnMembersSelect(val members: List<Member>)
+    data object OnBackClick : GoodsFilterUiIntent
 
-    data object OnSortFilterClick
+    data object OnFloatingClick : GoodsFilterUiIntent
 
-    data class OnSortSelect(val sort: SortFilter)
+    data class OnPartyClick(val userId: Long) : GoodsFilterUiIntent
+
+    data object OnMemberFilterClick : GoodsFilterUiIntent
+
+    data class OnMembersSelect(val members: List<Member>) : GoodsFilterUiIntent
+
+    data object OnSortFilterClick : GoodsFilterUiIntent
+
+    data class OnSortSelect(val sort: SortFilter) : GoodsFilterUiIntent
 }
 
 sealed interface GoodsFilterUiEffect : UiEffect {
+    data object NavigateBack : GoodsFilterUiEffect
 
+    data object NavigateToPartyCreate : GoodsFilterUiEffect
+
+    data class NavigateToPartyDetail(val userId: Long) : GoodsFilterUiEffect
 }
