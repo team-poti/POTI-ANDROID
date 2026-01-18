@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
@@ -46,8 +45,8 @@ fun PartyDetailRoute(
     onPopBackStack: () -> Unit,
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
+    viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
-    viewModel: PartyDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -62,7 +61,7 @@ fun PartyDetailRoute(
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
-            isJoinEnable = uiState.isJoinEnable,
+            isJoinEnable = uiState.isDetailJoinEnable,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
@@ -76,7 +75,8 @@ fun PartyDetailRoute(
                 memberOptions = uiState.memberMenuItems,
                 deliveryOptions = uiState.deliveryMenuItems,
                 selectedMemberIds = uiState.selectedMemberIds,
-                selectedDeliveryId = uiState.selectedDeliveryIds,
+                selectedDeliveryId = uiState.selectedDeliveryId,
+                hasSelectedOptions = uiState.hasSelectedOptions,
                 totalPrice = uiState.totalPrice,
                 onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
                 onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },

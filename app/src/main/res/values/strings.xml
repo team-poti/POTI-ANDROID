@@ -70,9 +70,9 @@
     <string name="party_join_order_postal_label">우편번호</string>
     <string name="party_join_order_postal_placeholder">예) 12345</string>
     <string name="party_join_order_address_label">주소</string>
-    <string name="party_join_order_address_placeholder">주소</string>
+    <string name="party_join_order_address_placeholder">예) 서울시 솝트구 다솝로 37</string>
     <string name="party_join_order_contact_label">연락처</string>
-    <string name="party_join_order_contact_placeholder">연락처</string>
+    <string name="party_join_order_contact_placeholder">예) 010-1234-5678</string>
 
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>

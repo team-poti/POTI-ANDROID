@@ -8,62 +8,84 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.getSuccessDataOrNull
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
-import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.party.detail.component.CardOptionPrice
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.TotalPrice
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import com.poti.android.presentation.party.detail.model.PartyDetailEffect
+import com.poti.android.presentation.party.detail.model.PartyDetailIntent
+import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 
 @Composable
 fun PartyJoinRoute(
+    onPopBackStack: () -> Unit,
+    viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            PartyDetailEffect.NavigateBack -> onPopBackStack()
+            else -> {}
+        }
+    }
+
+    PartyJoinScreen(
+        uiState = uiState,
+        onOrderNameChange = { viewModel.processIntent(PartyDetailIntent.OnOrderNameChange(it)) },
+        onPostalCodeChange = { viewModel.processIntent(PartyDetailIntent.OnPostalCodeChange(it)) },
+        onAddressChange = { viewModel.processIntent(PartyDetailIntent.OnAddressChange(it)) },
+        onContactChange = { viewModel.processIntent(PartyDetailIntent.OnContactChange(it)) },
+        onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
+        onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+        modifier = modifier,
+    )
 }
 
 @Composable
 private fun PartyJoinScreen(
-    memberOptions: ImmutableList<FieldMenuItem>,
-    deliveryOptions: ImmutableList<FieldMenuItem>,
-    selectedMemberIds: Set<String>,
-    selectedDeliveryId: Set<String>,
+    uiState: PartyDetailUiState,
+    onOrderNameChange: (String) -> Unit,
+    onPostalCodeChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
+    onContactChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedMembers = memberOptions.filter { it.id in selectedMemberIds }
-    val selectedDelivery = deliveryOptions.find { it.id in selectedDeliveryId }
-
     Scaffold(
         modifier = modifier,
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title), // TODO: [지현] 닉네임 연결
+                title = stringResource(R.string.party_detail_title, uiState.partyDetail.getSuccessDataOrNull()?.userSummary?.nickname ?: ""),
             )
         },
         bottomBar = {
             PotiBottomButton(
                 text = stringResource(R.string.party_join_button),
                 onClick = onJoinClick,
-                enabled = true, // TODO: [지현] 활성화 연결
+                enabled = uiState.isDetailJoinEnable,
             )
         },
     ) { innerPadding ->
@@ -74,27 +96,28 @@ private fun PartyJoinScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 20.dp, bottom = 24.dp)
+                    .padding(top = 18.dp, bottom = 24.dp)
                     .padding(horizontal = screenWidthDp(16.dp)),
             ) {
                 Column(
                     modifier = Modifier,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    selectedMembers.forEach { member ->
+                    uiState.selectedMembers.forEach { member ->
                         PotiListOptionPrice(
                             itemOptionType = PotiItemOptionType.MEMBER,
                             itemOptionText = member.option,
-                            priceText = member.price ?: "",
+                            priceText = stringResource(R.string.party_option_price_won, member.price ?: "0"),
                             sizeType = PotiListOptionPriceSize.SMALL,
                         )
                     }
 
-                    selectedDelivery?.let { delivery ->
-                        CardOptionPrice(
-                            optionType = PotiItemOptionType.DELIVERY,
-                            text = delivery.option,
-                            price = delivery.price ?: "",
+                    uiState.selectedDelivery?.let { delivery ->
+                        PotiListOptionPrice(
+                            itemOptionType = PotiItemOptionType.DELIVERY,
+                            itemOptionText = delivery.option,
+                            priceText = stringResource(R.string.party_option_price_won, delivery.price ?: "0"),
+                            sizeType = PotiListOptionPriceSize.SMALL,
                         )
                     }
                 }
@@ -104,7 +127,7 @@ private fun PartyJoinScreen(
                     modifier = Modifier.padding(vertical = 16.dp),
                 )
 
-                TotalPrice(totalPrice = "12,800") // TODO: [지현] 가격 연결
+                TotalPrice(totalPrice = uiState.totalPrice)
             }
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
@@ -122,36 +145,29 @@ private fun PartyJoinScreen(
                     verticalArrangement = Arrangement.spacedBy(28.dp),
                 ) {
                     PotiShortTextField(
-                        value = "",
-                        onValueChanged = {},
+                        value = uiState.orderName,
+                        onValueChanged = onOrderNameChange,
                         placeholder = stringResource(R.string.party_join_order_name_placeholder),
                         label = stringResource(R.string.filed_label_name),
                     )
 
                     PotiShortTextField(
-                        value = "",
-                        onValueChanged = {},
-                        placeholder = stringResource(R.string.party_join_order_name_placeholder),
+                        value = uiState.postalCode,
+                        onValueChanged = onPostalCodeChange,
+                        placeholder = stringResource(R.string.party_join_order_postal_placeholder),
                         label = stringResource(R.string.party_join_order_postal_label),
                     )
 
                     PotiShortTextField(
-                        value = "",
-                        onValueChanged = {},
-                        placeholder = stringResource(R.string.party_join_order_name_placeholder),
-                        label = stringResource(R.string.party_join_order_postal_placeholder),
+                        value = uiState.address,
+                        onValueChanged = onAddressChange,
+                        placeholder = stringResource(R.string.party_join_order_address_placeholder),
+                        label = stringResource(R.string.party_join_order_address_label),
                     )
 
                     PotiShortTextField(
-                        value = "",
-                        onValueChanged = {},
-                        placeholder = stringResource(R.string.party_join_order_address_label),
-                        label = stringResource(R.string.party_join_order_address_placeholder),
-                    )
-
-                    PotiShortTextField(
-                        value = "",
-                        onValueChanged = {},
+                        value = uiState.contact,
+                        onValueChanged = onContactChange,
                         placeholder = stringResource(R.string.party_join_order_contact_label),
                         label = stringResource(R.string.party_join_order_contact_placeholder),
                     )
@@ -173,12 +189,13 @@ private fun PartyJoinScreenPreview() {
 
     PotiTheme {
         PartyJoinScreen(
-            memberOptions = dummyMemberOptions.toImmutableList(),
-            deliveryOptions = dummyDeliveryOptions.toImmutableList(),
-            selectedMemberIds = selectedMemberIds,
-            selectedDeliveryId = selectedDeliveryId,
+            uiState = PartyDetailUiState(),
             onBackClick = {},
             onJoinClick = {},
+            onOrderNameChange = {},
+            onPostalCodeChange = {},
+            onAddressChange = {},
+            onContactChange = {},
         )
     }
 }

@@ -12,6 +12,7 @@ import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.type.PartyStatusType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 data class PartyDetailUiState(
     val partyDetail: ApiState<PartyDetail> = ApiState.Loading,
@@ -20,11 +21,43 @@ data class PartyDetailUiState(
     val memberMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val deliveryMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val selectedMemberIds: Set<String> = emptySet(),
-    val selectedDeliveryIds: Set<String> = emptySet(),
-    val totalPrice: String = "0",
+    val selectedDeliveryId: Set<String> = emptySet(),
+    val orderName: String = "",
+    val postalCode: String = "",
+    val address: String = "",
+    val detailAddress: String = "",
+    val contact: String = "",
 ) : UiState {
-    val isJoinEnable: Boolean
+    val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
+
+    val selectedMembers: ImmutableList<FieldMenuItem>
+        get() = memberMenuItems
+            .filter { it.id in selectedMemberIds }
+            .toImmutableList()
+
+    val selectedDelivery: FieldMenuItem?
+        get() = deliveryMenuItems
+            .find { it.id in selectedDeliveryId }
+
+    val hasSelectedOptions: Boolean
+        get() = selectedMemberIds.isNotEmpty() || selectedDeliveryId.isNotEmpty()
+
+    val totalPrice: String
+        get() {
+            val memberPriceSum = selectedMembers.sumOf { it.price?.replace(",", "")?.toIntOrNull() ?: 0 }
+            val deliveryPrice = selectedDelivery?.price?.replace(",", "")?.toIntOrNull() ?: 0
+            return (memberPriceSum + deliveryPrice).toString()
+        }
+
+    val isBottomSheetButtonEnable: Boolean
+        get() = selectedMemberIds.isNotEmpty() && selectedDeliveryId.isNotEmpty()
+
+    val isFinalJoinButtonEnabled: Boolean
+        get() = orderName.isNotBlank() &&
+            postalCode.isNotBlank() &&
+            address.isNotBlank() &&
+            contact.isNotBlank()
 }
 
 sealed interface PartyDetailIntent : UiIntent {
@@ -45,6 +78,16 @@ sealed interface PartyDetailIntent : UiIntent {
     data class OnMemberRemove(val id: String) : PartyDetailIntent
 
     data class OnDeliverySelect(val item: FieldMenuItem) : PartyDetailIntent
+
+    data class OnOrderNameChange(val value: String) : PartyDetailIntent
+
+    data class OnPostalCodeChange(val value: String) : PartyDetailIntent
+
+    data class OnAddressChange(val value: String) : PartyDetailIntent
+
+    data class OnContactChange(val value: String) : PartyDetailIntent
+
+    data object OnFinalJoinClick : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {

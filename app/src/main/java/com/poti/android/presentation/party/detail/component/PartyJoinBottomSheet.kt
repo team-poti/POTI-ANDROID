@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -40,6 +41,7 @@ fun PartyJoinBottomSheet(
     onMemberSelect: (FieldMenuItem) -> Unit,
     onMemberRemove: (String) -> Unit,
     onDeliverySelect: (FieldMenuItem) -> Unit,
+    hasSelectedOptions: Boolean,
     totalPrice: String,
     onDismissRequest: () -> Unit,
     onNextClick: () -> Unit,
@@ -76,7 +78,7 @@ fun PartyJoinBottomSheet(
 
             PotiDropdownField(
                 value = "",
-                placeholder = stringResource(R.string.party_join_option_member_placeholder),
+                placeholder = stringResource(R.string.party_join_option_delivery_placeholder),
                 onItemClick = onDeliverySelect,
                 menuItems = deliveryOptions,
                 selectedIds = selectedDeliveryId,
@@ -85,36 +87,42 @@ fun PartyJoinBottomSheet(
                 initialOpenState = false,
             )
 
-            LazyColumn(
-                modifier = Modifier.height(194.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+            Column(
+                modifier = Modifier.height(screenHeightDp(255.dp)),
             ) {
-                items(selectedMembers) { member ->
-                    CardOptionPrice(
-                        optionType = PotiItemOptionType.MEMBER,
-                        text = member.option,
-                        price = member.price ?: "",
-                        onDeleteClick = { onMemberRemove(member.id) },
-                    )
-                }
-
-                selectedDelivery?.let { delivery ->
-                    item {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+                ) {
+                    items(selectedMembers) { member ->
                         CardOptionPrice(
-                            optionType = PotiItemOptionType.DELIVERY,
-                            text = delivery.option,
-                            price = delivery.price ?: "",
+                            optionType = PotiItemOptionType.MEMBER,
+                            text = member.option,
+                            price = stringResource(R.string.party_option_price_won, member.price ?: "0"),
+                            onDeleteClick = { onMemberRemove(member.id) },
                         )
                     }
+
+                    selectedDelivery?.let { delivery ->
+                        item {
+                            CardOptionPrice(
+                                optionType = PotiItemOptionType.DELIVERY,
+                                text = delivery.option,
+                                price = delivery.price ?: "",
+                            )
+                        }
+                    }
+                }
+
+                if (hasSelectedOptions) {
+                    PotiDivider(
+                        styleType = PotiDividerStyle.SMALL,
+                        modifier = Modifier.padding(vertical = 16.dp),
+                    )
+
+                    TotalPrice(totalPrice = totalPrice)
                 }
             }
-
-            PotiDivider(
-                styleType = PotiDividerStyle.SMALL,
-                modifier = Modifier.padding(vertical = 16.dp),
-            )
-
-            TotalPrice(totalPrice = totalPrice)
         }
     }
 }
@@ -148,6 +156,7 @@ private fun PartyJoinBottomSheetPreview() {
                 }
                 selectedDeliveryId.add(it.id)
             },
+            hasSelectedOptions = false,
             totalPrice = "11,000",
             onDismissRequest = {},
             onNextClick = {},
