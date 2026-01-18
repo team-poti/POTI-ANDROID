@@ -28,6 +28,7 @@ fun HomeGoodsSection(
     @StringRes title: Int,
     nickname: String,
     groupItems: List<GroupItem>,
+    onMoreClick: () -> Unit,
     onCardClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -53,7 +54,7 @@ fun HomeGoodsSection(
 
             PotiTextButton(
                 text = stringResource(R.string.home_more),
-                onClick = {},
+                onClick = onMoreClick,
             )
         }
 
@@ -69,10 +70,7 @@ fun HomeGoodsSection(
                     goodsType = item.postTitle,
                     partyCount = item.postCount.toInt(),
                     tag = item.tag,
-                    onClick = {
-                        // TODO: [예림] 상세 이동
-                        onCardClick
-                    },
+                    onClick = { onCardClick() },
                 )
             }
         }
@@ -87,6 +85,7 @@ private fun HomeGoodsSectionPreview() {
             title = R.string.home_recommend_goods,
             nickname = "포티",
             groupItems = fakeMyGroupItems,
+            onMoreClick = {},
             onCardClick = {},
         )
     }

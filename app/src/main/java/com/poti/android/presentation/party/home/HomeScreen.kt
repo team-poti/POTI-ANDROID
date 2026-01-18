@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
@@ -25,6 +30,7 @@ import com.poti.android.domain.model.home.GroupItem
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
+import com.poti.android.presentation.party.home.model.HomeUiEffect
 
 val fakeMyGroupItems = listOf(
     GroupItem(
@@ -52,31 +58,43 @@ val fakeMyGroupItems = listOf(
 
 @Composable
 fun HomeRoute(
+    onNavigateToPartyCreate: () -> Unit,
+    onNavigateToPartyDetail: (Long) -> Unit,
+    onNavigateToGoodsPartyList: () -> Unit,
     onNavigateToGoodsCategory: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    HomeScreen(
-        uiState = HomeContent(
-            nickname = "포티",
-            banners = listOf(
-                Banner(1, ""),
-                Banner(2, ""),
-                Banner(3, ""),
-            ),
-            myGroupItems = fakeMyGroupItems,
-            otherGroupItems = fakeMyGroupItems,
-        ),
-        onCardClick = onNavigateToGoodsCategory,
-        onFloatingClick = { },
-        modifier = modifier,
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
+            is HomeUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.postId)
+            HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList()
+            HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory()
+        }
+    }
+
+    uiState.homeContentLoadState.onSuccess { homeContent ->
+        HomeScreen(
+            homeContent = homeContent,
+            onFloatingClick = onNavigateToPartyCreate,
+            onBannerClick = onNavigateToPartyDetail,
+            onMoreClick = onNavigateToGoodsPartyList,
+            onCardClick = onNavigateToGoodsCategory,
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
 private fun HomeScreen(
-    uiState: HomeContent,
-    onCardClick: () -> Unit,
+    homeContent: HomeContent,
     onFloatingClick: () -> Unit,
+    onBannerClick: (Long) -> Unit,
+    onMoreClick: () -> Unit,
+    onCardClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -99,7 +117,8 @@ private fun HomeScreen(
                     .padding(bottom = 48.dp),
             ) {
                 HomeBannerSection(
-                    banners = uiState.banners,
+                    banners = homeContent.banners,
+                    onBannerClick = onBannerClick,
                     modifier = Modifier
                         .padding(top = screenHeightDp(16.dp))
                         .padding(horizontal = screenWidthDp(16.dp)),
@@ -109,8 +128,9 @@ private fun HomeScreen(
 
                 HomeGoodsSection(
                     title = R.string.home_recommend_goods,
-                    nickname = uiState.nickname,
-                    groupItems = uiState.myGroupItems,
+                    nickname = homeContent.nickname,
+                    groupItems = homeContent.myGroupItems,
+                    onMoreClick = onMoreClick,
                     onCardClick = onCardClick,
                 )
 
@@ -118,8 +138,9 @@ private fun HomeScreen(
 
                 HomeGoodsSection(
                     title = R.string.home_other_goods,
-                    nickname = uiState.nickname,
-                    groupItems = uiState.otherGroupItems,
+                    nickname = homeContent.nickname,
+                    groupItems = homeContent.otherGroupItems,
+                    onMoreClick = onMoreClick,
                     onCardClick = onCardClick,
                 )
             }
@@ -142,7 +163,7 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     PotiTheme {
         HomeScreen(
-            uiState = HomeContent(
+            homeContent = HomeContent(
                 nickname = "포티",
                 banners = listOf(
                     Banner(1, ""),
@@ -152,8 +173,10 @@ private fun HomeScreenPreview() {
                 myGroupItems = fakeMyGroupItems,
                 otherGroupItems = fakeMyGroupItems,
             ),
-            onCardClick = { },
             onFloatingClick = { },
+            onBannerClick = { },
+            onMoreClick = { },
+            onCardClick = { },
         )
     }
 }
