@@ -26,7 +26,14 @@ class AuthRepositoryImpl @Inject constructor(
         authRemoteDataSource.login(loginRequest = requestDto)
             .handleApiResponse()
             .getOrThrow()
-            .apply { preferenceDataSource.saveTokens(accessToken, refreshToken) }
+            .apply {
+                preferenceDataSource.saveTokens(accessToken, refreshToken)
+                preferenceDataSource.saveOnboardingState(!isNewUser)
+            }
             .toDomain()
+    }
+
+    override suspend fun saveOnboardingState(isCompleted: Boolean) {
+        preferenceDataSource.saveOnboardingState(isCompleted)
     }
 }

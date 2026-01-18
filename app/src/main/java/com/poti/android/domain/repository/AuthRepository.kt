@@ -7,4 +7,6 @@ interface AuthRepository {
         socialType: String,
         token: String,
     ): Result<UserAuth>
+
+    suspend fun saveOnboardingState(isCompleted: Boolean)
 }

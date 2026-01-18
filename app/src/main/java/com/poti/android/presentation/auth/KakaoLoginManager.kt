@@ -14,7 +14,10 @@ class KakaoLoginManager @Inject constructor() {
     ) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) return@loginWithKakaoTalk
+                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                    onResult(Result.failure(error))
+                    return@loginWithKakaoTalk
+                }
                 when {
                     token != null -> onResult(Result.success(token))
                     error != null -> UserApiClient.instance.loginWithKakaoAccount(context) { token2, error2 ->

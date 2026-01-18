@@ -3,7 +3,6 @@ package com.poti.android.presentation.auth
 import android.content.Context
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -16,7 +15,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val kakaoLoginManager: KakaoLoginManager,
     private val authRepository: AuthRepository,
-    private val preferenceDataSource: PreferenceDataSource,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
@@ -49,12 +47,10 @@ class LoginViewModel @Inject constructor(
                 .onSuccess { response ->
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
-                        preferenceDataSource.saveOnboardingState(false)
                         updateState { copy(loginState = ApiState.Success(Unit)) }
                         sendEffect(LoginEffect.NavigateToOnboarding)
                     } else {
                         Timber.i("기존 회원입니다. 온보딩 상태: 완료(true)로 저장 -> 홈으로 이동")
-                        preferenceDataSource.saveOnboardingState(true)
                         updateState { copy(loginState = ApiState.Success(Unit)) }
                         sendEffect(LoginEffect.NavigateToHome)
                     }

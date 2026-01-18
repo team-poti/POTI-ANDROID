@@ -52,7 +52,7 @@ object NetworkModule {
         authenticator(tokenAuthenticator)
         addInterceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("Accept", "*/*")
+                .header("Accept", "*/*")
                 .build()
             chain.proceed(request)
         }

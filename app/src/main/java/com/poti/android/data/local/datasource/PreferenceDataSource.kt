@@ -5,10 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.collections.set
 
 class PreferenceDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>,
@@ -27,6 +31,25 @@ class PreferenceDataSource @Inject constructor(
         prefs[REFRESH_TOKEN_KEY]
     }
 
+    @Volatile
+    private var _cachedAccessToken: String? = null
+    val cachedAccessToken: String?
+        get() = _cachedAccessToken
+
+    @Volatile
+    private var _cachedRefreshToken: String? = null
+    val cachedRefreshToken: String?
+        get() = _cachedRefreshToken
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            accessToken.collect { _cachedAccessToken = it }
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            refreshToken.collect { _cachedRefreshToken = it }
+        }
+    }
+
     suspend fun saveAccessToken(accessToken: String) = dataStore.edit { prefs ->
         Timber.d("saveAccessToken 호출됨: $accessToken")
         prefs[ACCESS_TOKEN_KEY] = accessToken
@@ -40,10 +63,15 @@ class PreferenceDataSource @Inject constructor(
     suspend fun saveTokens(
         accessToken: String,
         refreshToken: String,
-    ) = dataStore.edit { prefs ->
-        Timber.d("saveTokens 호출됨 - Access: ${accessToken.take(5)}... Refresh: ${refreshToken.take(5)}...")
-        prefs[ACCESS_TOKEN_KEY] = accessToken
-        prefs[REFRESH_TOKEN_KEY] = refreshToken
+    ) {
+        _cachedAccessToken = accessToken
+        _cachedRefreshToken = refreshToken
+
+        dataStore.edit { prefs ->
+            Timber.d("saveTokens 호출됨 - Access: ${accessToken.take(5)}... Refresh: ${refreshToken.take(5)}...")
+            prefs[ACCESS_TOKEN_KEY] = accessToken
+            prefs[REFRESH_TOKEN_KEY] = refreshToken
+        }
     }
 
     suspend fun saveOnboardingState(isFinished: Boolean) = dataStore.edit { prefs ->

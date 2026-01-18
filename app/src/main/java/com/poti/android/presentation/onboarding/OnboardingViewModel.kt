@@ -69,6 +69,10 @@ class OnboardingViewModel @Inject constructor(
 
         userRepository.postNicknameDuplicate(nickname)
             .onSuccess { isDuplicated ->
+                if (isDuplicated) {
+                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                    return@onSuccess
+                }
                 updateState {
                     copy(
                         nicknameError = null,
@@ -117,8 +121,13 @@ class OnboardingViewModel @Inject constructor(
 
         artistId?.let {
             userRepository.patchOnboarding(uiState.value.nickname, artistId)
-            updateState { copy(isButtonVisible = false) }
-            sendEffect(OnboardingUiEffect.NavigateToHome)
+                .onSuccess {
+                    updateState { copy(isButtonVisible = false) }
+                    sendEffect(OnboardingUiEffect.NavigateToHome)
+                }
+                .onFailure { error ->
+                    Timber.e(error, "온보딩 저장 실패")
+                }
         }
     }
 

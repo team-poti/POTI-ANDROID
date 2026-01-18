@@ -1,8 +1,6 @@
 package com.poti.android.data.network
 
 import com.poti.android.data.local.datasource.PreferenceDataSource
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
@@ -21,7 +19,7 @@ class AuthInterceptor @Inject constructor(
 
         val builder = originalRequest.newBuilder()
 
-        val accessToken = runBlocking { preferenceDataSource.accessToken.first() }
+        val accessToken = preferenceDataSource.cachedAccessToken
 
         if (!accessToken.isNullOrBlank()) {
             Timber.Forest.tag("AuthInterceptor").d("Adding Authorization Header")

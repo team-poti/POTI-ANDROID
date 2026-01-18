@@ -7,7 +7,6 @@ import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
 import com.poti.android.presentation.main.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -22,6 +21,8 @@ class TokenAuthenticator @Inject constructor(
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
     @ApplicationContext private val context: Context,
 ) : Authenticator {
+    private val lock = Any()
+
     override fun authenticate(
         route: Route?,
         response: Response,
@@ -29,47 +30,46 @@ class TokenAuthenticator @Inject constructor(
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
-        val currentAccessToken = runBlocking { preferenceDataSource.accessToken.first() }
-        val currentRefreshToken = runBlocking { preferenceDataSource.refreshToken.first() }
+        val currentAccessToken = preferenceDataSource.cachedAccessToken
+        val currentRefreshToken = preferenceDataSource.cachedRefreshToken
 
-        if (hasNewToken(response.request, currentAccessToken)) {
-            Timber.Forest.tag("TokenAuthenticator").d("Token already refreshed by another thread. Retrying with new token.")
-            return newRequestWithAccessToken(response.request, currentAccessToken)
-        }
+        synchronized(lock) {
+            val freshAccessToken = preferenceDataSource.cachedAccessToken
 
-        if (currentRefreshToken.isNullOrBlank()) {
-            Timber.Forest.tag("TokenAuthenticator").e("RefreshToken is empty. Logout.")
-            handleLogout()
-            return null
-        }
-
-        Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
-        val refreshResponse = try {
-            authRemoteDataSource.get().reissue(ReissueRequestDto(currentRefreshToken)).execute()
-        } catch (e: Exception) {
-            Timber.Forest.tag("TokenAuthenticator").e(e, "Reissue API call failed (Exception). Logout.")
-            handleLogout()
-            return null
-        }
-
-        if (refreshResponse.isSuccessful) {
-            val baseResponse = refreshResponse.body()
-            val reissueData = baseResponse?.data
-
-            if (reissueData != null) {
-                Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
-
-                val newAccessToken = reissueData.accessToken
-                val newRefreshToken = reissueData.refreshToken
-
-                runBlocking { preferenceDataSource.saveTokens(newAccessToken, newRefreshToken) }
-
-                return newRequestWithAccessToken(response.request, newAccessToken)
-            } else {
-                Timber.Forest.tag("TokenAuthenticator").e("Reissue success but data is null. Logout.")
+            if (freshAccessToken != currentAccessToken) {
+                Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
+                return newRequestWithAccessToken(response.request, freshAccessToken)
             }
-        } else {
-            Timber.Forest.tag("TokenAuthenticator").e("Reissue failed. Code: ${refreshResponse.code()}. Logout.")
+
+            if (currentRefreshToken.isNullOrBlank()) {
+                Timber.Forest.tag("TokenAuthenticator").e("RefreshToken is empty. Logout.")
+                handleLogout()
+                return null
+            }
+
+            Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
+            val refreshResponse = try {
+                authRemoteDataSource.get().reissue(ReissueRequestDto(currentRefreshToken)).execute()
+            } catch (e: Exception) {
+                Timber.Forest.tag("TokenAuthenticator").e(e, "Reissue API call failed (Exception). Logout.")
+                handleLogout()
+                return null
+            }
+
+            if (refreshResponse.isSuccessful) {
+                refreshResponse.body()?.data?.let { reissueData ->
+                    Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
+
+                    val newAccessToken = reissueData.accessToken
+                    val newRefreshToken = reissueData.refreshToken
+
+                    runBlocking {
+                        preferenceDataSource.saveTokens(newAccessToken, newRefreshToken)
+                    }
+
+                    return newRequestWithAccessToken(response.request, newAccessToken)
+                }
+            }
         }
 
         handleLogout()
@@ -87,20 +87,6 @@ class TokenAuthenticator @Inject constructor(
         return request.newBuilder()
             .header("Authorization", "Bearer $newAccessToken")
             .build()
-    }
-
-    private fun hasNewToken(
-        request: Request,
-        currentToken: String?,
-    ): Boolean {
-        val authHeader = request.header("Authorization")
-
-        val isDifferent = (authHeader != null && !authHeader.contains(currentToken ?: ""))
-
-        if (isDifferent) {
-            Timber.Forest.tag("TokenAuthenticator").d("Detected new token in local storage.")
-        }
-        return isDifferent
     }
 
     private fun handleLogout() {
