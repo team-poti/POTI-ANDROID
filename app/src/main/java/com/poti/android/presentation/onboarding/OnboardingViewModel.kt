@@ -3,24 +3,27 @@ package com.poti.android.presentation.onboarding
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.network.model.NetworkError
+import com.poti.android.domain.repository.ArtistRepository
+import com.poti.android.domain.repository.UserRepository
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
 import com.poti.android.presentation.onboarding.model.OnboardingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
 private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
-    initialState = OnboardingUiState(),
-) {
-    init {
-        fetchArtists()
-    }
-
+class OnboardingViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val artistRepository: ArtistRepository,
+) : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
+        initialState = OnboardingUiState(),
+    ) {
     override fun processIntent(intent: OnboardingUiIntent) {
         when (intent) {
             OnboardingUiIntent.OnBackClick -> sendEffect(OnboardingUiEffect.NavigateToBack)
@@ -34,7 +37,13 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
     }
 
     private fun fetchArtists() = launchScope {
-        updateState { copy(artists = ApiState.Success(dummyArtists)) }
+        artistRepository.getArtists()
+            .onSuccess { artists ->
+                updateState { copy(artists = ApiState.Success(artists.toImmutableList())) }
+            }
+            .onFailure { error ->
+                updateState { copy(artists = ApiState.Failure(error.message ?: "Failed")) }
+            }
     }
 
     private fun handleNicknameChange(value: String) {
@@ -58,22 +67,35 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
     private fun checkNicknameDuplication(nickname: String) = launchScope {
         Timber.d("닉네임 중복 및 비속어 확인 요청: $nickname")
 
-        val isDuplicate = false
-        val isProfanity = false
-
-        if (isDuplicate) {
-            // TODO: [지현] 닉네임 중복 처리
-        } else if (isProfanity) {
-            // TODO: [지현] 비속어 처리
-        } else {
-            updateState {
-                copy(
-                    nicknameError = null,
-                    isNicknameValid = true,
-                )
+        userRepository.postNicknameDuplicate(nickname)
+            .onSuccess { isDuplicated ->
+                if (isDuplicated) {
+                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                    return@onSuccess
+                }
+                updateState {
+                    copy(
+                        nicknameError = null,
+                        isNicknameValid = true,
+                    )
+                }
+                sendEffect(OnboardingUiEffect.NavigateToArtist)
+                fetchArtists()
             }
-            sendEffect(OnboardingUiEffect.NavigateToArtist)
-        }
+            .onFailure { error ->
+                if (error is NetworkError.BadRequest) {
+                    when (error.code) {
+                        40003 -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                        }
+                        else -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
+                        }
+                    }
+                } else {
+                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+                }
+            }
     }
 
     private fun handleNicknameNextClick() {
@@ -94,10 +116,19 @@ class OnboardingViewModel @Inject constructor() : BaseViewModel<OnboardingUiStat
         updateState { copy(selectedArtistId = newSelectedId) }
     }
 
-    private fun handleStartClick() {
-        // TODO: [지현] 나중에 여기에 서버 API 호출 로직 추가
-        updateState { copy(isButtonVisible = false) }
-        sendEffect(OnboardingUiEffect.NavigateToHome)
+    private fun handleStartClick() = launchScope {
+        val artistId = uiState.value.selectedArtistId
+
+        artistId?.let {
+            userRepository.patchOnboarding(uiState.value.nickname, artistId)
+                .onSuccess {
+                    updateState { copy(isButtonVisible = false) }
+                    sendEffect(OnboardingUiEffect.NavigateToHome)
+                }
+                .onFailure { error ->
+                    Timber.e(error, "온보딩 저장 실패")
+                }
+        }
     }
 
     private fun handleSkipClick() {

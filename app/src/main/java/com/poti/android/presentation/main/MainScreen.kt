@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.poti.android.core.navigation.Route
 
 @Composable
 fun MainScreen(
-    navigator: PotiNavigator = rememberPotiNavigator(),
+    startDestination: Route,
+    navigator: MainNavigator = rememberPotiNavigator(),
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -21,8 +23,9 @@ fun MainScreen(
             )
         },
     ) { innerPadding ->
-        PotiNavHost(
+        MainNavHost(
             navigator = navigator,
+            startDestination = startDestination,
             paddingValues = innerPadding,
         )
     }

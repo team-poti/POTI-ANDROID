@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -52,6 +53,7 @@ fun PotiArtistButton(
             modifier = Modifier
                 .size(screenWidthDp(90.dp))
                 .clip(CircleShape)
+                .background(PotiTheme.colors.gray100)
                 .noRippleClickable(onClick = onClick),
         ) {
             AsyncImage(
@@ -88,6 +90,7 @@ fun PotiArtistButton(
             text = text,
             style = typography.caption12m,
             color = if (selected) colors.gray800 else colors.gray700,
+            textAlign = TextAlign.Center,
         )
     }
 }
