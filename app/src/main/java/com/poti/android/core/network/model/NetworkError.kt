@@ -1,7 +1,7 @@
 package com.poti.android.core.network.model
 
 sealed class NetworkError(override val message: String?) : Throwable(message) {
-    data class BadRequest(val serverMsg: String) : NetworkError(serverMsg)
+    data class BadRequest(val code: Int?, val serverMsg: String) : NetworkError(serverMsg)
 
     data class Unauthorized(val serverMsg: String) : NetworkError(serverMsg)
 
