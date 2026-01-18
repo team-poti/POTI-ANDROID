@@ -21,7 +21,7 @@ interface PostService {
     suspend fun searchArtist()
 
     @POST("api/v1/posts")
-    suspend fun createPot(
+    suspend fun createPost(
         @Body body: CreatePostRequestDto
     ): ApiResponse<CreatePostResponseDto>
 }
