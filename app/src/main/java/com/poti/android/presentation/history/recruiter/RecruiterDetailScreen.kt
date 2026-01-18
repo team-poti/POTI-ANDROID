@@ -163,12 +163,38 @@ fun getStepIndicatorDrawable(step: Int): Int {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Recruit Step")
 @Composable
-private fun RecruiterDetailScreenPreview() {
+private fun RecruiterDetailScreenRecruitPreview() {
     PotiTheme {
         RecruiterDetailScreen(
             detail = DummyParticipantManageDetail.recruiterRecruitStep,
+            onBackClick = {},
+            onDetailClick = {},
+            onParticipantManageDetailClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Deposit Step")
+@Composable
+private fun RecruiterDetailScreenDepositPreview() {
+    PotiTheme {
+        RecruiterDetailScreen(
+            detail = DummyParticipantManageDetail.recruiterDepositStep,
+            onBackClick = {},
+            onDetailClick = {},
+            onParticipantManageDetailClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Delivery Done Step")
+@Composable
+private fun RecruiterDetailScreenDeliveryDonePreview() {
+    PotiTheme {
+        RecruiterDetailScreen(
+            detail = DummyParticipantManageDetail.recruiterDeliveryDoneStep,
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},

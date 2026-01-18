@@ -1,0 +1,96 @@
+package com.poti.android.presentation.history.component
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.poti.android.R
+import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.history.ArtistInfo
+import com.poti.android.domain.type.ParticipantStatusType
+import com.poti.android.presentation.history.mapper.toUiState
+
+@Composable
+fun PartyInfoSection(
+    recruitId: Long,
+    artistInfo: ArtistInfo,
+    onDetailClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.history_recruit_number, recruitId),
+            style = PotiTheme.typography.body14m,
+            color = PotiTheme.colors.gray800,
+            modifier = Modifier.padding(start = screenWidthDp(8.dp)),
+        )
+
+        val (partyStage, partyState) = artistInfo.partyState.toUiState()
+
+        HistoryCardItem(
+            sizeType = CardHistorySize.LARGE,
+            imageUrl = artistInfo.imageUrl,
+            artist = artistInfo.artist,
+            title = artistInfo.title,
+            participantStageType = partyStage,
+            participantStatusType = partyState,
+            onClick = { onDetailClick(recruitId) },
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Recruit Wait")
+@Composable
+private fun PartyInfoSectionRecruitWaitPreview() {
+    PotiTheme {
+        PartyInfoSection(
+            recruitId = 1L,
+            artistInfo = ArtistInfo(
+                imageUrl = "",
+                artist = "NewJeans",
+                title = "How Sweet 위버스 특전 분철",
+                partyState = ParticipantStatusType.RECRUIT_WAIT,
+            ),
+            onDetailClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Deposit Wait")
+@Composable
+private fun PartyInfoSectionDepositWaitPreview() {
+    PotiTheme {
+        PartyInfoSection(
+            recruitId = 1L,
+            artistInfo = ArtistInfo(
+                imageUrl = "",
+                artist = "IVE",
+                title = "I've IVE",
+                partyState = ParticipantStatusType.DEPOSIT_WAIT,
+            ),
+            onDetailClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Delivery Done")
+@Composable
+private fun PartyInfoSectionDeliveryDonePreview() {
+    PotiTheme {
+        PartyInfoSection(
+            recruitId = 1L,
+            artistInfo = ArtistInfo(
+                imageUrl = "",
+                artist = "aespa",
+                title = "Armageddon",
+                partyState = ParticipantStatusType.DELIVERY_DONE,
+            ),
+            onDetailClick = {},
+        )
+    }
+}
