@@ -160,7 +160,7 @@ object DummyParticipantManageDetail {
         // [추가된 필드]
         recruiterName = "포티 총대",
         recruiterProfileUrl = "https://picsum.photos/id/64/200",
-        recruiterRating = "4.8"
+        recruiterRating = "4.8",
     )
 
     /**
@@ -187,7 +187,7 @@ object DummyParticipantManageDetail {
         // [추가된 필드]
         recruiterName = "포티 총대",
         recruiterProfileUrl = "https://picsum.photos/id/64/200",
-        recruiterRating = "4.8"
+        recruiterRating = "4.8",
     )
 
     /**
@@ -214,6 +214,6 @@ object DummyParticipantManageDetail {
         // [추가된 필드]
         recruiterName = "포티 총대",
         recruiterProfileUrl = "https://picsum.photos/id/64/200",
-        recruiterRating = "4.8"
+        recruiterRating = "4.8",
     )
 }

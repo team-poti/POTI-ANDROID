@@ -15,9 +15,8 @@ import javax.inject.Inject
 class ParticipantViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
-    initialState = ParticipantDetailUiState(),
-) {
-
+        initialState = ParticipantDetailUiState(),
+    ) {
     init {
         processIntent(ParticipantDetailUiIntent.LoadDetail(savedStateHandle["recruitId"] ?: -1L))
     }
@@ -38,7 +37,7 @@ class ParticipantViewModel @Inject constructor(
         launchScope(
             onError = {
                 updateState { copy(participantDetail = ApiState.Failure(it.message ?: "Unknown Error")) }
-            }
+            },
         ) {
             updateState { copy(participantDetail = ApiState.Loading) }
 
@@ -55,7 +54,10 @@ class ParticipantViewModel @Inject constructor(
         }
     }
 
-    private fun submitDeposit(depositor: String, depositTime: String) {
+    private fun submitDeposit(
+        depositor: String,
+        depositTime: String,
+    ) {
         // TODO: [천민재] 입금 확인 API 연동
         // TODO: [천민재] 모집 완료, 입금 확인중으로 상태 전환
     }

@@ -24,7 +24,7 @@ import com.poti.android.presentation.history.mapper.toUiState
 fun PriceDetail(
     items: List<DepositItem>,
     totalAmount: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),

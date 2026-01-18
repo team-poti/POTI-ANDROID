@@ -12,15 +12,22 @@ data class ParticipantDetailUiState(
 
 sealed interface ParticipantDetailUiIntent : UiIntent {
     data class LoadDetail(val recruitId: Long) : ParticipantDetailUiIntent
+
     data object OnBackClick : ParticipantDetailUiIntent
+
     data object OnPartyDetailClick : ParticipantDetailUiIntent
+
     data class SubmitDeposit(val depositor: String, val depositTime: String) : ParticipantDetailUiIntent
+
     data object ConfirmDelivery : ParticipantDetailUiIntent
+
     data class SubmitReview(val rating: Int) : ParticipantDetailUiIntent
+
     data object SkipReview : ParticipantDetailUiIntent
 }
 
 sealed interface ParticipantDetailUiEffect : UiEffect {
     data object NavigateBack : ParticipantDetailUiEffect
+
     data class NavigateToPartyDetail(val recruitId: Long) : ParticipantDetailUiEffect
 }
