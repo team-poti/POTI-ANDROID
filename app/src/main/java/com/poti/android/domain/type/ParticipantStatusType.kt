@@ -9,5 +9,6 @@ enum class ParticipantStatusType {
     DEPOSIT_DONE,
 
     DELIVERY_WAIT,
+    DELIVERY_START,
     DELIVERY_DONE,
 }

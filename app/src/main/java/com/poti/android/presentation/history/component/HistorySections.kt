@@ -27,9 +27,7 @@ import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.ArtistInfo
 import com.poti.android.domain.model.history.ProgressInfo
-import com.poti.android.presentation.history.DummyParticipantManageDetail.dummyArtistInfo
-import com.poti.android.presentation.history.DummyParticipantManageDetail.dummyProgressInfoStep0
-import com.poti.android.presentation.history.DummyParticipantManageDetail.dummyProgressInfoStep2
+import com.poti.android.presentation.history.DummyParticipantManageDetail.participantDetailWaitDeposit
 import com.poti.android.presentation.history.mapper.toUiState
 
 @Composable
@@ -145,7 +143,7 @@ private fun PartyInfoSectionPreview() {
     PotiTheme {
         PartyInfoSection(
             partyId = 1L,
-            artistInfo = dummyArtistInfo,
+            artistInfo = participantDetailWaitDeposit.artistInfo,
             onDetailClick = {},
         )
     }
@@ -156,7 +154,7 @@ private fun PartyInfoSectionPreview() {
 private fun ProgressStatusSectionPreview_Step0() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = dummyProgressInfoStep0,
+            progressInfo = participantDetailWaitDeposit.progressInfo,
             modifier = Modifier.size(360.dp, 206.dp),
         )
     }
@@ -167,7 +165,7 @@ private fun ProgressStatusSectionPreview_Step0() {
 private fun ProgressStatusSectionPreview_Step2() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = dummyProgressInfoStep2,
+            progressInfo = participantDetailWaitDeposit.progressInfo,
             modifier = Modifier.size(360.dp, 206.dp),
         )
     }

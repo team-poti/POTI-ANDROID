@@ -11,6 +11,7 @@ import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
 import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
+import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
@@ -57,7 +58,12 @@ fun NavGraphBuilder.historyNavGraph(
         )
     }
     composable<HistoryRoute.ParticipantDetail> {
-        ParticipantDetailRoute(modifier = Modifier.padding(paddingValues))
+        ParticipantDetailRoute(
+            modifier = Modifier.padding(paddingValues),
+            // TODO: [천민재] pr-58 머지 후, 분철 내역 뷰 연결
+            onBackClick = {},
+            onNavigateToPartyDetail = navController::navigateToPartyDetail,
+        )
     }
     composable<HistoryRoute.RecruiterDetail> {
         RecruiterDetailRoute(

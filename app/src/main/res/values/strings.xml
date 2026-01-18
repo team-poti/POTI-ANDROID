@@ -126,6 +126,13 @@
     <string name="history_total_deposit_amount">총 입금 금액</string>
     <string name="history_shipping_info_title">배송 정보</string>
     <string name="history_shipping_info_format">%1$s\n(%2$s)%3$s%4$s</string>
+    <string name="history_deposit_done_button">입금 완료했어요</string>
+    <string name="history_delivery_done_button">배송을 받았어요</string>
+    <string name="history_deposit_bottomsheet_button">완료</string>
+    <string name="history_deposit_bottomsheet_depositor_placeholder">입금자명을 입력해주세요</string>
+    <string name="history_deposit_bottomsheet_depositor_label">입금자명</string>
+    <string name="history_deposit_bottomsheet_deposit_time_placeholder">입금 시간을 입력해주세요</string>
+    <string name="history_deposit_bottomsheet_deposit_time_label">입금 시간</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

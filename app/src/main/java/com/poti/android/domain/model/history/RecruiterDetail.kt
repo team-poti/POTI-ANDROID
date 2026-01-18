@@ -10,18 +10,6 @@ data class RecruiterDetail(
     val participantCount: Int = participantInfoList.size,
 )
 
-data class ArtistInfo(
-    val imageUrl: String,
-    val artist: String,
-    val title: String,
-    val partyState: ParticipantStatusType,
-)
-
-data class ProgressInfo(
-    val guideText: String,
-    val step: Int,
-)
-
 data class ParticipantInfo(
     val userId: Long,
     val memberNames: String,
