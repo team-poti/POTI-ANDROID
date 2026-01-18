@@ -2,15 +2,12 @@ package com.poti.android.presentation.party.detail.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateSetOf
@@ -117,23 +114,7 @@ fun PartyJoinBottomSheet(
                 modifier = Modifier.padding(vertical = 16.dp),
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(R.string.party_join_total_price),
-                    style = PotiTheme.typography.body16m,
-                    color = PotiTheme.colors.black,
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = stringResource(R.string.party_option_price_won, totalPrice),
-                    style = PotiTheme.typography.display20b,
-                    color = PotiTheme.colors.black,
-                )
-            }
+            TotalPrice(totalPrice = totalPrice)
         }
     }
 }
@@ -167,7 +148,7 @@ private fun PartyJoinBottomSheetPreview() {
                 }
                 selectedDeliveryId.add(it.id)
             },
-            totalPrice = "11,000원",
+            totalPrice = "11,000",
             onDismissRequest = {},
             onNextClick = {},
         )

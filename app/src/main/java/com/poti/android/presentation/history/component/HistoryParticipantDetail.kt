@@ -111,7 +111,7 @@ sealed interface DetailState {
 enum class FieldType(
     @StringRes val labelId: Int,
 ) {
-    NAME(R.string.history_participant_field_type_name),
+    NAME(R.string.filed_label_name),
     DEPOSIT(R.string.history_participant_field_type_deposit),
     DELIVERY(R.string.history_participant_field_type_delivery),
     CONTACT(R.string.history_participant_field_type_contact),

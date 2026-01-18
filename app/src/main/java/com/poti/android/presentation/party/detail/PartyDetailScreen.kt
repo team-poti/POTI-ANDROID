@@ -10,7 +10,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartyDetail
+import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
@@ -150,14 +150,7 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
-            Text(
-                text = stringResource(R.string.party_detail_announcement),
-                style = PotiTheme.typography.caption12m,
-                color = PotiTheme.colors.gray800,
-                modifier = Modifier
-                    .padding(horizontal = screenWidthDp(16.dp), vertical = 16.dp)
-                    .padding(bottom = 40.dp),
-            )
+            ParticipantGuidelines()
         }
     }
 }
