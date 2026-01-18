@@ -4,17 +4,38 @@ import com.poti.android.domain.type.ParticipantStatusType
 
 data class ParticipantDetail(
     val partyId: Long,
+    val userState: ParticipantStatusType,
     val artistInfo: ArtistInfo,
     val progressInfo: ProgressInfo,
     val depositInfo: ParticipantDepositInfo,
     val shippingInfo: ParticipantShippingInfo,
-    val userState: ParticipantStatusType,
 )
 
 data class ParticipantDepositInfo(
     val items: List<DepositItem>,
     val totalAmount: Int,
+    val depositStatus: DepositStatus,
 )
+
+sealed interface DepositStatus {
+    val accountNumber: String
+    val dueDate: String
+
+    data class DepositWait(
+        override val accountNumber: String,
+        override val dueDate: String,
+    ) : DepositStatus
+
+    data class DepositCheck(
+        override val accountNumber: String,
+        override val dueDate: String,
+    ) : DepositStatus
+
+    object DepositDone : DepositStatus {
+        override val accountNumber: String = ""
+        override val dueDate: String = ""
+    }
+}
 
 sealed interface DepositItem {
     val name: String

@@ -168,7 +168,7 @@ fun getStepIndicatorDrawable(step: Int): Int {
 private fun RecruiterDetailScreenPreview() {
     PotiTheme {
         RecruiterDetailScreen(
-            detail = DummyParticipantManageDetail.deliveryDoneStep,
+            detail = DummyParticipantManageDetail.recruiterRecruitStep,
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},

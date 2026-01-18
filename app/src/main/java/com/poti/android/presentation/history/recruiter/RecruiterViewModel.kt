@@ -56,7 +56,7 @@ class RecruiterViewModel @Inject constructor(
                 // TODO: [천민재] 서버 연결 필요
                 copy(
                     recruiterDetail = ApiState.Success(
-                        DummyParticipantManageDetail.recruitStep,
+                        DummyParticipantManageDetail.recruiterRecruitStep,
                     ),
                 )
             }
