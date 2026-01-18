@@ -8,13 +8,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class GoodsFilterViewModel @Inject constructor(
-)
-    : BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
-        initialState = GoodsFilterUiState()
+class GoodsFilterViewModel @Inject constructor() :
+    BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
+        initialState = GoodsFilterUiState(),
     ) {
-    override fun processIntent(intent: GoodsFilterUiIntent) {
-        TODO("Not yet implemented")
+        override fun processIntent(intent: GoodsFilterUiIntent) {
+            TODO("Not yet implemented")
+        }
     }
-
-}

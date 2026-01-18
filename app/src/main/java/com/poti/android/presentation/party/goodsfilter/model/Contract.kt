@@ -1,5 +1,9 @@
 package com.poti.android.presentation.party.goodsfilter.model
 
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
@@ -9,19 +13,19 @@ import com.poti.android.domain.model.party.Pots
 
 enum class SortFilter(
     val request: String,
-    val display: String,
+    @StringRes val displayRes: Int,
 ) {
     LATEST(
         request = "LATEST",
-        display = "최신순",
+        displayRes = R.string.goods_filter_sort_latest,
     ),
     DEADLINE(
         request = "DEADLINE",
-        display = "마감임박순",
+        displayRes = R.string.goods_filter_sort_deadline,
     ),
     RATING(
         request = "RATING",
-        display = "평점순",
+        displayRes = R.string.goods_filter_sort_rating,
     ),
 }
 
@@ -32,11 +36,20 @@ data class GoodsFilterUiState(
     val goodsSortFilter: SortFilter = SortFilter.LATEST,
 ) : UiState {
     val memberFilterText: String
-        get() = when {
-            selectedMember.isEmpty() -> "멤버 선택"
+        @Composable get() = when {
+            selectedMember.isEmpty() -> stringResource(R.string.goods_filter_member_select)
             selectedMember.size == 1 -> selectedMember[0].name
-            selectedMember.size == 2 -> "${selectedMember[0].name}, ${selectedMember[1].name}"
-            else -> "${selectedMember[0].name}, ${selectedMember[1].name} 외 ${selectedMember.size - 2}명"
+            selectedMember.size == 2 -> stringResource(
+                R.string.goods_filter_member_two_format,
+                selectedMember[0].name,
+                selectedMember[1].name,
+            )
+            else -> stringResource(
+                R.string.goods_filter_member_more_format,
+                selectedMember[0].name,
+                selectedMember[1].name,
+                selectedMember.size - 2,
+            )
         }
 
     val loadState: ApiState<Unit>
@@ -55,10 +68,15 @@ data class GoodsFilterUiState(
 }
 
 sealed interface GoodsFilterUiIntent : UiIntent {
-    data object onMemberFilterClick
-    data class onMembersSelect(val members: List<Member>)
-    data object onSortFilterClick
-    data class onSortSelect(val sort: SortFilter)
+    data object OnMemberFilterClick
+
+    data class OnMembersSelect(val members: List<Member>)
+
+    data object OnSortFilterClick
+
+    data class OnSortSelect(val sort: SortFilter)
 }
 
-sealed interface GoodsFilterUiEffect : UiEffect {}
+sealed interface GoodsFilterUiEffect : UiEffect {
+
+}

@@ -3,7 +3,7 @@ package com.poti.android.domain.model.party
 data class Pots(
     val postTitle: String,
     val artistName: String,
-    val potSummaries: List<PotSummary>
+    val potSummaries: List<PotSummary>,
 )
 
 data class PotSummary(

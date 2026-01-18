@@ -42,7 +42,7 @@ fun NavGraphBuilder.goodsFilterNavGraph(
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<GoodsRoute.GoodsPartyList> {backStackEntry ->
+    composable<GoodsRoute.GoodsPartyList> { backStackEntry ->
         val artistId = backStackEntry.toRoute<GoodsRoute.GoodsPartyList>().artistId
 
         GoodsFilteredPartyListRoute(

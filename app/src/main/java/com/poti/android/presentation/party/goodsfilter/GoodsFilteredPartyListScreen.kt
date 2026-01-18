@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.util.screenWidthDp
@@ -61,7 +62,7 @@ private fun GoodsFilteredPartyListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp))
+            contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp)),
         ) {
             stickyHeader {
                 Row(
@@ -74,7 +75,7 @@ private fun GoodsFilteredPartyListScreen(
                     )
 
                     PotiSmallButton(
-                        text = sortFilter.display,
+                        text = stringResource(sortFilter.displayRes),
                         onClick = {},
                     )
                 }
@@ -93,7 +94,7 @@ private fun GoodsFilteredPartyListScreen(
                     onClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
+                        .padding(bottom = 16.dp),
                 )
             }
 
@@ -121,7 +122,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     availableMembers = "원영, 유진",
                     profileImageUrl = "",
                     nickname = "닉네임",
-                    rating = "1.2"
+                    rating = "1.2",
                 ),
                 PotSummary(
                     potId = 1,
@@ -132,12 +133,12 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     availableMembers = "원영, 유진",
                     profileImageUrl = "",
                     nickname = "닉네임",
-                    rating = "1.2"
+                    rating = "1.2",
                 ),
-            )
+            ),
         ),
         selectedMember = emptyList(),
         sortFilter = SortFilter.LATEST,
-        memberFilterText = ""
+        memberFilterText = "",
     )
 }

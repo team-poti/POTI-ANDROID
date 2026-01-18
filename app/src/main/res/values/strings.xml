@@ -86,4 +86,12 @@
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
 
+    <!-- Goods filter -->
+    <string name="goods_filter_sort_latest">최신순</string>
+    <string name="goods_filter_sort_deadline">마감임박순</string>
+    <string name="goods_filter_sort_rating">평점순</string>
+    <string name="goods_filter_member_select">멤버 선택</string>
+    <string name="goods_filter_member_two_format">%1$s, %2$s</string>
+    <string name="goods_filter_member_more_format">%1$s, %2$s 외 %3$d명</string>
+
 </resources>
