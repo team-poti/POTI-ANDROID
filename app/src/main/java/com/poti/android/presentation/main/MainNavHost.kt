@@ -47,6 +47,7 @@ fun MainNavHost(
         )
         profileNavGraph(
             paddingValues = paddingValues,
+            onPopBackStack = navigator.navController::popBackStack,
         )
     }
 }
