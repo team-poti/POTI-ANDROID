@@ -5,8 +5,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.poti.android.di.ApplicationScope
+import com.poti.android.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -16,6 +18,8 @@ import kotlin.collections.set
 
 class PreferenceDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>,
+    @ApplicationScope private val externalScope: CoroutineScope,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
@@ -42,10 +46,10 @@ class PreferenceDataSource @Inject constructor(
         get() = _cachedRefreshToken
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        externalScope.launch(ioDispatcher) {
             accessToken.collect { _cachedAccessToken = it }
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        externalScope.launch(ioDispatcher) {
             refreshToken.collect { _cachedRefreshToken = it }
         }
     }

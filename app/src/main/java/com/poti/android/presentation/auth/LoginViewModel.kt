@@ -1,6 +1,5 @@
 package com.poti.android.presentation.auth
 
-import android.content.Context
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.AuthRepository
@@ -18,30 +17,19 @@ class LoginViewModel @Inject constructor(
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
-            is LoginIntent.OnKakaoLoginClick -> loginKakao(intent.context)
+            is LoginIntent.OnKakaoLoginClick -> sendEffect(LoginEffect.LaunchKakaoLogin)
             LoginIntent.OnGoogleLoginClick -> sendEffect(LoginEffect.NavigateToHome)
-        }
-    }
-
-    fun loginKakao(context: Context) {
-        Timber.d("카카오 로그인 실행")
-        updateState { copy(loginState = ApiState.Loading) }
-
-        kakaoLoginManager.login(context) { result ->
-            result.onSuccess { token ->
-                Timber.d("로그인 성공")
-                requestServerLogin(token.accessToken)
-            }
-            result.onFailure { error ->
-                Timber.e(error, "로그인 실패 원인: ${error.message}")
-                updateState {
-                    copy(loginState = ApiState.Failure(error.message ?: "카카오 로그인 실패"))
-                }
+            is LoginIntent.OnKakaoLoginSuccess -> requestServerLogin(intent.token)
+            is LoginIntent.OnKakaoLoginFailure -> {
+                Timber.e("카카오 로그인 실패: ${intent.message}")
+                updateState { copy(loginState = ApiState.Failure(intent.message)) }
             }
         }
     }
 
     private fun requestServerLogin(kakaoToken: String) {
+        updateState { copy(loginState = ApiState.Loading) }
+
         launchScope {
             authRepository.login(socialType = "KAKAO", token = kakaoToken)
                 .onSuccess { response ->

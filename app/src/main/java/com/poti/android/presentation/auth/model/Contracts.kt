@@ -1,6 +1,5 @@
 package com.poti.android.presentation.auth.model
 
-import android.content.Context
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
@@ -11,7 +10,11 @@ data class LoginState(
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {
-    data class OnKakaoLoginClick(val context: Context) : LoginIntent
+    data object OnKakaoLoginClick : LoginIntent
+
+    data class OnKakaoLoginSuccess(val token: String) : LoginIntent
+
+    data class OnKakaoLoginFailure(val message: String) : LoginIntent
 
     data object OnGoogleLoginClick : LoginIntent
 }
@@ -20,4 +23,6 @@ sealed interface LoginEffect : UiEffect {
     data object NavigateToOnboarding : LoginEffect
 
     data object NavigateToHome : LoginEffect
+
+    data object LaunchKakaoLogin : LoginEffect
 }

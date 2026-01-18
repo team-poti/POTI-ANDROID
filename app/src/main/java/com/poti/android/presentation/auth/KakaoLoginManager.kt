@@ -5,6 +5,9 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
 class KakaoLoginManager @Inject constructor() {
@@ -27,6 +30,7 @@ class KakaoLoginManager @Inject constructor() {
                             onResult(Result.failure(error2 ?: Exception("Unknown error")))
                         }
                     }
+                    else -> onResult(Result.failure(Exception("Unknown error: token and error are both null")))
                 }
             }
         } else {
@@ -39,4 +43,10 @@ class KakaoLoginManager @Inject constructor() {
             }
         }
     }
+}
+
+@EntryPoint
+@InstallIn(ActivityComponent::class)
+interface KakaoLoginEntryPoint {
+    fun kakaoLoginManager(): KakaoLoginManager
 }

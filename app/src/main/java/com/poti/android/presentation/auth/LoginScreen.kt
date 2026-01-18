@@ -1,5 +1,6 @@
 package com.poti.android.presentation.auth
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +31,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun LoginRoute(
@@ -39,18 +42,36 @@ fun LoginRoute(
 ) {
     val context = LocalContext.current
 
+    val kakaoLoginManager = remember(context) {
+        val activity = context as? Activity ?: throw IllegalStateException("Context is not an Activity")
+        EntryPointAccessors.fromActivity(
+            activity,
+            KakaoLoginEntryPoint::class.java,
+        ).kakaoLoginManager()
+    }
+
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
+                LoginEffect.LaunchKakaoLogin -> {
+                    kakaoLoginManager.login(context) { result ->
+                        result.onSuccess { token ->
+                            viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(token.accessToken))
+                        }
+                        result.onFailure { error ->
+                            viewModel.processIntent(LoginIntent.OnKakaoLoginFailure(error.message ?: "Unknown Error"))
+                        }
+                    }
+                }
             }
         }
     }
 
     LoginScreen(
         modifier = modifier,
-        onKakaoClick = { viewModel.processIntent(LoginIntent.OnKakaoLoginClick(context)) },
+        onKakaoClick = { viewModel.processIntent(LoginIntent.OnKakaoLoginClick) },
         onGoogleClick = { viewModel.processIntent(LoginIntent.OnGoogleLoginClick) },
     )
 }

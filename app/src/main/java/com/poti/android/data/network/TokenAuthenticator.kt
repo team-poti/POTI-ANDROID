@@ -1,12 +1,9 @@
 package com.poti.android.data.network
 
-import android.content.Context
-import android.content.Intent
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
-import com.poti.android.presentation.main.MainActivity
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.poti.android.domain.manager.AuthSessionManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -19,7 +16,7 @@ import javax.inject.Provider
 class TokenAuthenticator @Inject constructor(
     private val preferenceDataSource: PreferenceDataSource,
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
-    @ApplicationContext private val context: Context,
+    private val authSessionManager: AuthSessionManager,
 ) : Authenticator {
     private val lock = Any()
 
@@ -91,13 +88,10 @@ class TokenAuthenticator @Inject constructor(
 
     private fun handleLogout() {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
-        runBlocking { preferenceDataSource.clearTokens() }
-
-        Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
-
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        runBlocking {
+            preferenceDataSource.clearTokens()
+            Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
+            authSessionManager.triggerLogout()
         }
-        context.startActivity(intent)
     }
 }
