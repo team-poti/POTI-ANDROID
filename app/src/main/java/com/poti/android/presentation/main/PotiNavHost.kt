@@ -36,7 +36,9 @@ fun PotiNavHost(
             paddingValues = paddingValues,
         )
         historyNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
+            onPopBackStack = navigator.navController::popBackStack,
         )
         myPageNavGraph(
             paddingValues = paddingValues,

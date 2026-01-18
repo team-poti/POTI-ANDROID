@@ -1,17 +1,23 @@
 package com.poti.android.presentation.history.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderSection
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
@@ -21,6 +27,8 @@ import com.poti.android.presentation.history.component.HistoryCardItem
 import com.poti.android.presentation.history.component.ParticipantStateLabelStage
 import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
 import com.poti.android.presentation.history.list.model.HistoryItem
+import com.poti.android.presentation.history.list.model.HistoryListUiEffect
+import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
 
 enum class HistoryMode {
@@ -30,43 +38,39 @@ enum class HistoryMode {
 
 @Composable
 fun HistoryListRoute(
-    onBackClick: () -> Unit = {},
-    onSwitchModeClick: () -> Unit = {},
-    onTabSelected: (PotiHeaderTabType) -> Unit = {},
-    onCardClick: (Long) -> Unit = {},
+    onPopBackStack: () -> Unit,
+    onNavigateToRecruiterDetail: () -> Unit,
+    onNavigateToParticipantDetail: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: HistoryListViewModel = hiltViewModel(),
 ) {
-    // TODO: [예림] ViewModel 연결되면 교체
-    val uiState = HistoryListUiState(
-        selectedTab = PotiHeaderTabType.ONGOING,
-        ongoingCount = 2,
-        endedCount = 5,
-        items = listOf(
-            HistoryItem(
-                id = 1L,
-                imageUrl = "",
-                artist = "ive(아이브)",
-                title = "러브다이브 위드뮤",
-                stageType = ParticipantStateLabelStage.DELIVERY,
-                statusType = ParticipantStateLabelStatus.WAIT,
-            ),
-            HistoryItem(
-                id = 2L,
-                imageUrl = "",
-                artist = "aespa",
-                title = "걸스 스페셜",
-                stageType = ParticipantStateLabelStage.DEPOSIT,
-                statusType = ParticipantStateLabelStatus.DONE,
-            ),
-        ),
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            HistoryListUiEffect.NavigateBack -> onPopBackStack()
+            is HistoryListUiEffect.NavigateToDetail -> {
+                // TODO: [예림] effect.id 전달
+                if (uiState.mode == HistoryMode.RECRUIT) {
+                    onNavigateToRecruiterDetail()
+                } else {
+                    onNavigateToParticipantDetail()
+                }
+            }
+            is HistoryListUiEffect.SwitchMode -> {}
+        }
+    }
 
     HistoryListScreen(
         uiState = uiState,
-        onBackClick = onBackClick,
-        onSwitchModeClick = onSwitchModeClick,
-        onTabSelected = onTabSelected,
-        onCardClick = onCardClick,
+        onBackClick = { viewModel.processIntent(HistoryListUiIntent.OnBackClick) },
+        onSwitchModeClick = { viewModel.processIntent(HistoryListUiIntent.OnSwitchModeClick) },
+        onTabSelected = { tab ->
+            viewModel.processIntent(HistoryListUiIntent.OnTabSelected(tab))
+        },
+        onCardClick = { id ->
+            viewModel.processIntent(HistoryListUiIntent.OnCardClick(id))
+        },
         modifier = modifier,
     )
 }
@@ -86,6 +90,7 @@ private fun HistoryListScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
@@ -95,7 +100,7 @@ private fun HistoryListScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
@@ -108,11 +113,11 @@ private fun HistoryListScreen(
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                contentPadding = PaddingValues(
                     horizontal = 16.dp,
                     vertical = 12.dp,
                 ),
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(
                     items = uiState.items,
