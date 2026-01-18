@@ -1,5 +1,6 @@
 package com.poti.android.presentation.auth.model
 
+import android.content.Context
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
@@ -10,7 +11,9 @@ data class LoginState(
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {
-    data object OnKakaoLoginClick : LoginIntent
+    data class OnKakaoLoginClick(val context: Context) : LoginIntent
+
+    data object OnGoogleLoginClick : LoginIntent
 }
 
 sealed interface LoginEffect : UiEffect {

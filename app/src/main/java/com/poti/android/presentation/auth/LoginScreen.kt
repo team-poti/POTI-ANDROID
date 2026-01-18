@@ -28,7 +28,7 @@ import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
-import timber.log.Timber
+import com.poti.android.presentation.auth.model.LoginIntent
 
 @Composable
 fun LoginRoute(
@@ -50,10 +50,8 @@ fun LoginRoute(
 
     LoginScreen(
         modifier = modifier,
-        onKakaoClick = {
-            Timber.d("UI: 버튼 클릭됨! ViewModel 호출 시작")
-            viewModel.loginKakao(context)
-        },
+        onKakaoClick = { viewModel.processIntent(LoginIntent.OnKakaoLoginClick(context)) },
+        onGoogleClick = { viewModel.processIntent(LoginIntent.OnGoogleLoginClick) },
     )
 }
 
@@ -61,6 +59,7 @@ fun LoginRoute(
 private fun LoginScreen(
     modifier: Modifier = Modifier,
     onKakaoClick: () -> Unit,
+    onGoogleClick: () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -97,7 +96,7 @@ private fun LoginScreen(
             LoginButton(
                 iconResId = R.drawable.ic_google,
                 background = Color.White,
-                onClick = {},
+                onClick = onGoogleClick,
             )
         }
 
@@ -111,6 +110,7 @@ private fun LoginScreenPreview() {
     PotiTheme {
         LoginScreen(
             onKakaoClick = {},
+            onGoogleClick = {},
         )
     }
 }

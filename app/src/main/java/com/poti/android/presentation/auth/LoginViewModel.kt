@@ -20,7 +20,8 @@ class LoginViewModel @Inject constructor(
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
-            is LoginIntent.OnKakaoLoginClick -> { }
+            is LoginIntent.OnKakaoLoginClick -> loginKakao(intent.context)
+            LoginIntent.OnGoogleLoginClick -> sendEffect(LoginEffect.NavigateToHome)
         }
     }
 
