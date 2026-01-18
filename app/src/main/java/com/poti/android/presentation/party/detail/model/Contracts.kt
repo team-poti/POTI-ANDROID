@@ -19,21 +19,32 @@ data class PartyDetailUiState(
     val partyJoinOption: ApiState<PartyJoinOption> = ApiState.Loading,
     val memberMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val deliveryMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
+    val selectedMemberIds: Set<String> = emptySet(),
+    val selectedDeliveryIds: Set<String> = emptySet(),
+    val totalPrice: String = "0",
 ) : UiState {
     val isJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
 }
 
 sealed interface PartyDetailIntent : UiIntent {
+    data object LoadPartyDetail : PartyDetailIntent
+
     data object OnBackClick : PartyDetailIntent
 
     data class OnUploaderClick(val userId: Long) : PartyDetailIntent
 
-    data object LoadPartyDetail : PartyDetailIntent
-
     data object OnDetailJoinClick : PartyDetailIntent
 
     data object OnOptionNextClick : PartyDetailIntent
+
+    data object OnDismissBottomSheet : PartyDetailIntent
+
+    data class OnMemberSelect(val item: FieldMenuItem) : PartyDetailIntent
+
+    data class OnMemberRemove(val id: String) : PartyDetailIntent
+
+    data class OnDeliverySelect(val item: FieldMenuItem) : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {

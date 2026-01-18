@@ -33,13 +33,17 @@ class PartyDetailViewModel @Inject constructor(
     override fun processIntent(intent: PartyDetailIntent) {
         when (intent) {
             PartyDetailIntent.LoadPartyDetail -> fetchPartyDetail()
-            PartyDetailIntent.OnBackClick -> sendEffect(PartyDetailEffect.NavigateBack)
+            PartyDetailIntent.OnBackClick -> sendEffect(NavigateBack)
             is PartyDetailIntent.OnUploaderClick -> sendEffect(NavigateToProfile(intent.userId))
             PartyDetailIntent.OnDetailJoinClick -> {
                 updateState { copy(showJoinBottomSheet = true) }
                 fetchPartyJoinOption()
             }
-            PartyDetailIntent.OnOptionNextClick -> sendEffect(PartyDetailEffect.NavigateToJoin)
+            PartyDetailIntent.OnOptionNextClick -> sendEffect(NavigateToJoin)
+            PartyDetailIntent.OnDismissBottomSheet -> updateState { copy(showJoinBottomSheet = false) }
+            is PartyDetailIntent.OnDeliverySelect -> handleDeliverySelect(intent.item.id)
+            is PartyDetailIntent.OnMemberRemove -> handleMemberRemove(intent.id)
+            is PartyDetailIntent.OnMemberSelect -> handleMemberSelect(intent.item.id)
         }
     }
 
@@ -59,6 +63,45 @@ class PartyDetailViewModel @Inject constructor(
                 deliveryMenuItems = dummyJoinOption.deliveryOptions.map { it.toFieldMenuItem() }.toImmutableList(),
             )
         }
+    }
+
+    private fun handleMemberSelect(selectedId: String) {
+        val currentIds = uiState.value.selectedMemberIds.toMutableSet()
+        if (selectedId in currentIds) {
+            currentIds.remove(selectedId)
+        } else {
+            currentIds.add(selectedId)
+        }
+        updateState { copy(selectedMemberIds = currentIds) }
+        calculateTotalPrice()
+    }
+
+    private fun handleMemberRemove(selectedId: String) {
+        val currentIds = uiState.value.selectedMemberIds.toMutableSet()
+        currentIds.remove(selectedId)
+        updateState { copy(selectedMemberIds = currentIds) }
+        calculateTotalPrice()
+    }
+
+    private fun handleDeliverySelect(selectedId: String) {
+        val newSet = setOf(selectedId)
+        updateState { copy(selectedDeliveryIds = newSet) }
+        calculateTotalPrice()
+    }
+
+    private fun calculateTotalPrice() {
+        val currentState = uiState.value
+
+        val memberPriceSum = currentState.memberMenuItems
+            .filter { it.id in currentState.selectedMemberIds }
+            .sumOf { it.price?.replace(",", "")?.toIntOrNull() ?: 0 }
+
+        val deliveryPriceSum = currentState.deliveryMenuItems
+            .filter { it.id in currentState.selectedDeliveryIds }
+            .sumOf { it.price?.replace(",", "")?.toIntOrNull() ?: 0 }
+
+        val total = memberPriceSum + deliveryPriceSum
+        updateState { copy(totalPrice = total.toMoneyString()) } // 다시 문자열 포맷팅
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =

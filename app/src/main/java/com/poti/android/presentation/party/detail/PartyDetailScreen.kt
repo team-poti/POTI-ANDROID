@@ -9,6 +9,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,11 +34,13 @@ import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
+import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyDetailRoute(
     onPopBackStack: () -> Unit,
@@ -61,9 +64,26 @@ fun PartyDetailRoute(
             partyDetail = partyDetail,
             isJoinEnable = uiState.isJoinEnable,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
-            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
             modifier = modifier,
+        )
+    }
+
+    if (uiState.showJoinBottomSheet) {
+        (
+            PartyJoinBottomSheet(
+                memberOptions = uiState.memberMenuItems,
+                deliveryOptions = uiState.deliveryMenuItems,
+                selectedMemberIds = uiState.selectedMemberIds,
+                selectedDeliveryId = uiState.selectedDeliveryIds,
+                totalPrice = uiState.totalPrice,
+                onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
+                onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },
+                onDeliverySelect = { viewModel.processIntent(PartyDetailIntent.OnDeliverySelect(it)) },
+                onDismissRequest = { viewModel.processIntent(PartyDetailIntent.OnDismissBottomSheet) },
+                onNextClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+            )
         )
     }
 }
