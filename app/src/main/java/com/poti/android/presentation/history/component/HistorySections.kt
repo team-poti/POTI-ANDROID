@@ -5,15 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -29,10 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
-import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.ArtistInfo
-import com.poti.android.domain.model.history.ParticipantInfo
 import com.poti.android.domain.model.history.ProgressInfo
 import com.poti.android.presentation.history.DummyParticipantManageDetail.dummyArtistInfo
 import com.poti.android.presentation.history.DummyParticipantManageDetail.dummyProgressInfoStep0
@@ -44,14 +37,14 @@ fun PartyInfoSection(
     partyId: Long,
     artistInfo: ArtistInfo,
     onDetailClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.history_recruit_number, partyId),
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
-            modifier = Modifier.padding(start = screenWidthDp(8.dp))
+            modifier = Modifier.padding(start = screenWidthDp(8.dp)),
         )
 
         val (partyStage, partyState) = artistInfo.partyState.toUiState()
@@ -71,7 +64,7 @@ fun PartyInfoSection(
 @Composable
 fun ProgressStatusSection(
     progressInfo: ProgressInfo,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -79,24 +72,24 @@ fun ProgressStatusSection(
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
             modifier = Modifier
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.dp),
         )
         HistoryStateGuide(
             text = progressInfo.guideText,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(16.dp))
 
         Icon(
             imageVector = ImageVector.vectorResource(
-                getStepIndicatorDrawable(progressInfo.step)
+                getStepIndicatorDrawable(progressInfo.step),
             ),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
                 .padding(horizontal = screenWidthDp(8.dp))
-                .align(Alignment.CenterHorizontally)
+                .align(Alignment.CenterHorizontally),
         )
     }
 }
@@ -106,32 +99,33 @@ fun ParticipantManagementHeader(
     partyId: Long,
     participantCount: Int,
     onHeaderClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = screenWidthDp(16.dp),
-                end = screenWidthDp(4.dp))
+            .padding(
+                start = screenWidthDp(16.dp),
+                end = screenWidthDp(4.dp),
+            )
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = stringResource(id = R.string.history_participant_management_title, participantCount),
             style = PotiTheme.typography.body16sb,
-            color = PotiTheme.colors.black
+            color = PotiTheme.colors.black,
         )
         IconButton(onClick = { onHeaderClick(partyId) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right_lg),
                 contentDescription = null,
-                tint = PotiTheme.colors.gray700
+                tint = PotiTheme.colors.gray700,
             )
         }
     }
 }
-
 
 @DrawableRes
 fun getStepIndicatorDrawable(step: Int): Int {
@@ -152,7 +146,7 @@ private fun PartyInfoSectionPreview() {
         PartyInfoSection(
             partyId = 1L,
             artistInfo = dummyArtistInfo,
-            onDetailClick = {}
+            onDetailClick = {},
         )
     }
 }
@@ -163,7 +157,7 @@ private fun ProgressStatusSectionPreview_Step0() {
     PotiTheme {
         ProgressStatusSection(
             progressInfo = dummyProgressInfoStep0,
-            modifier = Modifier.size(360.dp, 206.dp)
+            modifier = Modifier.size(360.dp, 206.dp),
         )
     }
 }
@@ -174,7 +168,7 @@ private fun ProgressStatusSectionPreview_Step2() {
     PotiTheme {
         ProgressStatusSection(
             progressInfo = dummyProgressInfoStep2,
-            modifier = Modifier.size(360.dp, 206.dp)
+            modifier = Modifier.size(360.dp, 206.dp),
         )
     }
 }
@@ -186,7 +180,7 @@ private fun ParticipantManagementHeaderPreview_Empty() {
         ParticipantManagementHeader(
             partyId = 1L,
             participantCount = 0,
-            onHeaderClick = {}
+            onHeaderClick = {},
         )
     }
 }
@@ -198,7 +192,7 @@ private fun ParticipantManagementHeaderPreview_WithItems() {
         ParticipantManagementHeader(
             partyId = 1L,
             participantCount = 5,
-            onHeaderClick = {}
+            onHeaderClick = {},
         )
     }
 }

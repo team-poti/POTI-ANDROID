@@ -28,13 +28,10 @@ import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.ArtistInfo
 import com.poti.android.domain.model.history.DepositItem
 import com.poti.android.domain.model.history.ParticipantDepositInfo
 import com.poti.android.domain.model.history.ParticipantDetail
 import com.poti.android.domain.model.history.ParticipantShippingInfo
-import com.poti.android.domain.model.history.ProgressInfo
-import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.DummyParticipantManageDetail
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
@@ -42,31 +39,31 @@ import com.poti.android.presentation.history.mapper.toUiState
 
 @Composable
 fun ParticipantDetailRoute(
-    modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onDetailClick: (Long) -> Unit
+    onDetailClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ParticipantDetailScreen(
         modifier = modifier,
         detail = DummyParticipantManageDetail.dummyParticipantDetail,
         onBackClick = onBackClick,
-        onDetailClick = onDetailClick
+        onDetailClick = onDetailClick,
     )
 }
 
 @Composable
 private fun ParticipantDetailScreen(
-    modifier: Modifier = Modifier,
     detail: ParticipantDetail,
     onBackClick: () -> Unit,
-    onDetailClick: (Long) -> Unit
+    onDetailClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(id = R.string.history_participant_detail_title)
+                title = stringResource(id = R.string.history_participant_detail_title),
             )
         },
     ) { paddingValues ->
@@ -75,21 +72,21 @@ private fun ParticipantDetailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(PotiTheme.colors.white),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item {
                 PartyInfoSection(
                     partyId = detail.partyId,
                     artistInfo = detail.artistInfo,
                     onDetailClick = onDetailClick,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp),
                 )
             }
 
             item {
                 ProgressStatusSection(
                     progressInfo = detail.progressInfo,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
 
@@ -110,22 +107,25 @@ private fun DepositInfoSection(info: ParticipantDepositInfo) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = stringResource(id = R.string.history_deposit_info_title),
             style = PotiTheme.typography.body16sb,
-            color = PotiTheme.colors.black
+            color = PotiTheme.colors.black,
         )
         PriceDetail(items = info.items, totalAmount = info.totalAmount)
     }
 }
 
 @Composable
-private fun PriceDetail(items: List<DepositItem>, totalAmount: Int) {
+private fun PriceDetail(
+    items: List<DepositItem>,
+    totalAmount: Int,
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items.forEach { item ->
             val optionType = item.toUiState()
@@ -134,7 +134,8 @@ private fun PriceDetail(items: List<DepositItem>, totalAmount: Int) {
                 itemOptionText = item.name,
                 priceText = stringResource(
                     R.string.history_participant_detail_won_unit_format,
-                    item.price.toMoneyString()),
+                    item.price.toMoneyString(),
+                ),
                 sizeType = PotiListOptionPriceSize.SMALL,
             )
         }
@@ -142,18 +143,20 @@ private fun PriceDetail(items: List<DepositItem>, totalAmount: Int) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(id = R.string.history_total_deposit_amount),
                 style = PotiTheme.typography.body14m,
-                color = PotiTheme.colors.gray800
+                color = PotiTheme.colors.gray800,
             )
             Text(
-                text = stringResource(R.string.history_participant_detail_won_unit_format,
-                    totalAmount.toMoneyString()),
+                text = stringResource(
+                    R.string.history_participant_detail_won_unit_format,
+                    totalAmount.toMoneyString(),
+                ),
                 style = PotiTheme.typography.body16sb,
-                color = PotiTheme.colors.black
+                color = PotiTheme.colors.black,
             )
         }
     }
@@ -165,38 +168,42 @@ private fun ShippingInfoSection(info: ParticipantShippingInfo) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = stringResource(id = R.string.history_shipping_info_title),
             style = PotiTheme.typography.body16sb,
-            color = PotiTheme.colors.black
+            color = PotiTheme.colors.black,
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = stringResource(R.string.history_shipping_info_format,
-                    info.recipient, info.zipcode, info.address, info.phone),
+                text = stringResource(
+                    R.string.history_shipping_info_format,
+                    info.recipient,
+                    info.zipcode,
+                    info.address,
+                    info.phone,
+                ),
                 style = PotiTheme.typography.body14m,
                 color = PotiTheme.colors.black,
-                lineHeight = PotiTheme.typography.body14m.fontSize * 1.5
+                lineHeight = PotiTheme.typography.body14m.fontSize * 1.5,
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_delivery),
                     contentDescription = "Delivery Method",
-                    tint = PotiTheme.colors.gray800
+                    tint = PotiTheme.colors.gray800,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = info.deliveryMethod,
                     style = PotiTheme.typography.body14m,
-                    color = PotiTheme.colors.gray800
+                    color = PotiTheme.colors.gray800,
                 )
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
