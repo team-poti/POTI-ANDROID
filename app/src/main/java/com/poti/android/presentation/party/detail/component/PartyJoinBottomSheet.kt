@@ -110,7 +110,7 @@ fun PartyJoinBottomSheet(
                             CardOptionPrice(
                                 optionType = PotiItemOptionType.DELIVERY,
                                 text = delivery.option,
-                                price = delivery.price ?: "",
+                                price = stringResource(R.string.party_option_price_won, delivery.price ?: "0"),
                             )
                         }
                     }

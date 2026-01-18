@@ -41,11 +41,15 @@ class PartyDetailViewModel @Inject constructor(
             is PartyDetailIntent.OnDeliverySelect -> handleDeliverySelect(intent.item.id)
             is PartyDetailIntent.OnMemberRemove -> handleMemberRemove(intent.id)
             is PartyDetailIntent.OnMemberSelect -> handleMemberSelect(intent.item.id)
-            is PartyDetailIntent.OnOrderNameChange -> updateState { copy(orderName = intent.value) }
-            is PartyDetailIntent.OnPostalCodeChange -> updateState { copy(postalCode = intent.value) }
-            is PartyDetailIntent.OnAddressChange -> updateState { copy(address = intent.value) }
-            is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value) }
-            PartyDetailIntent.OnFinalJoinClick -> postOrder()
+            is PartyDetailIntent.OnOrderNameChange -> updateState { copy(orderName = intent.value, isOrderNameError = false) }
+            is PartyDetailIntent.OnPostalCodeChange -> updateState { copy(postalCode = intent.value, isPostalCodeError = false) }
+            is PartyDetailIntent.OnAddressChange -> updateState { copy(address = intent.value, isAddressError = false) }
+            is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
+            PartyDetailIntent.OnFinalJoinClick -> {
+                if (validateInputs()) {
+                    postOrder()
+                }
+            }
         }
     }
 
@@ -91,6 +95,27 @@ class PartyDetailViewModel @Inject constructor(
     private fun handleDeliverySelect(selectedId: String) {
         val newSet = setOf(selectedId)
         updateState { copy(selectedDeliveryId = newSet) }
+    }
+
+    private fun validateInputs(): Boolean {
+        val currentState = uiState.value
+        val isNameEmpty = currentState.orderName.isBlank()
+        val isPostalEmpty = currentState.postalCode.isBlank()
+        val isAddressEmpty = currentState.address.isBlank()
+        val isContactEmpty = currentState.contact.isBlank()
+
+        if (isNameEmpty || isPostalEmpty || isAddressEmpty || isContactEmpty) {
+            updateState {
+                copy(
+                    isOrderNameError = isNameEmpty,
+                    isPostalCodeError = isPostalEmpty,
+                    isAddressError = isAddressEmpty,
+                    isContactError = isContactEmpty,
+                )
+            }
+            return false
+        }
+        return true
     }
 
     private fun postOrder() = launchScope {

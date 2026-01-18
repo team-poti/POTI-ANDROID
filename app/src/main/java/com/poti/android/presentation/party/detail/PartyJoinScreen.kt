@@ -9,8 +9,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateSetOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +55,7 @@ fun PartyJoinRoute(
         onAddressChange = { viewModel.processIntent(PartyDetailIntent.OnAddressChange(it)) },
         onContactChange = { viewModel.processIntent(PartyDetailIntent.OnContactChange(it)) },
         onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
-        onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+        onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnFinalJoinClick) },
         modifier = modifier,
     )
 }
@@ -149,6 +147,7 @@ private fun PartyJoinScreen(
                         onValueChanged = onOrderNameChange,
                         placeholder = stringResource(R.string.party_join_order_name_placeholder),
                         label = stringResource(R.string.filed_label_name),
+                        error = if (uiState.isOrderNameError) stringResource(R.string.party_join_order_name_error) else "",
                     )
 
                     PotiShortTextField(
@@ -156,6 +155,7 @@ private fun PartyJoinScreen(
                         onValueChanged = onPostalCodeChange,
                         placeholder = stringResource(R.string.party_join_order_postal_placeholder),
                         label = stringResource(R.string.party_join_order_postal_label),
+                        error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
                     )
 
                     PotiShortTextField(
@@ -163,6 +163,7 @@ private fun PartyJoinScreen(
                         onValueChanged = onAddressChange,
                         placeholder = stringResource(R.string.party_join_order_address_placeholder),
                         label = stringResource(R.string.party_join_order_address_label),
+                        error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
                     )
 
                     PotiShortTextField(
@@ -170,6 +171,7 @@ private fun PartyJoinScreen(
                         onValueChanged = onContactChange,
                         placeholder = stringResource(R.string.party_join_order_contact_label),
                         label = stringResource(R.string.party_join_order_contact_placeholder),
+                        error = if (uiState.isContactError) stringResource(R.string.party_join_order_contact_error) else "",
                     )
                 }
             }
@@ -184,9 +186,6 @@ private fun PartyJoinScreen(
 @Preview
 @Composable
 private fun PartyJoinScreenPreview() {
-    val selectedMemberIds = remember { mutableStateSetOf<String>() }
-    val selectedDeliveryId = remember { mutableStateSetOf<String>() }
-
     PotiTheme {
         PartyJoinScreen(
             uiState = PartyDetailUiState(),

@@ -27,6 +27,10 @@ data class PartyDetailUiState(
     val address: String = "",
     val detailAddress: String = "",
     val contact: String = "",
+    val isOrderNameError: Boolean = false,
+    val isPostalCodeError: Boolean = false,
+    val isAddressError: Boolean = false,
+    val isContactError: Boolean = false,
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
@@ -52,12 +56,6 @@ data class PartyDetailUiState(
 
     val isBottomSheetButtonEnable: Boolean
         get() = selectedMemberIds.isNotEmpty() && selectedDeliveryId.isNotEmpty()
-
-    val isFinalJoinButtonEnabled: Boolean
-        get() = orderName.isNotBlank() &&
-            postalCode.isNotBlank() &&
-            address.isNotBlank() &&
-            contact.isNotBlank()
 }
 
 sealed interface PartyDetailIntent : UiIntent {
