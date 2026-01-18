@@ -4,12 +4,19 @@ package com.poti.android.presentation.party.detail.model
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.party.PartyDetail
+import com.poti.android.domain.type.PartyStatusType
 
 data class PartyDetailUiState(
     val partyDetail: ApiState<PartyDetail> = ApiState.Loading,
-) : UiState
+) : UiState {
+    val isJoinEnable: Boolean
+        get() {
+            return partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
+        }
+}
 
 sealed interface PartyDetailIntent : UiIntent {
     data object OnBackClick : PartyDetailIntent

@@ -52,6 +52,7 @@
     <string name="party_detail_participants_count">%1$d/%2$d</string>
     <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
     <string name="party_detail_join_party">분철팟 참여하기</string>
+    <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
 
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>

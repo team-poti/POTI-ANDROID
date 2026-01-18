@@ -59,6 +59,7 @@ fun PartyDetailRoute(
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
+            isJoinEnable = uiState.isJoinEnable,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
@@ -70,6 +71,7 @@ fun PartyDetailRoute(
 @Composable
 private fun PartyDetailScreen(
     partyDetail: PartyDetail,
+    isJoinEnable: Boolean,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
@@ -85,8 +87,9 @@ private fun PartyDetailScreen(
         },
         bottomBar = {
             PotiBottomButton(
-                text = stringResource(R.string.party_detail_join_party),
+                text = if (isJoinEnable) stringResource(R.string.party_detail_join_party) else stringResource(R.string.party_detail_join_party_closed),
                 onClick = onJoinClick,
+                enabled = isJoinEnable,
             )
         },
     ) { innerPadding ->
@@ -165,6 +168,7 @@ private fun PartyDetailScreenPreview() {
     PotiTheme {
         PartyDetailScreen(
             partyDetail = dummyPartyDetail,
+            isJoinEnable = true,
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
