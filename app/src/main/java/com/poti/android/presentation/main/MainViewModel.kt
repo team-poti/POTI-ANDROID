@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.presentation.auth.navigation.AuthRoute
-import com.poti.android.presentation.onboarding.navigation.OnboardingGraph
+import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -18,11 +18,8 @@ class MainViewModel @Inject constructor(
     val startDestination = preferenceDataSource.authState
         .map { authState ->
             when {
-                authState.accessToken.isNullOrBlank() -> AuthRoute.Login
-
-                !authState.isOnboardingFinished -> OnboardingGraph
-
-                else -> MainTab.HOME.route
+                !authState.accessToken.isNullOrBlank() && authState.isOnboardingFinished -> PartyGraph
+                else -> AuthRoute.Login
             }
         }
         .stateIn(

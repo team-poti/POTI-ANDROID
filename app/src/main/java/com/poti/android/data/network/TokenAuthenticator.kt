@@ -1,9 +1,12 @@
 package com.poti.android.data.network
 
-import com.poti.android.core.network.model.AuthType
+import android.content.Context
+import android.content.Intent
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
+import com.poti.android.presentation.main.MainActivity
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
@@ -17,6 +20,7 @@ import javax.inject.Provider
 class TokenAuthenticator @Inject constructor(
     private val preferenceDataSource: PreferenceDataSource,
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
+    @ApplicationContext private val context: Context,
 ) : Authenticator {
     override fun authenticate(
         route: Route?,
@@ -78,24 +82,11 @@ class TokenAuthenticator @Inject constructor(
     ): Request {
         if (newAccessToken == null) return request
 
-        val authType = request.tag(String::class.java)
-        Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new token. Strategy: $authType")
+        Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new Bearer token.")
 
-        val builder = request.newBuilder()
-
-        when (authType) {
-            AuthType.ACCESS_TOKEN -> {
-                builder.header("Access-Token", newAccessToken)
-            }
-            AuthType.RAW -> {
-                builder.header("Authorization", newAccessToken)
-            }
-            AuthType.BEARER, null -> {
-                builder.header("Authorization", "Bearer $newAccessToken")
-            }
-        }
-
-        return builder.build()
+        return request.newBuilder()
+            .header("Authorization", "Bearer $newAccessToken")
+            .build()
     }
 
     private fun hasNewToken(
@@ -103,10 +94,8 @@ class TokenAuthenticator @Inject constructor(
         currentToken: String?,
     ): Boolean {
         val authHeader = request.header("Authorization")
-        val accessHeader = request.header("Access-Token")
 
-        val isDifferent = (authHeader != null && !authHeader.contains(currentToken ?: "")) ||
-            (accessHeader != null && accessHeader != currentToken)
+        val isDifferent = (authHeader != null && !authHeader.contains(currentToken ?: ""))
 
         if (isDifferent) {
             Timber.Forest.tag("TokenAuthenticator").d("Detected new token in local storage.")
@@ -117,6 +106,12 @@ class TokenAuthenticator @Inject constructor(
     private fun handleLogout() {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
         runBlocking { preferenceDataSource.clearTokens() }
-        // TODO: [지현] 로그인 화면으로 이동
+
+        Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        context.startActivity(intent)
     }
 }

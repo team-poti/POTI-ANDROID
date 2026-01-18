@@ -52,6 +52,7 @@ fun PotiArtistButton(
             modifier = Modifier
                 .size(screenWidthDp(90.dp))
                 .clip(CircleShape)
+                .background(PotiTheme.colors.gray100)
                 .noRippleClickable(onClick = onClick),
         ) {
             AsyncImage(

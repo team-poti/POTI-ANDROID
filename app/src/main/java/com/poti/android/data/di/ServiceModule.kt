@@ -1,5 +1,6 @@
 package com.poti.android.data.di
 
+import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
@@ -21,4 +22,9 @@ object ServiceModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService =
         retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideArtistService(retrofit: Retrofit): ArtistService =
+        retrofit.create(ArtistService::class.java)
 }

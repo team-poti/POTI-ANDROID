@@ -1,4 +1,4 @@
-package com.poti.android.data.mapper
+package com.poti.android.data.mapper.auth
 
 import com.poti.android.data.remote.dto.response.auth.LoginResponseDto
 import com.poti.android.domain.model.auth.UserAuth
