@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
@@ -59,7 +58,6 @@ fun HistoryListRoute(
                     onNavigateToParticipantDetail()
                 }
             }
-            is HistoryListUiEffect.SwitchMode -> {}
         }
     }
 
@@ -86,33 +84,12 @@ private fun HistoryListScreen(
     onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val titleRes = when (uiState.mode) {
-        HistoryMode.RECRUIT -> R.string.user_history_recruit
-        HistoryMode.PARTICIPATION -> R.string.user_history_participate
-    }
-
-    val emptyTextRes = when (uiState.mode) {
-        HistoryMode.RECRUIT -> {
-            when (uiState.selectedTab) {
-                PotiHeaderTabType.ONGOING -> R.string.history_empty_recruit_ongoing
-                PotiHeaderTabType.ENDED -> R.string.history_empty_recruit_ended
-            }
-        }
-
-        HistoryMode.PARTICIPATION -> {
-            when (uiState.selectedTab) {
-                PotiHeaderTabType.ONGOING -> R.string.history_empty_participation_ongoing
-                PotiHeaderTabType.ENDED -> R.string.history_empty_participation_ended
-            }
-        }
-    }
-
     Scaffold(
         modifier = modifier,
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(titleRes),
+                title = stringResource(uiState.titleRes),
                 onTrailingIconClick = onSwitchModeClick,
             )
         },
@@ -131,7 +108,7 @@ private fun HistoryListScreen(
 
             if (uiState.items.isEmpty()) {
                 PotiEmptyStateInline(
-                    text = stringResource(emptyTextRes),
+                    text = stringResource(uiState.emptyTextRes),
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {

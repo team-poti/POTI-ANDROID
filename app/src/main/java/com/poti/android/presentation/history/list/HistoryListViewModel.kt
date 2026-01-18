@@ -32,9 +32,6 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                         selectedTab = PotiHeaderTabType.ONGOING,
                     )
                 }
-                sendEffect(
-                    HistoryListUiEffect.SwitchMode(newMode == HistoryMode.RECRUIT),
-                )
                 loadHistory()
             }
             is HistoryListUiIntent.OnTabSelected -> {

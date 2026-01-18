@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.list.model
 
+import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
@@ -15,7 +16,28 @@ data class HistoryListUiState(
     val ongoingCount: Int = 0,
     val endedCount: Int = 0,
     val items: List<HistoryItem> = emptyList(),
-) : UiState
+) : UiState {
+    val titleRes = when (mode) {
+        HistoryMode.RECRUIT -> R.string.user_history_recruit
+        HistoryMode.PARTICIPATION -> R.string.user_history_participate
+    }
+
+    val emptyTextRes = when (mode) {
+        HistoryMode.RECRUIT -> {
+            when (selectedTab) {
+                PotiHeaderTabType.ONGOING -> R.string.history_empty_recruit_ongoing
+                PotiHeaderTabType.ENDED -> R.string.history_empty_recruit_ended
+            }
+        }
+
+        HistoryMode.PARTICIPATION -> {
+            when (selectedTab) {
+                PotiHeaderTabType.ONGOING -> R.string.history_empty_participation_ongoing
+                PotiHeaderTabType.ENDED -> R.string.history_empty_participation_ended
+            }
+        }
+    }
+}
 
 data class HistoryItem(
     val id: Long,
@@ -38,8 +60,6 @@ sealed interface HistoryListUiIntent : UiIntent {
 
 sealed interface HistoryListUiEffect : UiEffect {
     data object NavigateBack : HistoryListUiEffect
-
-    data class SwitchMode(val isRecruitMode: Boolean) : HistoryListUiEffect
 
     data class NavigateToDetail(val id: Long) : HistoryListUiEffect
 }
