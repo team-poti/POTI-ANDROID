@@ -18,7 +18,7 @@ class PartyDetailViewModel @Inject constructor(
         initialState = PartyDetailUiState(),
     ) {
     private val args = savedStateHandle.toRoute<PartyDetailRoute.Detail>()
-    private val partyId = args.partyId
+    private val recruitId = args.recruitId
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)

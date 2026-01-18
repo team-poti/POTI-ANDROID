@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model
+package com.poti.android.presentation.history.model.recruiter
 
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -21,7 +21,7 @@ sealed interface RecruiterDetailUiIntent : UiIntent {
 sealed interface RecruiterDetailUiEffect : UiEffect {
     object NavigateBack : RecruiterDetailUiEffect
 
-    data class NavigateToPartyDetail(val partyId: Long) : RecruiterDetailUiEffect
+    data class NavigateToPartyDetail(val recruitId: Long) : RecruiterDetailUiEffect
 
-    data class NavigateToParticipantList(val partyId: Long) : RecruiterDetailUiEffect
+    data class NavigateToParticipantList(val recruitId: Long) : RecruiterDetailUiEffect
 }

@@ -46,7 +46,6 @@ fun HistoryParticipantDropdown(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.white)
             .padding(
                 vertical = 20.dp,

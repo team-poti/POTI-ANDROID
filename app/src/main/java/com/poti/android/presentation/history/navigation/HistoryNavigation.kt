@@ -19,7 +19,7 @@ sealed interface HistoryRoute : Route {
     data object HistoryList : HistoryRoute
 
     @Serializable
-    data object ParticipantDetail : HistoryRoute
+    data class ParticipantDetail(val recruitId: Long) : HistoryRoute
 
     @Serializable
     data object RecruiterDetail : HistoryRoute

@@ -1,0 +1,26 @@
+package com.poti.android.presentation.history.model.participant
+
+import com.poti.android.core.base.UiEffect
+import com.poti.android.core.base.UiIntent
+import com.poti.android.core.base.UiState
+import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.history.ParticipantDetail
+
+data class ParticipantDetailUiState(
+    val participantDetail: ApiState<ParticipantDetail> = ApiState.Loading,
+) : UiState
+
+sealed interface ParticipantDetailUiIntent : UiIntent {
+    data class LoadDetail(val recruitId: Long) : ParticipantDetailUiIntent
+    data object OnBackClick : ParticipantDetailUiIntent
+    data object OnPartyDetailClick : ParticipantDetailUiIntent
+    data class SubmitDeposit(val depositor: String, val depositTime: String) : ParticipantDetailUiIntent
+    data object ConfirmDelivery : ParticipantDetailUiIntent
+    data class SubmitReview(val rating: Int) : ParticipantDetailUiIntent
+    data object SkipReview : ParticipantDetailUiIntent
+}
+
+sealed interface ParticipantDetailUiEffect : UiEffect {
+    data object NavigateBack : ParticipantDetailUiEffect
+    data class NavigateToPartyDetail(val recruitId: Long) : ParticipantDetailUiEffect
+}
