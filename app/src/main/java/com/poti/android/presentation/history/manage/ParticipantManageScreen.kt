@@ -1,17 +1,27 @@
-package com.poti.android.presentation.history.mapper
+package com.poti.android.presentation.history.manage
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
@@ -19,70 +29,74 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.ParticipantManageDetail
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.component.DetailState
+import com.poti.android.presentation.history.component.HistoryDeliveryBottomSheet
+import com.poti.android.presentation.history.component.HistoryDepositConfirmModal
 import com.poti.android.presentation.history.component.HistoryParticipantDropdown
+import com.poti.android.presentation.history.mapper.toUiModel
+import com.poti.android.presentation.history.model.manage.ManageModalState
+import com.poti.android.presentation.history.model.manage.ParticipantManageUiEffect
+import com.poti.android.presentation.history.model.manage.ParticipantManageUiIntent
+import com.poti.android.presentation.history.model.manage.RecruiterManageDetailUiModel
 import com.poti.android.presentation.history.model.manage.RecruiterManageStateUiModel
 
 @Composable
 fun ParticipantManageRoute(
     modifier: Modifier = Modifier,
     popBackStack: () -> Unit = {},
-    navigateToDetail: (Long) -> Unit = {},
+    viewModel: ParticipantManageViewModel = hiltViewModel(),
 ) {
-    // TODO: [천민재] 실제 데이터 연동 필요
-    val participants = remember {
-        listOf(
-            ParticipantManageDetail(
-                participantId = 1,
-                nickname = "포티",
-                profileImage = null,
-                participantState = ParticipantStatusType.DEPOSIT_CHECK,
-                selectedMember = "장원영",
-                memberPrice = 15000,
-                deliveryMethod = "GS반값택배",
-                deliveryPrice = 1800,
-                depositTime = "2024.12.31 15:30",
-                depositorName = "김철수",
-                recipient = null,
-                phoneNumber = null,
-                zipcode = null,
-                address = null,
-                trackingNumber = null,
-            ),
-            ParticipantManageDetail(
-                participantId = 2,
-                nickname = "이영희",
-                profileImage = null,
-                participantState = ParticipantStatusType.DELIVERY_WAIT,
-                selectedMember = "카리나",
-                memberPrice = 20000,
-                deliveryMethod = "CU끼리택배",
-                deliveryPrice = 1600,
-                depositTime = null,
-                depositorName = null,
-                recipient = "이영희",
-                phoneNumber = "010-1234-5678",
-                zipcode = "12345",
-                address = "서울특별시 강남구 역삼동",
-                trackingNumber = null,
-            ),
-        )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.sideEffect) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                ParticipantManageUiEffect.NavigateBack -> popBackStack()
+            }
+        }
     }
 
-    ParticipantManageScreen(
-        participants = participants,
-        onBackClick = popBackStack,
-        modifier = modifier,
-    )
+    when (val state = uiState.participantManageDetail) {
+        is ApiState.Success -> {
+            ParticipantManageScreen(
+                uiModels = state.data,
+                activeModal = uiState.activeModal,
+                onBackClick = { viewModel.processIntent(ParticipantManageUiIntent.OnBackClick) },
+                onDepositConfirmClick = { id -> viewModel.processIntent(ParticipantManageUiIntent.OnDepositConfirmClick(id)) },
+                onDeliveryInputClick = { id -> viewModel.processIntent(ParticipantManageUiIntent.OnDeliveryInputClick(id)) },
+                onDismissModal = { viewModel.processIntent(ParticipantManageUiIntent.DismissModal) },
+                onDepositModalConfirm = { id ->
+                    viewModel.processIntent(ParticipantManageUiIntent.ConfirmDeposit(participantId = id))
+                },
+                onDeliveryModalConfirm = { participantId, deliveryMethod, trackingNumber ->
+                    viewModel.processIntent(
+                        ParticipantManageUiIntent.RegisterDelivery(
+                            participantId = participantId,
+                            deliveryMethod = deliveryMethod,
+                            trackingNumber = trackingNumber,
+                        ),
+                    )
+                },
+                modifier = modifier,
+            )
+        }
+        else -> Unit
+    }
 }
 
 @Composable
 private fun ParticipantManageScreen(
-    participants: List<ParticipantManageDetail>,
+    uiModels: List<RecruiterManageDetailUiModel>,
+    activeModal: ManageModalState,
     onBackClick: () -> Unit,
+    onDepositConfirmClick: (Long) -> Unit,
+    onDeliveryInputClick: (Long) -> Unit,
+    onDismissModal: () -> Unit,
+    onDepositModalConfirm: (Long) -> Unit,
+    onDeliveryModalConfirm: (participantId: Long, deliveryMethod: String, trackingNumber: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expandedIds = remember { mutableStateListOf<Long>() }
-    val uiModels = remember(participants) { participants.map { it.toUiModel() } }
+    val expandedIds = remember(uiModels) { mutableStateListOf<Long>() }
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
@@ -91,43 +105,28 @@ private fun ParticipantManageScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
-            title = stringResource(R.string.history_participant_management_title, participants.size),
+            title = stringResource(R.string.history_participant_management_title),
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .animateContentSize(),
         ) {
-            itemsIndexed(uiModels, key = { _, item -> item.participantId }) { index, uiModel ->
-                if(index == 0) {
+            uiModels.forEachIndexed { index, uiModel ->
+                if (index == 0) {
                     PotiDivider(
-                        styleType = PotiDividerStyle.SMALL
+                        styleType = PotiDividerStyle.SMALL,
                     )
                 }
 
                 val isExpanded = uiModel.participantId in expandedIds
 
-                val detailState = when (val state = uiModel.detailState) {
-                    RecruiterManageStateUiModel.Default -> DetailState.Default
-                    is RecruiterManageStateUiModel.DepositCheck -> DetailState.DepositCheck(
-                        deposit = state.deposit,
-                        onButtonClick = { /* TODO: Handle deposit confirm */ },
-                    )
-                    is RecruiterManageStateUiModel.Delivery -> DetailState.Delivery(
-                        name = state.name,
-                        delivery = state.delivery,
-                        contact = state.contact,
-                        onButtonClick = { /* TODO: Handle delivery */ },
-                    )
-                    is RecruiterManageStateUiModel.AfterDelivery -> DetailState.AfterDelivery(
-                        name = state.name,
-                        delivery = state.delivery,
-                        contact = state.contact,
-                        invoice = state.invoice,
-                    )
-                    is RecruiterManageStateUiModel.Finished -> DetailState.Finished(
-                        invoice = state.invoice,
-                    )
-                }
+                val detailState = uiModel.detailState.toDetailState(
+                    onDepositConfirm = { onDepositConfirmClick(uiModel.participantId) },
+                    onDeliveryInput = { onDeliveryInputClick(uiModel.participantId) },
+                )
 
                 HistoryParticipantDropdown(
                     userName = uiModel.nickname,
@@ -153,6 +152,59 @@ private fun ParticipantManageScreen(
             }
         }
     }
+
+    when (activeModal) {
+        is ManageModalState.DepositConfirm -> {
+            HistoryDepositConfirmModal(
+                onConfirm = { onDepositModalConfirm(activeModal.participantId) },
+                onDismiss = onDismissModal,
+            )
+        }
+        is ManageModalState.DeliveryInput -> {
+            HistoryDeliveryBottomSheet(
+                onDismissRequest = onDismissModal,
+                onConfirmClick = { deliveryMethod, trackingNumber ->
+                    onDeliveryModalConfirm(
+                        // participantId =
+                            activeModal.participantId,
+                        // deliveryMethod =
+                            deliveryMethod,
+                        // trackingNumber =
+                            trackingNumber,
+                    )
+                },
+            )
+        }
+        ManageModalState.None -> Unit
+    }
+}
+
+private fun RecruiterManageStateUiModel.toDetailState(
+    onDepositConfirm: () -> Unit,
+    onDeliveryInput: () -> Unit,
+): DetailState {
+    return when (this) {
+        RecruiterManageStateUiModel.Default -> DetailState.Default
+        is RecruiterManageStateUiModel.DepositCheck -> DetailState.DepositCheck(
+            deposit = this.deposit,
+            onButtonClick = onDepositConfirm,
+        )
+        is RecruiterManageStateUiModel.Delivery -> DetailState.Delivery(
+            name = this.name,
+            delivery = this.delivery,
+            contact = this.contact,
+            onButtonClick = onDeliveryInput,
+        )
+        is RecruiterManageStateUiModel.AfterDelivery -> DetailState.AfterDelivery(
+            name = this.name,
+            delivery = this.delivery,
+            contact = this.contact,
+            invoice = this.invoice,
+        )
+        is RecruiterManageStateUiModel.Finished -> DetailState.Finished(
+            invoice = this.invoice,
+        )
+    }
 }
 
 @Preview(showBackground = true, heightDp = 1000)
@@ -160,8 +212,6 @@ private fun ParticipantManageScreen(
 private fun ParticipantManageScreenAllStatesPreview() {
     val participants = listOf(
         // 1. 입금 확인 (Deposit Check)
-        // - 입금자명, 입금 시간 정보가 표시되어야 함
-        // - [입금 확인] 버튼 활성화 예상
         ParticipantManageDetail(
             participantId = 1,
             nickname = "포티_입금확인중",
@@ -180,7 +230,6 @@ private fun ParticipantManageScreenAllStatesPreview() {
             trackingNumber = null,
         ),
         // 2. 입금 완료 (Deposit Done)
-        // - 특별한 하단 정보 없음 (Default State)
         ParticipantManageDetail(
             participantId = 2,
             nickname = "포티_입금완료",
@@ -199,8 +248,6 @@ private fun ParticipantManageScreenAllStatesPreview() {
             trackingNumber = null,
         ),
         // 3. 배송 대기 (Delivery Wait)
-        // - 배송지 정보(이름, 주소, 연락처)가 표시되어야 함
-        // - [운송장 입력] 버튼 활성화 예상
         ParticipantManageDetail(
             participantId = 3,
             nickname = "포티_배송대기",
@@ -219,8 +266,6 @@ private fun ParticipantManageScreenAllStatesPreview() {
             trackingNumber = null,
         ),
         // 4. 배송 중/완료 (Delivery Done/Start)
-        // - 배송지 정보 + 운송장 번호가 표시되어야 함
-        // - 버튼 없음 (정보 표시 전용)
         ParticipantManageDetail(
             participantId = 4,
             nickname = "포티_배송완료",
@@ -238,12 +283,35 @@ private fun ParticipantManageScreenAllStatesPreview() {
             address = "경기도 성남시 분당구 판교로 999",
             trackingNumber = "1234-5678-9012",
         ),
-    )
+    ).map { it.toUiModel() }
+
+    var fakeModalState by remember { mutableStateOf<ManageModalState>(ManageModalState.None) }
 
     PotiTheme {
-        ParticipantManageScreen(
-            participants = participants,
-            onBackClick = {},
-        )
+        Scaffold { innerPadding ->
+            ParticipantManageScreen(
+                uiModels = participants,
+                activeModal = fakeModalState,
+                onBackClick = {},
+                onDepositConfirmClick = { id ->
+                    fakeModalState = ManageModalState.DepositConfirm(id)
+                },
+                onDeliveryInputClick = { id ->
+                    fakeModalState = ManageModalState.DeliveryInput(id)
+                },
+                onDismissModal = {
+                    fakeModalState = ManageModalState.None
+                },
+                onDepositModalConfirm = {
+                    fakeModalState = ManageModalState.None
+                },
+                onDeliveryModalConfirm = { _, _, _ ->
+                    fakeModalState = ManageModalState.None
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            )
+        }
     }
 }
