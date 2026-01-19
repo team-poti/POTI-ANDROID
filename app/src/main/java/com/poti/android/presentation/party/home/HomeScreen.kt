@@ -31,6 +31,7 @@ import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
 import com.poti.android.presentation.party.home.model.HomeUiEffect
+import com.poti.android.presentation.party.home.model.HomeUiIntent
 
 val fakeMyGroupItems = listOf(
     GroupItem(
@@ -79,10 +80,12 @@ fun HomeRoute(
     uiState.homeContentLoadState.onSuccess { homeContent ->
         HomeScreen(
             homeContent = homeContent,
-            onFloatingClick = onNavigateToPartyCreate,
-            onBannerClick = onNavigateToPartyDetail,
-            onMoreClick = onNavigateToGoodsPartyList,
-            onCardClick = onNavigateToGoodsCategory,
+            onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
+            onBannerClick = { postId ->
+                viewModel.processIntent(HomeUiIntent.OnBannerClick(postId))
+            },
+            onMoreClick = { viewModel.processIntent(HomeUiIntent.OnMoreClick) },
+            onCardClick = { viewModel.processIntent(HomeUiIntent.OnCardClick) },
             modifier = modifier,
         )
     }
