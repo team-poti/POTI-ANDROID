@@ -28,6 +28,7 @@ fun NavGraphBuilder.partyNavGraph(
         )
         goodsFilterNavGraph(
             paddingValues = paddingValues,
+            navController = navController,
         )
         partyDetailNavGraph(
             paddingValues = paddingValues,

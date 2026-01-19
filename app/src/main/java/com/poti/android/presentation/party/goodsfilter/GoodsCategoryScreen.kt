@@ -32,7 +32,7 @@ import com.poti.android.presentation.party.home.component.GoodsLargeCard
 fun GoodsCategoryRoute(
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToGoodsFilter: () -> Unit,
+    onNavigateToGoodsPartyList: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GoodsCategoryViewModel = hiltViewModel(),
 ) {
@@ -42,7 +42,7 @@ fun GoodsCategoryRoute(
         when (effect) {
             GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
             GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsFilter()
+            GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsPartyList()
         }
     }
 
@@ -52,7 +52,7 @@ fun GoodsCategoryRoute(
             onBackClick = onPopBackStack,
             onFloatingClick = onNavigateToPartyCreate,
             onSortFilterClick = {},
-            onCardClick = onNavigateToGoodsFilter,
+            onCardClick = onNavigateToGoodsPartyList,
             modifier = modifier,
         )
     }
