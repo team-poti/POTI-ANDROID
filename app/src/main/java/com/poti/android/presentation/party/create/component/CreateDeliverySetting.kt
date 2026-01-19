@@ -14,10 +14,12 @@ import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.delivery.DeliveryOption
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CreateDeliverySetting(
-    deliveryOptions: List<DeliveryOption>,
+    deliveryOptions: ImmutableList<DeliveryOption>,
     selectedOptionIds: Set<Long>,
     onDeliveryOptionClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,7 +59,7 @@ fun CreateDeliverySetting(
 @Preview
 @Composable
 private fun CreateDeliverySettingPreview() {
-    val deliveryOptions = listOf(
+    val deliveryOptions = persistentListOf(
         DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
         DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
     )

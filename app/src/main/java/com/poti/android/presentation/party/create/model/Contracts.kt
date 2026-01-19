@@ -1,15 +1,18 @@
 package com.poti.android.presentation.party.create.model
 
 import android.net.Uri
-import android.view.MenuItem
 import androidx.annotation.StringRes
 import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
+import com.poti.android.core.common.extension.getSuccessDataOrNull
+import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.artist.Artist
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.create.Artist
 import com.poti.android.domain.model.delivery.DeliveryOption
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 enum class MemberSettingStatus {
     DEFAULT,
@@ -31,18 +34,18 @@ enum class FieldError(
 }
 
 data class CreateUiState(
-    val selectedImages: List<Uri> = emptyList(),
+    val selectedImages: ImmutableList<Uri> = persistentListOf(),
     val selectedArtist: Artist? = null,
     val productName: String = "",
-    val productSearchResults: List<String> = emptyList(),
+    val productSearchResults: ImmutableList<String> = persistentListOf(),
     val deadline: String = "",
     val description: String = "",
     val accountNumber: String = "",
     val bank: String = "",
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.DEFAULT,
-    val memberOptions: List<MemberPriceOption> = emptyList(),
+    val memberOptions: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
     val selectedMemberIds: Set<Long> = setOf(),
-    val deliveryOptions: List<DeliveryOption> = emptyList(),
+    val deliveryOptions: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
     val selectedDeliveryIds: Set<Long> = setOf(),
     val imageError: FieldError? = null,
     val artistError: FieldError? = null,
@@ -52,9 +55,9 @@ data class CreateUiState(
     val accountNumberError: FieldError? = null,
     val bankError: FieldError? = null,
     val artistSearchKeyword: String = "",
-    val artistSearchResults: List<MenuItem> = emptyList(),
+    val artistSearchResults: ApiState<ImmutableList<Artist>> = ApiState.Init,
 ) : UiState {
-    val selectedMembersOption = memberOptions.filter { option -> option.memberId in selectedMemberIds }
+    val selectedMembersOption = memberOptions.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
 }
 
 sealed interface CreateUiIntent : UiIntent {

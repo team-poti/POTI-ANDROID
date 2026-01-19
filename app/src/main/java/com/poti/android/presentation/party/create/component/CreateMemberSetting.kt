@@ -31,11 +31,13 @@ import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CreateMemberSetting(
     status: MemberSettingStatus,
-    selectedMembersOption: List<MemberPriceOption>,
+    selectedMembersOption: ImmutableList<MemberPriceOption>,
     onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -148,21 +150,21 @@ private fun CreateMemberSettingPreview() {
         ) {
             CreateMemberSetting(
                 status = MemberSettingStatus.DEFAULT,
-                selectedMembersOption = emptyList(),
+                selectedMembersOption = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
             )
 
             CreateMemberSetting(
                 status = MemberSettingStatus.IN_PROGRESS,
-                selectedMembersOption = emptyList(),
+                selectedMembersOption = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
             )
 
             CreateMemberSetting(
                 status = MemberSettingStatus.IN_PROGRESS,
-                selectedMembersOption = listOf(
+                selectedMembersOption = persistentListOf(
                     MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
                     MemberPriceOption(memberId = 1, name = "유진", price = ""),
                     MemberPriceOption(memberId = 1, name = "레이", price = "4000"),
@@ -173,14 +175,14 @@ private fun CreateMemberSettingPreview() {
 
             CreateMemberSetting(
                 status = MemberSettingStatus.ERROR_NO_MEMBER,
-                selectedMembersOption = emptyList(),
+                selectedMembersOption = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
             )
 
             CreateMemberSetting(
                 status = MemberSettingStatus.ERROR_NO_PRICE,
-                selectedMembersOption = listOf(
+                selectedMembersOption = persistentListOf(
                     MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
                     MemberPriceOption(memberId = 1, name = "유진", price = ""),
                     MemberPriceOption(memberId = 1, name = "레이", price = "4000"),

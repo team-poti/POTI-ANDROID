@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
@@ -47,6 +49,7 @@ import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PartyCreateRoute(
@@ -263,12 +266,14 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                CreateMemberSetting(
-                    status = uiState.memberSettingStatus,
-                    selectedMembersOption = uiState.selectedMembersOption,
-                    onPriceChange = onMemberPriceChanged,
-                    onEditBtnClick = onMemberEditBtnClick,
-                )
+                uiState.memberOptions.onSuccess {
+                    CreateMemberSetting(
+                        status = uiState.memberSettingStatus,
+                        selectedMembersOption = it,
+                        onPriceChange = onMemberPriceChanged,
+                        onEditBtnClick = onMemberEditBtnClick,
+                    )
+                }
             }
 
             item {
@@ -276,11 +281,13 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                CreateDeliverySetting(
-                    deliveryOptions = uiState.deliveryOptions,
-                    selectedOptionIds = uiState.selectedDeliveryIds,
-                    onDeliveryOptionClick = onDeliveryRadioBtnClick,
-                )
+                uiState.deliveryOptions.onSuccess {
+                    CreateDeliverySetting(
+                        deliveryOptions = it,
+                        selectedOptionIds = uiState.selectedDeliveryIds,
+                        onDeliveryOptionClick = onDeliveryRadioBtnClick,
+                    )
+                }
             }
 
             item {
@@ -305,9 +312,11 @@ private fun PartyCreateScreen(
 @Preview
 @Composable
 private fun PartyCreateScreenDefaultPreview() {
-    val deliveryOptions = listOf(
-        DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-        DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+    val deliveryOptions = ApiState.Success(
+        persistentListOf(
+            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
+            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+        )
     )
     val selectedDeliveryIds = setOf(1.toLong())
 
@@ -337,9 +346,11 @@ private fun PartyCreateScreenDefaultPreview() {
 @Preview
 @Composable
 private fun PartyCreateScreenAccountNumberErrorPreview() {
-    val deliveryOptions = listOf(
-        DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-        DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+    val deliveryOptions = ApiState.Success(
+        persistentListOf(
+            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
+            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+        )
     )
     var accountNumberError by remember { mutableStateOf<FieldError?>(null) }
 
@@ -371,9 +382,11 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
 @Preview
 @Composable
 private fun PartyCreateMemberPreview() {
-    val deliveryOptions = listOf(
-        DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-        DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+    val deliveryOptions = ApiState.Success(
+        persistentListOf(
+            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
+            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+        )
     )
 
     PotiTheme {
