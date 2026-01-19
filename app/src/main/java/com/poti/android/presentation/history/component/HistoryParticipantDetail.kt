@@ -251,7 +251,8 @@ fun HistoryParticipantDetail(
                     onClick = onButtonClick,
                     showIcon = false,
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
                 )
             }
         }
