@@ -8,16 +8,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.poti.android.presentation.onboarding.navigation.OnboardingGraph
 
-class PotiNavigator(
+class MainNavigator(
     val navController: NavHostController,
 ) {
     private val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
-
-    val startDestination = OnboardingGraph
 
     val currentTab: MainTab?
         @Composable get() = MainTab.entries.find { tab ->
@@ -52,6 +49,6 @@ class PotiNavigator(
 @Composable
 fun rememberPotiNavigator(
     navController: NavHostController = rememberNavController(),
-): PotiNavigator = remember(navController) {
-    PotiNavigator(navController)
+): MainNavigator = remember(navController) {
+    MainNavigator(navController)
 }
