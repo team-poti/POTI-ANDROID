@@ -19,7 +19,6 @@
     <string name="action_button_continue">계속</string>
     <string name="action_button_select_all">전체 선택</string>
 
-
     <!-- LoginScreen -->
     <string name="login_poti_description">굿즈 분철을 더 간편하게</string>
 
@@ -32,7 +31,6 @@
     <string name="onboarding_nickname_error_min_length">2글자 이상 적어주세요</string>
     <string name="onboarding_nickname_error_duplicate">사용중인 닉네임이에요</string>
     <string name="onboarding_nickname_error_server">잠시후 다시 시도해주세요</string>
-
 
     <!-- Party -->
     <string name="party_recruit_deadline">모집 기한</string>
@@ -62,7 +60,6 @@
     <string name="create_label_won">원</string>
     <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
 
-
     <!-- History -->
     <string name="history_participant_stage_deposit">입금</string>
     <string name="history_participant_stage_delivery">배송</string>
@@ -90,5 +87,10 @@
     <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
+
+    <!-- Home -->
+    <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
+    <string name="home_other_goods">다른 굿즈 구경하기</string>
+    <string name="home_more">더보기</string>
 
 </resources>
