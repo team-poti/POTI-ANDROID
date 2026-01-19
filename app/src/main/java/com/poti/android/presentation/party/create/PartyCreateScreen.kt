@@ -372,9 +372,7 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
             onMemberPriceChanged = {},
             onMemberEditBtnClick = {},
             onDeliveryRadioBtnClick = {},
-            onCreateBtnClick = {
-                accountNumberError = FieldError.ACCOUNT_NUMBER_ERROR
-            },
+            onCreateBtnClick = { accountNumberError = FieldError.ACCOUNT_NUMBER_ERROR },
         )
     }
 }
