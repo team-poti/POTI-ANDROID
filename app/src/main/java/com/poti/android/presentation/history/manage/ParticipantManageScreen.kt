@@ -42,7 +42,7 @@ import com.poti.android.presentation.history.model.manage.RecruiterManageStateUi
 @Composable
 fun ParticipantManageRoute(
     modifier: Modifier = Modifier,
-    popBackStack: () -> Unit = {},
+    popBackStack: () -> Unit,
     viewModel: ParticipantManageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -166,11 +166,11 @@ private fun ParticipantManageScreen(
                 onConfirmClick = { deliveryMethod, trackingNumber ->
                     onDeliveryModalConfirm(
                         // participantId =
-                            activeModal.participantId,
+                        activeModal.participantId,
                         // deliveryMethod =
-                            deliveryMethod,
+                        deliveryMethod,
                         // trackingNumber =
-                            trackingNumber,
+                        trackingNumber,
                     )
                 },
             )
