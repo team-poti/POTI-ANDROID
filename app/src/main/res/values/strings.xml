@@ -75,7 +75,7 @@
     <string name="create_placeholder_artist">아티스트 찾기</string>
     <string name="create_label_artist">아티스트</string>
     <string name="create_placeholder_deadline">날짜를 선택해주세요</string>
-    <string name="create_label_deadline">데드라인</string>
+    <string name="create_label_deadline">모집 기한</string>
     <string name="create_placeholder_description">분철 범위 등.. 에 대한 설명을 입력해주세요</string>
     <string name="create_label_description">설명</string>
     <string name="create_placeholder_bank">은행 정보를 입력해주세요</string>
