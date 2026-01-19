@@ -33,7 +33,6 @@ import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.create.MemberOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
@@ -42,6 +41,7 @@ import com.poti.android.presentation.party.create.component.CreateProductDropdow
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
+import com.poti.android.presentation.party.create.model.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable
@@ -77,7 +77,7 @@ private fun PartyCreateScreen(
     onDescriptionChanged: (String) -> Unit,
     onAccountNumberChanged: (String) -> Unit,
     onBankChanged: (String) -> Unit,
-    onMemberPriceChanged: (MemberOption) -> Unit,
+    onMemberPriceChanged: (MemberPriceOption) -> Unit,
     onMemberEditBtnClick: () -> Unit,
     onDeliveryRadioBtnClick: (Long) -> Unit,
     onCreateBtnClick: () -> Unit,

@@ -29,14 +29,14 @@ import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.create.MemberOption
+import com.poti.android.presentation.party.create.model.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable
 fun CreateMemberSetting(
     status: MemberSettingStatus,
-    selectedMembersOption: List<MemberOption>,
-    onPriceChange: (MemberOption) -> Unit,
+    selectedMembersOption: List<MemberPriceOption>,
+    onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -89,7 +89,7 @@ fun CreateMemberSetting(
                             option = option.name,
                             value = option.price,
                             onValueChanged = { newPrice ->
-                                val newOption = MemberOption(
+                                val newOption = MemberPriceOption(
                                     memberId = option.memberId,
                                     name = option.name,
                                     price = newPrice,
@@ -163,9 +163,9 @@ private fun CreateMemberSettingPreview() {
             CreateMemberSetting(
                 status = MemberSettingStatus.IN_PROGRESS,
                 selectedMembersOption = listOf(
-                    MemberOption(memberId = 1, name = "원영", price = "5000"),
-                    MemberOption(memberId = 1, name = "유진", price = ""),
-                    MemberOption(memberId = 1, name = "레이", price = "4000"),
+                    MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
+                    MemberPriceOption(memberId = 1, name = "유진", price = ""),
+                    MemberPriceOption(memberId = 1, name = "레이", price = "4000"),
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
@@ -181,9 +181,9 @@ private fun CreateMemberSettingPreview() {
             CreateMemberSetting(
                 status = MemberSettingStatus.ERROR_NO_PRICE,
                 selectedMembersOption = listOf(
-                    MemberOption(memberId = 1, name = "원영", price = "5000"),
-                    MemberOption(memberId = 1, name = "유진", price = ""),
-                    MemberOption(memberId = 1, name = "레이", price = "4000"),
+                    MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
+                    MemberPriceOption(memberId = 1, name = "유진", price = ""),
+                    MemberPriceOption(memberId = 1, name = "레이", price = "4000"),
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},

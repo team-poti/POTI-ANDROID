@@ -8,7 +8,6 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.domain.model.create.Artist
-import com.poti.android.domain.model.create.MemberOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 
 enum class MemberSettingStatus {
@@ -40,7 +39,7 @@ data class CreateUiState(
     val accountNumber: String = "",
     val bank: String = "",
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.DEFAULT,
-    val memberOptions: List<MemberOption> = emptyList(),
+    val memberOptions: List<MemberPriceOption> = emptyList(),
     val selectedMemberIds: Set<Long> = setOf(),
     val deliveryOptions: List<DeliveryOption> = emptyList(),
     val selectedDeliveryIds: Set<Long> = setOf(),
