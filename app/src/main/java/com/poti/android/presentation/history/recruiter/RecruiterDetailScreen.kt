@@ -82,9 +82,11 @@ private fun RecruiterDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = if(detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE)
+                title = if (detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE) {
                     stringResource(R.string.history_ongoing_title_done)
-                    else stringResource(id = R.string.history_ongoing_title),
+                } else {
+                    stringResource(id = R.string.history_ongoing_title)
+                },
             )
         },
     ) { paddingValues ->
