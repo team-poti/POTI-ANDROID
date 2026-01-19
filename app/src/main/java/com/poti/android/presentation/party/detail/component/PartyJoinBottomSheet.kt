@@ -42,9 +42,6 @@ fun PartyJoinBottomSheet(
         skipPartiallyExpanded = true,
     ),
 ) {
-    val selectedMembers = uiState.memberMenuItems.filter { it.id in uiState.selectedMemberIds }
-    val selectedDelivery = uiState.deliveryMenuItems.find { it.id in uiState.selectedDeliveryId }
-
     PotiBottomSheet(
         onDismissRequest = onDismissRequest,
         text = stringResource(R.string.action_button_continue),
@@ -74,7 +71,7 @@ fun PartyJoinBottomSheet(
                 placeholder = stringResource(R.string.party_join_option_delivery_placeholder),
                 onItemClick = onDeliverySelect,
                 menuItems = uiState.deliveryMenuItems,
-                selectedIds = uiState.selectedDeliveryId,
+                selectedIds = uiState.selectedDeliveryIds,
                 modifier = Modifier.padding(bottom = 49.dp),
                 label = stringResource(R.string.party_join_option_delivery_label),
                 initialOpenState = false,
@@ -87,7 +84,10 @@ fun PartyJoinBottomSheet(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
                 ) {
-                    items(selectedMembers) { member ->
+                    items(
+                        items = uiState.selectedMembers,
+                        key = { it.id },
+                    ) { member ->
                         CardOptionPrice(
                             optionType = PotiItemOptionType.MEMBER,
                             text = member.option,
@@ -96,7 +96,7 @@ fun PartyJoinBottomSheet(
                         )
                     }
 
-                    selectedDelivery?.let { delivery ->
+                    uiState.selectedDelivery?.let { delivery ->
                         item {
                             CardOptionPrice(
                                 optionType = PotiItemOptionType.DELIVERY,

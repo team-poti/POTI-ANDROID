@@ -184,8 +184,8 @@ private fun PartyJoinScreen(
                     PotiShortTextField(
                         value = uiState.contact,
                         onValueChanged = onContactChange,
-                        placeholder = stringResource(R.string.party_join_order_contact_label),
-                        label = stringResource(R.string.party_join_order_contact_placeholder),
+                        placeholder = stringResource(R.string.party_join_order_contact_placeholder),
+                        label = stringResource(R.string.party_join_order_contact_label),
                         error = if (uiState.isContactError) stringResource(R.string.party_join_order_contact_error) else "",
                     )
                 }

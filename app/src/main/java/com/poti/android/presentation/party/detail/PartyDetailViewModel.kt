@@ -89,18 +89,18 @@ class PartyDetailViewModel @Inject constructor(
         } else {
             currentIds.add(selectedId)
         }
-        updateState { copy(selectedMemberIds = currentIds) }
+        updateState { copy(selectedMemberIds = currentIds.toSet()) }
     }
 
     private fun handleMemberRemove(selectedId: String) {
         val currentIds = uiState.value.selectedMemberIds.toMutableSet()
         currentIds.remove(selectedId)
-        updateState { copy(selectedMemberIds = currentIds) }
+        updateState { copy(selectedMemberIds = currentIds.toSet()) }
     }
 
     private fun handleDeliverySelect(selectedId: String) {
         val newSet = setOf(selectedId)
-        updateState { copy(selectedDeliveryId = newSet) }
+        updateState { copy(selectedDeliveryIds = newSet) }
     }
 
     private fun validateInputs(): Boolean {
@@ -140,7 +140,7 @@ class PartyDetailViewModel @Inject constructor(
                 isAddressError = false,
                 isContactError = false,
                 selectedMemberIds = emptySet(),
-                selectedDeliveryId = emptySet(),
+                selectedDeliveryIds = emptySet(),
                 showJoinBottomSheet = false,
             )
         }

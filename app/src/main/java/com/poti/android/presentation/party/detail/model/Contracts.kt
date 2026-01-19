@@ -21,7 +21,7 @@ data class PartyDetailUiState(
     val memberMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val deliveryMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val selectedMemberIds: Set<String> = emptySet(),
-    val selectedDeliveryId: Set<String> = emptySet(),
+    val selectedDeliveryIds: Set<String> = emptySet(),
     val orderName: String = "",
     val postalCode: String = "",
     val address: String = "",
@@ -43,10 +43,10 @@ data class PartyDetailUiState(
 
     val selectedDelivery: FieldMenuItem?
         get() = deliveryMenuItems
-            .find { it.id in selectedDeliveryId }
+            .find { it.id in selectedDeliveryIds }
 
     val hasSelectedOptions: Boolean
-        get() = selectedMemberIds.isNotEmpty() || selectedDeliveryId.isNotEmpty()
+        get() = selectedMemberIds.isNotEmpty() || selectedDeliveryIds.isNotEmpty()
 
     val totalPrice: String
         get() {
@@ -56,7 +56,7 @@ data class PartyDetailUiState(
         }
 
     val isBottomSheetButtonEnable: Boolean
-        get() = selectedMemberIds.isNotEmpty() && selectedDeliveryId.isNotEmpty()
+        get() = selectedMemberIds.isNotEmpty() && selectedDeliveryIds.isNotEmpty()
 }
 
 sealed interface PartyDetailIntent : UiIntent {
