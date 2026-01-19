@@ -17,17 +17,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderSection
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.history.HistoryItem
+import com.poti.android.domain.model.history.HistoryListContent
 import com.poti.android.presentation.history.component.CardHistorySize
 import com.poti.android.presentation.history.component.HistoryCardItem
 import com.poti.android.presentation.history.component.ParticipantStateLabelStage
 import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
-import com.poti.android.presentation.history.list.model.HistoryItem
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
@@ -127,11 +129,11 @@ private fun HistoryListScreen(
 
                         HistoryCardItem(
                             sizeType = CardHistorySize.SMALL,
-                            imageUrl = item.imageUrl,
+                            imageUrl = item.imageUrl ?: "",
                             artist = item.artist,
                             title = item.title,
-                            participantStageType = item.stageType,
-                            participantStatusType = item.statusType,
+                            participantStageType = item.stage,
+                            participantStatusType = item.status,
                             onClick = { onCardClick(item.id) },
                         )
                     }
@@ -147,27 +149,31 @@ private fun HistoryListScreenPreview_Ongoing() {
     PotiTheme {
         HistoryListScreen(
             uiState = HistoryListUiState(
-                selectedTab = PotiHeaderTabType.ONGOING,
-                ongoingCount = 2,
-                endedCount = 5,
-                items = listOf(
-                    HistoryItem(
-                        id = 1L,
-                        imageUrl = "",
-                        artist = "ive(아이브)",
-                        title = "러브다이브 위드뮤",
-                        stageType = ParticipantStateLabelStage.DELIVERY,
-                        statusType = ParticipantStateLabelStatus.WAIT,
-                    ),
-                    HistoryItem(
-                        id = 2L,
-                        imageUrl = "",
-                        artist = "aespa",
-                        title = "걸스 스페셜",
-                        stageType = ParticipantStateLabelStage.DEPOSIT,
-                        statusType = ParticipantStateLabelStatus.DONE,
+                historyListLoadState = ApiState.Success(
+                    HistoryListContent(
+                        ongoingCount = 2,
+                        endedCount = 5,
+                        items = listOf(
+                            HistoryItem(
+                                id = 1L,
+                                imageUrl = "",
+                                artist = "ive(아이브)",
+                                title = "러브다이브 위드뮤",
+                                stage = ParticipantStateLabelStage.DELIVERY,
+                                status = ParticipantStateLabelStatus.WAIT,
+                            ),
+                            HistoryItem(
+                                id = 2L,
+                                imageUrl = "",
+                                artist = "aespa",
+                                title = "걸스 스페셜",
+                                stage = ParticipantStateLabelStage.DEPOSIT,
+                                status = ParticipantStateLabelStatus.DONE,
+                            ),
+                        ),
                     ),
                 ),
+                selectedTab = PotiHeaderTabType.ONGOING,
             ),
             onBackClick = {},
             onSwitchModeClick = {},
@@ -183,10 +189,14 @@ private fun HistoryListScreenPreview_Ended() {
     PotiTheme {
         HistoryListScreen(
             uiState = HistoryListUiState(
+                historyListLoadState = ApiState.Success(
+                    HistoryListContent(
+                        ongoingCount = 2,
+                        endedCount = 0,
+                        items = emptyList(),
+                    ),
+                ),
                 selectedTab = PotiHeaderTabType.ENDED,
-                ongoingCount = 2,
-                endedCount = 0,
-                items = listOf(),
             ),
             onBackClick = {},
             onSwitchModeClick = {},

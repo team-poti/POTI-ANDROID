@@ -4,18 +4,16 @@ import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.domain.model.history.HistoryItem
+import com.poti.android.domain.model.history.HistoryListContent
 import com.poti.android.presentation.history.list.HistoryMode
 
 data class HistoryListUiState(
-    val isLoading: Boolean = false,
+    val historyListLoadState: ApiState<HistoryListContent> = ApiState.Init,
     val mode: HistoryMode = HistoryMode.RECRUIT,
     val selectedTab: PotiHeaderTabType = PotiHeaderTabType.ONGOING,
-    val ongoingCount: Int = 0,
-    val endedCount: Int = 0,
-    val items: List<HistoryItem> = emptyList(),
 ) : UiState {
     val titleRes = when (mode) {
         HistoryMode.RECRUIT -> R.string.user_history_recruit
@@ -37,16 +35,15 @@ data class HistoryListUiState(
             }
         }
     }
-}
+    val items: List<HistoryItem>
+        get() = (historyListLoadState as? ApiState.Success)?.data?.items.orEmpty()
 
-data class HistoryItem(
-    val id: Long,
-    val imageUrl: String,
-    val artist: String,
-    val title: String,
-    val stageType: ParticipantStateLabelStage,
-    val statusType: ParticipantStateLabelStatus,
-)
+    val ongoingCount: Int
+        get() = (historyListLoadState as? ApiState.Success)?.data?.ongoingCount ?: 0
+
+    val endedCount: Int
+        get() = (historyListLoadState as? ApiState.Success)?.data?.endedCount ?: 0
+}
 
 sealed interface HistoryListUiIntent : UiIntent {
     data object OnBackClick : HistoryListUiIntent
