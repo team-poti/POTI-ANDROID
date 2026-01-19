@@ -1,4 +1,4 @@
-package com.poti.android.data.remote.dto.response
+package com.poti.android.data.remote.dto.response.post
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

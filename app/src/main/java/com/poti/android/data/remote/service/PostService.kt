@@ -1,9 +1,10 @@
 package com.poti.android.data.remote.service
 
-import com.poti.android.data.remote.dto.base.ApiResponse
-import com.poti.android.data.remote.dto.request.CreatePostRequestDto
-import com.poti.android.data.remote.dto.response.CreatePostResponseDto
-import com.poti.android.data.remote.dto.response.ProductSearchResponseDto
+import com.poti.android.core.network.model.BaseResponse
+import com.poti.android.data.remote.dto.request.post.CreatePostRequestDto
+import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
+import com.poti.android.data.remote.dto.response.post.CreatePostResponseDto
+import com.poti.android.data.remote.dto.response.post.ProductSearchResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -14,14 +15,15 @@ interface PostService {
     suspend fun searchProductTitle(
         @Query("artistId") artistId : Long,
         @Query("keyword") keyword: String,
-    ): ApiResponse<ProductSearchResponseDto>
+    ): BaseResponse<ProductSearchResponseDto>
 
-    // TODO: [도연] 서버 수정 완료 시 업데이트
     @GET("api/v1/posts/artists")
-    suspend fun searchArtist()
+    suspend fun searchArtist(
+        @Query("keyword") keyword: String,
+    ): BaseResponse<ArtistSearchListResponseDto>
 
     @POST("api/v1/posts")
     suspend fun createPost(
         @Body body: CreatePostRequestDto
-    ): ApiResponse<CreatePostResponseDto>
+    ): BaseResponse<CreatePostResponseDto>
 }
