@@ -45,6 +45,7 @@ fun PartyDetailRoute(
     onPopBackStack: () -> Unit,
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
+    onReload: (Long) -> Unit,
     viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -55,6 +56,7 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateBack -> onPopBackStack()
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
+            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
         }
     }
 

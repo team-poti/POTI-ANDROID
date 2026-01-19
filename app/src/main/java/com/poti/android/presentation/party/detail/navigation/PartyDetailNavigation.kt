@@ -33,6 +33,14 @@ fun NavController.navigateToPartyJoin() {
     navigate(PartyDetailRoute.Join)
 }
 
+fun NavController.reloadPartyDetail(partyId: Long) {
+    navigate(PartyDetailGraph(partyId)) {
+        popUpTo<PartyDetailGraph> {
+            inclusive = true
+        }
+    }
+}
+
 fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
@@ -43,6 +51,7 @@ fun NavGraphBuilder.partyDetailNavGraph(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToJoin = navController::navigateToPartyJoin,
                 onNavigateToProfile = navController::navigateToProfile,
+                onReload = navController::reloadPartyDetail,
                 viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )
@@ -50,6 +59,7 @@ fun NavGraphBuilder.partyDetailNavGraph(
         composable<PartyDetailRoute.Join> { entry ->
             PartyJoinRoute(
                 onPopBackStack = navController::popBackStack,
+                onReload = navController::reloadPartyDetail,
                 viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )

@@ -37,6 +37,7 @@ import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 @Composable
 fun PartyJoinRoute(
     onPopBackStack: () -> Unit,
+    onReload: (Long) -> Unit,
     viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -45,6 +46,7 @@ fun PartyJoinRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             PartyDetailEffect.NavigateBack -> onPopBackStack()
+            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
             else -> {}
         }
     }

@@ -97,4 +97,6 @@ sealed interface PartyDetailEffect : UiEffect {
     data object NavigateToJoin : PartyDetailEffect
 
     data class NavigateToProfile(val userId: Long) : PartyDetailEffect
+
+    data class ReloadDetail(val partyId: Long) : PartyDetailEffect
 }

@@ -46,15 +46,11 @@ class PartyDetailViewModel @Inject constructor(
             is PartyDetailIntent.OnAddressChange -> updateState { copy(address = intent.value, isAddressError = false) }
             is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
             PartyDetailIntent.OnFinalJoinClick -> {
-                if (validateInputs()) {
-                    postOrder()
-                }
+                if (validateInputs()) postOrder()
             }
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }
-                clearJoinInputState()
-                fetchPartyDetail()
-                sendEffect(NavigateBack)
+                sendEffect(ReloadDetail(partyId))
             }
         }
     }
@@ -126,24 +122,6 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun postOrder() = launchScope {
         updateState { copy(isJoinSuccessDialogVisible = true) }
-    }
-
-    private fun clearJoinInputState() {
-        updateState {
-            copy(
-                orderName = "",
-                postalCode = "",
-                address = "",
-                contact = "",
-                isOrderNameError = false,
-                isPostalCodeError = false,
-                isAddressError = false,
-                isContactError = false,
-                selectedMemberIds = emptySet(),
-                selectedDeliveryIds = emptySet(),
-                showJoinBottomSheet = false,
-            )
-        }
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =
