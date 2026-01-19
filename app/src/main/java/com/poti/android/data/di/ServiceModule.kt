@@ -39,9 +39,4 @@ object ServiceModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService =
         retrofit.create(UserService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideArtistService(retrofit: Retrofit): ArtistService =
-        retrofit.create(ArtistService::class.java)
 }
