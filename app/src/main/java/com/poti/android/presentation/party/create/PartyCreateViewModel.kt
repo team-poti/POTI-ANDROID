@@ -13,21 +13,21 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 ) {
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
-            is CreateUiIntent.OnAccountNumberChange -> TODO()
-            is CreateUiIntent.OnArtistSelect -> TODO()
-            is CreateUiIntent.OnBankChange -> TODO()
-            CreateUiIntent.OnCreateClick -> TODO()
-            is CreateUiIntent.OnDeadlineChange -> TODO()
-            is CreateUiIntent.OnDeliverySelect -> TODO()
-            is CreateUiIntent.OnDescriptionChange -> TODO()
-            is CreateUiIntent.OnImagesChanged -> TODO()
-            CreateUiIntent.OnMemberEditClick -> TODO()
-            is CreateUiIntent.OnMembersSelect -> TODO()
-            is CreateUiIntent.OnPriceChange -> TODO()
-            is CreateUiIntent.OnProductChange -> TODO()
-            is CreateUiIntent.OnProductSelect -> TODO()
-            CreateUiIntent.OnSearchClick -> TODO()
-            CreateUiIntent.OnBackClick -> TODO()
+            is CreateUiIntent.OnAccountNumberChange -> {}
+            is CreateUiIntent.OnArtistSelect -> {}
+            is CreateUiIntent.OnBankChange -> {}
+            CreateUiIntent.OnCreateClick -> {}
+            is CreateUiIntent.OnDeadlineChange -> {}
+            is CreateUiIntent.OnDeliverySelect -> {}
+            is CreateUiIntent.OnDescriptionChange -> {}
+            is CreateUiIntent.OnImagesChanged -> {}
+            CreateUiIntent.OnMemberEditClick -> {}
+            is CreateUiIntent.OnMembersSelect -> {}
+            is CreateUiIntent.OnPriceChange -> {}
+            is CreateUiIntent.OnProductChange -> {}
+            is CreateUiIntent.OnProductSelect -> {}
+            CreateUiIntent.OnSearchClick -> {}
+            CreateUiIntent.OnBackClick -> {}
         }
     }
 }
