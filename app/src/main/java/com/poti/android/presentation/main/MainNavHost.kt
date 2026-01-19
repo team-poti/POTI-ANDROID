@@ -40,6 +40,7 @@ fun MainNavHost(
             paddingValues = paddingValues,
         )
         historyNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
         )
         myPageNavGraph(
