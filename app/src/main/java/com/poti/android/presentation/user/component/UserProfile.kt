@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -37,6 +38,8 @@ fun UserProfile(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
+                .placeholder(R.drawable.img_basic_profile)
+                .error(R.drawable.img_basic_profile)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
