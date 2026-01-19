@@ -51,8 +51,8 @@ fun PotiProfileSummary(
             modifier = Modifier
                 .size(sizeType.profilePicSize)
                 .clip(RoundedCornerShape(99.dp)),
-            placeholder = painterResource(id = R.drawable.ic_member),
-            error = painterResource(id = R.drawable.ic_member),
+            placeholder = painterResource(id = R.drawable.img_basic_profile),
+            error = painterResource(id = R.drawable.img_basic_profile),
         )
 
         when (sizeType) {

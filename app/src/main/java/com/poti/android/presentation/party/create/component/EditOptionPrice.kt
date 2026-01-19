@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -55,7 +56,9 @@ fun EditOptionPrice(
     modifier: Modifier = Modifier,
     isChecked: Boolean? = null,
     onCheckboxClick: (() -> Unit)? = null,
+    onFocusChanged: ((Boolean) -> Unit) = {},
     imeAction: ImeAction = ImeAction.Done,
+    enabled: Boolean = true,
 ) {
     val density = LocalDensity.current
     val measurer = rememberTextMeasurer()
@@ -112,6 +115,8 @@ fun EditOptionPrice(
                 imeAction = imeAction,
                 transformation = transformation,
                 textStyle = textStyle,
+                onFocusChanged = onFocusChanged,
+                enabled = enabled,
                 modifier = Modifier.width(textWidth),
             )
 
@@ -142,6 +147,8 @@ private fun OptionTextField(
     imeAction: ImeAction,
     transformation: VisualTransformation,
     textStyle: TextStyle,
+    onFocusChanged: (Boolean) -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -150,7 +157,10 @@ private fun OptionTextField(
     BasicTextField(
         value = value,
         onValueChange = onValueChanged,
-        modifier = modifier,
+        modifier = modifier
+            .onFocusChanged { focusState ->
+                onFocusChanged(focusState.isFocused)
+            },
         textStyle = textStyle.copy(
             color = PotiTheme.colors.black,
         ),
@@ -174,6 +184,7 @@ private fun OptionTextField(
         decorationBox = { innerTextField ->
             innerTextField()
         },
+        enabled = enabled,
     )
 }
 
@@ -246,6 +257,7 @@ private fun OptionTextFieldPreview() {
                 imeAction = ImeAction.Next,
                 isChecked = true,
                 onCheckboxClick = {},
+                onFocusChanged = {},
             )
 
             EditOptionPrice(
@@ -255,6 +267,7 @@ private fun OptionTextFieldPreview() {
                 imeAction = ImeAction.Next,
                 isChecked = false,
                 onCheckboxClick = {},
+                onFocusChanged = {},
             )
 
             EditOptionPrice(
@@ -262,6 +275,7 @@ private fun OptionTextFieldPreview() {
                 value = text3,
                 onValueChanged = { text3 = it },
                 imeAction = ImeAction.Done,
+                onFocusChanged = {},
             )
         }
     }
