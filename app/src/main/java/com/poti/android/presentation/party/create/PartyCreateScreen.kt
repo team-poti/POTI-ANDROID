@@ -37,6 +37,7 @@ import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
@@ -47,7 +48,6 @@ import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
-import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import kotlinx.collections.immutable.persistentListOf
 
@@ -316,7 +316,7 @@ private fun PartyCreateScreenDefaultPreview() {
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
+        ),
     )
     val selectedDeliveryIds = setOf(1.toLong())
 
@@ -350,7 +350,7 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
+        ),
     )
     var accountNumberError by remember { mutableStateOf<FieldError?>(null) }
 
@@ -386,7 +386,7 @@ private fun PartyCreateMemberPreview() {
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
+        ),
     )
 
     PotiTheme {
