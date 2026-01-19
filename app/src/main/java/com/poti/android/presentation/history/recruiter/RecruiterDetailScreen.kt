@@ -151,18 +151,6 @@ private fun RecruiterDetailScreen(
     }
 }
 
-@DrawableRes
-fun getStepIndicatorDrawable(step: Int): Int {
-    return when (step) {
-        0 -> R.drawable.ic_history_step_indicator_0
-        1 -> R.drawable.ic_history_step_indicator_1
-        2 -> R.drawable.ic_history_step_indicator_2
-        3 -> R.drawable.ic_history_step_indicator_3
-        4 -> R.drawable.ic_history_step_indicator_4
-        else -> R.drawable.ic_history_step_indicator_0
-    }
-}
-
 @Preview(showBackground = true, name = "Recruit Step")
 @Composable
 private fun RecruiterDetailScreenRecruitPreview() {

@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,10 +37,10 @@ fun HistoryDeliveryConfirmModal(
 ) {
     PotiSmallModal(
         onDismissRequest = onDismiss,
-        title = "잠깐! 정말 상품을 수령했나요?",
-        text = "거래가 종료되면 되돌릴 수 없어요",
-        dismissBtnText = "이전",
-        confirmBtnText = "배송 완료",
+        title = stringResource(R.string.history_deivery_confirm_modal_title),
+        text = stringResource(R.string.history_deivery_confirm_modal_text),
+        dismissBtnText = stringResource(R.string.history_deivery_confirm_modal_dismiss),
+        confirmBtnText = stringResource(R.string.history_deivery_confirm_modal_confirm),
         onDismissBtnClick = onDismiss,
         onConfirmBtnClick = onConfirm,
     )
@@ -58,11 +59,11 @@ fun HistoryDeliveryReviewModal(
 
     PotiLargeModal(
         onDismissRequest = onDismissRequest,
-        title = "거래는 어땠나요?",
-        text = "별점으로 간단히 평가해주세요",
-        btnText = "완료",
+        title = stringResource(R.string.history_deivery_review_modal_title),
+        text = stringResource(R.string.history_deivery_review_modal_text),
+        btnText = stringResource(R.string.history_deivery_review_modal_button),
         onBtnClick = { onConfirm(currentRating) },
-        subBtnText = "건너뛰기",
+        subBtnText = stringResource(R.string.history_deivery_review_modal_sub_button),
         onSubBtnClick = onSkip,
     ) {
         Box(

@@ -120,7 +120,6 @@
     <string name="history_participant_management_title">참여자 관리 (%d)</string>
     <string name="history_no_participants">아직 참여자가 없어요</string>
     <string name="history_participant_detail_title">참여자 정보 상세</string>
-    <string name="action_confirm_deposit_done">입금 확인 완료</string>
     <string name="history_participation_number">참여번호 %s</string>
     <string name="history_deposit_info_title">입금 정보</string>
     <string name="history_total_deposit_amount">총 입금 금액</string>
@@ -133,6 +132,14 @@
     <string name="history_deposit_bottomsheet_depositor_label">입금자명</string>
     <string name="history_deposit_bottomsheet_deposit_time_placeholder">입금 시간을 입력해주세요</string>
     <string name="history_deposit_bottomsheet_deposit_time_label">입금 시간</string>
+    <string name="history_deivery_confirm_modal_title">잠깐! 정말 상품을 수령했나요?</string>
+    <string name="history_deivery_confirm_modal_text">거래가 종료되면 되돌릴 수 없어요</string>
+    <string name="history_deivery_confirm_modal_dismiss">이전</string>
+    <string name="history_deivery_confirm_modal_confirm">배송 완료</string>
+    <string name="history_deivery_review_modal_title">거래는 어땠나요?</string>
+    <string name="history_deivery_review_modal_text">별점으로 간단히 평가해주세요</string>
+    <string name="history_deivery_review_modal_button">완료</string>
+    <string name="history_deivery_review_modal_sub_button">건너뛰기</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

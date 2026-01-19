@@ -16,6 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.designsystem.component.display.PotiItemOption
+import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
+import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.ParticipantShippingInfo
 
@@ -49,21 +52,11 @@ fun ShippingInfoSection(
                 lineHeight = PotiTheme.typography.body14m.fontSize * 1.5,
             )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_delivery),
-                    contentDescription = "Delivery Method",
-                    tint = PotiTheme.colors.gray800,
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = info.deliveryMethod,
-                    style = PotiTheme.typography.body14m,
-                    color = PotiTheme.colors.gray800,
-                )
-            }
+            PotiItemOption(
+                optionType = PotiItemOptionType.DELIVERY,
+                sizeType = PotiItemOptionSize.SMALL,
+                text = info.deliveryMethod,
+            )
         }
     }
 }
