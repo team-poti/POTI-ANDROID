@@ -11,8 +11,8 @@ data class ArtistSearchListResponseDto(
 
 @Serializable
 data class ArtistSearchResponseDto(
-    @SerialName("artists")
-    val artists: Long,
+    @SerialName("artistId")
+    val artistId: Long,
     @SerialName("name")
     val name: String,
 )

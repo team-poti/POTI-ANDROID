@@ -8,6 +8,6 @@ import javax.inject.Inject
 class ImageRemoteDataSource @Inject constructor(
     private val imageService: ImageService,
 ) {
-    suspend fun getPresignedUrl(type: String, count: Int, extension: String): BaseResponse<PresignedUrlListResponseDto> =
-        imageService.getPresignedUrl(type, count, extension)
+    suspend fun getPresignedUrls(type: String, count: Int, extension: String): BaseResponse<PresignedUrlListResponseDto> =
+        imageService.getPresignedUrls(type, count, extension)
 }

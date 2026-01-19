@@ -20,13 +20,13 @@ data class CreatePostRequestDto(
     @SerialName("imageUrls")
     val imageUrls: List<String>,
     @SerialName("options")
-    val options: List<OptionDto>,
+    val options: List<OptionRequestDto>,
     @SerialName("shippings")
-    val shippings: List<ShippingDto>,
+    val shippings: List<ShippingRequestDto>,
 )
 
 @Serializable
-data class OptionDto(
+data class OptionRequestDto(
     @SerialName("memberId")
     val memberId: Long,
     @SerialName("price")
@@ -34,7 +34,7 @@ data class OptionDto(
 )
 
 @Serializable
-data class ShippingDto(
+data class ShippingRequestDto(
     @SerialName("deliveryMethodId")
     val deliveryMethodId: Long,
     @SerialName("price")

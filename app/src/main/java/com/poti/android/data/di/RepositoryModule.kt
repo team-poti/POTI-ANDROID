@@ -2,9 +2,13 @@ package com.poti.android.data.di
 
 import com.poti.android.data.repository.ArtistRepositoryImpl
 import com.poti.android.data.repository.AuthRepositoryImpl
+import com.poti.android.data.repository.ImageRepositoryImpl
+import com.poti.android.data.repository.PostRepositoryImpl
 import com.poti.android.data.repository.UserRepositoryImpl
 import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.repository.ImageRepository
+import com.poti.android.domain.repository.PostRepository
 import com.poti.android.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -26,4 +30,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindArtistRepository(artistRepositoryImpl: ArtistRepositoryImpl): ArtistRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindImageRepository(imageRepositoryImpl: ImageRepositoryImpl): ImageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPostRepository(postRepositoryImpl: PostRepositoryImpl): PostRepository
 }
