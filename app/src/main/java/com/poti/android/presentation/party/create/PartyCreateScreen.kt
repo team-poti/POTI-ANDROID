@@ -22,8 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -39,28 +41,44 @@ import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.CreateProductDropdownField
 import com.poti.android.presentation.party.create.component.SellerNotice
+import com.poti.android.presentation.party.create.model.CreateUiEffect
+import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable
-fun PartyCreateRoute(modifier: Modifier = Modifier) {
+fun PartyCreateRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    viewModel: PartyCreateViewModel,
+    modifier: Modifier = Modifier,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            CreateUiEffect.NavigateToBack -> onPopBackStack()
+            CreateUiEffect.NavigateToSearch -> onNavigateToSearch()
+        }
+    }
+
     PartyCreateScreen(
-        uiState = CreateUiState(),
-        onPopBackStack = {},
-        onImageChanged = {},
-        onSearchArtist = {},
-        onProductChanged = {},
-        onProductSearchItemClick = {},
-        onDeadlineChanged = {},
-        onDescriptionChanged = {},
-        onAccountNumberChanged = {},
-        onBankChanged = {},
-        onMemberPriceChanged = {},
-        onMemberEditBtnClick = {},
-        onDeliveryRadioBtnClick = {},
-        onCreateBtnClick = {},
+        uiState = uiState,
+        onPopBackStack = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
+        onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
+        onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
+        onProductChanged = { viewModel.processIntent(CreateUiIntent.OnProductChange(it)) },
+        onProductSearchItemClick = { viewModel.processIntent(CreateUiIntent.OnProductSelect(it)) },
+        onDeadlineChanged = { viewModel.processIntent(CreateUiIntent.OnDeadlineChange(it)) },
+        onDescriptionChanged = { viewModel.processIntent(CreateUiIntent.OnDescriptionChange(it)) },
+        onAccountNumberChanged = { viewModel.processIntent(CreateUiIntent.OnAccountNumberChange(it)) },
+        onBankChanged = { viewModel.processIntent(CreateUiIntent.OnBankChange(it)) },
+        onMemberPriceChanged = { viewModel.processIntent(CreateUiIntent.OnPriceChange(it)) },
+        onMemberEditBtnClick = { viewModel.processIntent(CreateUiIntent.OnMemberEditClick) },
+        onDeliveryRadioBtnClick = { viewModel.processIntent(CreateUiIntent.OnDeliverySelect(it)) },
+        onCreateBtnClick = { viewModel.processIntent(CreateUiIntent.OnCreateClick) },
         modifier = modifier,
     )
 }

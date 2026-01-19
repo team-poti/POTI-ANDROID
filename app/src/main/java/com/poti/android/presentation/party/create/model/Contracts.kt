@@ -56,6 +56,25 @@ data class CreateUiState(
     val selectedMembersOption = memberOptions.filter { option -> option.memberId in selectedMemberIds }
 }
 
-sealed interface CreateUiIntent : UiIntent {}
+sealed interface CreateUiIntent : UiIntent {
+    data object OnBackClick : CreateUiIntent
+    data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
+    data object OnSearchClick : CreateUiIntent
+    data class OnArtistSelect(val artist: Artist) : CreateUiIntent
+    data class OnProductChange(val value: String) : CreateUiIntent
+    data class OnProductSelect(val product: String) : CreateUiIntent
+    data class OnDeadlineChange(val value: String) : CreateUiIntent
+    data class OnDescriptionChange(val value: String) : CreateUiIntent
+    data class OnAccountNumberChange(val value: String) : CreateUiIntent
+    data class OnBankChange(val value: String) : CreateUiIntent
+    data object OnMemberEditClick : CreateUiIntent
+    data class OnMembersSelect(val members: List<MemberPriceOption>) : CreateUiIntent
+    data class OnPriceChange(val member: MemberPriceOption) : CreateUiIntent
+    data class OnDeliverySelect(val deliveryId: Long) : CreateUiIntent
+    data object OnCreateClick : CreateUiIntent
+}
 
-sealed interface CreateUiEffect : UiEffect {}
+sealed interface CreateUiEffect : UiEffect {
+    data object NavigateToBack : CreateUiEffect
+    data object NavigateToSearch : CreateUiEffect
+}
