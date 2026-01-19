@@ -1,8 +1,5 @@
 package com.poti.android.presentation.auth.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
@@ -15,9 +12,13 @@ sealed interface AuthRoute : Route {
 }
 
 fun NavGraphBuilder.authNavGraph(
-    paddingValues: PaddingValues,
+    onNavigateToOnboarding: () -> Unit,
+    onNavigateToHome: () -> Unit,
 ) {
     composable<AuthRoute.Login> {
-        LoginRoute(modifier = Modifier.padding(paddingValues))
+        LoginRoute(
+            onNavigateToOnboarding = onNavigateToOnboarding,
+            onNavigateToHome = onNavigateToHome,
+        )
     }
 }
