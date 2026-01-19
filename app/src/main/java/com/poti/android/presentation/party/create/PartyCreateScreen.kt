@@ -45,7 +45,7 @@ import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
-import com.poti.android.presentation.party.create.model.MemberPriceOption
+import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable

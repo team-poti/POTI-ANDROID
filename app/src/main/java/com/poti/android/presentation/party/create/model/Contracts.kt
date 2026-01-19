@@ -7,6 +7,7 @@ import com.poti.android.R
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
+import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.create.Artist
 import com.poti.android.domain.model.delivery.DeliveryOption
 

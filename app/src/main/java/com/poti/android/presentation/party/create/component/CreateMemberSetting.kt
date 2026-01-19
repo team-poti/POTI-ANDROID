@@ -29,7 +29,7 @@ import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.party.create.model.MemberPriceOption
+import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 
 @Composable
