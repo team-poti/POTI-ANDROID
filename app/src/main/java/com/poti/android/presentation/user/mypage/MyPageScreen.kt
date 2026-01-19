@@ -10,12 +10,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
@@ -27,39 +32,35 @@ import com.poti.android.presentation.user.component.HistorySummaryCard
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
+import com.poti.android.presentation.user.mypage.model.MyPageUiEffect
 
 @Composable
 fun MyPageRoute(
+    onNavigateToArtist: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel(),
 ) {
-    MyPageScreen(
-        userMyPage = UserMyPage(
-            nickname = "분철의 악마",
-            email = "akkma@app.jam",
-            profileImageUrl = "",
-            ratingAvg = "4.8",
-            activityMessage = "최근 3일 이내 활동",
-            joinedAt = "2025-12-28",
-            hasFavoriteArtist = true,
-            favoriteArtistName = "아이브(ive)",
-            participationSummary = HistorySummary(
-                total = 12,
-                inProgress = 3,
-                completed = 9,
-            ),
-            recruitSummary = HistorySummary(
-                total = 7,
-                inProgress = 2,
-                completed = 5,
-            ),
-        ),
-        modifier = modifier,
-    )
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            MyPageUiEffect.NavigateToArtist -> onNavigateToArtist()
+        }
+    }
+
+    uiState.userMyPageLoadState.onSuccess { userMyPage ->
+        MyPageScreen(
+            userMyPage = userMyPage,
+            onArtistClick = onNavigateToArtist, // TODO: [예림] 선택 최애 없을 때만 이동
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
 private fun MyPageScreen(
     userMyPage: UserMyPage,
+    onArtistClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -107,7 +108,7 @@ private fun MyPageScreen(
 
                 BadgeButton(
                     bias = biasText,
-                    onClick = {},
+                    onClick = onArtistClick,
                     modifier = Modifier,
                 )
             }
@@ -121,14 +122,14 @@ private fun MyPageScreen(
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_participate),
                 summary = userMyPage.participationSummary,
-                onItemClick = { type -> },
+                onItemClick = { type -> }, // TODO: [예림] 분철 내역 뷰 연결
                 modifier = Modifier.fillMaxWidth(),
             )
 
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_recruit),
                 summary = userMyPage.recruitSummary,
-                onItemClick = { type -> },
+                onItemClick = { type -> }, // TODO: [예림] 분철 내역 뷰 연결
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -160,6 +161,7 @@ private fun ProfileScreenPreview() {
                     completed = 5,
                 ),
             ),
+            onArtistClick = {},
             modifier = Modifier,
         )
     }
@@ -190,6 +192,7 @@ private fun ProfileScreenPreview2() {
                     completed = 5,
                 ),
             ),
+            onArtistClick = {},
             modifier = Modifier,
         )
     }
