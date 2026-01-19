@@ -36,7 +36,7 @@ fun MemberSelectBottomSheet(
     onSubBtnClick: () -> Unit,
     subEnabled: Boolean,
     members: List<String>,
-    selectedIndics: Set<Int>,
+    selectedIndices: Set<Int>,
     onMemberClick: (Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -70,7 +70,7 @@ fun MemberSelectBottomSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             itemsIndexed(members) { index, member ->
-                val isSelected = index in selectedIndics
+                val isSelected = index in selectedIndices
 
                 PotiChipButton(
                     text = member,
@@ -96,7 +96,7 @@ private fun MemberSelectBottomSheetPreview() {
         onSubBtnClick = {},
         subEnabled = true,
         members = listOf("원영", "유진"),
-        selectedIndics = setOf(1),
+        selectedIndices = setOf(1),
         onMemberClick = {},
     )
 }
@@ -114,7 +114,7 @@ private fun MemberSelectBottomSheetLongVerPreview() {
         onSubBtnClick = {},
         subEnabled = true,
         members = listOf("원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진", "원영", "유진"),
-        selectedIndics = setOf(1),
+        selectedIndices = setOf(1),
         onMemberClick = {},
     )
 }
