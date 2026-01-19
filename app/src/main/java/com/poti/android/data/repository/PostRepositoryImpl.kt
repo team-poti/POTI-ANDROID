@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.artist.toDomain
 import com.poti.android.data.mapper.artist.toDto
+import com.poti.android.data.mapper.delivery.toDomain
 import com.poti.android.data.mapper.delivery.toDto
 import com.poti.android.data.remote.datasource.PostRemoteDataSource
 import com.poti.android.data.remote.dto.request.post.CreatePostRequestDto
@@ -58,5 +59,13 @@ class PostRepositoryImpl @Inject constructor(
             .handleApiResponse()
             .getOrThrow()
             .postId
+    }
+
+    override suspend fun getShippingOptions(): Result<List<DeliveryOption>> = httpResponseHandler.safeApiCall {
+        postRemoteDataSource
+            .getShippingOptions()
+            .handleApiResponse()
+            .getOrThrow()
+            .map { it.toDomain() }
     }
 }

@@ -25,4 +25,6 @@ interface PostRepository {
         options: List<MemberPriceOption>,
         shippings: List<DeliveryOption>,
     ): Result<Long>
+
+    suspend fun getShippingOptions(): Result<List<DeliveryOption>>
 }
