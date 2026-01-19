@@ -55,6 +55,7 @@ fun GoodsFilteredPartyListRoute(
     uiState.potsInfo.onSuccess { potsInfo ->
         GoodsFilteredPartyListScreen(
             potsInfo = potsInfo,
+            displayMembers = uiState.displayMembers,
             selectedMember = uiState.selectedMember,
             sortFilter = uiState.goodsSortFilter,
             memberFilterText = uiState.memberFilterText,
@@ -81,6 +82,7 @@ fun GoodsFilteredPartyListRoute(
 @Composable
 private fun GoodsFilteredPartyListScreen(
     potsInfo: Pots,
+    displayMembers: List<Member>,
     selectedMember: List<Member>,
     sortFilter: SortFilter,
     memberFilterText: String,
@@ -187,6 +189,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                 ),
             ),
         ),
+        displayMembers = emptyList(),
         selectedMember = emptyList(),
         sortFilter = SortFilter.LATEST,
         memberFilterText = "",

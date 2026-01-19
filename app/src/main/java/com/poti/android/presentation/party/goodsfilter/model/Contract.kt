@@ -32,6 +32,7 @@ enum class SortFilter(
 data class GoodsFilterUiState(
     val potsInfo: ApiState<Pots> = ApiState.Loading,
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
+    val displayMembers: List<Member> = emptyList(),
     val selectedMember: List<Member> = emptyList(),
     val goodsSortFilter: SortFilter = SortFilter.LATEST,
 ) : UiState {
