@@ -43,6 +43,7 @@ fun MainNavHost(
             paddingValues = paddingValues,
         )
         myPageNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
         )
         profileNavGraph(

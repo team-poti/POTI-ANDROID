@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingArtist
 import com.poti.android.presentation.user.mypage.MyPageRoute
 import kotlinx.serialization.Serializable
 
@@ -21,8 +22,12 @@ fun NavController.navigateToMyPage() {
 
 fun NavGraphBuilder.myPageNavGraph(
     paddingValues: PaddingValues,
+    navController: NavController,
 ) {
     composable<MyPageRoute.MyPage> {
-        MyPageRoute(modifier = Modifier.padding(paddingValues))
+        MyPageRoute(
+            onNavigateToArtist = navController::navigateToOnboardingArtist,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
