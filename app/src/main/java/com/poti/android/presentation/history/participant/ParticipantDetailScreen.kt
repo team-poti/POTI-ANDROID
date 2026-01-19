@@ -126,9 +126,11 @@ private fun ParticipantDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = if(detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE)
+                title = if (detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE) {
                     stringResource(R.string.history_participant_detail_title_done)
-                    else stringResource(id = R.string.history_participant_detail_title),
+                } else {
+                    stringResource(id = R.string.history_participant_detail_title)
+                },
                 modifier = Modifier.padding(top = 16.dp),
             )
         },
