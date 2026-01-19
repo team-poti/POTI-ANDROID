@@ -8,17 +8,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.ParticipantShippingInfo
+import com.poti.android.presentation.history.model.participant.ShippingInfoUiModel
 
 @Composable
 fun ShippingInfoSection(
-    info: ParticipantShippingInfo,
+    info: ShippingInfoUiModel,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,5 +53,22 @@ fun ShippingInfoSection(
                 text = info.deliveryMethod,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ShippingInfoSectionPreview() {
+    PotiTheme {
+        ShippingInfoSection(
+            info = ShippingInfoUiModel(
+                recipient = "김포티",
+                zipcode = "06000",
+                address = "서울특별시 강남구 테헤란로 123 포티타워 101호",
+                phone = "010-1234-5678",
+                deliveryMethod = "GS25 반값택배",
+                trackingNumber = null,
+            ),
+        )
     }
 }

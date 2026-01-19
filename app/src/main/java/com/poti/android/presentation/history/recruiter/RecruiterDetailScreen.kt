@@ -25,15 +25,14 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.RecruiterDetail
-import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.DummyParticipantManageDetail
 import com.poti.android.presentation.history.component.HistoryParticipantOverview
 import com.poti.android.presentation.history.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
-import com.poti.android.presentation.history.mapper.toUiState
 import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiIntent
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
 
 @Composable
 fun RecruiterDetailRoute(
@@ -60,9 +59,9 @@ fun RecruiterDetailRoute(
             RecruiterDetailScreen(
                 modifier = modifier,
                 detail = state.data,
-                onBackClick = onNavigateToMypageRecruit,
-                onDetailClick = onNavigateToPartyDetail,
-                onParticipantManageDetailClick = onNavigateToParticipantManage,
+                onBackClick = { viewModel.processIntent(RecruiterDetailUiIntent.BackButtonClicked) },
+                onDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.PartyCardClicked) },
+                onParticipantManageDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.ParticipantSectionClicked) },
             )
         }
         else -> {}
@@ -71,10 +70,10 @@ fun RecruiterDetailRoute(
 
 @Composable
 private fun RecruiterDetailScreen(
-    detail: RecruiterDetail,
+    detail: RecruiterDetailUiModel,
     onBackClick: () -> Unit,
-    onDetailClick: (Long) -> Unit,
-    onParticipantManageDetailClick: (Long) -> Unit,
+    onDetailClick: () -> Unit,
+    onParticipantManageDetailClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -82,11 +81,7 @@ private fun RecruiterDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = if (detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE) {
-                    stringResource(R.string.history_ongoing_title_done)
-                } else {
-                    stringResource(id = R.string.history_ongoing_title)
-                },
+                title = stringResource(id = detail.topBarTitleRes),
             )
         },
     ) { paddingValues ->
@@ -139,15 +134,13 @@ private fun RecruiterDetailScreen(
                     items = detail.participantInfoList,
                     key = { it.userId },
                 ) { participant ->
-                    val (stage, status) = participant.participantState.toUiState()
-
                     HistoryParticipantOverview(
                         memberList = participant.memberNames,
                         userInfo = participant.userInfo,
                         deliveryMethod = participant.deliveryMethod,
                         price = participant.deliveryPrice,
-                        participantStageType = stage,
-                        participantStatusType = status,
+                        participantStageType = participant.stage,
+                        participantStatusType = participant.status,
                     )
                 }
             }

@@ -37,10 +37,10 @@ fun HistoryDeliveryConfirmModal(
 ) {
     PotiSmallModal(
         onDismissRequest = onDismiss,
-        title = stringResource(R.string.history_deivery_confirm_modal_title),
-        text = stringResource(R.string.history_deivery_confirm_modal_text),
-        dismissBtnText = stringResource(R.string.history_deivery_confirm_modal_dismiss),
-        confirmBtnText = stringResource(R.string.history_deivery_confirm_modal_confirm),
+        title = stringResource(R.string.history_delivery_confirm_modal_title),
+        text = stringResource(R.string.history_delivery_confirm_modal_text),
+        dismissBtnText = stringResource(R.string.history_delivery_confirm_modal_dismiss),
+        confirmBtnText = stringResource(R.string.history_delivery_confirm_modal_confirm),
         onDismissBtnClick = onDismiss,
         onConfirmBtnClick = onConfirm,
     )
@@ -59,11 +59,11 @@ fun HistoryDeliveryReviewModal(
 
     PotiLargeModal(
         onDismissRequest = onDismissRequest,
-        title = stringResource(R.string.history_deivery_review_modal_title),
-        text = stringResource(R.string.history_deivery_review_modal_text),
-        btnText = stringResource(R.string.history_deivery_review_modal_button),
+        title = stringResource(R.string.history_delivery_review_modal_title),
+        text = stringResource(R.string.history_delivery_review_modal_text),
+        btnText = stringResource(R.string.history_delivery_review_modal_button),
         onBtnClick = { onConfirm(currentRating) },
-        subBtnText = stringResource(R.string.history_deivery_review_modal_sub_button),
+        subBtnText = stringResource(R.string.history_delivery_review_modal_sub_button),
         onSubBtnClick = onSkip,
     ) {
         Box(
@@ -91,7 +91,7 @@ fun HistoryDeliveryReviewModal(
         ) {
             Row(
                 modifier = Modifier.padding(bottom = 30.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy((-6).dp),
             ) {
                 repeat(5) { index ->
                     val starIndex = index + 1
