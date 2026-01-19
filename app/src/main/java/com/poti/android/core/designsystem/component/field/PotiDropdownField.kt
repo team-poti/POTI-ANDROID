@@ -237,14 +237,14 @@ private fun PotiDropdownFieldWithPriceWithMutlipleSelectPreview() {
     var text by remember { mutableStateOf("") }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val menuItems = listOf(
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
-        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000"),
     )
 
     PotiTheme {
