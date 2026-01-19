@@ -33,6 +33,7 @@ import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
 import com.poti.android.presentation.user.mypage.model.MyPageUiEffect
+import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 
 @Composable
 fun MyPageRoute(
@@ -51,7 +52,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = onNavigateToArtist, // TODO: [예림] 선택 최애 없을 때만 이동
+            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) }, // TODO: [예림] 선택 최애 없을 때만 이동
             modifier = modifier,
         )
     }
