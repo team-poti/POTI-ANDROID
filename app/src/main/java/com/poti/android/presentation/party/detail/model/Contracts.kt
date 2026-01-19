@@ -31,6 +31,7 @@ data class PartyDetailUiState(
     val isPostalCodeError: Boolean = false,
     val isAddressError: Boolean = false,
     val isContactError: Boolean = false,
+    val isJoinSuccessDialogVisible: Boolean = false,
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
@@ -86,6 +87,8 @@ sealed interface PartyDetailIntent : UiIntent {
     data class OnContactChange(val value: String) : PartyDetailIntent
 
     data object OnFinalJoinClick : PartyDetailIntent
+
+    data object OnJoinSuccessConfirm : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {

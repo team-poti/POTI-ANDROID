@@ -50,6 +50,12 @@ class PartyDetailViewModel @Inject constructor(
                     postOrder()
                 }
             }
+            PartyDetailIntent.OnJoinSuccessConfirm -> {
+                updateState { copy(isJoinSuccessDialogVisible = false) }
+                clearJoinInputState()
+                fetchPartyDetail()
+                sendEffect(NavigateBack)
+            }
         }
     }
 
@@ -119,7 +125,25 @@ class PartyDetailViewModel @Inject constructor(
     }
 
     private fun postOrder() = launchScope {
-        // TODO: [지현] 서버 연결
+        updateState { copy(isJoinSuccessDialogVisible = true) }
+    }
+
+    private fun clearJoinInputState() {
+        updateState {
+            copy(
+                orderName = "",
+                postalCode = "",
+                address = "",
+                contact = "",
+                isOrderNameError = false,
+                isPostalCodeError = false,
+                isAddressError = false,
+                isContactError = false,
+                selectedMemberIds = emptySet(),
+                selectedDeliveryId = emptySet(),
+                showJoinBottomSheet = false,
+            )
+        }
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =

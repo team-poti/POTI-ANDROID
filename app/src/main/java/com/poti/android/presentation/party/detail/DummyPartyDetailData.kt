@@ -77,7 +77,7 @@ val dummyPartyDetail = PartyDetail(
             selectedMembers = listOf("유진"),
         ),
     ),
-    currentCount = 2,
+    currentCount = 3,
     totalCount = 5,
 )
 
@@ -90,7 +90,7 @@ val dummyJoinOption = PartyJoinOption(
         ),
         Members(
             memberId = 2,
-            memberName = "멤버3",
+            memberName = "멤버2",
             memberPrice = 6000,
         ),
         Members(

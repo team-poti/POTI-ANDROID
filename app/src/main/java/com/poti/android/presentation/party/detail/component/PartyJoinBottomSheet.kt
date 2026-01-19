@@ -26,24 +26,15 @@ import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.core.designsystem.component.field.PotiDropdownField
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.party.detail.dummyDeliveryOptions
-import com.poti.android.presentation.party.detail.dummyMemberOptions
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyJoinBottomSheet(
-    memberOptions: ImmutableList<FieldMenuItem>,
-    deliveryOptions: ImmutableList<FieldMenuItem>,
-    selectedMemberIds: Set<String>,
-    selectedDeliveryId: Set<String>,
+    uiState: PartyDetailUiState,
     onMemberSelect: (FieldMenuItem) -> Unit,
     onMemberRemove: (String) -> Unit,
     onDeliverySelect: (FieldMenuItem) -> Unit,
-    hasSelectedOptions: Boolean,
-    totalPrice: String,
-    isNextEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -51,14 +42,14 @@ fun PartyJoinBottomSheet(
         skipPartiallyExpanded = true,
     ),
 ) {
-    val selectedMembers = memberOptions.filter { it.id in selectedMemberIds }
-    val selectedDelivery = deliveryOptions.find { it.id in selectedDeliveryId }
+    val selectedMembers = uiState.memberMenuItems.filter { it.id in uiState.selectedMemberIds }
+    val selectedDelivery = uiState.deliveryMenuItems.find { it.id in uiState.selectedDeliveryId }
 
-    PotiBottomSheet( // TODO: [지현] 버튼 수정
+    PotiBottomSheet(
         onDismissRequest = onDismissRequest,
         text = stringResource(R.string.action_button_continue),
         onClick = onNextClick,
-        isButtonEnabled = isNextEnabled,
+        isButtonEnabled = uiState.isBottomSheetButtonEnable,
         sheetState = sheetState,
         modifier = modifier,
     ) {
@@ -71,8 +62,8 @@ fun PartyJoinBottomSheet(
                 value = "",
                 placeholder = stringResource(R.string.party_join_option_member_placeholder),
                 onItemClick = onMemberSelect,
-                menuItems = memberOptions,
-                selectedIds = selectedMemberIds,
+                menuItems = uiState.memberMenuItems,
+                selectedIds = uiState.selectedMemberIds,
                 modifier = Modifier.padding(bottom = 28.dp),
                 label = stringResource(R.string.party_join_option_member_label),
                 initialOpenState = true,
@@ -82,8 +73,8 @@ fun PartyJoinBottomSheet(
                 value = "",
                 placeholder = stringResource(R.string.party_join_option_delivery_placeholder),
                 onItemClick = onDeliverySelect,
-                menuItems = deliveryOptions,
-                selectedIds = selectedDeliveryId,
+                menuItems = uiState.deliveryMenuItems,
+                selectedIds = uiState.selectedDeliveryId,
                 modifier = Modifier.padding(bottom = 49.dp),
                 label = stringResource(R.string.party_join_option_delivery_label),
                 initialOpenState = false,
@@ -116,13 +107,13 @@ fun PartyJoinBottomSheet(
                     }
                 }
 
-                if (hasSelectedOptions) {
+                if (uiState.hasSelectedOptions) {
                     PotiDivider(
                         styleType = PotiDividerStyle.SMALL,
                         modifier = Modifier.padding(vertical = 16.dp),
                     )
 
-                    TotalPrice(totalPrice = totalPrice)
+                    TotalPrice(totalPrice = uiState.totalPrice)
                 }
             }
         }
@@ -138,10 +129,7 @@ private fun PartyJoinBottomSheetPreview() {
 
     PotiTheme {
         PartyJoinBottomSheet(
-            memberOptions = dummyMemberOptions.toImmutableList(),
-            deliveryOptions = dummyDeliveryOptions.toImmutableList(),
-            selectedMemberIds = selectedMemberIds,
-            selectedDeliveryId = selectedDeliveryId,
+            uiState = PartyDetailUiState(),
             onMemberSelect = {
                 if (it.id in selectedMemberIds) {
                     selectedMemberIds.remove(it.id)
@@ -158,9 +146,6 @@ private fun PartyJoinBottomSheetPreview() {
                 }
                 selectedDeliveryId.add(it.id)
             },
-            hasSelectedOptions = false,
-            totalPrice = "11,000",
-            isNextEnabled = true,
             onDismissRequest = {},
             onNextClick = {},
         )

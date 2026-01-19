@@ -58,6 +58,17 @@ fun PartyDetailRoute(
         }
     }
 
+    if (uiState.showJoinBottomSheet) {
+        PartyJoinBottomSheet(
+            uiState = uiState,
+            onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
+            onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },
+            onDeliverySelect = { viewModel.processIntent(PartyDetailIntent.OnDeliverySelect(it)) },
+            onDismissRequest = { viewModel.processIntent(PartyDetailIntent.OnDismissBottomSheet) },
+            onNextClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+        )
+    }
+
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
@@ -66,25 +77,6 @@ fun PartyDetailRoute(
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
             modifier = modifier,
-        )
-    }
-
-    if (uiState.showJoinBottomSheet) {
-        (
-            PartyJoinBottomSheet(
-                memberOptions = uiState.memberMenuItems,
-                deliveryOptions = uiState.deliveryMenuItems,
-                selectedMemberIds = uiState.selectedMemberIds,
-                selectedDeliveryId = uiState.selectedDeliveryId,
-                hasSelectedOptions = uiState.hasSelectedOptions,
-                totalPrice = uiState.totalPrice,
-                isNextEnabled = uiState.isBottomSheetButtonEnable,
-                onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
-                onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },
-                onDeliverySelect = { viewModel.processIntent(PartyDetailIntent.OnDeliverySelect(it)) },
-                onDismissRequest = { viewModel.processIntent(PartyDetailIntent.OnDismissBottomSheet) },
-                onNextClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
-            )
         )
     }
 }

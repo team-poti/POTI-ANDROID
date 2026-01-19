@@ -24,6 +24,7 @@ import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
+import com.poti.android.core.designsystem.component.modal.PotiLargeModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -46,6 +47,20 @@ fun PartyJoinRoute(
             PartyDetailEffect.NavigateBack -> onPopBackStack()
             else -> {}
         }
+    }
+
+    if (uiState.isJoinSuccessDialogVisible) {
+        PotiLargeModal(
+            onDismissRequest = {},
+            title = stringResource(R.string.party_join_confirm_modal_title),
+            text = stringResource(R.string.party_join_confirm_modal_text),
+            btnText = stringResource(R.string.action_button_next),
+            onBtnClick = { viewModel.processIntent(PartyDetailIntent.OnJoinSuccessConfirm) },
+            image = R.drawable.ic_launcher_background,
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            modifier = modifier,
+        )
     }
 
     PartyJoinScreen(
