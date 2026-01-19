@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState()
+    initialState = CreateUiState(),
 ) {
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
