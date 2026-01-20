@@ -12,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-<<<<<<< HEAD
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,10 +35,6 @@ import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.list.model.toUiStage
 import com.poti.android.presentation.history.list.model.toUiStatus
-=======
-import androidx.compose.ui.tooling.preview.Preview
-import com.poti.android.core.designsystem.theme.PotiTheme
->>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
 
 enum class HistoryMode {
     RECRUIT,
@@ -84,7 +79,6 @@ fun HistoryListRoute(
     )
 }
 
-<<<<<<< HEAD
 @Composable
 private fun HistoryListScreen(
     uiState: HistoryListUiState,
@@ -210,12 +204,5 @@ private fun HistoryListScreenPreview_Ended() {
             onTabSelected = {},
             onCardClick = {},
         )
-=======
-@Preview(showBackground = true)
-@Composable
-private fun HistoryListScreenPreview() {
-    PotiTheme {
-        HistoryListScreen()
->>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -62,7 +61,7 @@ fun HistoryDeliveryReviewModal(
         title = stringResource(R.string.history_delivery_review_modal_title),
         text = stringResource(R.string.history_delivery_review_modal_text),
         btnText = stringResource(R.string.history_delivery_review_modal_button),
-        onBtnClick = { if(currentRating != 0) onConfirm(currentRating) },
+        onBtnClick = { if (currentRating != 0) onConfirm(currentRating) },
         subBtnText = stringResource(R.string.history_delivery_review_modal_sub_button),
         onSubBtnClick = onSkip,
     ) {

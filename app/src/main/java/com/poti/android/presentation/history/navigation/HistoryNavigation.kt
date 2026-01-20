@@ -47,11 +47,7 @@ fun NavController.navigateToParticipantManage(recruitId: Long) {
 fun NavGraphBuilder.historyNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
-<<<<<<< HEAD
     onPopBackStack: () -> Unit,
-=======
-    navController: NavController,
->>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
 ) {
     composable<HistoryRoute.HistoryList> {
         HistoryListRoute(
