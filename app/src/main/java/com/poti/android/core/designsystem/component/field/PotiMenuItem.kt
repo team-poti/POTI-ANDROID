@@ -13,9 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.poti.android.R
 import com.poti.android.core.common.extension.bottomBorder
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -69,7 +67,7 @@ fun PotiMenuItem(
 
         if (price != null) {
             Text(
-                text = stringResource(R.string.party_option_price_won, price),
+                text = price,
                 color = textColor,
                 style = PotiTheme.typography.body14m,
             )

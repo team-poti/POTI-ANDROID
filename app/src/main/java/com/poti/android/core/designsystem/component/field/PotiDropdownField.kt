@@ -37,15 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
+import com.poti.android.core.designsystem.model.FieldMenuItem
 import com.poti.android.core.designsystem.theme.PotiTheme
-import java.util.UUID
-
-data class FieldMenuItem(
-    val option: String,
-    val price: String? = null,
-    val disabled: Boolean = false,
-    val id: String = UUID.randomUUID().toString(),
-)
 
 /**
  * 필드 하단에 드롭다운 메뉴가 제공되는 컴포넌트입니다.
@@ -66,7 +59,6 @@ data class FieldMenuItem(
  * @param offset 필드 하단으로부터 메뉴까지의 간격입니다. 기본값 12dp이며, y값만 조정 가능합니다.
  * @param shape 메뉴 전체 모양입니다.
  * @param border 메뉴 전체 테두리입니다.
- * @param onExpandedChange 열림/닫힘 상태 변화를 외부로 알리는 콜백입니다.
  *
  * @author 도연
  * @sample PotiDropdownFieldPreview
@@ -88,7 +80,6 @@ fun PotiDropdownField(
     offset: DpOffset = DpOffset(x = 0.dp, y = 12.dp),
     shape: Shape = RoundedCornerShape(8.dp),
     border: BorderStroke = BorderStroke(1.dp, PotiTheme.colors.gray700),
-    onExpandedChange: ((Boolean) -> Unit)? = null,
 ) {
     val expandedState = remember { MutableTransitionState(initialOpenState) }
     var parentWidth by remember { mutableIntStateOf(0) }
@@ -126,9 +117,7 @@ fun PotiDropdownField(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                     ) {
-                        val newState = !expandedState.currentState
-                        expandedState.targetState = newState
-                        onExpandedChange?.invoke(newState)
+                        expandedState.targetState = !expandedState.currentState
                     },
                 borderColor = status.borderColor,
                 backgroundColor = PotiTheme.colors.white,
@@ -157,7 +146,6 @@ fun PotiDropdownField(
             expandedState = expandedState,
             onDismissRequest = {
                 expandedState.targetState = false
-                onExpandedChange?.invoke(false)
             },
             scrollState = scrollState,
             parentWidth = parentWidth,
@@ -176,7 +164,6 @@ fun PotiDropdownField(
                         onItemClick(item)
                         if (closeOnItemClick) {
                             expandedState.targetState = false
-                            onExpandedChange?.invoke(false)
                         }
                     },
                     isSelected = item.id in selectedIds,
@@ -243,14 +230,14 @@ private fun PotiDropdownFieldWithPriceWithMutlipleSelectPreview() {
     var text by remember { mutableStateOf("") }
     val selectedIds = remember { mutableStateSetOf<String>() }
     val menuItems = listOf(
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
-        FieldMenuItem("옵션", "1,000"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
+        FieldMenuItem("옵션", "1,000원"),
     )
 
     PotiTheme {

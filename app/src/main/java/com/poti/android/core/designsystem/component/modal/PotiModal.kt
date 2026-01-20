@@ -62,7 +62,7 @@ internal fun PotiModal(
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
 
         SideEffect {
-            dialogWindow?.setDimAmount(0.6f)
+            dialogWindow?.setDimAmount(0.4f)
         }
 
         Surface(

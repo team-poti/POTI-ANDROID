@@ -31,16 +31,6 @@ enum class ActionButtonType {
     DEACTIVE_SUB,
     ;
 
-    fun resolve(enabled: Boolean): ActionButtonType {
-        if (enabled) return this
-
-        return when (this) {
-            PRIMARY_MAIN, SECONDARY_MAIN -> DEACTIVE_MAIN
-            PRIMARY_SUB, SECONDARY_SUB -> DEACTIVE_SUB
-            else -> this
-        }
-    }
-
     fun getBackgroundColor(
         colors: PotiColors,
         isPressed: Boolean,
@@ -62,9 +52,6 @@ enum class ActionButtonType {
             DEACTIVE_SUB -> colors.gray700
         }
     }
-
-    val isInteractive: Boolean
-        get() = this != DEACTIVE_MAIN && this != DEACTIVE_SUB
 }
 
 @Composable
@@ -78,12 +65,9 @@ fun PotiActionButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val colors = PotiTheme.colors
-
-    val currentType = type.resolve(enabled)
-
-    val backgroundColor = currentType.getBackgroundColor(colors, isPressed)
-    val contentColor = currentType.getContentColor(colors)
-    val isButtonEnabled = enabled && currentType.isInteractive
+    val backgroundColor = type.getBackgroundColor(colors, isPressed)
+    val contentColor = type.getContentColor(colors)
+    val isButtonEnabled = enabled && type != ActionButtonType.DEACTIVE_MAIN && type != ActionButtonType.DEACTIVE_SUB
 
     Row(
         modifier = modifier

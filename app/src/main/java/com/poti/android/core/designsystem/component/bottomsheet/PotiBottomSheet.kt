@@ -80,7 +80,7 @@ fun PotiBottomSheet(
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         containerColor = PotiTheme.colors.white,
-        scrimColor = PotiTheme.colors.black.copy(alpha = 0.6f),
+        scrimColor = PotiTheme.colors.blackA40,
         dragHandle = null,
         properties = properties,
     ) {
@@ -108,7 +108,6 @@ fun PotiBottomSheet(
                     }
                 }
             },
-            enabled = enabled,
             subText = subText,
             onSubClick = {
                 onSubClick?.let {
@@ -120,6 +119,7 @@ fun PotiBottomSheet(
                     }
                 }
             },
+            enabled = enabled,
             subEnabled = subEnabled,
         )
     }
@@ -130,9 +130,9 @@ private fun BottomSheetButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
     subEnabled: Boolean = true,
 ) {
     Row(

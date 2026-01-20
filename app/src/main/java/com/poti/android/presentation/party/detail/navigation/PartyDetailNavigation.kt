@@ -6,63 +6,43 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.detail.PartyDetailRoute
 import com.poti.android.presentation.party.detail.PartyJoinRoute
 import com.poti.android.presentation.user.profile.navigation.navigateToProfile
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class PartyDetailGraph(val partyId: Long) : Route
-
 sealed interface PartyDetailRoute : Route {
     @Serializable
-    data object Detail : PartyDetailRoute
+    data class Detail(val partyId: Long) : PartyDetailRoute
 
     @Serializable
     data object Join : PartyDetailRoute
 }
 
 fun NavController.navigateToPartyDetail(partyId: Long) {
-    navigate(PartyDetailGraph(partyId))
+    navigate(PartyDetailRoute.Detail(partyId))
 }
 
 fun NavController.navigateToPartyJoin() {
     navigate(PartyDetailRoute.Join)
 }
 
-fun NavController.reloadPartyDetail(partyId: Long) {
-    navigate(PartyDetailGraph(partyId)) {
-        popUpTo<PartyDetailGraph> {
-            inclusive = true
-        }
-    }
-}
-
 fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
 ) {
-    navigation<PartyDetailGraph>(startDestination = PartyDetailRoute.Detail) {
-        composable<PartyDetailRoute.Detail> { entry ->
-            PartyDetailRoute(
-                onPopBackStack = navController::popBackStack,
-                onNavigateToJoin = navController::navigateToPartyJoin,
-                onNavigateToProfile = navController::navigateToProfile,
-                onReload = navController::reloadPartyDetail,
-                viewModel = entry.sharedViewModel(navController),
-                modifier = Modifier.padding(paddingValues),
-            )
-        }
-        composable<PartyDetailRoute.Join> { entry ->
-            PartyJoinRoute(
-                onPopBackStack = navController::popBackStack,
-                onReload = navController::reloadPartyDetail,
-                viewModel = entry.sharedViewModel(navController),
-                modifier = Modifier.padding(paddingValues),
-            )
-        }
+    composable<PartyDetailRoute.Detail> {
+        PartyDetailRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToJoin = navController::navigateToPartyJoin,
+            onNavigateToProfile = navController::navigateToProfile,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
+    composable<PartyDetailRoute.Join> {
+        PartyJoinRoute(
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
