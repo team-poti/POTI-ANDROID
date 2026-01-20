@@ -27,7 +27,7 @@ fun ParticipantStatusType.toUiState(): Pair<ParticipantStateLabelStage, Particip
     }
 }
 
-fun DepositItem.toUiState() = when(this) {
+fun DepositItem.toUiState() = when (this) {
     is DepositItem.DeliveryItem -> PotiItemOptionType.DELIVERY
     is DepositItem.MemberItem -> PotiItemOptionType.MEMBER
 }

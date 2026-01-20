@@ -14,8 +14,8 @@ import javax.inject.Inject
 class RecruiterViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
-    initialState = RecruiterDetailUiState()
-) {
+        initialState = RecruiterDetailUiState(),
+    ) {
     private val recruitId: Long = savedStateHandle["recruitId"] ?: -1L
 
     init {
@@ -44,17 +44,20 @@ class RecruiterViewModel @Inject constructor(
         launchScope(
             onError = { throwable ->
                 updateState {
-                    copy(recruiterDetail = ApiState.Failure(
-                        "Fail: ${throwable.message}")
+                    copy(
+                        recruiterDetail = ApiState.Failure(
+                            "Fail: ${throwable.message}",
+                        ),
                     )
                 }
-            }
+            },
         ) {
             updateState {
                 // TODO: [천민재] 서버 연결 필요
-                copy(recruiterDetail = ApiState.Success(
-                        DummyParticipantManageDetail.recruitStep
-                    )
+                copy(
+                    recruiterDetail = ApiState.Success(
+                        DummyParticipantManageDetail.recruitStep,
+                    ),
                 )
             }
         }

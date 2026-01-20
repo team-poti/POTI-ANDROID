@@ -139,9 +139,9 @@ fun HistoryCardItem(
             modifier = Modifier
                 .fillMaxHeight()
                 .noRippleClickable(
-                interactionSource = interactionSource,
-                onClick = onClick,
-            )
+                    interactionSource = interactionSource,
+                    onClick = onClick,
+                ),
         )
     }
 }

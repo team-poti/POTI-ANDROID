@@ -63,10 +63,11 @@ fun NavGraphBuilder.historyNavGraph(
         RecruiterDetailRoute(
             modifier = Modifier.padding(paddingValues),
             // TODO: [천민재] 마이페이지 모집 내역으로 이동
-            onBackClick = {},
+            onNavigateToMypageRecruit = {},
             // TODO: [천민재] 분철팟 상세 페이지로 이동
-            onDetailClick = {},
-            onParticipantManageDetailClick = navController::navigateToParticipantManage)
+            onNavigateToPartyDetail = {},
+            onNavigateToParticipantManage = navController::navigateToParticipantManage,
+        )
     }
     composable<HistoryRoute.ParticipantManage> {
         ParticipantManageRoute(modifier = Modifier.padding(paddingValues))

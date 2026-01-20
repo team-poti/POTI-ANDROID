@@ -7,14 +7,14 @@ data class RecruiterDetail(
     val artistInfo: ArtistInfo,
     val progressInfo: ProgressInfo,
     val participantInfoList: List<ParticipantInfo>,
-    val participantCount: Int = participantInfoList.size
+    val participantCount: Int = participantInfoList.size,
 )
 
 data class ArtistInfo(
     val imageUrl: String,
     val artist: String,
     val title: String,
-    val partyState: ParticipantStatusType
+    val partyState: ParticipantStatusType,
 )
 
 data class ProgressInfo(
@@ -28,5 +28,5 @@ data class ParticipantInfo(
     val participantState: ParticipantStatusType,
     val userInfo: String,
     val deliveryMethod: String,
-    val deliveryPrice: Int
+    val deliveryPrice: Int,
 )

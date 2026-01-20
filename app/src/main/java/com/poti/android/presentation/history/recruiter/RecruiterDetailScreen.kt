@@ -1,7 +1,6 @@
 package com.poti.android.presentation.history.recruiter
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -38,32 +37,32 @@ import com.poti.android.presentation.history.model.RecruiterDetailUiEffect
 
 @Composable
 fun RecruiterDetailRoute(
-    onBackClick: () -> Unit,
-    onDetailClick: (Long) -> Unit,
-    onParticipantManageDetailClick: (Long) -> Unit,
+    onNavigateToMypageRecruit: () -> Unit,
+    onNavigateToPartyDetail: (Long) -> Unit,
+    onNavigateToParticipantManage: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: RecruiterViewModel = hiltViewModel()
+    viewModel: RecruiterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                RecruiterDetailUiEffect.NavigateBack -> onBackClick()
-                is RecruiterDetailUiEffect.NavigateToParticipantList -> onParticipantManageDetailClick(sideEffect.partyId)
-                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onDetailClick(sideEffect.partyId)
+                RecruiterDetailUiEffect.NavigateBack -> onNavigateToMypageRecruit()
+                is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(sideEffect.partyId)
+                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(sideEffect.partyId)
             }
         }
     }
 
-    when(val state = uiState.recruiterDetail) {
+    when (val state = uiState.recruiterDetail) {
         is ApiState.Success -> {
             RecruiterDetailScreen(
                 modifier = modifier,
                 detail = state.data,
-                onBackClick = onBackClick,
-                onDetailClick = onDetailClick,
-                onParticipantManageDetailClick = onParticipantManageDetailClick,
+                onBackClick = onNavigateToMypageRecruit,
+                onDetailClick = onNavigateToPartyDetail,
+                onParticipantManageDetailClick = onNavigateToParticipantManage,
             )
         }
         else -> {}
@@ -76,21 +75,21 @@ private fun RecruiterDetailScreen(
     onBackClick: () -> Unit,
     onDetailClick: (Long) -> Unit,
     onParticipantManageDetailClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(id = R.string.history_ongoing_title)
+                title = stringResource(id = R.string.history_ongoing_title),
             )
-        }
+        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
                 PartyInfoSection(
@@ -98,7 +97,8 @@ private fun RecruiterDetailScreen(
                     artistInfo = detail.artistInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(
-                        horizontal = screenWidthDp(8.dp))
+                        horizontal = screenWidthDp(8.dp),
+                    ),
                 )
             }
 
@@ -106,7 +106,8 @@ private fun RecruiterDetailScreen(
                 ProgressStatusSection(
                     progressInfo = detail.progressInfo,
                     modifier = Modifier.padding(
-                        horizontal = screenWidthDp(16.dp))
+                        horizontal = screenWidthDp(16.dp),
+                    ),
                 )
             }
 
@@ -119,20 +120,20 @@ private fun RecruiterDetailScreen(
                 ParticipantManagementHeader(
                     partyId = detail.partyId,
                     participantCount = detail.participantCount,
-                    onHeaderClick = onParticipantManageDetailClick
+                    onHeaderClick = onParticipantManageDetailClick,
                 )
             }
 
             if (detail.participantCount == 0) {
                 item {
                     PotiEmptyStateInline(
-                        text = stringResource(id = R.string.history_no_participants)
+                        text = stringResource(id = R.string.history_no_participants),
                     )
                 }
             } else {
                 items(
                     items = detail.participantInfoList,
-                    key = { it.userId }
+                    key = { it.userId },
                 ) { participant ->
                     val (stage, status) = participant.participantState.toUiState()
 

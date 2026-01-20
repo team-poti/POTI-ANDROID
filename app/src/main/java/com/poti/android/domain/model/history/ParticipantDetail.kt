@@ -8,12 +8,12 @@ data class ParticipantDetail(
     val progressInfo: ProgressInfo,
     val depositInfo: ParticipantDepositInfo,
     val shippingInfo: ParticipantShippingInfo,
-    val userState: ParticipantStatusType
+    val userState: ParticipantStatusType,
 )
 
 data class ParticipantDepositInfo(
     val items: List<DepositItem>,
-    val totalAmount: Int
+    val totalAmount: Int,
 )
 
 sealed interface DepositItem {
@@ -22,12 +22,12 @@ sealed interface DepositItem {
 
     data class DeliveryItem(
         override val name: String,
-        override val price: Int
+        override val price: Int,
     ) : DepositItem
 
     data class MemberItem(
         override val name: String,
-        override val price: Int
+        override val price: Int,
     ) : DepositItem
 }
 
@@ -37,5 +37,5 @@ data class ParticipantShippingInfo(
     val address: String,
     val phone: String,
     val deliveryMethod: String,
-    val trackingNumber: String?
+    val trackingNumber: String?,
 )

@@ -12,12 +12,16 @@ data class RecruiterDetailUiState(
 
 sealed interface RecruiterDetailUiIntent : UiIntent {
     object BackButtonClicked : RecruiterDetailUiIntent
+
     object PartyCardClicked : RecruiterDetailUiIntent
+
     object ParticipantSectionClicked : RecruiterDetailUiIntent
 }
 
 sealed interface RecruiterDetailUiEffect : UiEffect {
     object NavigateBack : RecruiterDetailUiEffect
+
     data class NavigateToPartyDetail(val partyId: Long) : RecruiterDetailUiEffect
+
     data class NavigateToParticipantList(val partyId: Long) : RecruiterDetailUiEffect
 }
