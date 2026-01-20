@@ -1,6 +1,5 @@
 package com.poti.android.presentation.history.recruiter
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -27,6 +26,7 @@ import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.RecruiterDetail
+import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.DummyParticipantManageDetail
 import com.poti.android.presentation.history.component.HistoryParticipantOverview
 import com.poti.android.presentation.history.component.ParticipantManagementHeader
@@ -82,7 +82,9 @@ private fun RecruiterDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(id = R.string.history_ongoing_title),
+                title = if(detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE)
+                    stringResource(R.string.history_ongoing_title_done)
+                    else stringResource(id = R.string.history_ongoing_title),
             )
         },
     ) { paddingValues ->
