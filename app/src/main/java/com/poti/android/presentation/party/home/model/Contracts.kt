@@ -14,9 +14,9 @@ data class HomeUiState(
 sealed interface HomeUiIntent : UiIntent {
     data class OnBannerClick(val postId: Long) : HomeUiIntent
 
-    data object OnMoreClick : HomeUiIntent
+    data class OnMoreClick(val artistId: Long) : HomeUiIntent
 
-    data object OnCardClick : HomeUiIntent
+    data class OnCardClick(val artistId: Long) : HomeUiIntent
 
     data object OnFloatingClick : HomeUiIntent
 
@@ -28,7 +28,7 @@ sealed interface HomeUiEffect : UiEffect {
 
     data class NavigateToPartyDetail(val postId: Long) : HomeUiEffect
 
-    data object NavigateToGoodsCategory : HomeUiEffect
+    data class NavigateToGoodsCategory(val artistId: Long) : HomeUiEffect
 
-    data object NavigateToGoodsPartyList : HomeUiEffect
+    data class NavigateToGoodsPartyList(val artistId: Long) : HomeUiEffect
 }

@@ -22,6 +22,11 @@ sealed interface GoodsRoute : Route {
     data class GoodsPartyList(
         val artistId: Long,
     ) : GoodsRoute
+
+    @Serializable
+    data class GoodsCategory(
+        val artistId: Long,
+    ) : GoodsRoute
 }
 
 fun NavController.navigateToGoodsList() {
@@ -32,8 +37,8 @@ fun NavController.navigateToGoodsPartyList(artistId: Long) {
     navigate(GoodsRoute.GoodsPartyList(artistId))
 }
 
-fun NavController.navigateToGoodsCategory() {
-    navigate(GoodsRoute.GoodsList)
+fun NavController.navigateToGoodsCategory(artistId: Long) {
+    navigate(GoodsRoute.GoodsCategory(artistId))
 }
 
 fun NavGraphBuilder.goodsFilterNavGraph(
