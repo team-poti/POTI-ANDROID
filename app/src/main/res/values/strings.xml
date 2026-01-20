@@ -19,6 +19,10 @@
     <string name="action_button_continue">계속</string>
     <string name="action_button_select_all">전체 선택</string>
 
+    <!-- Field Component -->
+    <string name="field_label_name">이름</string>
+
+
     <!-- LoginScreen -->
     <string name="login_poti_description">굿즈 분철을 더 간편하게</string>
 
@@ -32,8 +36,10 @@
     <string name="onboarding_nickname_error_duplicate">사용중인 닉네임이에요</string>
     <string name="onboarding_nickname_error_server">잠시후 다시 시도해주세요</string>
 
+
     <!-- Party -->
     <string name="party_recruit_deadline">모집 기한</string>
+    <string name="party_option_price_won">%s원</string>
 
     <!-- Exploration -->
     <string name="goods_card_party_count">팟 %1$d개</string>
@@ -55,6 +61,29 @@
     <string name="party_detail_participants_count">%1$d/%2$d</string>
     <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
     <string name="party_detail_join_party">분철팟 참여하기</string>
+    <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
+
+    <!-- PartyJoin -->
+    <string name="party_join_option_member_label">멤버</string>
+    <string name="party_join_option_member_placeholder">분철 받을 멤버를 선택하세요</string>
+    <string name="party_join_option_delivery_label">배송 방법</string>
+    <string name="party_join_option_delivery_placeholder">배송 방법을 선택하세요</string>
+    <string name="party_join_total_price">총 입금 예정 금액</string>
+    <string name="party_join_button">참여하기</string>
+    <string name="party_join_order_info">주문자 정보</string>
+    <string name="party_join_order_name_placeholder">예) 이포티</string>
+    <string name="party_join_order_name_error">이름을 입력해주세요</string>
+    <string name="party_join_order_postal_label">우편번호</string>
+    <string name="party_join_order_postal_placeholder">예) 12345</string>
+    <string name="party_join_order_postal_error">우편번호를 입력해주세요</string>
+    <string name="party_join_order_address_label">주소</string>
+    <string name="party_join_order_address_placeholder">예) 서울시 솝트구 다솝로 37</string>
+    <string name="party_join_order_address_error">주소를 입력해주세요</string>
+    <string name="party_join_order_contact_label">연락처</string>
+    <string name="party_join_order_contact_placeholder">예) 010-1234-5678</string>
+    <string name="party_join_order_contact_error">연락처를 입력해주세요</string>
+    <string name="party_join_confirm_modal_title">참여가 완료되었어요</string>
+    <string name="party_join_confirm_modal_text">모집이 끝나면 입금이 시작돼요</string>
 
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>
@@ -99,7 +128,6 @@
     <string name="history_participant_stage_done">완료</string>
     <string name="history_participant_stage_and_status_format">%1$s %2$s</string>
     <string name="history_callout_copy">복사</string>
-    <string name="history_participant_field_type_name">이름</string>
     <string name="history_participant_field_type_deposit">입금 정보</string>
     <string name="history_participant_field_type_delivery">배송 정보</string>
     <string name="history_participant_field_type_contact">연락처</string>
@@ -108,7 +136,6 @@
     <string name="history_participant_field_delivery_label">송장 번호 입력</string>
     <string name="history_participant_detail_deposit_label">입금 금액</string>
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
-    <string name="history_participant_detail_won_unit_format">%s원</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

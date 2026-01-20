@@ -111,7 +111,7 @@ sealed interface DetailState {
 enum class FieldType(
     @StringRes val labelId: Int,
 ) {
-    NAME(R.string.history_participant_field_type_name),
+    NAME(R.string.field_label_name),
     DEPOSIT(R.string.history_participant_field_type_deposit),
     DELIVERY(R.string.history_participant_field_type_delivery),
     CONTACT(R.string.history_participant_field_type_contact),
@@ -181,7 +181,7 @@ fun HistoryParticipantDetail(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
                         priceText = stringResource(
-                            R.string.history_participant_detail_won_unit_format,
+                            R.string.party_option_price_won,
                             item.price.toMoneyString(),
                         ),
                         sizeType = PotiListOptionPriceSize.SMALL,
@@ -206,7 +206,7 @@ fun HistoryParticipantDetail(
 
                     Text(
                         text = stringResource(
-                            R.string.history_participant_detail_won_unit_format,
+                            R.string.party_option_price_won,
                             totalPrice.toMoneyString(),
                         ),
                         style = typography.body16sb,
