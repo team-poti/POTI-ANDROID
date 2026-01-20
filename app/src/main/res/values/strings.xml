@@ -111,13 +111,19 @@
     <string name="history_participant_detail_won_unit_format">%s원</string>
 
     <!-- User Component -->
-    <string name="user_my_page_title">마이</string>
-    <string name="user_select_favorite_artist">나의 최애 선택하기</string>
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
     <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
+    <string name="user_my_page_title">마이</string>
+    <string name="user_select_favorite_artist">나의 최애 선택하기</string>
+
+    <!-- History List -->
+    <string name="history_empty_recruit_ongoing">진행 중인 모집 내역이 없어요</string>
+    <string name="history_empty_recruit_ended">지난 모집 내역이 없어요</string>
+    <string name="history_empty_participation_ongoing">진행 중인 참여 내역이 없어요</string>
+    <string name="history_empty_participation_ended">지난 참여 내역이 없어요</string>
 
     <!-- Home -->
     <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
