@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.goodsfilter
 
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PartyList
 import com.poti.android.domain.model.party.PartySummary
 
@@ -13,7 +14,10 @@ val dummyPartyList = PartyList(
             goodsImageUrl = "",
             currentCount = 3,
             totalCount = 5,
-            availableMembers = "안유진, 장원영",
+            availableMembers = listOf(
+                Member(1, "원영"),
+                Member(2, "유진"),
+            ),
             profileImageUrl = "",
             nickname = "포티공주",
             rating = 4.8,
@@ -24,7 +28,10 @@ val dummyPartyList = PartyList(
             goodsImageUrl = "",
             currentCount = 6,
             totalCount = 6,
-            availableMembers = "리즈, 레이",
+            availableMembers = listOf(
+                Member(1, "원영"),
+                Member(2, "유진"),
+            ),
             profileImageUrl = "",
             nickname = "굿즈요정",
             rating = 4.5,
@@ -35,7 +42,10 @@ val dummyPartyList = PartyList(
             goodsImageUrl = "",
             currentCount = 1,
             totalCount = 4,
-            availableMembers = "가을, 이서",
+            availableMembers = listOf(
+                Member(1, "가을"),
+                Member(2, "이서"),
+            ),
             profileImageUrl = "",
             nickname = "공구마스터",
             rating = 5.0,

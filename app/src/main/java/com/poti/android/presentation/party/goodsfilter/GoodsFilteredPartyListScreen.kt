@@ -32,6 +32,9 @@ import com.poti.android.presentation.party.goodsfilter.component.PartyCard
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.SortFilter
+import com.poti.android.presentation.party.goodsfilter.model.membersText
+import com.poti.android.presentation.party.goodsfilter.model.priceText
+import com.poti.android.presentation.party.goodsfilter.model.ratingText
 
 @Composable
 fun GoodsFilteredPartyListRoute(
@@ -139,7 +142,7 @@ private fun GoodsFilteredPartyListScreen(
                     nickname = party.nickname,
                     rating = party.ratingText,
                     imageUrl = party.goodsImageUrl,
-                    members = party.availableMembers,
+                    members = party.membersText,
                     price = party.priceText,
                     currentCount = party.currentCount,
                     totalCount = party.totalCount,
@@ -171,7 +174,10 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 5,
                     totalCount = 7,
-                    availableMembers = "원영, 유진",
+                    availableMembers = listOf(
+                        Member(1, "원영"),
+                        Member(2, "유진"),
+                    ),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,
@@ -182,7 +188,10 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 6,
                     totalCount = 6,
-                    availableMembers = "원영, 유진",
+                    availableMembers = listOf(
+                        Member(1, "원영"),
+                        Member(2, "유진"),
+                    ),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,

@@ -1,7 +1,6 @@
 package com.poti.android.domain.model.party
 
-import java.text.NumberFormat
-import java.util.Locale
+import com.poti.android.domain.model.artist.Member
 
 data class PartyList(
     val partyTitle: String,
@@ -15,11 +14,8 @@ data class PartySummary(
     val goodsImageUrl: String,
     val currentCount: Int,
     val totalCount: Int,
-    val availableMembers: String,
+    val availableMembers: List<Member>,
     val profileImageUrl: String?,
     val nickname: String,
     val rating: Double,
-) {
-    val priceText = "${NumberFormat.getNumberInstance(Locale.KOREA).format(price)}원~"
-    val ratingText = String.format(Locale.KOREA, "%.2f", rating)
-}
+)
