@@ -8,6 +8,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.Members
+import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PartyDetailViewModel @Inject constructor(
+    private val partyRepository: PartyRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
@@ -57,8 +59,14 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }
-        // TODO: [지현] 나중에 서버 연결
-        updateState { copy(partyDetail = ApiState.Success(dummyPartyDetail)) }
+
+        partyRepository.getPartyDetail(partyId = partyId)
+            .onSuccess { partyDetail ->
+                updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
+            }
+            .onFailure { error ->
+                updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
+            }
     }
 
     private fun handleDetailJoin() {
