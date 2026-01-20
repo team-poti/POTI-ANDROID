@@ -15,6 +15,7 @@ import com.poti.android.presentation.history.component.StateLabelStage
 import com.poti.android.presentation.history.component.StateLabelStatus
 import com.poti.android.presentation.history.model.PartySummaryUiModel
 import com.poti.android.presentation.history.model.ProgressUiModel
+<<<<<<< HEAD
 import com.poti.android.presentation.history.participant.model.ActionButtonState
 import com.poti.android.presentation.history.participant.model.DepositInfoUiModel
 import com.poti.android.presentation.history.participant.model.DepositItemUiModel
@@ -24,6 +25,17 @@ import com.poti.android.presentation.history.participant.model.ParticipantDetail
 import com.poti.android.presentation.history.participant.model.ShippingInfoUiModel
 import com.poti.android.presentation.history.recruiter.model.ParticipantInfoUiModel
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
+=======
+import com.poti.android.presentation.history.model.participant.ActionButtonState
+import com.poti.android.presentation.history.model.participant.DepositInfoUiModel
+import com.poti.android.presentation.history.model.participant.DepositItemUiModel
+import com.poti.android.presentation.history.model.participant.ParticipantDetailActionType
+import com.poti.android.presentation.history.model.participant.ParticipantDetailModalUiModel
+import com.poti.android.presentation.history.model.participant.ParticipantDetailUiModel
+import com.poti.android.presentation.history.model.participant.ShippingInfoUiModel
+import com.poti.android.presentation.history.model.recruiter.ParticipantInfoUiModel
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
+>>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
 
 fun RecruiterDetail.toUiModel(): RecruiterDetailUiModel {
     val uiArtistInfo = partySummary.toUiModel()

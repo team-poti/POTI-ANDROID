@@ -84,7 +84,6 @@ fun HistoryDeliveryReviewModal(
                 rating = partnerRating,
             )
         }
-
         Row(
             modifier = Modifier.padding(bottom = 30.dp),
             horizontalArrangement = Arrangement.spacedBy((-6).dp),

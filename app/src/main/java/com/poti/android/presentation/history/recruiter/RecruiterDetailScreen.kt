@@ -30,9 +30,15 @@ import com.poti.android.presentation.history.component.HistoryParticipantOvervie
 import com.poti.android.presentation.history.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
+<<<<<<< HEAD
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
+=======
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiIntent
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
+>>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
 
 @Composable
 fun RecruiterDetailRoute(
@@ -54,7 +60,11 @@ fun RecruiterDetailRoute(
         }
     }
 
+<<<<<<< HEAD
     when (val state = uiState.recruiterDetailState) {
+=======
+    when (val state = uiState.recruiterDetail) {
+>>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
         is ApiState.Success -> {
             RecruiterDetailScreen(
                 modifier = modifier,
@@ -117,6 +127,10 @@ private fun RecruiterDetailScreen(
 
             item {
                 ParticipantManagementHeader(
+<<<<<<< HEAD
+=======
+                    recruitId = detail.recruitId,
+>>>>>>> 374aec2ca20e47732b2889c58ecb6c5e6fdb15f1
                     participantCount = detail.participantCount,
                     onHeaderClick = onParticipantManageDetailClick,
                 )
