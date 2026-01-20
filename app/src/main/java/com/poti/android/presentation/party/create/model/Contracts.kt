@@ -43,9 +43,9 @@ data class CreateUiState(
     val accountNumber: String = "",
     val bank: String = "",
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.DEFAULT,
-    val memberOptions: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
+    val memberOptionsState: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
     val selectedMemberIds: Set<Long> = setOf(),
-    val deliveryOptions: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
+    val deliveryOptionsState: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
     val selectedDeliveryIds: Set<Long> = setOf(),
     val imageError: FieldError? = null,
     val artistError: FieldError? = null,
@@ -55,9 +55,9 @@ data class CreateUiState(
     val accountNumberError: FieldError? = null,
     val bankError: FieldError? = null,
     val artistSearchKeyword: String = "",
-    val artistSearchResults: ApiState<ImmutableList<Artist>> = ApiState.Init,
+    val artistSearchResultsState: ApiState<ImmutableList<Artist>> = ApiState.Init,
 ) : UiState {
-    val selectedMembersOption = memberOptions.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
+    val selectedMembersOption = memberOptionsState.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
 }
 
 sealed interface CreateUiIntent : UiIntent {
