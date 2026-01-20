@@ -1,14 +1,11 @@
 package com.poti.android.domain.type
 
 enum class ParticipantStatusType {
-    RECRUIT_ING,
-    RECRUIT_DONE,
-
-    DEPOSIT_WAIT,
-    DEPOSIT_CHECK,
-    DEPOSIT_DONE,
-
-    DELIVERY_WAIT,
-    DELIVERY_START,
-    DELIVERY_DONE,
+    RECRUITING, // 모집 중
+    WAIT_PAY, // 입금 대기
+    WAIT_PAY_CHECK, // 입금 확인 대기
+    PAID, // 입금 완료
+    READY, // 배송 대기
+    SHIPPED, // 배송 시작
+    DELIVERED, // 배송 완료
 }

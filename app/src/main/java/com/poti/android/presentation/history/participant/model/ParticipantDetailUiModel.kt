@@ -23,28 +23,7 @@ data class ParticipantDetailUiModel(
     val activeModal: ParticipantDetailModalUiModel,
     val isTrackingInfoVisible: Boolean,
     val isParticipantStatusVisible: Boolean,
-) {
-    val userStage: StateLabelStage = when (userState) {
-        ParticipantStatusType.RECRUIT_ING -> StateLabelStage.RECRUIT
-        ParticipantStatusType.RECRUIT_DONE -> StateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStage.DEPOSIT
-        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStage.DEPOSIT
-        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_START -> StateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_DONE -> StateLabelStage.DELIVERY
-    }
-    val userStatus: StateLabelStatus = when (userState) {
-        ParticipantStatusType.RECRUIT_ING -> StateLabelStatus.ING
-        ParticipantStatusType.RECRUIT_DONE -> StateLabelStatus.DONE
-        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStatus.WAIT
-        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStatus.CHECK
-        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStatus.DONE
-        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStatus.WAIT
-        ParticipantStatusType.DELIVERY_START -> StateLabelStatus.START
-        ParticipantStatusType.DELIVERY_DONE -> StateLabelStatus.DONE
-    }
-}
+)
 
 sealed interface ActionButtonState {
     data object Gone : ActionButtonState

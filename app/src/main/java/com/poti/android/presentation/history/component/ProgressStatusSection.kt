@@ -19,11 +19,12 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.model.ProgressUiModel
+import com.poti.android.domain.type.PartyStatusType
 
 @Composable
 fun ProgressStatusSection(
-    progressInfo: ProgressUiModel,
+    progressStatus: PartyStatusType,
+    statusMessage: String,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -31,11 +32,10 @@ fun ProgressStatusSection(
             text = stringResource(id = R.string.history_progress_status_title),
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
-            modifier = Modifier
-                .padding(bottom = 20.dp),
+            modifier = Modifier.padding(vertical = 20.dp),
         )
         HistoryStateGuide(
-            text = progressInfo.guideText,
+            text = statusMessage,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -43,7 +43,7 @@ fun ProgressStatusSection(
 
         Icon(
             painter = painterResource(
-                getStepIndicatorDrawable(progressInfo.step),
+                getStepIndicatorDrawable(progressStatus),
             ),
             contentDescription = null,
             tint = Color.Unspecified,
@@ -56,14 +56,14 @@ fun ProgressStatusSection(
 }
 
 @DrawableRes
-fun getStepIndicatorDrawable(step: Int): Int {
-    return when (step) {
-        0 -> R.drawable.img_history_step_indicator_0
-        1 -> R.drawable.img_history_step_indicator_1
-        2 -> R.drawable.img_history_step_indicator_2
-        3 -> R.drawable.img_history_step_indicator_3
-        4 -> R.drawable.img_history_step_indicator_4
-        else -> R.drawable.img_history_step_indicator_0
+fun getStepIndicatorDrawable(status: PartyStatusType): Int {
+    return when (status) {
+        PartyStatusType.RECRUITING -> R.drawable.img_history_step_indicator_0
+        PartyStatusType.CLOSED -> R.drawable.img_history_step_indicator_1
+        PartyStatusType.PAYMENT_DONE -> R.drawable.img_history_step_indicator_2
+        PartyStatusType.SHIPPING -> R.drawable.img_history_step_indicator_3
+        PartyStatusType.DELIVERED -> R.drawable.img_history_step_indicator_4
+        PartyStatusType.COMPLETED -> R.drawable.img_history_step_indicator_4
     }
 }
 
@@ -72,10 +72,8 @@ fun getStepIndicatorDrawable(step: Int): Int {
 private fun ProgressStatusSectionStep0Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressUiModel(
-                guideText = "모집이 시작되었습니다.",
-                step = 0,
-            ),
+            progressStatus = PartyStatusType.RECRUITING,
+            statusMessage = "참여자를 기다리고 있어요",
         )
     }
 }
@@ -85,10 +83,8 @@ private fun ProgressStatusSectionStep0Preview() {
 private fun ProgressStatusSectionStep1Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressUiModel(
-                guideText = "입금을 확인하고 있습니다.",
-                step = 1,
-            ),
+            progressStatus = PartyStatusType.CLOSED,
+            statusMessage = "입금을 기다리는 중이에요",
         )
     }
 }
@@ -98,10 +94,8 @@ private fun ProgressStatusSectionStep1Preview() {
 private fun ProgressStatusSectionStep2Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressUiModel(
-                guideText = "배송이 시작되었습니다.",
-                step = 2,
-            ),
+            progressStatus = PartyStatusType.PAYMENT_DONE,
+            statusMessage = "배송을 기다리는 참여자가 있어요",
         )
     }
 }
@@ -111,10 +105,8 @@ private fun ProgressStatusSectionStep2Preview() {
 private fun ProgressStatusSectionStep4Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressUiModel(
-                guideText = "거래가 완료되었습니다.",
-                step = 4,
-            ),
+            progressStatus = PartyStatusType.DELIVERED,
+            statusMessage = "거래가 종료되었어요",
         )
     }
 }

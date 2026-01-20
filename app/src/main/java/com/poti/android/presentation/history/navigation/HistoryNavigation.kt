@@ -11,6 +11,7 @@ import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
 import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
+import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
@@ -18,10 +19,10 @@ sealed interface HistoryRoute : Route {
     data object HistoryList : HistoryRoute
 
     @Serializable
-    data object ParticipantDetail : HistoryRoute
+    data class ParticipantDetail(val participantId: Long) : HistoryRoute
 
     @Serializable
-    data object RecruiterDetail : HistoryRoute
+    data class RecruiterDetail(val recruitId: Long) : HistoryRoute
 
     @Serializable
     data class ParticipantManage(val recruitId: Long) : HistoryRoute
@@ -31,12 +32,12 @@ fun NavController.navigateToHistoryList() {
     navigate(HistoryRoute.HistoryList)
 }
 
-fun NavController.navigateToParticipantDetail() {
-    navigate(HistoryRoute.ParticipantDetail)
+fun NavController.navigateToParticipantDetail(participantId: Long) {
+    navigate(HistoryRoute.ParticipantDetail(participantId))
 }
 
-fun NavController.navigateToRecruiterDetail() {
-    navigate(HistoryRoute.RecruiterDetail)
+fun NavController.navigateToRecruiterDetail(recruitId: Long) {
+    navigate(HistoryRoute.RecruiterDetail(recruitId))
 }
 
 fun NavController.navigateToParticipantManage(recruitId: Long) {
@@ -62,10 +63,8 @@ fun NavGraphBuilder.historyNavGraph(
     composable<HistoryRoute.RecruiterDetail> {
         RecruiterDetailRoute(
             modifier = Modifier.padding(paddingValues),
-            // TODO: [천민재] 마이페이지 모집 내역으로 이동
-            onNavigateToMypageRecruit = {},
-            // TODO: [천민재] 분철팟 상세 페이지로 이동
-            onNavigateToPartyDetail = {},
+            onPopBackStack = navController::popBackStack,
+            onNavigateToPartyDetail = navController::navigateToPartyDetail,
             onNavigateToParticipantManage = navController::navigateToParticipantManage,
         )
     }

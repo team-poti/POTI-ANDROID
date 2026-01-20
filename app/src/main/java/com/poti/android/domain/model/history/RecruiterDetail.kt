@@ -4,17 +4,17 @@ import com.poti.android.domain.type.ParticipantStatusType
 
 data class RecruiterDetail(
     val recruitId: Long,
+    val orderNumber: String,
     val partySummary: PartySummary,
-    val progressInfo: ProgressInfo,
     val participantInfoList: List<ParticipantInfo>,
-    val participantCount: Int = participantInfoList.size,
+    val participantCount: Int,
 )
 
 data class ParticipantInfo(
     val userId: Long,
-    val memberNames: String,
-    val participantState: ParticipantStatusType,
-    val userInfo: String,
+    val memberNames: List<String>,
+    val participantStatus: ParticipantStatusType,
     val deliveryMethod: String,
-    val deliveryPrice: Int,
+    val totalPrice: Int,
+    val shippingInfo: ShippingInfo,
 )

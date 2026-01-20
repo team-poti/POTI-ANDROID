@@ -24,15 +24,16 @@ import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
+import com.poti.android.core.designsystem.theme.PotiTheme.typography
+import com.poti.android.domain.type.ParticipantStatusType
+import com.poti.android.presentation.history.mapper.color
+import com.poti.android.presentation.history.mapper.labelResId
+import com.poti.android.presentation.history.mapper.statusColor
+import com.poti.android.presentation.history.recruiter.model.ParticipantUiModel
 
 @Composable
 fun HistoryParticipantOverview(
-    memberList: String,
-    userInfo: String,
-    deliveryMethod: String,
-    price: Int,
-    participantStageType: StateLabelStage,
-    participantStatusType: StateLabelStatus,
+    participant: ParticipantUiModel,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -51,8 +52,8 @@ fun HistoryParticipantOverview(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = memberList,
-                style = PotiTheme.typography.body16m,
+                text = participant.memberNamesString,
+                style = typography.body16m,
                 color = colors.black,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -60,16 +61,16 @@ fun HistoryParticipantOverview(
             )
             Spacer(Modifier.width(12.dp))
 
-            HistoryStateLabel(
-                sizeType = StateLabelSize.SMALL,
-                stageType = participantStageType,
-                statusType = participantStatusType,
+            Text(
+                text = stringResource(participant.participantStatus.labelResId),
+                style = typography.body14sb,
+                color = participant.participantStatus.statusColor.color,
             )
         }
 
         Text(
-            text = userInfo,
-            style = PotiTheme.typography.body14m,
+            text = participant.shippingInfo,
+            style = typography.body14m,
             color = colors.gray800,
         )
 
@@ -77,14 +78,14 @@ fun HistoryParticipantOverview(
             PotiItemOption(
                 optionType = PotiItemOptionType.DELIVERY,
                 sizeType = PotiItemOptionSize.SMALL,
-                text = deliveryMethod,
+                text = participant.deliveryMethod,
             )
             PotiItemOption(
                 optionType = PotiItemOptionType.PRICE,
                 sizeType = PotiItemOptionSize.SMALL,
                 text = stringResource(
                     R.string.history_participant_detail_won_unit_format,
-                    price.toMoneyString(),
+                    participant.totalPrice.toMoneyString(),
                 ),
             )
         }
@@ -95,20 +96,15 @@ fun HistoryParticipantOverview(
 @Composable
 private fun HistoryParticipantOverviewPreview() {
     PotiTheme {
-        val members = listOf("멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명", "멤버명")
-        val userName = "이포티"
-        val zipcode = "01234"
-        val address = "서울특별시 솝트구 다솝로 456"
-        val phone = "010-2345-2345"
-
         HistoryParticipantOverview(
-            memberList = members.joinToString(", "),
-            userInfo = "$userName\n($zipcode) $address\n$phone",
-            deliveryMethod = "준등기",
-            price = 12800,
-            participantStageType = StateLabelStage.DEPOSIT,
-            participantStatusType = StateLabelStatus.CHECK,
-            modifier = Modifier.width(375.dp),
+            participant = ParticipantUiModel(
+                userId = 1,
+                memberNamesString = "레이, 이서",
+                participantStatus = ParticipantStatusType.DELIVERED,
+                shippingInfo = "이포티\n(01234) 서울특별시 솝트구 다솝로 456\n010-1234-5678",
+                deliveryMethod = "준등기",
+                totalPrice = 12800,
+            ),
         )
     }
 }

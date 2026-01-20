@@ -118,6 +118,17 @@
     <string name="create_error_need_account_number">계좌번호를 입력해주세요</string>
     <string name="create_error_need_bank">은행 정보를 입력해주세요</string>
 
+    <!-- Party Status -->
+    <string name="party_status_recruiting">모집 중</string>
+    <string name="party_status_closed">모집 완료</string>
+    <string name="party_status_payment_done">입금 완료</string>
+    <string name="party_status_shipping">배송 시작</string>
+    <string name="party_status_delivered">배송 완료</string>
+    <string name="participant_status_wait_pay">입금 대기</string>
+    <string name="participant_status_wait_pay_check">입금 확인중</string>
+    <string name="participant_status_ready">배송 대기</string>
+
+
     <!-- History -->
     <string name="history_participant_stage_deposit">입금</string>
     <string name="history_participant_stage_delivery">배송</string>
@@ -139,10 +150,6 @@
     <string name="history_participant_detail_deposit_label">입금 금액</string>
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
     <string name="history_participant_detail_won_unit_format">%s원</string>
-    <string name="history_step_recruit_complete">모집 완료</string>
-    <string name="history_step_deposit_complete">입금 완료</string>
-    <string name="history_step_delivery_start">배송 시작</string>
-    <string name="history_step_delivery_complete">배송 완료</string>
     <string name="history_ongoing_title">진행 중인 분철</string>
     <string name="history_recruit_number">모집번호 %s</string>
     <string name="history_progress_status_title">진행 상황</string>

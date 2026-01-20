@@ -1,47 +1,44 @@
 package com.poti.android.presentation.history.recruiter.model
 
-import androidx.annotation.StringRes
+import com.poti.android.domain.model.history.ParticipantInfo
+import com.poti.android.domain.model.history.PartySummary
+import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.StateLabelStage
-import com.poti.android.presentation.history.component.StateLabelStatus
-import com.poti.android.presentation.history.model.PartySummaryUiModel
-import com.poti.android.presentation.history.model.ProgressUiModel
 
 data class RecruiterDetailUiModel(
     val recruitId: Long,
-    val artistInfo: PartySummaryUiModel,
-    val progressInfo: ProgressUiModel,
-    val participantInfoList: List<ParticipantInfoUiModel>,
+    val orderNumber: String,
+    val partySummary: PartySummary,
+    val participants: List<ParticipantUiModel>,
     val participantCount: Int,
-    @StringRes val topBarTitleRes: Int,
 )
 
-data class ParticipantInfoUiModel(
+data class ParticipantUiModel(
     val userId: Long,
-    val memberNames: String,
-    val userInfo: String,
+    val memberNamesString: String,
+    val participantStatus: ParticipantStatusType,
+    val shippingInfo: String,
     val deliveryMethod: String,
-    val deliveryPrice: Int,
-    val participantState: ParticipantStatusType,
-) {
-    val stage: StateLabelStage = when (participantState) {
-        ParticipantStatusType.RECRUIT_ING -> StateLabelStage.RECRUIT
-        ParticipantStatusType.RECRUIT_DONE -> StateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStage.DEPOSIT
-        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStage.DEPOSIT
-        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_START -> StateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_DONE -> StateLabelStage.DELIVERY
-    }
-    val status: StateLabelStatus = when (participantState) {
-        ParticipantStatusType.RECRUIT_ING -> StateLabelStatus.ING
-        ParticipantStatusType.RECRUIT_DONE -> StateLabelStatus.DONE
-        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStatus.WAIT
-        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStatus.CHECK
-        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStatus.DONE
-        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStatus.WAIT
-        ParticipantStatusType.DELIVERY_START -> StateLabelStatus.START
-        ParticipantStatusType.DELIVERY_DONE -> StateLabelStatus.DONE
-    }
+    val totalPrice: Int,
+)
+
+fun RecruiterDetail.toUiModel(): RecruiterDetailUiModel = RecruiterDetailUiModel(
+    recruitId = this.recruitId,
+    orderNumber = this.orderNumber,
+    partySummary = this.partySummary,
+    participants = this.participantInfoList.map { it.toUiModel() },
+    participantCount = this.participantCount,
+)
+
+fun ParticipantInfo.toUiModel(): ParticipantUiModel {
+    return ParticipantUiModel(
+        userId = this.userId,
+        memberNamesString = this.memberNames.joinToString(separator = ", "),
+        participantStatus = this.participantStatus,
+        shippingInfo = this.shippingInfo.run {
+            "$receiverName\n$address\n$phone"
+        },
+        deliveryMethod = this.deliveryMethod,
+        totalPrice = this.totalPrice,
+    )
 }
