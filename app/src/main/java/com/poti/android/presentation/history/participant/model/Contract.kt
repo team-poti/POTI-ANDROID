@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model.participant
+package com.poti.android.presentation.history.participant.model
 
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -6,7 +6,7 @@ import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 
 data class ParticipantDetailUiState(
-    val participantDetail: ApiState<ParticipantDetailUiModel> = ApiState.Loading,
+    val participantDetailState: ApiState<ParticipantDetailUiModel> = ApiState.Loading,
 ) : UiState
 
 sealed interface ParticipantDetailUiIntent : UiIntent {

@@ -133,8 +133,8 @@ private fun HistoryListScreen(
                             imageUrl = item.imageUrl ?: "",
                             artist = item.artist,
                             title = item.title,
-                            participantStageType = item.toUiStage(),
-                            participantStatusType = item.toUiStatus(),
+                            stageType = item.toUiStage(),
+                            statusType = item.toUiStatus(),
                             onClick = { onCardClick(item.id) },
                         )
                     }

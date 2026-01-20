@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.presentation.history.DummyParticipantManageDetail
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiIntent
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiState
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class RecruiterViewModel @Inject constructor(
         if (recruitId != -1L) {
             getParticipantManageDetail(recruitId)
         } else {
-            updateState { copy(recruiterDetail = ApiState.Loading) }
+            updateState { copy(recruiterDetailState = ApiState.Loading) }
         }
     }
 
@@ -45,7 +45,7 @@ class RecruiterViewModel @Inject constructor(
             onError = { throwable ->
                 updateState {
                     copy(
-                        recruiterDetail = ApiState.Failure(
+                        recruiterDetailState = ApiState.Failure(
                             "Fail: ${throwable.message}",
                         ),
                     )
@@ -55,7 +55,7 @@ class RecruiterViewModel @Inject constructor(
             updateState {
                 // TODO: [천민재] 서버 연결 필요
                 copy(
-                    recruiterDetail = ApiState.Success(
+                    recruiterDetailState = ApiState.Success(
                         DummyParticipantManageDetail.recruiterRecruitStep,
                     ),
                 )

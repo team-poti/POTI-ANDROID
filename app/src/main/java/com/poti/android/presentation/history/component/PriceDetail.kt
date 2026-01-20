@@ -19,7 +19,7 @@ import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.model.participant.DepositItemUiModel
+import com.poti.android.presentation.history.participant.model.DepositItemUiModel
 
 @Composable
 fun PriceDetail(

@@ -15,7 +15,7 @@ import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.model.participant.ShippingInfoUiModel
+import com.poti.android.presentation.history.participant.model.ShippingInfoUiModel
 
 @Composable
 fun ShippingInfoSection(
@@ -35,13 +35,7 @@ fun ShippingInfoSection(
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = stringResource(
-                    R.string.history_shipping_info_format,
-                    info.recipient,
-                    info.zipcode,
-                    info.address,
-                    info.phone,
-                ),
+                text ="${info.recipient}\n(${info.zipcode}) ${info.address}${info.phone}",
                 style = PotiTheme.typography.body14m,
                 color = PotiTheme.colors.black,
                 lineHeight = PotiTheme.typography.body14m.fontSize * 1.5,

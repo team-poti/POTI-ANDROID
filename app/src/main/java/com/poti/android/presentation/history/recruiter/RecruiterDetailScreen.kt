@@ -30,9 +30,9 @@ import com.poti.android.presentation.history.component.HistoryParticipantOvervie
 import com.poti.android.presentation.history.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiEffect
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiIntent
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
 
 @Composable
 fun RecruiterDetailRoute(
@@ -54,7 +54,7 @@ fun RecruiterDetailRoute(
         }
     }
 
-    when (val state = uiState.recruiterDetail) {
+    when (val state = uiState.recruiterDetailState) {
         is ApiState.Success -> {
             RecruiterDetailScreen(
                 modifier = modifier,
@@ -117,7 +117,6 @@ private fun RecruiterDetailScreen(
 
             item {
                 ParticipantManagementHeader(
-                    recruitId = detail.recruitId,
                     participantCount = detail.participantCount,
                     onHeaderClick = onParticipantManageDetailClick,
                 )

@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model.participant
+package com.poti.android.presentation.history.participant.model
 
 import androidx.annotation.StringRes
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType

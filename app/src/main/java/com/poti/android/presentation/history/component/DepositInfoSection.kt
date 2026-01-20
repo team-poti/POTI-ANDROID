@@ -14,8 +14,8 @@ import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.model.participant.DepositInfoUiModel
-import com.poti.android.presentation.history.model.participant.DepositItemUiModel
+import com.poti.android.presentation.history.participant.model.DepositInfoUiModel
+import com.poti.android.presentation.history.participant.model.DepositItemUiModel
 
 @Composable
 fun DepositInfoSection(

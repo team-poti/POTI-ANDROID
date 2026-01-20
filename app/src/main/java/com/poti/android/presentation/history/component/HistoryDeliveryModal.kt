@@ -62,7 +62,7 @@ fun HistoryDeliveryReviewModal(
         title = stringResource(R.string.history_delivery_review_modal_title),
         text = stringResource(R.string.history_delivery_review_modal_text),
         btnText = stringResource(R.string.history_delivery_review_modal_button),
-        onBtnClick = { onConfirm(currentRating) },
+        onBtnClick = { if(currentRating != 0) onConfirm(currentRating) },
         subBtnText = stringResource(R.string.history_delivery_review_modal_sub_button),
         onSubBtnClick = onSkip,
     ) {
@@ -85,30 +85,25 @@ fun HistoryDeliveryReviewModal(
             )
         }
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+        Row(
+            modifier = Modifier.padding(bottom = 30.dp),
+            horizontalArrangement = Arrangement.spacedBy((-6).dp),
         ) {
-            Row(
-                modifier = Modifier.padding(bottom = 30.dp),
-                horizontalArrangement = Arrangement.spacedBy((-6).dp),
-            ) {
-                repeat(5) { index ->
-                    val starIndex = index + 1
-                    val isSelected = starIndex <= currentRating
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_star),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = { currentRating = starIndex },
-                            ),
-                        tint = if (isSelected) PotiTheme.colors.poti600 else PotiTheme.colors.gray300,
-                    )
-                }
+            repeat(5) { index ->
+                val starIndex = index + 1
+                val isSelected = starIndex <= currentRating
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_star),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { currentRating = starIndex },
+                        ),
+                    tint = if (isSelected) PotiTheme.colors.poti600 else PotiTheme.colors.gray300,
+                )
             }
         }
     }

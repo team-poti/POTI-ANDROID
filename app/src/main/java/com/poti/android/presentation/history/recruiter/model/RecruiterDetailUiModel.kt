@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model.recruiter
+package com.poti.android.presentation.history.recruiter.model
 
 import androidx.annotation.StringRes
 import com.poti.android.domain.type.ParticipantStatusType

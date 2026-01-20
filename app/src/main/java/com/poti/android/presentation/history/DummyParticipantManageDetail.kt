@@ -7,15 +7,15 @@ import com.poti.android.presentation.history.component.StateLabelStage
 import com.poti.android.presentation.history.component.StateLabelStatus
 import com.poti.android.presentation.history.model.PartySummaryUiModel
 import com.poti.android.presentation.history.model.ProgressUiModel
-import com.poti.android.presentation.history.model.participant.ActionButtonState
-import com.poti.android.presentation.history.model.participant.DepositInfoUiModel
-import com.poti.android.presentation.history.model.participant.DepositItemUiModel
-import com.poti.android.presentation.history.model.participant.ParticipantDetailActionType
-import com.poti.android.presentation.history.model.participant.ParticipantDetailModalUiModel
-import com.poti.android.presentation.history.model.participant.ParticipantDetailUiModel
-import com.poti.android.presentation.history.model.participant.ShippingInfoUiModel
-import com.poti.android.presentation.history.model.recruiter.ParticipantInfoUiModel
-import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
+import com.poti.android.presentation.history.participant.model.ActionButtonState
+import com.poti.android.presentation.history.participant.model.DepositInfoUiModel
+import com.poti.android.presentation.history.participant.model.DepositItemUiModel
+import com.poti.android.presentation.history.participant.model.ParticipantDetailActionType
+import com.poti.android.presentation.history.participant.model.ParticipantDetailModalUiModel
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiModel
+import com.poti.android.presentation.history.participant.model.ShippingInfoUiModel
+import com.poti.android.presentation.history.recruiter.model.ParticipantInfoUiModel
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
 
 object DummyParticipantManageDetail {
     // ========================================================================

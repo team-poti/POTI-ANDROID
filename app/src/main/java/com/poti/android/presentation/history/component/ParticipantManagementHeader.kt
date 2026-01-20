@@ -15,12 +15,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun ParticipantManagementHeader(
-    recruitId: Long,
     participantCount: Int,
     onHeaderClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -41,15 +41,13 @@ fun ParticipantManagementHeader(
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
         )
-        IconButton(
-            onClick = { onHeaderClick() },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right_lg),
-                contentDescription = null,
-                tint = PotiTheme.colors.gray700,
-            )
-        }
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_right_lg),
+            contentDescription = null,
+            tint = PotiTheme.colors.gray700,
+            modifier = Modifier.noRippleClickable(onHeaderClick)
+        )
     }
 }
 
@@ -58,7 +56,6 @@ fun ParticipantManagementHeader(
 private fun ParticipantManagementHeaderEmptyPreview() {
     PotiTheme {
         ParticipantManagementHeader(
-            recruitId = 1L,
             participantCount = 0,
             onHeaderClick = {},
         )
@@ -70,7 +67,6 @@ private fun ParticipantManagementHeaderEmptyPreview() {
 private fun ParticipantManagementHeaderMultiPreview() {
     PotiTheme {
         ParticipantManagementHeader(
-            recruitId = 1L,
             participantCount = 5,
             onHeaderClick = {},
         )
@@ -82,7 +78,6 @@ private fun ParticipantManagementHeaderMultiPreview() {
 private fun ParticipantManagementHeaderManyPreview() {
     PotiTheme {
         ParticipantManagementHeader(
-            recruitId = 1L,
             participantCount = 100,
             onHeaderClick = {},
         )

@@ -35,7 +35,7 @@ fun PartyInfoSection(
             title = partyInfo.title,
             stageType = partyInfo.partyStage,
             statusType = partyInfo.partyStatus,
-            onClick = { onDetailClick() },
+            onClick = onDetailClick,
         )
     }
 }

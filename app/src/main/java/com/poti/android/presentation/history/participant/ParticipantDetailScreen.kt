@@ -1,6 +1,7 @@
 package com.poti.android.presentation.history.participant
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,11 +45,11 @@ import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.component.RecruiterInfoForReview
 import com.poti.android.presentation.history.component.ShippingInfoSection
-import com.poti.android.presentation.history.model.participant.ActionButtonState
-import com.poti.android.presentation.history.model.participant.ParticipantDetailActionType
-import com.poti.android.presentation.history.model.participant.ParticipantDetailUiEffect
-import com.poti.android.presentation.history.model.participant.ParticipantDetailUiIntent
-import com.poti.android.presentation.history.model.participant.ParticipantDetailUiModel
+import com.poti.android.presentation.history.participant.model.ActionButtonState
+import com.poti.android.presentation.history.participant.model.ParticipantDetailActionType
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiIntent
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiModel
 
 @Composable
 fun ParticipantDetailRoute(
@@ -66,7 +69,7 @@ fun ParticipantDetailRoute(
         }
     }
 
-    when (val state = uiState.participantDetail) {
+    when (val state = uiState.participantDetailState) {
         is ApiState.Success -> {
             ParticipantDetailScreen(
                 modifier = modifier,
@@ -103,6 +106,7 @@ private fun ParticipantDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     var modalState by remember { mutableStateOf<ParticipantDetailModalState>(ParticipantDetailModalState.None) }
+    val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -114,112 +118,98 @@ private fun ParticipantDetailScreen(
             )
         },
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(PotiTheme.colors.white),
+                .background(PotiTheme.colors.white)
+                .verticalScroll(scrollState),
         ) {
-            item {
-                PartyInfoSection(
-                    recruitId = detail.recruitId,
-                    partyInfo = detail.partySummaryInfo,
-                    onDetailClick = onDetailClick,
-                    modifier = Modifier.padding(horizontal = 8.dp),
+            PartyInfoSection(
+                recruitId = detail.recruitId,
+                partyInfo = detail.partySummaryInfo,
+                onDetailClick = onDetailClick,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+            ProgressStatusSection(
+                progressInfo = detail.progressInfo,
+                modifier = Modifier.padding(
+                    top = 20.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                ),
+            )
+
+            PotiDivider(
+                styleType = PotiDividerStyle.LARGE,
+                modifier = Modifier.padding(vertical = 20.dp),
+            )
+
+            DepositInfoSection(info = detail.depositInfo)
+
+            PotiDivider(
+                styleType = PotiDividerStyle.LARGE,
+                modifier = Modifier.padding(top = 24.dp),
+            )
+
+            ShippingInfoSection(
+                info = detail.shippingInfo,
+                modifier = Modifier.padding(top = 20.dp),
+            )
+
+            if (detail.isTrackingInfoVisible) {
+                HistoryCalloutInfo(
+                    text = detail.shippingInfo.trackingNumber ?: "",
+                    copyable = true,
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 16.dp),
                 )
             }
 
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-                ProgressStatusSection(
-                    progressInfo = detail.progressInfo,
-                    modifier = Modifier.padding(
-                        top = 20.dp,
-                        start = 16.dp,
-                        end = 16.dp,
+            if (detail.isParticipantStatusVisible) {
+                Spacer(
+                    Modifier.height(
+                        if (detail.isTrackingInfoVisible) {
+                            12.dp
+                        } else {
+                            20.dp
+                        },
                     ),
                 )
-            }
 
-            item {
-                PotiDivider(
-                    styleType = PotiDividerStyle.LARGE,
-                    modifier = Modifier.padding(vertical = 20.dp),
+                HistoryStateLabel(
+                    sizeType = StateLabelSize.LARGE,
+                    stageType = detail.userStage,
+                    statusType = detail.userStatus,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp)
+                        .wrapContentWidth(Alignment.End),
                 )
             }
 
-            item {
-                DepositInfoSection(info = detail.depositInfo)
-            }
-
-            item {
-                PotiDivider(
-                    styleType = PotiDividerStyle.LARGE,
-                    modifier = Modifier.padding(top = 24.dp),
-                )
-            }
-
-            item {
-                ShippingInfoSection(
-                    info = detail.shippingInfo,
-                    modifier = Modifier.padding(top = 20.dp),
-                )
-
-                if (detail.isTrackingInfoVisible) {
-                    HistoryCalloutInfo(
-                        text = detail.shippingInfo.trackingNumber ?: "",
-                        copyable = true,
-                        modifier = Modifier
-                            .padding(top = 20.dp)
-                            .padding(horizontal = 16.dp),
-                    )
-                }
-
-                if (detail.isParticipantStatusVisible) {
-                    Spacer(
-                        Modifier.height(
-                            if (detail.isTrackingInfoVisible) {
-                                12.dp
-                            } else {
-                                20.dp
-                            },
-                        ),
-                    )
-
-                    HistoryStateLabel(
-                        sizeType = StateLabelSize.LARGE,
-                        stageType = detail.userStage,
-                        statusType = detail.userStatus,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 16.dp)
-                            .wrapContentWidth(Alignment.End),
-                    )
-                }
-
-                Spacer(Modifier.height(24.dp))
-            }
+            Spacer(Modifier.height(24.dp))
 
             if (detail.actionButtonState is ActionButtonState.Visible) {
                 val buttonState = detail.actionButtonState
-                item {
-                    PotiActionButton(
-                        text = stringResource(buttonState.textResId),
-                        onClick = {
-                            modalState = when (buttonState.actionType) {
-                                ParticipantDetailActionType.OPEN_DEPOSIT_INPUT -> ParticipantDetailModalState.DepositInput
-                                ParticipantDetailActionType.OPEN_DELIVERY_CONFIRM -> ParticipantDetailModalState.DeliveryConfirm
-                            }
-                        },
-                        type = ActionButtonType.SECONDARY_MAIN,
-                        enabled = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 49.dp)
-                            .padding(bottom = 14.dp),
-                    )
-                }
+                PotiActionButton(
+                    text = stringResource(buttonState.textResId),
+                    onClick = {
+                        modalState = when (buttonState.actionType) {
+                            ParticipantDetailActionType.OPEN_DEPOSIT_INPUT -> ParticipantDetailModalState.DepositInput
+                            ParticipantDetailActionType.OPEN_DELIVERY_CONFIRM -> ParticipantDetailModalState.DeliveryConfirm
+                        }
+                    },
+                    type = ActionButtonType.SECONDARY_MAIN,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 49.dp)
+                        .padding(bottom = 14.dp),
+                )
             }
         }
     }

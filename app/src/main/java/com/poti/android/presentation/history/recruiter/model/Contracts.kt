@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model.recruiter
+package com.poti.android.presentation.history.recruiter.model
 
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -6,7 +6,7 @@ import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 
 data class RecruiterDetailUiState(
-    val recruiterDetail: ApiState<RecruiterDetailUiModel> = ApiState.Loading,
+    val recruiterDetailState: ApiState<RecruiterDetailUiModel> = ApiState.Loading,
 ) : UiState
 
 sealed interface RecruiterDetailUiIntent : UiIntent {
