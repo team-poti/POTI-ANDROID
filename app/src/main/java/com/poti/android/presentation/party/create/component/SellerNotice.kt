@@ -32,7 +32,7 @@ fun SellerNotice(
                 horizontal = screenWidthDp(16.dp),
                 vertical = 24.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         texts.forEach { text ->
             Text(

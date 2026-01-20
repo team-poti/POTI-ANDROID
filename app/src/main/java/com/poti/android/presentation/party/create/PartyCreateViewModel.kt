@@ -109,7 +109,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             copy(
                 isDirty = true,
                 accountNumber = newValue.filter { it.isDigit() },
-                accountNumberError = if (newValue.isNotBlank()) null else this.accountNumberError
+                accountNumberError = if (newValue.isNotBlank()) null else this.accountNumberError,
             )
         }
     }
@@ -169,7 +169,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             copy(
                 isDirty = true,
                 deadline = newValue,
-                deadlineError = if (newValue.isNotBlank()) null else this.deadlineError
+                deadlineError = if (newValue.isNotBlank()) null else this.deadlineError,
             )
         }
     }
@@ -179,7 +179,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             copy(
                 isDirty = true,
                 description = newValue,
-                descriptionError = if (newValue.isNotBlank()) null else this.descriptionError
+                descriptionError = if (newValue.isNotBlank()) null else this.descriptionError,
             )
         }
     }
@@ -197,7 +197,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         updateState {
             copy(
                 isDirty = true,
-                selectedDeliveryIds = newIds
+                selectedDeliveryIds = newIds,
             )
         }
     }
@@ -209,7 +209,9 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             if (option == newOption) {
                 currentPrice = newOption.price
                 newOption
-            } else option
+            } else {
+                option
+            }
         }.toPersistentList()
 
         val clearError = currentPrice.isNullOrBlank() && newOption.price.isNotBlank()
@@ -217,7 +219,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         updateState {
             copy(
                 editableMemberOptions = newOptions,
-                memberSettingStatus = if (clearError) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus
+                memberSettingStatus = if (clearError) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus,
             )
         }
     }
@@ -241,8 +243,11 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
     private fun resetDisplayMembers() {
         val selectedIndices = uiState.value.editableMemberOptions.mapIndexedNotNull { index, option ->
-            if (option.memberId in uiState.value.selectedMemberIds) index
-            else null
+            if (option.memberId in uiState.value.selectedMemberIds) {
+                index
+            } else {
+                null
+            }
         }.toSet()
 
         updateState {
@@ -270,8 +275,11 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
     private fun handleMemberSelectDone() {
         val newIds = uiState.value.editableMemberOptions.mapIndexedNotNull { index, option ->
-            if (index in uiState.value.sheetDisplayMemberIndices) option.memberId
-            else null
+            if (index in uiState.value.sheetDisplayMemberIndices) {
+                option.memberId
+            } else {
+                null
+            }
         }.toSet()
 
         val newMemberOptions = clearUnselectedOptionPrices(newIds)
@@ -280,15 +288,18 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             copy(
                 selectedMemberIds = newIds,
                 editableMemberOptions = newMemberOptions,
-                memberSettingStatus = if (newIds.isNotEmpty()) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus
+                memberSettingStatus = if (newIds.isNotEmpty()) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus,
             )
         }
     }
 
     private fun clearUnselectedOptionPrices(newIds: Set<Long>): ImmutableList<MemberPriceOption> {
         return uiState.value.editableMemberOptions.map { option ->
-            if (option.memberId in newIds) option
-            else option.copy(price = "")
+            if (option.memberId in newIds) {
+                option
+            } else {
+                option.copy(price = "")
+            }
         }.toPersistentList()
     }
 
@@ -338,7 +349,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
         updateState {
             copy(
-                createPartyState = ApiState.Loading
+                createPartyState = ApiState.Loading,
             )
         }
         // TODO: [도연] 이미지 전처리
@@ -347,7 +358,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
         updateState {
             copy(
-                createPartyState = ApiState.Success(Unit)
+                createPartyState = ApiState.Success(Unit),
             )
         }
     }

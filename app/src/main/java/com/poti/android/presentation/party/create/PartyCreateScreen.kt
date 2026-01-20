@@ -44,9 +44,9 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
+import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
-import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
@@ -116,7 +116,7 @@ fun PartyCreateRoute(
             confirmBtnText = "계속 작성하기",
             onDismissBtnClick = { viewModel.processIntent(CreateUiIntent.OnBackConfirm) },
             onConfirmBtnClick = { showDialog = false },
-            dismissOnClickOutside = false
+            dismissOnClickOutside = false,
         )
     }
 

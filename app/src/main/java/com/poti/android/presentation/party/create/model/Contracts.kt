@@ -73,7 +73,8 @@ data class CreateUiState(
 sealed interface CreateUiIntent : UiIntent {
     data object OnBackClick : CreateUiIntent
 
-    data object OnBackConfirm: CreateUiIntent
+    data object OnBackConfirm : CreateUiIntent
+
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 
     data object OnSearchClick : CreateUiIntent
@@ -116,5 +117,5 @@ sealed interface CreateUiEffect : UiEffect {
 
     data object ShowBottomSheet : CreateUiEffect
 
-    data object ShowDialog: CreateUiEffect
+    data object ShowDialog : CreateUiEffect
 }

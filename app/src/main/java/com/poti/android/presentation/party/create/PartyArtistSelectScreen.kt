@@ -47,8 +47,8 @@ fun PartyArtistSelectRoute(
         uiState = uiState,
         onSearchKeywordChange = { viewModel.processIntent(CreateUiIntent.OnArtistSearchKeywordChange(it)) },
         onArtistSelect = { viewModel.processIntent(CreateUiIntent.OnArtistSelect(it)) },
-        onConfirmClick = {viewModel.processIntent(CreateUiIntent.OnBackClick)},
-        onPopBackStack = {viewModel.processIntent(CreateUiIntent.OnBackClick)},
+        onConfirmClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
+        onPopBackStack = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
         modifier = modifier,
     )
 }
@@ -69,12 +69,12 @@ private fun PartyArtistSelectScreen(
                 onNavigationClick = onPopBackStack,
                 title = stringResource(R.string.create_header_artist_search),
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerPadding),
         ) {
             CreateDropdownField(
                 value = uiState.artistSearchKeyword,
@@ -103,7 +103,7 @@ private fun PartyArtistSelectScreen(
                     .padding(horizontal = screenWidthDp(16.dp))
                     .padding(top = 4.dp, bottom = 16.dp),
                 type = if (uiState.isArtistSelectDoneBtnEnabled) ActionButtonType.SECONDARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
-                enabled = uiState.isArtistSelectDoneBtnEnabled
+                enabled = uiState.isArtistSelectDoneBtnEnabled,
             )
         }
     }
