@@ -34,7 +34,12 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             }
 
             is CreateUiIntent.OnImagesChanged -> {
-                updateState { copy(selectedImages = intent.uris.toPersistentList()) }
+                updateState {
+                    copy(
+                        isDirty = true,
+                        selectedImages = intent.uris.toPersistentList(),
+                    )
+                }
             }
 
             is CreateUiIntent.OnArtistSelect -> {
