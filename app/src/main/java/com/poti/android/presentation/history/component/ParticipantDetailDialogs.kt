@@ -21,7 +21,6 @@ sealed interface ParticipantDetailModalState {
 @Composable
 fun ParticipantDetailDialogs(
     modalState: ParticipantDetailModalState,
-    recruiterInfo: RecruiterInfoForReview,
     onDismiss: () -> Unit,
     onDepositSubmit: (String, String) -> Unit,
     onDeliveryConfirm: () -> Unit,
@@ -54,9 +53,9 @@ fun ParticipantDetailDialogs(
 
         is ParticipantDetailModalState.DeliveryReview -> {
             HistoryDeliveryReviewModal(
-                recruiterName = recruiterInfo.name,
-                recruiterProfileUrl = recruiterInfo.profileUrl,
-                partnerRating = recruiterInfo.rating,
+                recruiterName = modalState.recruiterName,
+                recruiterProfileUrl = modalState.recruiterProfileUrl,
+                partnerRating = modalState.recruiterRating,
                 onConfirm = { rating ->
                     onDismiss()
                     onReviewSubmit(rating)
@@ -71,19 +70,12 @@ fun ParticipantDetailDialogs(
     }
 }
 
-data class RecruiterInfoForReview(
-    val name: String,
-    val profileUrl: String,
-    val rating: String,
-)
-
 @Preview
 @Composable
 private fun ParticipantDetailDialogsDepositPreview() {
     PotiTheme {
         ParticipantDetailDialogs(
             modalState = ParticipantDetailModalState.DepositInput,
-            recruiterInfo = RecruiterInfoForReview("포티", "", "4.8"),
             onDismiss = {},
             onDepositSubmit = { _, _ -> },
             onDeliveryConfirm = {},
@@ -100,7 +92,6 @@ private fun ParticipantDetailDialogsConfirmPreview() {
     PotiTheme {
         ParticipantDetailDialogs(
             modalState = ParticipantDetailModalState.DeliveryConfirm,
-            recruiterInfo = RecruiterInfoForReview("포티", "", "4.8"),
             onDismiss = {},
             onDepositSubmit = { _, _ -> },
             onDeliveryConfirm = {},
@@ -117,7 +108,6 @@ private fun ParticipantDetailDialogsReviewPreview() {
     PotiTheme {
         ParticipantDetailDialogs(
             modalState = ParticipantDetailModalState.DeliveryReview("포티", "", "4.8"),
-            recruiterInfo = RecruiterInfoForReview("포티", "", "4.8"),
             onDismiss = {},
             onDepositSubmit = { _, _ -> },
             onDeliveryConfirm = {},
