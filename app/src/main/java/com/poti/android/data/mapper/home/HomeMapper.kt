@@ -11,6 +11,7 @@ import com.poti.android.domain.model.home.HomeContent
 fun HomeResponseDto.toDomain(): HomeContent = HomeContent(
     nickname = nickname,
     mainArtist = mainArtist.orEmpty(),
+    mainArtistId = mainArtistId ?: 0L,
     myGroupItems = myGroupItems.orEmpty().map { it.toDomain() },
     otherGroupItems = otherGroupItems.map { it.toDomain() },
     banners = banners.map { it.toDomain() },
@@ -19,16 +20,18 @@ fun HomeResponseDto.toDomain(): HomeContent = HomeContent(
 fun MyGroupItemDto.toDomain(): GroupItem = GroupItem(
     postTitle = postTitle.orEmpty(),
     artist = artist.orEmpty(),
+    artistId = artistId ?: 0L,
     postImage = postImage.orEmpty(),
-    postCount = postCount?.toLong() ?: 0L,
+    postCount = postCount ?: 0,
     tag = tag.orEmpty(),
 )
 
 fun OtherGroupItemDto.toDomain(): GroupItem = GroupItem(
     postTitle = postTitle,
     artist = artist,
+    artistId = artistId ?: 0L,
     postImage = postImage.orEmpty(),
-    postCount = postCount.toLong(),
+    postCount = postCount,
     tag = tag,
 )
 

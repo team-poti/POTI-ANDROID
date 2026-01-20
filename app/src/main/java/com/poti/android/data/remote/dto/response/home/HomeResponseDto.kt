@@ -9,6 +9,8 @@ data class HomeResponseDto(
     val nickname: String,
     @SerialName("mainArtist")
     val mainArtist: String?,
+    @SerialName("mainArtistId")
+    val mainArtistId: Long?,
     @SerialName("myGroupItems")
     val myGroupItems: List<MyGroupItemDto>?,
     @SerialName("otherGroupItems")
@@ -21,6 +23,8 @@ data class HomeResponseDto(
 data class MyGroupItemDto(
     @SerialName("artist")
     val artist: String?,
+    @SerialName("artistId")
+    val artistId: Long?,
     @SerialName("postImage")
     val postImage: String?,
     @SerialName("postTitle")
@@ -35,6 +39,8 @@ data class MyGroupItemDto(
 data class OtherGroupItemDto(
     @SerialName("artist")
     val artist: String,
+    @SerialName("artistId")
+    val artistId: Long?,
     @SerialName("postImage")
     val postImage: String?,
     @SerialName("postTitle")
