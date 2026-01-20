@@ -17,7 +17,7 @@ interface PostRepository {
     suspend fun createPost(
         artistId: Long,
         product: String,
-        descripton: String,
+        description: String,
         deadline: String,
         bank: String,
         accountNumber: String,

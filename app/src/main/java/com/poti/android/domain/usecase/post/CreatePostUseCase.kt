@@ -21,7 +21,7 @@ class CreatePostUseCase @Inject constructor(
     ): Result<Long> = postRepository.createPost(
         artistId = artistId,
         product = product,
-        descripton = description,
+        description = description,
         deadline = deadline,
         bank = bank,
         accountNumber = accountNumber,

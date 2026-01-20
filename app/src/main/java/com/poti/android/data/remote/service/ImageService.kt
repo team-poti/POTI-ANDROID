@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ImageService {
-    @GET("api/v1/images/presigned-url")
+    @GET("/api/v1/images/presigned-url")
     suspend fun getPresignedUrls(
         @Query("type") type: String,
         @Query("count") count: Int,

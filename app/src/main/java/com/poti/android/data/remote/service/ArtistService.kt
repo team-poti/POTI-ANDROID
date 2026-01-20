@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ArtistService {
-    @GET("api/v1/artists/{artistId}/members")
+    @GET("/api/v1/artists/{artistId}/members")
     suspend fun getMemberList(
         @Path("artistId") artistId: Long,
     ): BaseResponse<MemberListResponseDto>

@@ -35,7 +35,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun createPost(
         artistId: Long,
         product: String,
-        descripton: String,
+        description: String,
         deadline: String,
         bank: String,
         accountNumber: String,
@@ -47,7 +47,7 @@ class PostRepositoryImpl @Inject constructor(
             body = CreatePostRequestDto(
                 artistId = artistId,
                 title = product,
-                content = descripton,
+                content = description,
                 deadline = deadline,
                 bankName = bank,
                 accountNumber = accountNumber,
