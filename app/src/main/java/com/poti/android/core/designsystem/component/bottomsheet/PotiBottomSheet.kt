@@ -77,7 +77,7 @@ fun PotiBottomSheet(
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         containerColor = PotiTheme.colors.white,
-        scrimColor = PotiTheme.colors.blackA40,
+        scrimColor = PotiTheme.colors.black.copy(alpha = 0.6f),
         dragHandle = null,
         properties = properties,
     ) {
