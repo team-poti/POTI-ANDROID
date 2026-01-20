@@ -26,13 +26,15 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
+import com.poti.android.domain.type.HistoryStage
+import com.poti.android.domain.type.HistoryStatus
 import com.poti.android.presentation.history.component.CardHistorySize
 import com.poti.android.presentation.history.component.HistoryCardItem
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
+import com.poti.android.presentation.history.list.model.toUiStage
+import com.poti.android.presentation.history.list.model.toUiStatus
 
 enum class HistoryMode {
     RECRUIT,
@@ -126,14 +128,13 @@ private fun HistoryListScreen(
                         items = uiState.items,
                         key = { it.id },
                     ) { item ->
-
                         HistoryCardItem(
                             sizeType = CardHistorySize.SMALL,
                             imageUrl = item.imageUrl ?: "",
                             artist = item.artist,
                             title = item.title,
-                            participantStageType = item.stage,
-                            participantStatusType = item.status,
+                            participantStageType = item.toUiStage(),
+                            participantStatusType = item.toUiStatus(),
                             onClick = { onCardClick(item.id) },
                         )
                     }
@@ -159,16 +160,16 @@ private fun HistoryListScreenPreview_Ongoing() {
                                 imageUrl = "",
                                 artist = "ive(아이브)",
                                 title = "러브다이브 위드뮤",
-                                stage = ParticipantStateLabelStage.DELIVERY,
-                                status = ParticipantStateLabelStatus.WAIT,
+                                stage = HistoryStage.DELIVERY,
+                                status = HistoryStatus.WAIT,
                             ),
                             HistoryItem(
                                 id = 2L,
                                 imageUrl = "",
                                 artist = "aespa",
                                 title = "걸스 스페셜",
-                                stage = ParticipantStateLabelStage.DEPOSIT,
-                                status = ParticipantStateLabelStatus.DONE,
+                                stage = HistoryStage.DEPOSIT,
+                                status = HistoryStatus.DONE,
                             ),
                         ),
                     ),

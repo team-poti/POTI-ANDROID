@@ -6,8 +6,8 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.domain.type.HistoryStage
+import com.poti.android.domain.type.HistoryStatus
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
@@ -83,16 +83,16 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                 imageUrl = "",
                 artist = if (isRecruit) "IVE" else "aespa",
                 title = if (isRecruit) "러브다이브 공동구매" else "걸스 앨범 분철",
-                stage = ParticipantStateLabelStage.DELIVERY,
-                status = ParticipantStateLabelStatus.WAIT,
+                stage = HistoryStage.DELIVERY,
+                status = HistoryStatus.WAIT,
             ),
             HistoryItem(
                 id = 2L,
                 imageUrl = "",
                 artist = "NewJeans",
                 title = "OMG 한정판",
-                stage = ParticipantStateLabelStage.DEPOSIT,
-                status = ParticipantStateLabelStatus.DONE,
+                stage = HistoryStage.DEPOSIT,
+                status = HistoryStatus.DONE,
             ),
         )
 
@@ -102,8 +102,8 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                 imageUrl = "",
                 artist = "LE SSERAFIM",
                 title = "ANTIFRAGILE",
-                stage = ParticipantStateLabelStage.DELIVERY,
-                status = ParticipantStateLabelStatus.DONE,
+                stage = HistoryStage.DELIVERY,
+                status = HistoryStatus.DONE,
             ),
         )
 

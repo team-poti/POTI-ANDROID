@@ -8,6 +8,10 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
+import com.poti.android.domain.type.HistoryStage
+import com.poti.android.domain.type.HistoryStatus
+import com.poti.android.presentation.history.component.ParticipantStateLabelStage
+import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
 import com.poti.android.presentation.history.list.HistoryMode
 
 data class HistoryListUiState(
@@ -59,4 +63,17 @@ sealed interface HistoryListUiEffect : UiEffect {
     data object NavigateBack : HistoryListUiEffect
 
     data class NavigateToDetail(val id: Long) : HistoryListUiEffect
+}
+
+fun HistoryItem.toUiStage(): ParticipantStateLabelStage = when (stage) {
+    HistoryStage.DEPOSIT -> ParticipantStateLabelStage.DEPOSIT
+    HistoryStage.DELIVERY -> ParticipantStateLabelStage.DELIVERY
+    HistoryStage.RECRUIT -> ParticipantStateLabelStage.RECRUIT
+}
+
+fun HistoryItem.toUiStatus(): ParticipantStateLabelStatus = when (status) {
+    HistoryStatus.WAIT -> ParticipantStateLabelStatus.WAIT
+    HistoryStatus.CHECK -> ParticipantStateLabelStatus.CHECK
+    HistoryStatus.START -> ParticipantStateLabelStatus.START
+    HistoryStatus.DONE -> ParticipantStateLabelStatus.DONE
 }

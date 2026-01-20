@@ -1,7 +1,7 @@
 package com.poti.android.domain.model.history
 
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.domain.type.HistoryStage
+import com.poti.android.domain.type.HistoryStatus
 
 data class HistoryListContent(
     val ongoingCount: Int,
@@ -14,6 +14,6 @@ data class HistoryItem(
     val imageUrl: String?,
     val artist: String,
     val title: String,
-    val stage: ParticipantStateLabelStage,
-    val status: ParticipantStateLabelStatus,
+    val stage: HistoryStage,
+    val status: HistoryStatus,
 )
