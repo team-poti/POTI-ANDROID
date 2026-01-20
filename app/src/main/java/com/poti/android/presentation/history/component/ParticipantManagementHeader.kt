@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +46,10 @@ fun ParticipantManagementHeader(
             painter = painterResource(id = R.drawable.ic_arrow_right_lg),
             contentDescription = null,
             tint = PotiTheme.colors.gray700,
-            modifier = Modifier.noRippleClickable(onHeaderClick),
+            modifier = Modifier
+                .padding(10.dp)
+                .size(24.dp)
+                .noRippleClickable(onHeaderClick),
         )
     }
 }
