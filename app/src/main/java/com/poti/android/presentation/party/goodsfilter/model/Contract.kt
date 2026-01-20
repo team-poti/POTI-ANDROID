@@ -9,7 +9,7 @@ import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
-import com.poti.android.domain.model.party.Pots
+import com.poti.android.domain.model.party.PartyList
 
 enum class SortFilter(
     val request: String,
@@ -30,7 +30,7 @@ enum class SortFilter(
 }
 
 data class GoodsFilterUiState(
-    val potsInfo: ApiState<Pots> = ApiState.Loading,
+    val partyListInfo: ApiState<PartyList> = ApiState.Loading,
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMember: List<Member> = emptyList(),
@@ -55,13 +55,13 @@ data class GoodsFilterUiState(
 
     val loadState: ApiState<Unit>
         get() = when {
-            potsInfo is ApiState.Loading &&
+            partyListInfo is ApiState.Loading &&
                 membersLoadState is ApiState.Loading -> ApiState.Loading
 
-            potsInfo is ApiState.Failure ||
+            partyListInfo is ApiState.Failure ||
                 membersLoadState is ApiState.Failure -> ApiState.Failure("")
 
-            potsInfo is ApiState.Success &&
+            partyListInfo is ApiState.Success &&
                 membersLoadState is ApiState.Success -> ApiState.Success(Unit)
 
             else -> ApiState.Loading
@@ -75,7 +75,7 @@ sealed interface GoodsFilterUiIntent : UiIntent {
 
     data object OnFloatingClick : GoodsFilterUiIntent
 
-    data class OnPartyClick(val potId: Long) : GoodsFilterUiIntent
+    data class OnPartyClick(val partyId: Long) : GoodsFilterUiIntent
 
     data object OnMemberFilterClick : GoodsFilterUiIntent
 
@@ -91,5 +91,5 @@ sealed interface GoodsFilterUiEffect : UiEffect {
 
     data object NavigateToPartyCreate : GoodsFilterUiEffect
 
-    data class NavigateToPartyDetail(val userId: Long) : GoodsFilterUiEffect
+    data class NavigateToPartyDetail(val partyId: Long) : GoodsFilterUiEffect
 }

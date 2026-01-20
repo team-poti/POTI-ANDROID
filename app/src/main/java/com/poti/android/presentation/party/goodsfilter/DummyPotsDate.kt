@@ -1,14 +1,14 @@
 package com.poti.android.presentation.party.goodsfilter
 
-import com.poti.android.domain.model.party.PotSummary
-import com.poti.android.domain.model.party.Pots
+import com.poti.android.domain.model.party.PartyList
+import com.poti.android.domain.model.party.PartySummary
 
-val dummyPots = Pots(
-    postTitle = "러브다이브 위드뮤",
+val dummyPartyList = PartyList(
+    partyTitle = "러브다이브 위드뮤",
     artistName = "IVE(아이브)",
-    potSummaries = listOf(
-        PotSummary(
-            potId = 1L,
+    partySummaries = listOf(
+        PartySummary(
+            partyId = 1L,
             price = 21300,
             goodsImageUrl = "",
             currentCount = 3,
@@ -18,8 +18,8 @@ val dummyPots = Pots(
             nickname = "포티공주",
             rating = 4.8,
         ),
-        PotSummary(
-            potId = 2L,
+        PartySummary(
+            partyId = 2L,
             price = 21300,
             goodsImageUrl = "",
             currentCount = 6,
@@ -29,8 +29,8 @@ val dummyPots = Pots(
             nickname = "굿즈요정",
             rating = 4.5,
         ),
-        PotSummary(
-            potId = 3L,
+        PartySummary(
+            partyId = 3L,
             price = 21300,
             goodsImageUrl = "",
             currentCount = 1,

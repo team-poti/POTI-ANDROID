@@ -23,7 +23,7 @@ class GoodsFilterViewModel @Inject constructor() :
                 GoodsFilterUiIntent.OnBackClick -> sendEffect(GoodsFilterUiEffect.NavigateBack)
                 GoodsFilterUiIntent.OnFloatingClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyCreate)
                 is GoodsFilterUiIntent.OnPartyClick ->
-                    sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.potId))
+                    sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.partyId))
                 GoodsFilterUiIntent.OnMemberFilterClick -> {
                     // TODO: [예림] 바텀시트 open
                 }
@@ -42,7 +42,7 @@ class GoodsFilterViewModel @Inject constructor() :
         private fun loadGoodsPots() = launchScope {
             updateState {
                 copy(
-                    potsInfo = ApiState.Success(dummyPots),
+                    partyListInfo = ApiState.Success(dummyPartyList),
                     membersLoadState = ApiState.Success(emptyList()),
                 )
             }

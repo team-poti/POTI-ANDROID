@@ -26,9 +26,9 @@ import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.Member
-import com.poti.android.domain.model.party.PotSummary
-import com.poti.android.domain.model.party.Pots
-import com.poti.android.presentation.party.goodsfilter.component.PotsCard
+import com.poti.android.domain.model.party.PartyList
+import com.poti.android.domain.model.party.PartySummary
+import com.poti.android.presentation.party.goodsfilter.component.PartyCard
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.SortFilter
@@ -48,13 +48,13 @@ fun GoodsFilteredPartyListRoute(
         when (effect) {
             GoodsFilterUiEffect.NavigateBack -> onPopBackStack()
             GoodsFilterUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            is GoodsFilterUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.userId)
+            is GoodsFilterUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.partyId)
         }
     }
 
-    uiState.potsInfo.onSuccess { potsInfo ->
+    uiState.partyListInfo.onSuccess { potsInfo ->
         GoodsFilteredPartyListScreen(
-            potsInfo = potsInfo,
+            partyListInfo = potsInfo,
             displayMembers = uiState.displayMembers,
             selectedMember = uiState.selectedMember,
             sortFilter = uiState.goodsSortFilter,
@@ -81,7 +81,7 @@ fun GoodsFilteredPartyListRoute(
 
 @Composable
 private fun GoodsFilteredPartyListScreen(
-    potsInfo: Pots,
+    partyListInfo: PartyList,
     displayMembers: List<Member>,
     selectedMember: List<Member>,
     sortFilter: SortFilter,
@@ -99,8 +99,8 @@ private fun GoodsFilteredPartyListScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = potsInfo.postTitle,
-                subTitle = potsInfo.artistName,
+                title = partyListInfo.partyTitle,
+                subTitle = partyListInfo.artistName,
             )
         },
         floatingActionButton = {
@@ -115,7 +115,7 @@ private fun GoodsFilteredPartyListScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp)),
         ) {
-            stickyHeader {
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -132,17 +132,17 @@ private fun GoodsFilteredPartyListScreen(
                 }
             }
 
-            items(potsInfo.potSummaries) { pot ->
-                PotsCard(
-                    potId = pot.potId,
-                    profileImageUrl = pot.profileImageUrl ?: "",
-                    nickname = pot.nickname,
-                    rating = pot.ratingText,
-                    imageUrl = pot.goodsImageUrl,
-                    members = pot.availableMembers,
-                    price = pot.priceText,
-                    currentCount = pot.currentCount,
-                    totalCount = pot.totalCount,
+            items(partyListInfo.partySummaries) { party ->
+                PartyCard(
+                    potId = party.partyId,
+                    profileImageUrl = party.profileImageUrl ?: "",
+                    nickname = party.nickname,
+                    rating = party.ratingText,
+                    imageUrl = party.goodsImageUrl,
+                    members = party.availableMembers,
+                    price = party.priceText,
+                    currentCount = party.currentCount,
+                    totalCount = party.totalCount,
                     onClick = onCardClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -161,12 +161,12 @@ private fun GoodsFilteredPartyListScreen(
 @Composable
 private fun GoodsFilteredPartyListScreenPreveiw() {
     GoodsFilteredPartyListScreen(
-        potsInfo = Pots(
-            postTitle = "헤더 타이틀",
+        partyListInfo = PartyList(
+            partyTitle = "헤더 타이틀",
             artistName = "서브타이틀",
-            potSummaries = listOf(
-                PotSummary(
-                    potId = 1,
+            partySummaries = listOf(
+                PartySummary(
+                    partyId = 1,
                     price = 1000,
                     goodsImageUrl = "",
                     currentCount = 5,
@@ -176,8 +176,8 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     nickname = "닉네임",
                     rating = 1.2,
                 ),
-                PotSummary(
-                    potId = 1,
+                PartySummary(
+                    partyId = 1,
                     price = 8000,
                     goodsImageUrl = "",
                     currentCount = 6,

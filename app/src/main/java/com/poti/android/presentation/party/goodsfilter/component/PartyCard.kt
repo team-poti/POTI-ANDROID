@@ -36,7 +36,7 @@ import com.poti.android.core.designsystem.component.display.PotiProfileSummarySi
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun PotsCard(
+fun PartyCard(
     potId: Long,
     profileImageUrl: String,
     nickname: String,
@@ -174,13 +174,13 @@ fun PotsCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun PotsCardPreview() {
+private fun PartyCardPreview() {
     PotiTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PotsCard(
+            PartyCard(
                 potId = 0L,
                 profileImageUrl = "",
                 nickname = "닉네임",
@@ -194,7 +194,7 @@ private fun PotsCardPreview() {
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            PotsCard(
+            PartyCard(
                 potId = 0L,
                 profileImageUrl = "",
                 nickname = "닉네임",

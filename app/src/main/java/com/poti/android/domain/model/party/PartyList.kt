@@ -3,14 +3,14 @@ package com.poti.android.domain.model.party
 import java.text.NumberFormat
 import java.util.Locale
 
-data class Pots(
-    val postTitle: String,
+data class PartyList(
+    val partyTitle: String,
     val artistName: String,
-    val potSummaries: List<PotSummary>,
+    val partySummaries: List<PartySummary>,
 )
 
-data class PotSummary(
-    val potId: Long,
+data class PartySummary(
+    val partyId: Long,
     val price: Int,
     val goodsImageUrl: String,
     val currentCount: Int,
