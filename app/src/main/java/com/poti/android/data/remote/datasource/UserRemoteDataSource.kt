@@ -5,6 +5,7 @@ import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.NicknameDuplicateResponseDto
 import com.poti.android.data.remote.dto.response.user.OnboardingResponseDto
+import com.poti.android.data.remote.dto.response.user.ProfileResponseDto
 import com.poti.android.data.remote.service.UserService
 import javax.inject.Inject
 
@@ -16,4 +17,7 @@ class UserRemoteDataSource @Inject constructor(
 
     suspend fun postNicknameDuplicate(nicknameDuplicateRequest: NicknameDuplicateRequestDto): BaseResponse<NicknameDuplicateResponseDto> =
         userService.postNicknameDuplicate(nicknameDuplicateRequest = nicknameDuplicateRequest)
+
+    suspend fun getUserProfile(userId: Long): BaseResponse<ProfileResponseDto> =
+        userService.getUserProfile(userId)
 }
