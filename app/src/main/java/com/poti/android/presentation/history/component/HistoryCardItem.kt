@@ -59,8 +59,8 @@ fun HistoryCardItem(
     imageUrl: String,
     artist: String,
     title: String,
-    participantStageType: ParticipantStateLabelStage,
-    participantStatusType: ParticipantStateLabelStatus,
+    stageType: StateLabelStage,
+    statusType: StateLabelStatus,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -72,10 +72,6 @@ fun HistoryCardItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(if (isPressed) colors.gray100 else colors.white)
-            .noRippleClickable(
-                interactionSource = interactionSource,
-                onClick = onClick,
-            )
             .padding(8.dp)
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
@@ -129,10 +125,10 @@ fun HistoryCardItem(
                 ),
             )
 
-            HistoryParticipantStateLabel(
-                sizeType = ParticipantStateLabelSize.SMALL,
-                stageType = participantStageType,
-                statusType = participantStatusType,
+            HistoryStateLabel(
+                sizeType = StateLabelSize.SMALL,
+                stageType = stageType,
+                statusType = statusType,
             )
         }
 
@@ -140,6 +136,12 @@ fun HistoryCardItem(
             painter = painterResource(id = R.drawable.ic_arrow_right_lg),
             contentDescription = null,
             tint = colors.gray700,
+            modifier = Modifier
+                .fillMaxHeight()
+                .noRippleClickable(
+                    interactionSource = interactionSource,
+                    onClick = onClick,
+                ),
         )
     }
 }
@@ -157,8 +159,8 @@ private fun HistoryCardItemPreview() {
                 imageUrl = "",
                 artist = "ive(아이브)",
                 title = "러브다이브 위드뮤",
-                participantStageType = ParticipantStateLabelStage.DELIVERY,
-                participantStatusType = ParticipantStateLabelStatus.WAIT,
+                stageType = StateLabelStage.DELIVERY,
+                statusType = StateLabelStatus.WAIT,
                 onClick = {},
             )
 
@@ -168,8 +170,8 @@ private fun HistoryCardItemPreview() {
                 imageUrl = "",
                 artist = "ive(아이브)",
                 title = "러브다이브 위드뮤",
-                participantStageType = ParticipantStateLabelStage.DEPOSIT,
-                participantStatusType = ParticipantStateLabelStatus.DONE,
+                stageType = StateLabelStage.DEPOSIT,
+                statusType = StateLabelStatus.DONE,
                 onClick = {},
             )
         }

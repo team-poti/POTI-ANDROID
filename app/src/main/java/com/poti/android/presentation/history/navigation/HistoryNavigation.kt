@@ -24,7 +24,7 @@ sealed interface HistoryRoute : Route {
     data object RecruiterDetail : HistoryRoute
 
     @Serializable
-    data object ParticipantManage : HistoryRoute
+    data class ParticipantManage(val recruitId: Long) : HistoryRoute
 }
 
 fun NavController.navigateToHistoryList() {
@@ -39,8 +39,8 @@ fun NavController.navigateToRecruiterDetail() {
     navigate(HistoryRoute.RecruiterDetail)
 }
 
-fun NavController.navigateToParticipantManage() {
-    navigate(HistoryRoute.ParticipantManage)
+fun NavController.navigateToParticipantManage(recruitId: Long) {
+    navigate(HistoryRoute.ParticipantManage(recruitId))
 }
 
 fun NavGraphBuilder.historyNavGraph(
@@ -60,7 +60,14 @@ fun NavGraphBuilder.historyNavGraph(
         ParticipantDetailRoute(modifier = Modifier.padding(paddingValues))
     }
     composable<HistoryRoute.RecruiterDetail> {
-        RecruiterDetailRoute(modifier = Modifier.padding(paddingValues))
+        RecruiterDetailRoute(
+            modifier = Modifier.padding(paddingValues),
+            // TODO: [천민재] 마이페이지 모집 내역으로 이동
+            onNavigateToMypageRecruit = {},
+            // TODO: [천민재] 분철팟 상세 페이지로 이동
+            onNavigateToPartyDetail = {},
+            onNavigateToParticipantManage = navController::navigateToParticipantManage,
+        )
     }
     composable<HistoryRoute.ParticipantManage> {
         ParticipantManageRoute(modifier = Modifier.padding(paddingValues))

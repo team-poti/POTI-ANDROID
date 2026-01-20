@@ -31,8 +31,8 @@ fun HistoryParticipantOverview(
     userInfo: String,
     deliveryMethod: String,
     price: Int,
-    participantStageType: ParticipantStateLabelStage,
-    participantStatusType: ParticipantStateLabelStatus,
+    participantStageType: StateLabelStage,
+    participantStatusType: StateLabelStatus,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -60,8 +60,8 @@ fun HistoryParticipantOverview(
             )
             Spacer(Modifier.width(12.dp))
 
-            HistoryParticipantStateLabel(
-                sizeType = ParticipantStateLabelSize.SMALL,
+            HistoryStateLabel(
+                sizeType = StateLabelSize.SMALL,
                 stageType = participantStageType,
                 statusType = participantStatusType,
             )
@@ -83,7 +83,7 @@ fun HistoryParticipantOverview(
                 optionType = PotiItemOptionType.PRICE,
                 sizeType = PotiItemOptionSize.SMALL,
                 text = stringResource(
-                    R.string.party_option_price_won,
+                    R.string.history_participant_detail_won_unit_format,
                     price.toMoneyString(),
                 ),
             )
@@ -106,8 +106,8 @@ private fun HistoryParticipantOverviewPreview() {
             userInfo = "$userName\n($zipcode) $address\n$phone",
             deliveryMethod = "준등기",
             price = 12800,
-            participantStageType = ParticipantStateLabelStage.DEPOSIT,
-            participantStatusType = ParticipantStateLabelStatus.CHECK,
+            participantStageType = StateLabelStage.DEPOSIT,
+            participantStatusType = StateLabelStatus.CHECK,
             modifier = Modifier.width(375.dp),
         )
     }
