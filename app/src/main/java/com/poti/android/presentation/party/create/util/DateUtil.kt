@@ -12,7 +12,6 @@ fun String.toDateOrNull(): LocalDate? {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
         return LocalDate.parse(this, formatter)
     } catch (_: DateTimeParseException) {
-        Log.d("아아", "실패임")
         null
     }
 }
