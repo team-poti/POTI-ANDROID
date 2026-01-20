@@ -163,7 +163,7 @@ private fun PartyJoinScreen(
                         value = uiState.orderName,
                         onValueChanged = onOrderNameChange,
                         placeholder = stringResource(R.string.party_join_order_name_placeholder),
-                        label = stringResource(R.string.filed_label_name),
+                        label = stringResource(R.string.field_label_name),
                         error = if (uiState.isOrderNameError) stringResource(R.string.party_join_order_name_error) else "",
                     )
 
