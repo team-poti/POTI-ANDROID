@@ -1,26 +1,41 @@
 package com.poti.android.presentation.history
 
-import com.poti.android.domain.model.history.*
+import com.poti.android.R
+import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.domain.type.ParticipantStatusType
+import com.poti.android.presentation.history.component.ParticipantStateLabelStage
+import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.presentation.history.model.PartySummaryUiModel
+import com.poti.android.presentation.history.model.ProgressUiModel
+import com.poti.android.presentation.history.model.participant.ActionButtonState
+import com.poti.android.presentation.history.model.participant.DepositInfoUiModel
+import com.poti.android.presentation.history.model.participant.DepositItemUiModel
+import com.poti.android.presentation.history.model.participant.ParticipantDetailActionType
+import com.poti.android.presentation.history.model.participant.ParticipantDetailModalUiModel
+import com.poti.android.presentation.history.model.participant.ParticipantDetailUiModel
+import com.poti.android.presentation.history.model.participant.ShippingInfoUiModel
+import com.poti.android.presentation.history.model.recruiter.ParticipantInfoUiModel
+import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiModel
 
 object DummyParticipantManageDetail {
     // ========================================================================
-    // 1. Shared Common Data (공통 더미 데이터)
+    // 1. Shared Common Data
     // ========================================================================
 
-    private val commonArtistInfo = ArtistInfo(
+    private val commonPartySummary = PartySummaryUiModel(
         artist = "NewJeans",
         title = "How Sweet 위버스 특전 분철",
         imageUrl = "https://picsum.photos/200",
-        partyState = ParticipantStatusType.RECRUIT_DONE,
+        partyStage = ParticipantStateLabelStage.RECRUIT,
+        partyStatus = ParticipantStateLabelStatus.DONE,
     )
 
     private val commonDepositItems = listOf(
-        DepositItem.MemberItem(name = "해린 포토카드", price = 15000),
-        DepositItem.DeliveryItem(name = "GS25 반값택배", price = 1800),
+        DepositItemUiModel(name = "해린 포토카드", price = 15000, type = PotiItemOptionType.MEMBER),
+        DepositItemUiModel(name = "GS25 반값택배", price = 1800, type = PotiItemOptionType.DELIVERY),
     )
 
-    private val commonShippingInfo = ParticipantShippingInfo(
+    private val commonShippingInfo = ShippingInfoUiModel(
         recipient = "김포티",
         zipcode = "06000",
         address = "서울특별시 강남구 테헤란로 123 포티타워 101호",
@@ -30,24 +45,24 @@ object DummyParticipantManageDetail {
     )
 
     // ========================================================================
-    // 2. Recruiter View Data (총대 관리 페이지용 - RecruiterDetail)
+    // 2. Recruiter View Data
     // ========================================================================
 
-    // Step 0: 모집 중/완료 단계
-    val recruiterRecruitStep = RecruiterDetail(
+    val recruiterRecruitStep = RecruiterDetailUiModel(
         recruitId = 1,
-        artistInfo = ArtistInfo(
+        artistInfo = PartySummaryUiModel(
             imageUrl = "",
             artist = "IVE(아이브)",
             title = "I've IVE 위드뮤 분철",
-            partyState = ParticipantStatusType.RECRUIT_WAIT,
+            partyStage = ParticipantStateLabelStage.RECRUIT,
+            partyStatus = ParticipantStateLabelStatus.WAIT,
         ),
-        progressInfo = ProgressInfo(
-            guideText = "모집이 시작되었습니다.",
+        progressInfo = ProgressUiModel(
             step = 0,
+            guideText = "모집이 시작되었습니다.",
         ),
         participantInfoList = listOf(
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 101,
                 memberNames = "장원영",
                 participantState = ParticipantStatusType.RECRUIT_DONE,
@@ -56,23 +71,25 @@ object DummyParticipantManageDetail {
                 deliveryPrice = 1800,
             ),
         ),
+        participantCount = 1,
+        topBarTitleRes = R.string.history_ongoing_title,
     )
 
-    // Step 1: 입금 진행/확인 단계
-    val recruiterDepositStep = RecruiterDetail(
+    val recruiterDepositStep = RecruiterDetailUiModel(
         recruitId = 2,
-        artistInfo = ArtistInfo(
+        artistInfo = PartySummaryUiModel(
             imageUrl = "",
             artist = "aespa(에스파)",
             title = "Armageddon 미공포 분철",
-            partyState = ParticipantStatusType.DEPOSIT_WAIT,
+            partyStage = ParticipantStateLabelStage.DEPOSIT,
+            partyStatus = ParticipantStateLabelStatus.WAIT,
         ),
-        progressInfo = ProgressInfo(
-            guideText = "입금을 확인하고 있습니다.",
+        progressInfo = ProgressUiModel(
             step = 1,
+            guideText = "입금을 확인하고 있습니다.",
         ),
         participantInfoList = listOf(
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 201,
                 memberNames = "카리나, 윈터",
                 participantState = ParticipantStatusType.DEPOSIT_DONE,
@@ -80,7 +97,7 @@ object DummyParticipantManageDetail {
                 deliveryMethod = "CU끼리택배",
                 deliveryPrice = 1600,
             ),
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 202,
                 memberNames = "닝닝",
                 participantState = ParticipantStatusType.DEPOSIT_WAIT,
@@ -88,7 +105,7 @@ object DummyParticipantManageDetail {
                 deliveryMethod = "준등기",
                 deliveryPrice = 1800,
             ),
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 203,
                 memberNames = "지젤",
                 participantState = ParticipantStatusType.DEPOSIT_CHECK,
@@ -97,23 +114,25 @@ object DummyParticipantManageDetail {
                 deliveryPrice = 3500,
             ),
         ),
+        participantCount = 3,
+        topBarTitleRes = R.string.history_ongoing_title,
     )
 
-    // Step 2: 배송/종료 단계
-    val recruiterDeliveryDoneStep = RecruiterDetail(
+    val recruiterDeliveryDoneStep = RecruiterDetailUiModel(
         recruitId = 3,
-        artistInfo = ArtistInfo(
+        artistInfo = PartySummaryUiModel(
             imageUrl = "",
             artist = "NewJeans",
             title = "How Sweet 위버스 특전",
-            partyState = ParticipantStatusType.DELIVERY_DONE,
+            partyStage = ParticipantStateLabelStage.DELIVERY,
+            partyStatus = ParticipantStateLabelStatus.DONE,
         ),
-        progressInfo = ProgressInfo(
-            guideText = "모든 진행이 완료되었습니다.",
+        progressInfo = ProgressUiModel(
             step = 2,
+            guideText = "거래가 완료되었습니다.",
         ),
         participantInfoList = listOf(
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 301,
                 memberNames = "민지, 하니",
                 participantState = ParticipantStatusType.DELIVERY_DONE,
@@ -121,7 +140,7 @@ object DummyParticipantManageDetail {
                 deliveryMethod = "GS반값택배",
                 deliveryPrice = 1800,
             ),
-            ParticipantInfo(
+            ParticipantInfoUiModel(
                 userId = 302,
                 memberNames = "다니엘",
                 participantState = ParticipantStatusType.DELIVERY_DONE,
@@ -130,90 +149,103 @@ object DummyParticipantManageDetail {
                 deliveryPrice = 1800,
             ),
         ),
+        participantCount = 2,
+        topBarTitleRes = R.string.history_ongoing_title_done,
     )
 
     // ========================================================================
-    // 3. Participant View Data (참여자 상세 페이지용 - ParticipantDetail)
+    // 3. Participant View Data
     // ========================================================================
 
-    /**
-     * Case 1: 입금 대기 (Recruit Done -> Deposit Wait)
-     * - 액션: 하단 [입금 완료] 버튼 노출
-     */
-    val participantDetailWaitDeposit = ParticipantDetail(
+    val participantDetailWaitDeposit = ParticipantDetailUiModel(
         recruitId = 1001L,
-        artistInfo = commonArtistInfo,
-        progressInfo = ProgressInfo(
-            guideText = "입금을 진행해주세요.",
-            step = 1,
-        ),
-        depositInfo = ParticipantDepositInfo(
-            items = commonDepositItems,
-            totalAmount = 16800,
-            depositStatus = DepositStatus.DepositWait(
-                accountNumber = "카카오뱅크 3333-01-1234567",
-                dueDate = "2024.12.31 23:59까지",
-            ),
-        ),
-        shippingInfo = commonShippingInfo,
         userState = ParticipantStatusType.RECRUIT_DONE,
-        // [추가된 필드]
-        recruiterName = "포티 총대",
-        recruiterProfileUrl = "https://picsum.photos/id/64/200",
-        recruiterRating = "4.8",
-    )
-
-    /**
-     * Case 2: 입금 확인 중 (Deposit Check)
-     * - 액션: 버튼 없음 (총대 확인 대기)
-     */
-    val participantDetailCheckDeposit = ParticipantDetail(
-        recruitId = 1002L,
-        artistInfo = commonArtistInfo,
-        progressInfo = ProgressInfo(
-            guideText = "총대가 입금을 확인하고 있습니다.",
+        partySummaryInfo = commonPartySummary,
+        progressInfo = ProgressUiModel(
             step = 1,
+            guideText = "입금을 확인하고 있습니다.",
         ),
-        depositInfo = ParticipantDepositInfo(
+        depositInfo = DepositInfoUiModel(
             items = commonDepositItems,
             totalAmount = 16800,
-            depositStatus = DepositStatus.DepositCheck(
-                accountNumber = "카카오뱅크 3333-01-1234567",
-                dueDate = "2024.12.31 23:59까지",
-            ),
+            accountNumber = "카카오뱅크 3333-01-1234567",
+            dueDate = "2024.12.31 23:59까지",
+            stage = ParticipantStateLabelStage.DEPOSIT,
+            status = ParticipantStateLabelStatus.WAIT,
         ),
         shippingInfo = commonShippingInfo,
-        userState = ParticipantStatusType.DEPOSIT_CHECK,
-        // [추가된 필드]
         recruiterName = "포티 총대",
         recruiterProfileUrl = "https://picsum.photos/id/64/200",
         recruiterRating = "4.8",
+        topBarTitleResId = R.string.history_participant_detail_title,
+        actionButtonState = ActionButtonState.Visible(
+            textResId = R.string.history_deposit_done_button,
+            actionType = ParticipantDetailActionType.OPEN_DEPOSIT_INPUT,
+        ),
+        activeModal = ParticipantDetailModalUiModel.None,
+        isTrackingInfoVisible = false,
+        isParticipantStatusVisible = false,
     )
 
-    /**
-     * Case 3: 배송 시작 (Delivery Start)
-     * - 액션: 하단 [수령 완료] 버튼 노출
-     * - 특징: 운송장 번호 존재
-     */
-    val participantDetailDeliveryStart = ParticipantDetail(
-        recruitId = 1003L,
-        artistInfo = commonArtistInfo,
-        progressInfo = ProgressInfo(
-            guideText = "배송이 시작되었습니다.",
-            step = 2,
+    val participantDetailCheckDeposit = ParticipantDetailUiModel(
+        recruitId = 1002L,
+        userState = ParticipantStatusType.DEPOSIT_CHECK,
+        partySummaryInfo = commonPartySummary,
+        progressInfo = ProgressUiModel(
+            step = 1,
+            guideText = "입금을 확인하고 있습니다.",
         ),
-        depositInfo = ParticipantDepositInfo(
+        depositInfo = DepositInfoUiModel(
             items = commonDepositItems,
             totalAmount = 16800,
-            depositStatus = DepositStatus.DepositDone,
+            accountNumber = "카카오뱅크 3333-01-1234567",
+            dueDate = "2024.12.31 23:59까지",
+            stage = ParticipantStateLabelStage.DEPOSIT,
+            status = ParticipantStateLabelStatus.CHECK,
+        ),
+        shippingInfo = commonShippingInfo,
+        recruiterName = "포티 총대",
+        recruiterProfileUrl = "https://picsum.photos/id/64/200",
+        recruiterRating = "4.8",
+        topBarTitleResId = R.string.history_participant_detail_title,
+        actionButtonState = ActionButtonState.Gone,
+        activeModal = ParticipantDetailModalUiModel.None,
+        isTrackingInfoVisible = false,
+        isParticipantStatusVisible = false,
+    )
+
+    val participantDetailDeliveryStart = ParticipantDetailUiModel(
+        recruitId = 1003L,
+        userState = ParticipantStatusType.DELIVERY_START,
+        partySummaryInfo = commonPartySummary.copy(
+            partyStage = ParticipantStateLabelStage.DELIVERY,
+            partyStatus = ParticipantStateLabelStatus.START,
+        ),
+        progressInfo = ProgressUiModel(
+            step = 2,
+            guideText = "배송이 시작되었습니다.",
+        ),
+        depositInfo = DepositInfoUiModel(
+            items = commonDepositItems,
+            totalAmount = 16800,
+            accountNumber = null,
+            dueDate = null,
+            stage = ParticipantStateLabelStage.DEPOSIT,
+            status = ParticipantStateLabelStatus.DONE,
         ),
         shippingInfo = commonShippingInfo.copy(
             trackingNumber = "1234-5678-9012",
         ),
-        userState = ParticipantStatusType.DELIVERY_START,
-        // [추가된 필드]
         recruiterName = "포티 총대",
         recruiterProfileUrl = "https://picsum.photos/id/64/200",
         recruiterRating = "4.8",
+        topBarTitleResId = R.string.history_participant_detail_title,
+        actionButtonState = ActionButtonState.Visible(
+            textResId = R.string.history_delivery_done_button,
+            actionType = ParticipantDetailActionType.OPEN_DELIVERY_CONFIRM,
+        ),
+        activeModal = ParticipantDetailModalUiModel.None,
+        isTrackingInfoVisible = true,
+        isParticipantStatusVisible = true,
     )
 }

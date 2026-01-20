@@ -22,7 +22,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun ParticipantManagementHeader(
     recruitId: Long,
     participantCount: Int,
-    onHeaderClick: (Long) -> Unit,
+    onHeaderClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -42,7 +42,7 @@ fun ParticipantManagementHeader(
             color = PotiTheme.colors.black,
         )
         IconButton(
-            onClick = { onHeaderClick(recruitId) },
+            onClick = { onHeaderClick() },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right_lg),

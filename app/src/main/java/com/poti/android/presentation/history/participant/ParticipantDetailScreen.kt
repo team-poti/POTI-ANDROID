@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poti.android.R
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
@@ -32,38 +31,22 @@ import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.ParticipantDetail
-import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.DummyParticipantManageDetail
 import com.poti.android.presentation.history.component.DepositInfoSection
 import com.poti.android.presentation.history.component.HistoryCalloutInfo
-import com.poti.android.presentation.history.component.HistoryDeliveryConfirmModal
-import com.poti.android.presentation.history.component.HistoryDeliveryReviewModal
-import com.poti.android.presentation.history.component.HistoryDepositBottomSheet
 import com.poti.android.presentation.history.component.HistoryParticipantStateLabel
+import com.poti.android.presentation.history.component.ParticipantDetailDialogs
+import com.poti.android.presentation.history.component.ParticipantDetailModalState
 import com.poti.android.presentation.history.component.ParticipantStateLabelSize
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
+import com.poti.android.presentation.history.component.RecruiterInfoForReview
 import com.poti.android.presentation.history.component.ShippingInfoSection
-import com.poti.android.presentation.history.mapper.toUiState
+import com.poti.android.presentation.history.model.participant.ActionButtonState
+import com.poti.android.presentation.history.model.participant.ParticipantDetailActionType
 import com.poti.android.presentation.history.model.participant.ParticipantDetailUiEffect
 import com.poti.android.presentation.history.model.participant.ParticipantDetailUiIntent
-
-private sealed interface ParticipantDetailModalState {
-    data object None : ParticipantDetailModalState
-
-    data object DepositInput : ParticipantDetailModalState
-
-    data object DeliveryConfirm : ParticipantDetailModalState
-
-    data class DeliveryReview(
-        val recruiterName: String,
-        val recruiterProfileUrl: String,
-        val recruiterRating: String,
-    ) : ParticipantDetailModalState
-}
+import com.poti.android.presentation.history.model.participant.ParticipantDetailUiModel
 
 @Composable
 fun ParticipantDetailRoute(
@@ -110,9 +93,9 @@ fun ParticipantDetailRoute(
 
 @Composable
 private fun ParticipantDetailScreen(
-    detail: ParticipantDetail,
+    detail: ParticipantDetailUiModel,
     onBackClick: () -> Unit,
-    onDetailClick: (Long) -> Unit,
+    onDetailClick: () -> Unit,
     onDepositSubmit: (depositor: String, depositTime: String) -> Unit,
     onDeliveryConfirm: () -> Unit,
     onReviewSubmit: (Int) -> Unit,
@@ -126,11 +109,7 @@ private fun ParticipantDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = if (detail.artistInfo.partyState == ParticipantStatusType.DELIVERY_DONE) {
-                    stringResource(R.string.history_participant_detail_title_done)
-                } else {
-                    stringResource(id = R.string.history_participant_detail_title)
-                },
+                title = stringResource(id = detail.topBarTitleResId),
                 modifier = Modifier.padding(top = 16.dp),
             )
         },
@@ -144,7 +123,7 @@ private fun ParticipantDetailScreen(
             item {
                 PartyInfoSection(
                     recruitId = detail.recruitId,
-                    artistInfo = detail.artistInfo,
+                    artistInfo = detail.partySummaryInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(horizontal = 8.dp),
                 )
@@ -186,22 +165,20 @@ private fun ParticipantDetailScreen(
                     modifier = Modifier.padding(top = 20.dp),
                 )
 
-                val (stage, state) = detail.userState.toUiState()
+                if (detail.isTrackingInfoVisible) {
+                    HistoryCalloutInfo(
+                        text = detail.shippingInfo.trackingNumber ?: "",
+                        copyable = true,
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .padding(horizontal = 16.dp),
+                    )
+                }
 
-                if (stage == ParticipantStateLabelStage.DELIVERY) {
-                    if (state == ParticipantStateLabelStatus.START) {
-                        HistoryCalloutInfo(
-                            text = detail.shippingInfo.trackingNumber ?: "",
-                            copyable = true,
-                            modifier = Modifier
-                                .padding(top = 20.dp)
-                                .padding(horizontal = 16.dp),
-                        )
-                    }
-
+                if (detail.isParticipantStatusVisible) {
                     Spacer(
                         Modifier.height(
-                            if (state == ParticipantStateLabelStatus.START) {
+                            if (detail.isTrackingInfoVisible) {
                                 12.dp
                             } else {
                                 20.dp
@@ -211,8 +188,8 @@ private fun ParticipantDetailScreen(
 
                     HistoryParticipantStateLabel(
                         sizeType = ParticipantStateLabelSize.LARGE,
-                        stageType = stage,
-                        statusType = state,
+                        stageType = detail.userStage,
+                        statusType = detail.userStatus,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(end = 16.dp)
@@ -223,21 +200,15 @@ private fun ParticipantDetailScreen(
                 Spacer(Modifier.height(24.dp))
             }
 
-            if (detail.userState == ParticipantStatusType.RECRUIT_DONE ||
-                detail.userState == ParticipantStatusType.DELIVERY_START
-            ) {
+            if (detail.actionButtonState is ActionButtonState.Visible) {
+                val buttonState = detail.actionButtonState
                 item {
                     PotiActionButton(
-                        text = if (detail.userState == ParticipantStatusType.RECRUIT_DONE) {
-                            stringResource(R.string.history_deposit_done_button)
-                        } else {
-                            stringResource(R.string.history_delivery_done_button)
-                        },
+                        text = stringResource(buttonState.textResId),
                         onClick = {
-                            modalState = when (detail.userState) {
-                                ParticipantStatusType.RECRUIT_DONE -> ParticipantDetailModalState.DepositInput
-                                ParticipantStatusType.DELIVERY_START -> ParticipantDetailModalState.DeliveryConfirm
-                                else -> ParticipantDetailModalState.None
+                            modalState = when (buttonState.actionType) {
+                                ParticipantDetailActionType.OPEN_DEPOSIT_INPUT -> ParticipantDetailModalState.DepositInput
+                                ParticipantDetailActionType.OPEN_DELIVERY_CONFIRM -> ParticipantDetailModalState.DeliveryConfirm
                             }
                         },
                         type = ActionButtonType.SECONDARY_MAIN,
@@ -245,61 +216,38 @@ private fun ParticipantDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
+                            .padding(top = 49.dp)
                             .padding(bottom = 14.dp),
                     )
                 }
             }
         }
     }
-    when (modalState) {
-        ParticipantDetailModalState.None -> Unit
 
-        ParticipantDetailModalState.DepositInput -> {
-            HistoryDepositBottomSheet(
-                onDismissRequest = { modalState = ParticipantDetailModalState.None },
-                onConfirmClick = { depositor, time ->
-                    modalState = ParticipantDetailModalState.None
-                    onDepositSubmit(depositor, time)
-                },
+    ParticipantDetailDialogs(
+        modalState = modalState,
+        recruiterInfo = RecruiterInfoForReview(
+            name = detail.recruiterName,
+            profileUrl = detail.recruiterProfileUrl,
+            rating = detail.recruiterRating,
+        ),
+        onDismiss = { modalState = ParticipantDetailModalState.None },
+        onDepositSubmit = onDepositSubmit,
+        onDeliveryConfirm = onDeliveryConfirm,
+        onNavigateToReview = {
+            modalState = ParticipantDetailModalState.DeliveryReview(
+                recruiterName = detail.recruiterName,
+                recruiterProfileUrl = detail.recruiterProfileUrl,
+                recruiterRating = detail.recruiterRating,
             )
-        }
-
-        ParticipantDetailModalState.DeliveryConfirm -> {
-            HistoryDeliveryConfirmModal(
-                onConfirm = {
-                    modalState = ParticipantDetailModalState.DeliveryReview(
-                        recruiterName = detail.recruiterName,
-                        recruiterProfileUrl = detail.recruiterProfileUrl,
-                        recruiterRating = detail.recruiterRating,
-                    )
-                    onDeliveryConfirm()
-                },
-                onDismiss = { modalState = ParticipantDetailModalState.None },
-            )
-        }
-
-        is ParticipantDetailModalState.DeliveryReview -> {
-            val deliveryReview = (modalState as ParticipantDetailModalState.DeliveryReview)
-            HistoryDeliveryReviewModal(
-                partnerNickname = deliveryReview.recruiterName,
-                partnerProfileUrl = deliveryReview.recruiterProfileUrl,
-                partnerRating = deliveryReview.recruiterRating,
-                onConfirm = { rating ->
-                    modalState = ParticipantDetailModalState.None
-                    onReviewSubmit(rating)
-                },
-                onSkip = {
-                    modalState = ParticipantDetailModalState.None
-                    onReviewSkip()
-                },
-                onDismissRequest = { modalState = ParticipantDetailModalState.None },
-            )
-        }
-    }
+        },
+        onReviewSubmit = onReviewSubmit,
+        onReviewSkip = onReviewSkip,
+    )
 }
 
-class ParticipantDetailPreviewProvider : PreviewParameterProvider<ParticipantDetail> {
-    override val values: Sequence<ParticipantDetail> = sequenceOf(
+class ParticipantDetailPreviewProvider : PreviewParameterProvider<ParticipantDetailUiModel> {
+    override val values: Sequence<ParticipantDetailUiModel> = sequenceOf(
         DummyParticipantManageDetail.participantDetailWaitDeposit,
         DummyParticipantManageDetail.participantDetailCheckDeposit,
         DummyParticipantManageDetail.participantDetailDeliveryStart,
@@ -309,7 +257,7 @@ class ParticipantDetailPreviewProvider : PreviewParameterProvider<ParticipantDet
 @Preview(showBackground = true)
 @Composable
 private fun ParticipantDetailScreenPreview(
-    @PreviewParameter(ParticipantDetailPreviewProvider::class) detail: ParticipantDetail,
+    @PreviewParameter(ParticipantDetailPreviewProvider::class) detail: ParticipantDetailUiModel,
 ) {
     PotiTheme {
         ParticipantDetailScreen(

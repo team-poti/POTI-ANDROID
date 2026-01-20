@@ -35,13 +35,6 @@
     <!-- Party -->
     <string name="party_recruit_deadline">모집 기한</string>
 
-    <!-- Exploration -->
-    <string name="goods_card_party_count">팟 %1$d개</string>
-    <string name="pots_card_closed">마감</string>
-    <string name="pots_card_current_count">%1$d</string>
-    <string name="pots_card_total_count">/%1$d</string>
-    <string name="pots_card_per_person">/ 인</string>
-
     <!-- PartyDetail -->
     <string name="party_detail_title">%s의 팟</string>
     <string name="party_detail_price">%s원~</string>
@@ -132,16 +125,23 @@
     <string name="history_deposit_bottomsheet_depositor_label">입금자명</string>
     <string name="history_deposit_bottomsheet_deposit_time_placeholder">YY-MM-DD TT:MM</string>
     <string name="history_deposit_bottomsheet_deposit_time_label">입금 시간</string>
-    <string name="history_deivery_confirm_modal_title">잠깐! 정말 상품을 수령했나요?</string>
-    <string name="history_deivery_confirm_modal_text">거래가 종료되면 되돌릴 수 없어요</string>
-    <string name="history_deivery_confirm_modal_dismiss">이전</string>
-    <string name="history_deivery_confirm_modal_confirm">배송 완료</string>
-    <string name="history_deivery_review_modal_title">거래는 어땠나요?</string>
-    <string name="history_deivery_review_modal_text">별점으로 간단히 평가해주세요</string>
-    <string name="history_deivery_review_modal_button">완료</string>
-    <string name="history_deivery_review_modal_sub_button">건너뛰기</string>
+    <string name="history_delivery_confirm_modal_title">잠깐! 정말 상품을 수령했나요?</string>
+    <string name="history_delivery_confirm_modal_text">거래가 종료되면 되돌릴 수 없어요</string>
+    <string name="history_delivery_confirm_modal_dismiss">이전</string>
+    <string name="history_delivery_confirm_modal_confirm">배송 완료</string>
+    <string name="history_delivery_review_modal_title">거래는 어땠나요?</string>
+    <string name="history_delivery_review_modal_text">별점으로 간단히 평가해주세요</string>
+    <string name="history_delivery_review_modal_button">완료</string>
+    <string name="history_delivery_review_modal_sub_button">건너뛰기</string>
     <string name="history_ongoing_title_done">종료된 분철</string>
     <string name="history_participant_detail_title_done">종료된 분철</string>
+
+    <!-- Exploration Component -->
+    <string name="goods_card_party_count">팟 %1$d개</string>
+    <string name="pots_card_closed">마감</string>
+    <string name="pots_card_current_count">%1$d</string>
+    <string name="pots_card_total_count">/%1$d</string>
+    <string name="pots_card_per_person">/ 인</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

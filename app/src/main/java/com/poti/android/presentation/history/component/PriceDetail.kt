@@ -9,20 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
+import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.DepositItem
-import com.poti.android.presentation.history.mapper.toUiState
+import com.poti.android.presentation.history.model.participant.DepositItemUiModel
 
 @Composable
 fun PriceDetail(
-    items: List<DepositItem>,
+    items: List<DepositItemUiModel>,
     totalAmount: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -31,9 +32,8 @@ fun PriceDetail(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items.forEach { item ->
-            val optionType = item.toUiState()
             PotiListOptionPrice(
-                itemOptionType = optionType,
+                itemOptionType = item.type,
                 itemOptionText = item.name,
                 priceText = stringResource(
                     R.string.history_participant_detail_won_unit_format,
@@ -65,5 +65,27 @@ fun PriceDetail(
                 color = PotiTheme.colors.black,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PriceDetailPreview() {
+    PotiTheme {
+        PriceDetail(
+            items = listOf(
+                DepositItemUiModel(
+                    name = "해린 포토카드",
+                    price = 15000,
+                    type = PotiItemOptionType.MEMBER,
+                ),
+                DepositItemUiModel(
+                    name = "GS25 반값택배",
+                    price = 1800,
+                    type = PotiItemOptionType.DELIVERY,
+                ),
+            ),
+            totalAmount = 16800,
+        )
     }
 }

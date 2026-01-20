@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.ProgressInfo
+import com.poti.android.presentation.history.model.ProgressUiModel
 
 @Composable
 fun ProgressStatusSection(
-    progressInfo: ProgressInfo,
+    progressInfo: ProgressUiModel,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -72,7 +72,7 @@ fun getStepIndicatorDrawable(step: Int): Int {
 private fun ProgressStatusSectionStep0Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressInfo(
+            progressInfo = ProgressUiModel(
                 guideText = "모집이 시작되었습니다.",
                 step = 0,
             ),
@@ -85,7 +85,7 @@ private fun ProgressStatusSectionStep0Preview() {
 private fun ProgressStatusSectionStep1Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressInfo(
+            progressInfo = ProgressUiModel(
                 guideText = "입금을 확인하고 있습니다.",
                 step = 1,
             ),
@@ -98,7 +98,7 @@ private fun ProgressStatusSectionStep1Preview() {
 private fun ProgressStatusSectionStep2Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressInfo(
+            progressInfo = ProgressUiModel(
                 guideText = "배송이 시작되었습니다.",
                 step = 2,
             ),
@@ -111,7 +111,7 @@ private fun ProgressStatusSectionStep2Preview() {
 private fun ProgressStatusSectionStep4Preview() {
     PotiTheme {
         ProgressStatusSection(
-            progressInfo = ProgressInfo(
+            progressInfo = ProgressUiModel(
                 guideText = "거래가 완료되었습니다.",
                 step = 4,
             ),

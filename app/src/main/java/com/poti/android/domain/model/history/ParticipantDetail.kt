@@ -5,7 +5,7 @@ import com.poti.android.domain.type.ParticipantStatusType
 data class ParticipantDetail(
     val recruitId: Long,
     val userState: ParticipantStatusType,
-    val artistInfo: ArtistInfo,
+    val partySummary: PartySummary,
     val progressInfo: ProgressInfo,
     val depositInfo: ParticipantDepositInfo,
     val shippingInfo: ParticipantShippingInfo,

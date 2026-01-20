@@ -4,7 +4,7 @@ import com.poti.android.domain.type.ParticipantStatusType
 
 data class RecruiterDetail(
     val recruitId: Long,
-    val artistInfo: ArtistInfo,
+    val partySummary: PartySummary,
     val progressInfo: ProgressInfo,
     val participantInfoList: List<ParticipantInfo>,
     val participantCount: Int = participantInfoList.size,
