@@ -54,8 +54,8 @@ fun ParticipantDetailDialogs(
 
         is ParticipantDetailModalState.DeliveryReview -> {
             HistoryDeliveryReviewModal(
-                partnerNickname = recruiterInfo.name,
-                partnerProfileUrl = recruiterInfo.profileUrl,
+                recruiterName = recruiterInfo.name,
+                recruiterProfileUrl = recruiterInfo.profileUrl,
                 partnerRating = recruiterInfo.rating,
                 onConfirm = { rating ->
                     onDismiss()

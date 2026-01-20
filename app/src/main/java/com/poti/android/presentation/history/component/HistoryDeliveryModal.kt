@@ -47,8 +47,8 @@ fun HistoryDeliveryConfirmModal(
 
 @Composable
 fun HistoryDeliveryReviewModal(
-    partnerNickname: String,
-    partnerProfileUrl: String?,
+    recruiterName: String,
+    recruiterProfileUrl: String?,
     partnerRating: String,
     onConfirm: (Int) -> Unit,
     onSkip: () -> Unit,
@@ -77,8 +77,8 @@ fun HistoryDeliveryReviewModal(
                 .padding(10.dp),
         ) {
             PotiProfileSummary(
-                profileImageUrl = partnerProfileUrl,
-                nickname = partnerNickname,
+                profileImageUrl = recruiterProfileUrl,
+                nickname = recruiterName,
                 sizeType = PotiProfileSummarySize.SMALL,
                 rating = partnerRating,
             )
@@ -123,8 +123,8 @@ private fun HistoryDeliveryConfirmModalPreview() {
 private fun HistoryDeliveryReviewModalPreview() {
     PotiTheme {
         HistoryDeliveryReviewModal(
-            partnerNickname = "닉네임",
-            partnerProfileUrl = null,
+            recruiterName = "닉네임",
+            recruiterProfileUrl = null,
             partnerRating = "4.8",
             onConfirm = {},
             onSkip = {},

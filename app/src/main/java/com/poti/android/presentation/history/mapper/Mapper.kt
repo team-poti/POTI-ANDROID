@@ -123,6 +123,7 @@ fun PartySummary.toUiModel(): PartySummaryUiModel {
     )
 }
 
+// TODO: [천민재] API 에 맞춰서 수정예정
 fun ProgressInfo.toUiModel(): ProgressUiModel {
     val guideText = when (step) {
         0 -> "모집이 시작되었습니다."

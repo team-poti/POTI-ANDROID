@@ -35,10 +35,8 @@ fun ShippingInfoSection(
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = "${info.recipient}\n(${info.zipcode}) ${info.address}${info.phone}",
+                text = "${info.recipient}\n(${info.zipcode}) ${info.address}\n${info.phone}",
                 style = PotiTheme.typography.body14m,
-                color = PotiTheme.colors.black,
-                lineHeight = PotiTheme.typography.body14m.fontSize * 1.5,
             )
 
             PotiItemOption(
