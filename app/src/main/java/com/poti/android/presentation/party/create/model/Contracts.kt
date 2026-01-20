@@ -13,6 +13,7 @@ import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 
 enum class MemberSettingStatus {
     DEFAULT,
@@ -24,10 +25,11 @@ enum class MemberSettingStatus {
 enum class FieldError(
     @get:StringRes val message: Int,
 ) {
-    IMAGE_ERROR(R.string.create_error_need_image),
-    ARTIST_ERROR(R.string.create_error_need_artist),
-    PRODUCT_ERROR(R.string.create_error_need_product),
-    DEADLINE_ERROR(R.string.create_error_need_deadline),
+    IMAGE_EMPTY_ERROR(R.string.create_error_need_image),
+    ARTIST_EMPTY_ERROR(R.string.create_error_need_artist),
+    PRODUCT_EMPTY_ERROR(R.string.create_error_need_product),
+    DEADLINE_EMPTY_ERROR(R.string.create_error_need_deadline),
+    DEADLINE_PAST_ERROR(R.string.create_error_past_deadline),
     DESCRIPTION_ERROR(R.string.create_error_need_description),
     ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
     BANK_ERROR(R.string.create_error_need_bank),
@@ -43,8 +45,10 @@ data class CreateUiState(
     val accountNumber: String = "",
     val bank: String = "",
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.DEFAULT,
-    val memberOptions: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
+    val memberOptionsState: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
+    val editableMemberOptions: ImmutableList<MemberPriceOption> = persistentListOf(),
     val selectedMemberIds: Set<Long> = setOf(),
+    val sheetDisplayMemberIndices: Set<Int> = setOf(),
     val deliveryOptions: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
     val selectedDeliveryIds: Set<Long> = setOf(),
     val imageError: FieldError? = null,
@@ -55,9 +59,14 @@ data class CreateUiState(
     val accountNumberError: FieldError? = null,
     val bankError: FieldError? = null,
     val artistSearchKeyword: String = "",
-    val artistSearchResults: ApiState<ImmutableList<Artist>> = ApiState.Init,
+    val artistSearchResultsState: ApiState<ImmutableList<Artist>> = ApiState.Init,
+    val isSheetTouched: Boolean = false,
+    val createPartyState: ApiState<Unit> = ApiState.Init,
 ) : UiState {
-    val selectedMembersOption = memberOptions.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
+    val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
+    val editOptionDisplayMembers = editableMemberOptions.filter { option -> option.memberId in selectedMemberIds }.toPersistentList()
+    val isArtistSearchResultsEmpty = artistSearchKeyword.isNotEmpty() && (artistSearchResultsState.getSuccessDataOrNull()?.isEmpty() ?: true)
+    val isArtistSelectDoneBtnEnabled = selectedArtist != null
 }
 
 sealed interface CreateUiIntent : UiIntent {
@@ -66,6 +75,8 @@ sealed interface CreateUiIntent : UiIntent {
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 
     data object OnSearchClick : CreateUiIntent
+
+    data class OnArtistSearchKeywordChange(val value: String) : CreateUiIntent
 
     data class OnArtistSelect(val artist: Artist) : CreateUiIntent
 
@@ -83,9 +94,13 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object OnMemberEditClick : CreateUiIntent
 
-    data class OnMembersSelect(val members: List<MemberPriceOption>) : CreateUiIntent
+    data class OnMemberSelect(val index: Int) : CreateUiIntent
 
-    data class OnPriceChange(val member: MemberPriceOption) : CreateUiIntent
+    data object OnAllMemberSelect : CreateUiIntent
+
+    data object OnMemberSelectDone : CreateUiIntent
+
+    data class OnMemberPriceChange(val option: MemberPriceOption) : CreateUiIntent
 
     data class OnDeliverySelect(val deliveryId: Long) : CreateUiIntent
 
@@ -96,4 +111,6 @@ sealed interface CreateUiEffect : UiEffect {
     data object NavigateToBack : CreateUiEffect
 
     data object NavigateToSearch : CreateUiEffect
+
+    data object ShowBottomSheet : CreateUiEffect
 }
