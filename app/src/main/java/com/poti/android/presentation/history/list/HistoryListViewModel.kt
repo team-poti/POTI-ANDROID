@@ -23,24 +23,8 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
     override fun processIntent(intent: HistoryListUiIntent) {
         when (intent) {
             HistoryListUiIntent.OnBackClick -> sendEffect(HistoryListUiEffect.NavigateBack)
-            HistoryListUiIntent.OnSwitchModeClick -> {
-                val newMode = if (uiState.value.mode == HistoryMode.RECRUIT) {
-                    HistoryMode.PARTICIPATION
-                } else {
-                    HistoryMode.RECRUIT
-                }
-                updateState {
-                    copy(
-                        mode = newMode,
-                        selectedTab = PotiHeaderTabType.ONGOING,
-                    )
-                }
-                loadUserHistoryList()
-            }
-            is HistoryListUiIntent.OnTabSelected -> {
-                updateState { copy(selectedTab = intent.tab) }
-                loadUserHistoryList()
-            }
+            HistoryListUiIntent.OnSwitchModeClick -> switchMode()
+            is HistoryListUiIntent.OnTabSelected -> selectTab(intent.tab)
             is HistoryListUiIntent.OnCardClick -> {
                 sendEffect(HistoryListUiEffect.NavigateToDetail(intent.id))
             }
@@ -48,6 +32,28 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
     }
 
     init {
+        loadUserHistoryList()
+    }
+
+    private fun switchMode() {
+        val newMode = if (uiState.value.mode == HistoryMode.RECRUIT) {
+            HistoryMode.PARTICIPATION
+        } else {
+            HistoryMode.RECRUIT
+        }
+
+        updateState {
+            copy(
+                mode = newMode,
+                selectedTab = PotiHeaderTabType.ONGOING, // 초기 탭 재설정
+            )
+        }
+
+        loadUserHistoryList()
+    }
+
+    private fun selectTab(tab: PotiHeaderTabType) {
+        updateState { copy(selectedTab = tab) }
         loadUserHistoryList()
     }
 
