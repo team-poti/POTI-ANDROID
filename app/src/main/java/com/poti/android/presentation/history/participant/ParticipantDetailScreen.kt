@@ -34,10 +34,10 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.history.DummyParticipantManageDetail
 import com.poti.android.presentation.history.component.DepositInfoSection
 import com.poti.android.presentation.history.component.HistoryCalloutInfo
-import com.poti.android.presentation.history.component.HistoryParticipantStateLabel
+import com.poti.android.presentation.history.component.HistoryStateLabel
 import com.poti.android.presentation.history.component.ParticipantDetailDialogs
 import com.poti.android.presentation.history.component.ParticipantDetailModalState
-import com.poti.android.presentation.history.component.ParticipantStateLabelSize
+import com.poti.android.presentation.history.component.StateLabelSize
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.component.RecruiterInfoForReview
@@ -123,7 +123,7 @@ private fun ParticipantDetailScreen(
             item {
                 PartyInfoSection(
                     recruitId = detail.recruitId,
-                    artistInfo = detail.partySummaryInfo,
+                    partyInfo = detail.partySummaryInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(horizontal = 8.dp),
                 )
@@ -186,8 +186,8 @@ private fun ParticipantDetailScreen(
                         ),
                     )
 
-                    HistoryParticipantStateLabel(
-                        sizeType = ParticipantStateLabelSize.LARGE,
+                    HistoryStateLabel(
+                        sizeType = StateLabelSize.LARGE,
                         stageType = detail.userStage,
                         statusType = detail.userStatus,
                         modifier = Modifier
@@ -248,6 +248,7 @@ private fun ParticipantDetailScreen(
 
 class ParticipantDetailPreviewProvider : PreviewParameterProvider<ParticipantDetailUiModel> {
     override val values: Sequence<ParticipantDetailUiModel> = sequenceOf(
+        DummyParticipantManageDetail.participantDetailIngRecruit,
         DummyParticipantManageDetail.participantDetailWaitDeposit,
         DummyParticipantManageDetail.participantDetailCheckDeposit,
         DummyParticipantManageDetail.participantDetailDeliveryStart,

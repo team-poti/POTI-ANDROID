@@ -49,8 +49,8 @@ fun DepositInfoSection(
                 modifier = Modifier.padding(bottom = 28.dp),
             )
 
-            HistoryParticipantStateLabel(
-                sizeType = ParticipantStateLabelSize.LARGE,
+            HistoryStateLabel(
+                sizeType = StateLabelSize.LARGE,
                 stageType = info.stage,
                 statusType = info.status,
                 modifier = Modifier.align(Alignment.End),
@@ -80,8 +80,8 @@ private fun DepositInfoSectionPreview() {
                 totalAmount = 16800,
                 accountNumber = "카카오뱅크 3333-01-1234567",
                 dueDate = "2024.12.31 23:59까지",
-                stage = ParticipantStateLabelStage.DEPOSIT,
-                status = ParticipantStateLabelStatus.WAIT,
+                stage = StateLabelStage.DEPOSIT,
+                status = StateLabelStatus.WAIT,
             ),
         )
     }

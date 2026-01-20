@@ -1,7 +1,7 @@
 package com.poti.android.domain.type
 
 enum class ParticipantStatusType {
-    RECRUIT_WAIT,
+    RECRUIT_ING,
     RECRUIT_DONE,
 
     DEPOSIT_WAIT,

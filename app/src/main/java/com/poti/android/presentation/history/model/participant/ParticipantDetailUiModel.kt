@@ -3,8 +3,8 @@ package com.poti.android.presentation.history.model.participant
 import androidx.annotation.StringRes
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.presentation.history.component.StateLabelStage
+import com.poti.android.presentation.history.component.StateLabelStatus
 import com.poti.android.presentation.history.model.PartySummaryUiModel
 import com.poti.android.presentation.history.model.ProgressUiModel
 
@@ -24,25 +24,25 @@ data class ParticipantDetailUiModel(
     val isTrackingInfoVisible: Boolean,
     val isParticipantStatusVisible: Boolean,
 ) {
-    val userStage: ParticipantStateLabelStage = when (userState) {
-        ParticipantStatusType.RECRUIT_WAIT -> ParticipantStateLabelStage.RECRUIT
-        ParticipantStatusType.RECRUIT_DONE -> ParticipantStateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_WAIT -> ParticipantStateLabelStage.RECRUIT
-        ParticipantStatusType.DEPOSIT_CHECK -> ParticipantStateLabelStage.DEPOSIT
-        ParticipantStatusType.DEPOSIT_DONE -> ParticipantStateLabelStage.DEPOSIT
-        ParticipantStatusType.DELIVERY_WAIT -> ParticipantStateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_START -> ParticipantStateLabelStage.DELIVERY
-        ParticipantStatusType.DELIVERY_DONE -> ParticipantStateLabelStage.DELIVERY
+    val userStage: StateLabelStage = when (userState) {
+        ParticipantStatusType.RECRUIT_ING -> StateLabelStage.RECRUIT
+        ParticipantStatusType.RECRUIT_DONE -> StateLabelStage.RECRUIT
+        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStage.RECRUIT
+        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStage.DEPOSIT
+        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStage.DEPOSIT
+        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStage.DELIVERY
+        ParticipantStatusType.DELIVERY_START -> StateLabelStage.DELIVERY
+        ParticipantStatusType.DELIVERY_DONE -> StateLabelStage.DELIVERY
     }
-    val userStatus: ParticipantStateLabelStatus = when (userState) {
-        ParticipantStatusType.RECRUIT_WAIT -> ParticipantStateLabelStatus.WAIT
-        ParticipantStatusType.RECRUIT_DONE -> ParticipantStateLabelStatus.DONE
-        ParticipantStatusType.DEPOSIT_WAIT -> ParticipantStateLabelStatus.WAIT
-        ParticipantStatusType.DEPOSIT_CHECK -> ParticipantStateLabelStatus.CHECK
-        ParticipantStatusType.DEPOSIT_DONE -> ParticipantStateLabelStatus.DONE
-        ParticipantStatusType.DELIVERY_WAIT -> ParticipantStateLabelStatus.WAIT
-        ParticipantStatusType.DELIVERY_START -> ParticipantStateLabelStatus.START
-        ParticipantStatusType.DELIVERY_DONE -> ParticipantStateLabelStatus.DONE
+    val userStatus: StateLabelStatus = when (userState) {
+        ParticipantStatusType.RECRUIT_ING -> StateLabelStatus.ING
+        ParticipantStatusType.RECRUIT_DONE -> StateLabelStatus.DONE
+        ParticipantStatusType.DEPOSIT_WAIT -> StateLabelStatus.WAIT
+        ParticipantStatusType.DEPOSIT_CHECK -> StateLabelStatus.CHECK
+        ParticipantStatusType.DEPOSIT_DONE -> StateLabelStatus.DONE
+        ParticipantStatusType.DELIVERY_WAIT -> StateLabelStatus.WAIT
+        ParticipantStatusType.DELIVERY_START -> StateLabelStatus.START
+        ParticipantStatusType.DELIVERY_DONE -> StateLabelStatus.DONE
     }
 }
 
@@ -79,8 +79,8 @@ data class DepositInfoUiModel(
     val totalAmount: Int,
     val accountNumber: String?,
     val dueDate: String?,
-    val stage: ParticipantStateLabelStage,
-    val status: ParticipantStateLabelStatus,
+    val stage: StateLabelStage,
+    val status: StateLabelStatus,
 )
 
 data class DepositItemUiModel(

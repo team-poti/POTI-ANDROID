@@ -3,8 +3,8 @@ package com.poti.android.presentation.history
 import com.poti.android.R
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.presentation.history.component.StateLabelStage
+import com.poti.android.presentation.history.component.StateLabelStatus
 import com.poti.android.presentation.history.model.PartySummaryUiModel
 import com.poti.android.presentation.history.model.ProgressUiModel
 import com.poti.android.presentation.history.model.participant.ActionButtonState
@@ -26,8 +26,8 @@ object DummyParticipantManageDetail {
         artist = "NewJeans",
         title = "How Sweet 위버스 특전 분철",
         imageUrl = "https://picsum.photos/200",
-        partyStage = ParticipantStateLabelStage.RECRUIT,
-        partyStatus = ParticipantStateLabelStatus.DONE,
+        partyStage = StateLabelStage.RECRUIT,
+        partyStatus = StateLabelStatus.DONE,
     )
 
     private val commonDepositItems = listOf(
@@ -54,8 +54,8 @@ object DummyParticipantManageDetail {
             imageUrl = "",
             artist = "IVE(아이브)",
             title = "I've IVE 위드뮤 분철",
-            partyStage = ParticipantStateLabelStage.RECRUIT,
-            partyStatus = ParticipantStateLabelStatus.WAIT,
+            partyStage = StateLabelStage.RECRUIT,
+            partyStatus = StateLabelStatus.WAIT,
         ),
         progressInfo = ProgressUiModel(
             step = 0,
@@ -81,8 +81,8 @@ object DummyParticipantManageDetail {
             imageUrl = "",
             artist = "aespa(에스파)",
             title = "Armageddon 미공포 분철",
-            partyStage = ParticipantStateLabelStage.DEPOSIT,
-            partyStatus = ParticipantStateLabelStatus.WAIT,
+            partyStage = StateLabelStage.DEPOSIT,
+            partyStatus = StateLabelStatus.WAIT,
         ),
         progressInfo = ProgressUiModel(
             step = 1,
@@ -124,8 +124,8 @@ object DummyParticipantManageDetail {
             imageUrl = "",
             artist = "NewJeans",
             title = "How Sweet 위버스 특전",
-            partyStage = ParticipantStateLabelStage.DELIVERY,
-            partyStatus = ParticipantStateLabelStatus.DONE,
+            partyStage = StateLabelStage.DELIVERY,
+            partyStatus = StateLabelStatus.DONE,
         ),
         progressInfo = ProgressUiModel(
             step = 2,
@@ -156,10 +156,41 @@ object DummyParticipantManageDetail {
     // ========================================================================
     // 3. Participant View Data
     // ========================================================================
+    val participantDetailIngRecruit = ParticipantDetailUiModel(
+        recruitId = 1001L,
+        userState = ParticipantStatusType.RECRUIT_DONE,
+        partySummaryInfo = commonPartySummary.copy(
+            partyStatus = StateLabelStatus.ING,
+        ),
+        progressInfo = ProgressUiModel(
+            step = 1,
+            guideText = "다른 참여자들을 기다리고 있어요",
+        ),
+        depositInfo = DepositInfoUiModel(
+            items = commonDepositItems,
+            totalAmount = 16800,
+            accountNumber = "카카오뱅크 3333-01-1234567",
+            dueDate = "2024.12.31 23:59까지",
+            stage = StateLabelStage.DEPOSIT,
+            status = StateLabelStatus.WAIT,
+        ),
+        shippingInfo = commonShippingInfo,
+        recruiterName = "포티 총대",
+        recruiterProfileUrl = "https://picsum.photos/id/64/200",
+        recruiterRating = "4.8",
+        topBarTitleResId = R.string.history_participant_detail_title,
+        actionButtonState = ActionButtonState.Visible(
+            textResId = R.string.history_deposit_done_button,
+            actionType = ParticipantDetailActionType.OPEN_DEPOSIT_INPUT,
+        ),
+        activeModal = ParticipantDetailModalUiModel.None,
+        isTrackingInfoVisible = false,
+        isParticipantStatusVisible = false,
+    )
 
     val participantDetailWaitDeposit = ParticipantDetailUiModel(
         recruitId = 1001L,
-        userState = ParticipantStatusType.RECRUIT_DONE,
+        userState = ParticipantStatusType.DEPOSIT_WAIT,
         partySummaryInfo = commonPartySummary,
         progressInfo = ProgressUiModel(
             step = 1,
@@ -170,8 +201,8 @@ object DummyParticipantManageDetail {
             totalAmount = 16800,
             accountNumber = "카카오뱅크 3333-01-1234567",
             dueDate = "2024.12.31 23:59까지",
-            stage = ParticipantStateLabelStage.DEPOSIT,
-            status = ParticipantStateLabelStatus.WAIT,
+            stage = StateLabelStage.DEPOSIT,
+            status = StateLabelStatus.WAIT,
         ),
         shippingInfo = commonShippingInfo,
         recruiterName = "포티 총대",
@@ -200,8 +231,8 @@ object DummyParticipantManageDetail {
             totalAmount = 16800,
             accountNumber = "카카오뱅크 3333-01-1234567",
             dueDate = "2024.12.31 23:59까지",
-            stage = ParticipantStateLabelStage.DEPOSIT,
-            status = ParticipantStateLabelStatus.CHECK,
+            stage = StateLabelStage.DEPOSIT,
+            status = StateLabelStatus.CHECK,
         ),
         shippingInfo = commonShippingInfo,
         recruiterName = "포티 총대",
@@ -218,8 +249,8 @@ object DummyParticipantManageDetail {
         recruitId = 1003L,
         userState = ParticipantStatusType.DELIVERY_START,
         partySummaryInfo = commonPartySummary.copy(
-            partyStage = ParticipantStateLabelStage.DELIVERY,
-            partyStatus = ParticipantStateLabelStatus.START,
+            partyStage = StateLabelStage.DELIVERY,
+            partyStatus = StateLabelStatus.START,
         ),
         progressInfo = ProgressUiModel(
             step = 2,
@@ -230,8 +261,8 @@ object DummyParticipantManageDetail {
             totalAmount = 16800,
             accountNumber = null,
             dueDate = null,
-            stage = ParticipantStateLabelStage.DEPOSIT,
-            status = ParticipantStateLabelStatus.DONE,
+            stage = StateLabelStage.DEPOSIT,
+            status = StateLabelStatus.DONE,
         ),
         shippingInfo = commonShippingInfo.copy(
             trackingNumber = "1234-5678-9012",

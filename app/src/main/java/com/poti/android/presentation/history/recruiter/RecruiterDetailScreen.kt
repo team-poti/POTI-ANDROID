@@ -93,7 +93,7 @@ private fun RecruiterDetailScreen(
             item {
                 PartyInfoSection(
                     recruitId = detail.recruitId,
-                    artistInfo = detail.artistInfo,
+                    partyInfo = detail.artistInfo,
                     onDetailClick = onDetailClick,
                     modifier = Modifier.padding(
                         horizontal = screenWidthDp(8.dp),

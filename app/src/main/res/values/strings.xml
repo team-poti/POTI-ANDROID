@@ -40,6 +40,7 @@
     <string name="history_participant_stage_deposit">입금</string>
     <string name="history_participant_stage_delivery">배송</string>
     <string name="history_participant_stage_recruit">모집</string>
+    <string name="history_participant_stage_ing">중</string>
     <string name="history_participant_stage_wait">대기</string>
     <string name="history_participant_stage_check">확인 중</string>
     <string name="history_participant_stage_start">시작</string>
