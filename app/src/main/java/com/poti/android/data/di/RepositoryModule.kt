@@ -39,7 +39,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindPostRepository(partyRepositoryImpl: PartyRepositoryImpl): PartyRepository
+    abstract fun bindPartyRepository(partyRepositoryImpl: PartyRepositoryImpl): PartyRepository
 
     @Binds
     @Singleton

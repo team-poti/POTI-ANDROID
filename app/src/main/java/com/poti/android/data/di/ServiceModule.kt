@@ -28,7 +28,7 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun providesPostService(retrofit: Retrofit): PartyService =
+    fun providesPartyService(retrofit: Retrofit): PartyService =
         retrofit.create(PartyService::class.java)
 
     @Provides
