@@ -43,6 +43,8 @@ import kotlinx.coroutines.launch
  * @param sheetState 바텀시트 상태로 expanded 상태 등을 조정하고 싶을 때 사용합니다.
  * @param subText Sub 버튼 텍스트입니다. lg 스타일일 때 사용합니다.
  * @param onSubClick Sub 버튼 콜백입니다. lg 스타일일 때 사용합니다.
+ * @param enabled Main 버튼 활성 여부입니다.
+ * @param subEnabled Sub 버튼 활성 여부입니다.
  * @param shouldDismissOnBackPress 시스템 뒤로가기 시 바텀시트가 닫히는지 여부입니다. 기본값 true로, 닫히도록 설정되어 있습니다.
  * @param content
  *
@@ -60,6 +62,8 @@ fun PotiBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    subEnabled: Boolean = true,
     shouldDismissOnBackPress: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -117,6 +121,8 @@ fun PotiBottomSheet(
                     }
                 }
             },
+            enabled = enabled,
+            subEnabled = subEnabled,
         )
     }
 }
@@ -129,6 +135,8 @@ private fun BottomSheetButton(
     enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    subEnabled: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -142,6 +150,7 @@ private fun BottomSheetButton(
                 text = subText,
                 onClick = onSubClick,
                 type = ActionButtonType.SECONDARY_SUB,
+                enabled = subEnabled,
                 modifier = Modifier.weight(119f),
             )
         }
@@ -150,6 +159,7 @@ private fun BottomSheetButton(
             text = text,
             onClick = onClick,
             type = ActionButtonType.SECONDARY_MAIN,
+            enabled = enabled,
             modifier = Modifier.weight(216f),
             enabled = enabled,
         )

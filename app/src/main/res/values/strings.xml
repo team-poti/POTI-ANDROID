@@ -88,7 +88,35 @@
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>
     <string name="create_msg_hint">모집자 본인이 보유할 멤버는 꼭 제외해주세요!</string>
-
+    <string name="create_title_member_setting">멤버 설정</string>
+    <string name="create_msg_need_member">멤버를 1명 이상 추가해주세요</string>
+    <string name="create_msg_need_price">모든 멤버에 가격을 설정해주세요</string>
+    <string name="create_placeholder_need_artist">아티스트를 먼저 선택해주세요</string>
+    <string name="create_placeholder_need_member">선택한 멤버가 없어요</string>
+    <string name="create_btn_member_edit">멤버 편집</string>
+    <string name="create_notice">판매자한테 안내해야 되는 내용...\n어쩌꾸 저쩌꾸\n어ㅓ어아어ㅏㅓㅏㅏㅏㅇ\n우우우우우</string>
+    <string name="create_placeholder_product">상품 종류를 입력해주세요</string>
+    <string name="create_label_product">상품 종류</string>
+    <string name="create_label_delivery">배송 설정</string>
+    <string name="create_label_product_info">상품 정보</string>
+    <string name="create_placeholder_artist">아티스트 찾기</string>
+    <string name="create_label_artist">아티스트</string>
+    <string name="create_placeholder_deadline">날짜를 선택해주세요</string>
+    <string name="create_label_deadline">모집 기한</string>
+    <string name="create_placeholder_description">분철 범위 등.. 에 대한 설명을 입력해주세요</string>
+    <string name="create_label_description">설명</string>
+    <string name="create_placeholder_bank">은행 정보를 입력해주세요</string>
+    <string name="create_label_bank">은행</string>
+    <string name="create_btn_create">등록하기</string>
+    <string name="create_placeholder_account_number">계좌번호를 정확히 입력해주세요</string>
+    <string name="create_label_account_number">계좌번호</string>
+    <string name="create_error_need_image">사진을 1장 이상 등록해주세요</string>
+    <string name="create_error_need_artist">아티스트를 선택해주세요</string>
+    <string name="create_error_need_product">상품 종류를 입력해주세요</string>
+    <string name="create_error_need_deadline">모집 기한을 선택해주세요</string>
+    <string name="create_error_need_description">설명을 입력해주세요</string>
+    <string name="create_error_need_account_number">계좌번호를 입력해주세요</string>
+    <string name="create_error_need_bank">은행 정보를 입력해주세요</string>
 
     <!-- History -->
     <string name="history_participant_stage_deposit">입금</string>
@@ -115,5 +143,18 @@
     <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
+    <string name="user_my_page_title">마이</string>
+    <string name="user_select_favorite_artist">나의 최애 선택하기</string>
+
+    <!-- History List -->
+    <string name="history_empty_recruit_ongoing">진행 중인 모집 내역이 없어요</string>
+    <string name="history_empty_recruit_ended">지난 모집 내역이 없어요</string>
+    <string name="history_empty_participation_ongoing">진행 중인 참여 내역이 없어요</string>
+    <string name="history_empty_participation_ended">지난 참여 내역이 없어요</string>
+
+    <!-- Home -->
+    <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
+    <string name="home_other_goods">다른 굿즈 구경하기</string>
+    <string name="home_more">더보기</string>
 
 </resources>
