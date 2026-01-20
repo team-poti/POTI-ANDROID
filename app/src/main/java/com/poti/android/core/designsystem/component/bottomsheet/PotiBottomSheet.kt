@@ -58,7 +58,6 @@ fun PotiBottomSheet(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isButtonEnabled: Boolean = true,
     sheetState: SheetState = rememberModalBottomSheetState(),
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
@@ -109,7 +108,7 @@ fun PotiBottomSheet(
                     }
                 }
             },
-            enabled = isButtonEnabled,
+            enabled = enabled,
             subText = subText,
             onSubClick = {
                 onSubClick?.let {
@@ -121,7 +120,6 @@ fun PotiBottomSheet(
                     }
                 }
             },
-            enabled = enabled,
             subEnabled = subEnabled,
         )
     }
@@ -135,7 +133,6 @@ private fun BottomSheetButton(
     enabled: Boolean = true,
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
-    enabled: Boolean = true,
     subEnabled: Boolean = true,
 ) {
     Row(
@@ -161,7 +158,6 @@ private fun BottomSheetButton(
             type = ActionButtonType.SECONDARY_MAIN,
             enabled = enabled,
             modifier = Modifier.weight(216f),
-            enabled = enabled,
         )
     }
 }

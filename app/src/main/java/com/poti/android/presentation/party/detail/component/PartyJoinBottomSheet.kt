@@ -1,7 +1,10 @@
 package com.poti.android.presentation.party.detail.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,10 +13,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,11 +50,16 @@ fun PartyJoinBottomSheet(
         skipPartiallyExpanded = true,
     ),
 ) {
+    var isMemberFieldOpen by remember { mutableStateOf(true) }
+    var isDeliveryFieldOpen by remember { mutableStateOf(false) }
+
+    val isDropdownOpened = isMemberFieldOpen || isDeliveryFieldOpen
+
     PotiBottomSheet(
         onDismissRequest = onDismissRequest,
         text = stringResource(R.string.action_button_continue),
         onClick = onNextClick,
-        isButtonEnabled = uiState.isBottomSheetButtonEnable,
+        enabled = uiState.isBottomSheetButtonEnable,
         sheetState = sheetState,
         modifier = modifier,
     ) {
@@ -57,7 +69,7 @@ fun PartyJoinBottomSheet(
                 .padding(horizontal = screenWidthDp(16.dp)),
         ) {
             PotiDropdownField(
-                value = uiState.selectedDelivery?.option ?: "",
+                value = "",
                 placeholder = stringResource(R.string.party_join_option_member_placeholder),
                 onItemClick = onMemberSelect,
                 menuItems = uiState.memberMenuItems,
@@ -65,10 +77,11 @@ fun PartyJoinBottomSheet(
                 modifier = Modifier.padding(bottom = 28.dp),
                 label = stringResource(R.string.party_join_option_member_label),
                 initialOpenState = true,
+                onExpandedChange = { isOpen -> isMemberFieldOpen = isOpen },
             )
 
             PotiDropdownField(
-                value = "",
+                value = uiState.selectedDelivery?.option ?: "",
                 placeholder = stringResource(R.string.party_join_option_delivery_placeholder),
                 onItemClick = onDeliverySelect,
                 menuItems = uiState.deliveryMenuItems,
@@ -76,35 +89,50 @@ fun PartyJoinBottomSheet(
                 modifier = Modifier.padding(bottom = 49.dp),
                 label = stringResource(R.string.party_join_option_delivery_label),
                 initialOpenState = false,
+                onExpandedChange = { isOpen -> isDeliveryFieldOpen = isOpen },
             )
 
             Column(
                 modifier = Modifier.height(screenHeightDp(255.dp)),
             ) {
-                LazyColumn(
+                Box(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
                 ) {
-                    items(
-                        items = uiState.selectedMembers,
-                        key = { it.id },
-                    ) { member ->
-                        CardOptionPrice(
-                            optionType = PotiItemOptionType.MEMBER,
-                            text = member.option,
-                            price = stringResource(R.string.party_option_price_won, member.price ?: "0"),
-                            onDeleteClick = { onMemberRemove(member.id) },
-                        )
-                    }
-
-                    uiState.selectedDelivery?.let { delivery ->
-                        item {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .alpha(if (isDropdownOpened) 0.8f else 1.0f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+                    ) {
+                        items(
+                            items = uiState.selectedMembers,
+                            key = { it.id },
+                        ) { member ->
                             CardOptionPrice(
-                                optionType = PotiItemOptionType.DELIVERY,
-                                text = delivery.option,
-                                price = stringResource(R.string.party_option_price_won, delivery.price ?: "0"),
+                                optionType = PotiItemOptionType.MEMBER,
+                                text = member.option,
+                                price = stringResource(R.string.party_option_price_won, member.price ?: "0"),
+                                onDeleteClick = { onMemberRemove(member.id) },
                             )
                         }
+
+                        uiState.selectedDelivery?.let { delivery ->
+                            item {
+                                CardOptionPrice(
+                                    optionType = PotiItemOptionType.DELIVERY,
+                                    text = delivery.option,
+                                    price = stringResource(R.string.party_option_price_won, delivery.price ?: "0"),
+                                )
+                            }
+                        }
+                    }
+
+                    if (isDropdownOpened) {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(PotiTheme.colors.white.copy(alpha = 0.8f)),
+                        )
                     }
                 }
 
