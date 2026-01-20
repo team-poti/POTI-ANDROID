@@ -43,7 +43,7 @@ fun PotiDeleteButton(
     val backgroundColor = type.getBackgroundColor(colors)
 
     Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.icn_x_sm),
+        imageVector = ImageVector.vectorResource(R.drawable.ic_x_sm),
         contentDescription = null,
         modifier = modifier
             .noRippleClickable(onClick)

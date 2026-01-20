@@ -42,8 +42,10 @@ fun MainNavHost(
         historyNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
+            onPopBackStack = navigator.navController::popBackStack,
         )
         myPageNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
         )
         profileNavGraph(

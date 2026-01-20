@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
@@ -55,7 +56,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun PartyCreateRoute(
     onPopBackStack: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    viewModel: PartyCreateViewModel,
+    viewModel: PartyCreateViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -266,7 +267,7 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                uiState.memberOptions.onSuccess {
+                uiState.memberOptionsState.onSuccess {
                     CreateMemberSetting(
                         status = uiState.memberSettingStatus,
                         selectedMembersOption = it,
@@ -281,7 +282,7 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                uiState.deliveryOptions.onSuccess {
+                uiState.deliveryOptionsState.onSuccess {
                     CreateDeliverySetting(
                         deliveryOptions = it,
                         selectedOptionIds = uiState.selectedDeliveryIds,
@@ -323,7 +324,7 @@ private fun PartyCreateScreenDefaultPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                deliveryOptionsState = deliveryOptions,
                 selectedDeliveryIds = selectedDeliveryIds,
             ),
             onPopBackStack = {},
@@ -357,7 +358,7 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                deliveryOptionsState = deliveryOptions,
                 accountNumberError = accountNumberError,
             ),
             onPopBackStack = {},
@@ -390,7 +391,7 @@ private fun PartyCreateMemberPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                deliveryOptionsState = deliveryOptions,
                 memberSettingStatus = MemberSettingStatus.ERROR_NO_MEMBER,
             ),
             onPopBackStack = {},

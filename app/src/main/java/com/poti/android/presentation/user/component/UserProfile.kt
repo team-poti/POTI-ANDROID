@@ -19,15 +19,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun UserProfile(
-    imageUrl: String,
     nickname: String,
     email: String,
     modifier: Modifier = Modifier,
+    imageUrl: String? = "",
 ) {
     Column(
         modifier = modifier,
@@ -37,6 +38,8 @@ fun UserProfile(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
+                .placeholder(R.drawable.img_basic_profile)
+                .error(R.drawable.img_basic_profile)
                 .crossfade(true)
                 .build(),
             contentDescription = null,
@@ -74,7 +77,6 @@ private fun UserProfilePreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserProfile(
-                imageUrl = "",
                 nickname = "포티포티포티",
                 email = "poti@app.jam",
                 modifier = Modifier,

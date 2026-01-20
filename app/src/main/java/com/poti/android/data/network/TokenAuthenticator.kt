@@ -27,6 +27,12 @@ class TokenAuthenticator @Inject constructor(
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
+        if (requestUrl.contains("/auth/reissue")) {
+            Timber.Forest.tag("TokenAuthenticator").e("Refresh Token expired. Giving up.")
+            handleLogout()
+            return null
+        }
+
         val currentAccessToken = preferenceDataSource.cachedAccessToken
         val currentRefreshToken = preferenceDataSource.cachedRefreshToken
 

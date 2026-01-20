@@ -12,7 +12,6 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.onboarding.OnboardingArtistRoute
 import com.poti.android.presentation.onboarding.OnboardingGuideRoute
 import com.poti.android.presentation.onboarding.OnboardingNicknameRoute
-import com.poti.android.presentation.onboarding.OnboardingViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -50,29 +49,26 @@ fun NavGraphBuilder.onboardingNavGraph(
         startDestination = OnboardingRoute.Guide,
     ) {
         composable<OnboardingRoute.Guide> { entry ->
-            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
             OnboardingGuideRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToOnboardingNickname = navController::navigateToOnboardingNickname,
-                viewModel = viewModel,
+                viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )
         }
         composable<OnboardingRoute.Nickname> { entry ->
-            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
             OnboardingNicknameRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToOnboardingArtist = navController::navigateToOnboardingArtist,
-                viewModel = viewModel,
+                viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )
         }
         composable<OnboardingRoute.Artist> { entry ->
-            val viewModel: OnboardingViewModel = entry.sharedViewModel(navController)
             OnboardingArtistRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToHome = onNavigateToHome,
-                viewModel = viewModel,
+                viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )
         }

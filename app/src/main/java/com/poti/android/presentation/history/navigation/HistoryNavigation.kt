@@ -10,7 +10,9 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.manage.ParticipantManageRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
+import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
+import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
@@ -18,43 +20,53 @@ sealed interface HistoryRoute : Route {
     data object HistoryList : HistoryRoute
 
     @Serializable
-    data object ParticipantDetail : HistoryRoute
+    data class ParticipantDetail(val participantId: Long) : HistoryRoute
 
     @Serializable
-    data object RecruiterDetail : HistoryRoute
+    data class RecruiterDetail(val recruitId: Long) : HistoryRoute
 
     @Serializable
-    data object ParticipantManage : HistoryRoute
+    data class ParticipantManage(val recruitId: Long) : HistoryRoute
 }
 
 fun NavController.navigateToHistoryList() {
     navigate(HistoryRoute.HistoryList)
 }
 
-fun NavController.navigateToParticipantDetail() {
-    navigate(HistoryRoute.ParticipantDetail)
+fun NavController.navigateToParticipantDetail(participantId: Long) {
+    navigate(HistoryRoute.ParticipantDetail(participantId))
 }
 
-fun NavController.navigateToRecruiterDetail() {
-    navigate(HistoryRoute.RecruiterDetail)
+fun NavController.navigateToRecruiterDetail(recruitId: Long) {
+    navigate(HistoryRoute.RecruiterDetail(recruitId))
 }
 
-fun NavController.navigateToParticipantManage() {
-    navigate(HistoryRoute.ParticipantManage)
+fun NavController.navigateToParticipantManage(recruitId: Long) {
+    navigate(HistoryRoute.ParticipantManage(recruitId))
 }
 
 fun NavGraphBuilder.historyNavGraph(
-    paddingValues: PaddingValues,
     navController: NavController,
+    paddingValues: PaddingValues,
 ) {
     composable<HistoryRoute.HistoryList> {
-        HistoryListRoute(modifier = Modifier.padding(paddingValues))
+        HistoryListRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToRecruiterDetail = navController::navigateToRecruiterDetail,
+            onNavigateToParticipantDetail = navController::navigateToParticipantDetail,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
     composable<HistoryRoute.ParticipantDetail> {
         ParticipantDetailRoute(modifier = Modifier.padding(paddingValues))
     }
     composable<HistoryRoute.RecruiterDetail> {
-        RecruiterDetailRoute(modifier = Modifier.padding(paddingValues))
+        RecruiterDetailRoute(
+            modifier = Modifier.padding(paddingValues),
+            onPopBackStack = navController::popBackStack,
+            onNavigateToPartyDetail = navController::navigateToPartyDetail,
+            onNavigateToParticipantManage = navController::navigateToParticipantManage,
+        )
     }
     composable<HistoryRoute.ParticipantManage> {
         ParticipantManageRoute(
