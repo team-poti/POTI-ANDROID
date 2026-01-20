@@ -16,7 +16,7 @@ import com.poti.android.presentation.history.model.PartySummaryUiModel
 @Composable
 fun PartyInfoSection(
     recruitId: Long,
-    artistInfo: PartySummaryUiModel,
+    partyInfo: PartySummaryUiModel,
     onDetailClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -30,11 +30,11 @@ fun PartyInfoSection(
 
         HistoryCardItem(
             sizeType = CardHistorySize.LARGE,
-            imageUrl = artistInfo.imageUrl,
-            artist = artistInfo.artist,
-            title = artistInfo.title,
-            participantStageType = artistInfo.partyStage,
-            participantStatusType = artistInfo.partyStatus,
+            imageUrl = partyInfo.imageUrl,
+            artist = partyInfo.artist,
+            title = partyInfo.title,
+            stageType = partyInfo.partyStage,
+            statusType = partyInfo.partyStatus,
             onClick = { onDetailClick() },
         )
     }
@@ -46,12 +46,12 @@ private fun PartyInfoSectionRecruitWaitPreview() {
     PotiTheme {
         PartyInfoSection(
             recruitId = 1L,
-            artistInfo = PartySummaryUiModel(
+            partyInfo = PartySummaryUiModel(
                 imageUrl = "",
                 artist = "NewJeans",
                 title = "How Sweet 위버스 특전 분철",
-                partyStage = ParticipantStateLabelStage.RECRUIT,
-                partyStatus = ParticipantStateLabelStatus.WAIT,
+                partyStage = StateLabelStage.RECRUIT,
+                partyStatus = StateLabelStatus.WAIT,
             ),
             onDetailClick = {},
         )
@@ -64,12 +64,12 @@ private fun PartyInfoSectionDepositWaitPreview() {
     PotiTheme {
         PartyInfoSection(
             recruitId = 1L,
-            artistInfo = PartySummaryUiModel(
+            partyInfo = PartySummaryUiModel(
                 imageUrl = "",
                 artist = "IVE",
                 title = "I've IVE",
-                partyStage = ParticipantStateLabelStage.DEPOSIT,
-                partyStatus = ParticipantStateLabelStatus.WAIT,
+                partyStage = StateLabelStage.DEPOSIT,
+                partyStatus = StateLabelStatus.WAIT,
             ),
             onDetailClick = {},
         )
@@ -82,12 +82,12 @@ private fun PartyInfoSectionDeliveryDonePreview() {
     PotiTheme {
         PartyInfoSection(
             recruitId = 1L,
-            artistInfo = PartySummaryUiModel(
+            partyInfo = PartySummaryUiModel(
                 imageUrl = "",
                 artist = "aespa",
                 title = "Armageddon",
-                partyStage = ParticipantStateLabelStage.DELIVERY,
-                partyStatus = ParticipantStateLabelStatus.DONE,
+                partyStage = StateLabelStage.DELIVERY,
+                partyStatus = StateLabelStatus.DONE,
             ),
             onDetailClick = {},
         )

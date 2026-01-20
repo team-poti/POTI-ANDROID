@@ -1,14 +1,14 @@
 package com.poti.android.presentation.history.model
 
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.presentation.history.component.StateLabelStage
+import com.poti.android.presentation.history.component.StateLabelStatus
 
 data class PartySummaryUiModel(
     val imageUrl: String,
     val artist: String,
     val title: String,
-    val partyStage: ParticipantStateLabelStage,
-    val partyStatus: ParticipantStateLabelStatus,
+    val partyStage: StateLabelStage,
+    val partyStatus: StateLabelStatus,
 )
 
 data class ProgressUiModel(

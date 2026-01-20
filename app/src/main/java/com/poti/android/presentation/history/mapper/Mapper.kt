@@ -11,8 +11,8 @@ import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.model.history.ProgressInfo
 import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.ParticipantStateLabelStage
-import com.poti.android.presentation.history.component.ParticipantStateLabelStatus
+import com.poti.android.presentation.history.component.StateLabelStage
+import com.poti.android.presentation.history.component.StateLabelStatus
 import com.poti.android.presentation.history.model.PartySummaryUiModel
 import com.poti.android.presentation.history.model.ProgressUiModel
 import com.poti.android.presentation.history.model.participant.ActionButtonState
@@ -27,8 +27,8 @@ import com.poti.android.presentation.history.model.recruiter.RecruiterDetailUiMo
 
 fun RecruiterDetail.toUiModel(): RecruiterDetailUiModel {
     val uiArtistInfo = partySummary.toUiModel()
-    val topBarTitleRes = if (uiArtistInfo.partyStatus == ParticipantStateLabelStatus.DONE &&
-        uiArtistInfo.partyStage == ParticipantStateLabelStage.DELIVERY
+    val topBarTitleRes = if (uiArtistInfo.partyStatus == StateLabelStatus.DONE &&
+        uiArtistInfo.partyStage == StateLabelStage.DELIVERY
     ) {
         R.string.history_ongoing_title_done
     } else {
@@ -60,8 +60,8 @@ fun ParticipantDetail.toUiModel(): ParticipantDetailUiModel {
     val (depositStage, depositStatus) = depositInfo.depositStatus.toUiState()
     val partyUiModel = partySummary.toUiModel()
 
-    val topBarTitleResId = if (partyUiModel.partyStage == ParticipantStateLabelStage.DELIVERY &&
-        partyUiModel.partyStatus == ParticipantStateLabelStatus.DONE
+    val topBarTitleResId = if (partyUiModel.partyStage == StateLabelStage.DELIVERY &&
+        partyUiModel.partyStatus == StateLabelStatus.DONE
     ) {
         R.string.history_participant_detail_title_done
     } else {
@@ -82,10 +82,10 @@ fun ParticipantDetail.toUiModel(): ParticipantDetailUiModel {
 
     val (userStage, userStatus) = userState.toUiState()
 
-    val isTrackingInfoVisible = userStage == ParticipantStateLabelStage.DELIVERY &&
-        userStatus == ParticipantStateLabelStatus.START
+    val isTrackingInfoVisible = userStage == StateLabelStage.DELIVERY &&
+        userStatus == StateLabelStatus.START
 
-    val isParticipantStatusVisible = userStage == ParticipantStateLabelStage.DELIVERY
+    val isParticipantStatusVisible = userStage == StateLabelStage.DELIVERY
 
     return ParticipantDetailUiModel(
         recruitId = recruitId,
@@ -160,36 +160,36 @@ fun ParticipantShippingInfo.toUiModel(): ShippingInfoUiModel {
     )
 }
 
-fun ParticipantStatusType.toUiState(): Pair<ParticipantStateLabelStage, ParticipantStateLabelStatus> {
+fun ParticipantStatusType.toUiState(): Pair<StateLabelStage, StateLabelStatus> {
     return when (this) {
-        ParticipantStatusType.RECRUIT_WAIT ->
-            ParticipantStateLabelStage.RECRUIT to ParticipantStateLabelStatus.WAIT
+        ParticipantStatusType.RECRUIT_ING ->
+            StateLabelStage.RECRUIT to StateLabelStatus.ING
         ParticipantStatusType.RECRUIT_DONE ->
-            ParticipantStateLabelStage.RECRUIT to ParticipantStateLabelStatus.DONE
+            StateLabelStage.RECRUIT to StateLabelStatus.DONE
 
         ParticipantStatusType.DEPOSIT_WAIT ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.WAIT
+            StateLabelStage.DEPOSIT to StateLabelStatus.WAIT
         ParticipantStatusType.DEPOSIT_CHECK ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.CHECK
+            StateLabelStage.DEPOSIT to StateLabelStatus.CHECK
         ParticipantStatusType.DEPOSIT_DONE ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.DONE
+            StateLabelStage.DEPOSIT to StateLabelStatus.DONE
 
         ParticipantStatusType.DELIVERY_WAIT ->
-            ParticipantStateLabelStage.DELIVERY to ParticipantStateLabelStatus.WAIT
+            StateLabelStage.DELIVERY to StateLabelStatus.WAIT
         ParticipantStatusType.DELIVERY_START ->
-            ParticipantStateLabelStage.DELIVERY to ParticipantStateLabelStatus.START
+            StateLabelStage.DELIVERY to StateLabelStatus.START
         ParticipantStatusType.DELIVERY_DONE ->
-            ParticipantStateLabelStage.DELIVERY to ParticipantStateLabelStatus.DONE
+            StateLabelStage.DELIVERY to StateLabelStatus.DONE
     }
 }
 
-fun DepositStatus.toUiState(): Pair<ParticipantStateLabelStage, ParticipantStateLabelStatus> {
+fun DepositStatus.toUiState(): Pair<StateLabelStage, StateLabelStatus> {
     return when (this) {
         is DepositStatus.DepositWait ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.WAIT
+            StateLabelStage.DEPOSIT to StateLabelStatus.WAIT
         is DepositStatus.DepositCheck ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.CHECK
+            StateLabelStage.DEPOSIT to StateLabelStatus.CHECK
         DepositStatus.DepositDone ->
-            ParticipantStateLabelStage.DEPOSIT to ParticipantStateLabelStatus.DONE
+            StateLabelStage.DEPOSIT to StateLabelStatus.DONE
     }
 }
