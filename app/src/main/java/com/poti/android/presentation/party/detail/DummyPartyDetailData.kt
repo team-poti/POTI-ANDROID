@@ -1,9 +1,12 @@
 package com.poti.android.presentation.party.detail
 
+import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.Participant
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyImage
+import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.PartyStatusType
 
@@ -74,6 +77,97 @@ val dummyPartyDetail = PartyDetail(
             selectedMembers = listOf("유진"),
         ),
     ),
-    currentCount = 2,
+    currentCount = 3,
     totalCount = 5,
+)
+
+val dummyJoinOption = PartyJoinOption(
+    memberOptions = listOf(
+        Members(
+            memberId = 1,
+            memberName = "멤버1",
+            memberPrice = 5000,
+        ),
+        Members(
+            memberId = 2,
+            memberName = "멤버2",
+            memberPrice = 6000,
+        ),
+        Members(
+            memberId = 3,
+            memberName = "멤버3",
+            memberPrice = 5000,
+        ),
+        Members(
+            memberId = 4,
+            memberName = "멤버4",
+            memberPrice = 4500,
+        ),
+    ),
+    deliveryOptions = listOf(
+        DeliveryOption(
+            deliveryId = 1,
+            name = "준등기",
+            price = 1800,
+        ),
+        DeliveryOption(
+            deliveryId = 2,
+            name = "일반 택배",
+            price = 4000,
+        ),
+    ),
+)
+
+val dummyMemberOptions = listOf(
+    FieldMenuItem(
+        option = "멤버1",
+        price = "5,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버2",
+        price = "6,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버3",
+        price = "5,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버4",
+        price = "4,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버5",
+        price = "4,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버1",
+        price = "5,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버2",
+        price = "6,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버3",
+        price = "5,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버4",
+        price = "4,000원",
+    ),
+    FieldMenuItem(
+        option = "멤버5",
+        price = "4,000원",
+    ),
+)
+
+val dummyDeliveryOptions = listOf(
+    FieldMenuItem(
+        option = "준등기",
+        price = "1,800원",
+    ),
+    FieldMenuItem(
+        option = "일반 택배",
+        price = "4,800원",
+    ),
 )

@@ -83,7 +83,7 @@ fun HistoryParticipantOverview(
                 optionType = PotiItemOptionType.PRICE,
                 sizeType = PotiItemOptionSize.SMALL,
                 text = stringResource(
-                    R.string.history_participant_detail_won_unit_format,
+                    R.string.party_option_price_won,
                     price.toMoneyString(),
                 ),
             )

@@ -9,8 +9,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
@@ -31,20 +30,24 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartyDetail
+import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
+import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartyDetailRoute(
     onPopBackStack: () -> Unit,
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
+    onReload: (Long) -> Unit,
+    viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
-    viewModel: PartyDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -53,14 +56,27 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateBack -> onPopBackStack()
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
+            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
         }
+    }
+
+    if (uiState.showJoinBottomSheet) {
+        PartyJoinBottomSheet(
+            uiState = uiState,
+            onMemberSelect = { viewModel.processIntent(PartyDetailIntent.OnMemberSelect(it)) },
+            onMemberRemove = { viewModel.processIntent(PartyDetailIntent.OnMemberRemove(it)) },
+            onDeliverySelect = { viewModel.processIntent(PartyDetailIntent.OnDeliverySelect(it)) },
+            onDismissRequest = { viewModel.processIntent(PartyDetailIntent.OnDismissBottomSheet) },
+            onNextClick = { viewModel.processIntent(PartyDetailIntent.OnOptionNextClick) },
+        )
     }
 
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
+            isJoinEnable = uiState.isDetailJoinEnable,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
-            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnJoinClick) },
+            onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
             modifier = modifier,
         )
@@ -70,6 +86,7 @@ fun PartyDetailRoute(
 @Composable
 private fun PartyDetailScreen(
     partyDetail: PartyDetail,
+    isJoinEnable: Boolean,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
@@ -85,8 +102,9 @@ private fun PartyDetailScreen(
         },
         bottomBar = {
             PotiBottomButton(
-                text = stringResource(R.string.party_detail_join_party),
+                text = if (isJoinEnable) stringResource(R.string.party_detail_join_party) else stringResource(R.string.party_detail_join_party_closed),
                 onClick = onJoinClick,
+                enabled = isJoinEnable,
             )
         },
     ) { innerPadding ->
@@ -147,14 +165,7 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
-            Text(
-                text = stringResource(R.string.party_detail_announcement),
-                style = PotiTheme.typography.caption12m,
-                color = PotiTheme.colors.gray800,
-                modifier = Modifier
-                    .padding(horizontal = screenWidthDp(16.dp), vertical = 16.dp)
-                    .padding(bottom = 40.dp),
-            )
+            ParticipantGuidelines()
         }
     }
 }
@@ -165,6 +176,7 @@ private fun PartyDetailScreenPreview() {
     PotiTheme {
         PartyDetailScreen(
             partyDetail = dummyPartyDetail,
+            isJoinEnable = true,
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
