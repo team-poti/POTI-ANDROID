@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -30,9 +32,11 @@ fun HistoryDeliveryBottomSheet(
     var deliveryMethod by remember { mutableStateOf("") }
     var trackingNumber by remember { mutableStateOf("") }
 
+    // TODO: [천민재] #65 머지 후 enabled 반영
     PotiBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         text = stringResource(R.string.history_delivery_bottomsheet_button),
         onClick = { onConfirmClick(deliveryMethod, trackingNumber) },
         content = {
@@ -66,12 +70,14 @@ private fun BottomSheetContent(
             placeholder = stringResource(R.string.history_delivery_bottomsheet_method_placeholder),
             label = stringResource(R.string.history_delivery_bottomsheet_method_label),
             imeAction = ImeAction.Next,
+            modifier = Modifier.padding(top = 12.dp),
         )
         PotiShortTextField(
             value = trackingNumber,
             onValueChanged = onTrackingNumberChanged,
             placeholder = stringResource(R.string.history_delivery_bottomsheet_tracking_placeholder),
             label = stringResource(R.string.history_delivery_bottomsheet_tracking_label),
+            keyboardType = KeyboardType.Number,
             modifier = Modifier.padding(bottom = 226.dp),
         )
     }
