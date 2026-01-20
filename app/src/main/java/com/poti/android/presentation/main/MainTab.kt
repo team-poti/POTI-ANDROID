@@ -21,7 +21,7 @@ enum class MainTab(
     MY_PARTY(
         iconResId = R.drawable.ic_history,
         label = R.string.bottom_nav_history,
-        route = HistoryRoute.HistoryList,
+        route = HistoryRoute.History,
     ),
     MYPAGE(
         iconResId = R.drawable.ic_mypage,

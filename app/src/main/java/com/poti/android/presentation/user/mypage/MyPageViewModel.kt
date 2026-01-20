@@ -18,6 +18,15 @@ class MyPageViewModel @Inject constructor(
     override fun processIntent(intent: MyPageUiIntent) {
         when (intent) {
             MyPageUiIntent.OnArtistClick -> sendEffect(MyPageUiEffect.NavigateToArtist)
+
+            is MyPageUiIntent.OnHistoryClick -> {
+                sendEffect(
+                    MyPageUiEffect.NavigateToHistoryList(
+                        mode = intent.mode,
+                        tab = intent.tab,
+                    ),
+                )
+            }
         }
     }
 

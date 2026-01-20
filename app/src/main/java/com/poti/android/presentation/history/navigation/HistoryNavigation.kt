@@ -8,14 +8,22 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
+import com.poti.android.presentation.history.list.HistoryMode
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
 import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
+import com.poti.android.presentation.user.component.HistorySummaryType
 import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
     @Serializable
-    data object HistoryList : HistoryRoute
+    data object History : HistoryRoute
+
+    @Serializable
+    data class HistoryList(
+        val mode: HistoryMode,
+        val type: HistorySummaryType,
+    ) : HistoryRoute
 
     @Serializable
     data object ParticipantDetail : HistoryRoute
@@ -27,8 +35,16 @@ sealed interface HistoryRoute : Route {
     data object ParticipantManage : HistoryRoute
 }
 
-fun NavController.navigateToHistoryList() {
-    navigate(HistoryRoute.HistoryList)
+fun NavController.navigateToHistoryList(
+    mode: HistoryMode,
+    type: HistorySummaryType,
+) {
+    navigate(
+        HistoryRoute.HistoryList(
+            mode = mode,
+            type = type,
+        ),
+    )
 }
 
 fun NavController.navigateToParticipantDetail() {
@@ -48,6 +64,14 @@ fun NavGraphBuilder.historyNavGraph(
     paddingValues: PaddingValues,
     onPopBackStack: () -> Unit,
 ) {
+    composable<HistoryRoute.History> {
+        HistoryListRoute(
+            onPopBackStack = onPopBackStack,
+            onNavigateToRecruiterDetail = navController::navigateToRecruiterDetail,
+            onNavigateToParticipantDetail = navController::navigateToParticipantDetail,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
     composable<HistoryRoute.HistoryList> {
         HistoryListRoute(
             onPopBackStack = onPopBackStack,
