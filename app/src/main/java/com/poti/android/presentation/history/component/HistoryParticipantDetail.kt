@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -111,7 +113,7 @@ sealed interface DetailState {
 enum class FieldType(
     @StringRes val labelId: Int,
 ) {
-    NAME(R.string.field_label_name),
+    NAME(R.string.history_participant_field_type_name),
     DEPOSIT(R.string.history_participant_field_type_deposit),
     DELIVERY(R.string.history_participant_field_type_delivery),
     CONTACT(R.string.history_participant_field_type_contact),
@@ -181,7 +183,7 @@ fun HistoryParticipantDetail(
                         itemOptionType = item.type,
                         itemOptionText = item.name,
                         priceText = stringResource(
-                            R.string.party_option_price_won,
+                            R.string.history_participant_detail_won_unit_format,
                             item.price.toMoneyString(),
                         ),
                         sizeType = PotiListOptionPriceSize.SMALL,
@@ -206,7 +208,7 @@ fun HistoryParticipantDetail(
 
                     Text(
                         text = stringResource(
-                            R.string.party_option_price_won,
+                            R.string.history_participant_detail_won_unit_format,
                             totalPrice.toMoneyString(),
                         ),
                         style = typography.body16sb,
@@ -251,57 +253,76 @@ fun HistoryParticipantDetail(
                     onClick = onButtonClick,
                     showIcon = false,
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
                 )
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 2000)
 @Composable
-private fun HistoryParticipantDetailPreview() {
-    val depositItems = listOf(
-        DepositItem(
-            type = PotiItemOptionType.PRICE,
-            name = "멤버1",
-            price = 2000000000,
+private fun HistoryParticipantDetailAllStatesPreview() {
+    // 1. 공통 더미 데이터 설정
+    val dummyItems = listOf(
+        DepositItem(PotiItemOptionType.PRICE, "해린 포토카드", 15000),
+        DepositItem(PotiItemOptionType.DELIVERY, "GS25 반값택배", 1800),
+    )
+    val dummyTotal = dummyItems.sumOf { it.price }
+    val dummyUser = "참여자 닉네임"
+
+    // 2. 각 상태별 데이터 정의
+    val states = listOf(
+        "1. Default (기본 상태)" to DetailState.Default,
+        "2. DepositCheck (입금 확인 중)" to DetailState.DepositCheck(
+            deposit = "2024.01.01 14:30 / 홍길동",
+            onButtonClick = {},
         ),
-        DepositItem(
-            type = PotiItemOptionType.PRICE,
-            name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 10000,
+        "3. Delivery (배송 정보 입력 완료/대기)" to DetailState.Delivery(
+            name = "김철수",
+            delivery = "(06234) 서울 강남구 테헤란로 123",
+            contact = "010-1234-5678",
+            onButtonClick = {},
         ),
-        DepositItem(
-            type = PotiItemOptionType.PRICE,
-            name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000,
+        "4. AfterDelivery (배송 후 - 운송장 입력됨)" to DetailState.AfterDelivery(
+            name = "김철수",
+            delivery = "(06234) 서울 강남구 테헤란로 123",
+            contact = "010-1234-5678",
+            invoice = "GS택배 1234-5678-9012",
         ),
-        DepositItem(
-            type = PotiItemOptionType.PRICE,
-            name = "멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2멤버2",
-            price = 320000000,
-        ),
-        DepositItem(
-            type = PotiItemOptionType.DELIVERY,
-            name = "등기등기등기등기둥기둥",
-            price = 320000000,
+        "5. Finished (거래 종료)" to DetailState.Finished(
+            invoice = "GS택배 1234-5678-9012",
         ),
     )
 
     PotiTheme {
-        HistoryParticipantDetail(
-            userName = "닉네임",
-            userImageUrl = "",
-            depositItems = depositItems,
-            detailState = DetailState.AfterDelivery(
-                name = "이포티",
-                delivery = "(01234) 서울특별시 솝트구 다솝로 456",
-                contact = "010-1111-1111",
-                invoice = "우체국 37249720348093",
-            ),
-            totalPrice = depositItems.sumOf { it.price },
-            modifier = Modifier.width(311.dp),
-        )
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .width(340.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+        ) {
+            states.forEach { (title, state) ->
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = title,
+                        style = PotiTheme.typography.body16sb,
+                        color = PotiTheme.colors.poti800,
+                    )
+
+                    // 컴포넌트 렌더링
+                    HistoryParticipantDetail(
+                        userName = dummyUser,
+                        userImageUrl = "",
+                        depositItems = dummyItems,
+                        totalPrice = dummyTotal,
+                        detailState = state,
+                        modifier = Modifier,
+                    )
+                }
+            }
+        }
     }
 }

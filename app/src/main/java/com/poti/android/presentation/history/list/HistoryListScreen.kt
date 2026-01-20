@@ -26,15 +26,15 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
-import com.poti.android.domain.type.HistoryStage
-import com.poti.android.domain.type.HistoryStatus
+import com.poti.android.domain.type.HistoryListType
 import com.poti.android.presentation.history.component.CardHistorySize
 import com.poti.android.presentation.history.component.HistoryCardItem
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
-import com.poti.android.presentation.history.list.model.toUiStage
-import com.poti.android.presentation.history.list.model.toUiStatus
+import com.poti.android.presentation.history.mapper.color
+import com.poti.android.presentation.history.mapper.labelResId
+import com.poti.android.presentation.history.mapper.statusColor
 
 enum class HistoryMode {
     RECRUIT,
@@ -44,8 +44,8 @@ enum class HistoryMode {
 @Composable
 fun HistoryListRoute(
     onPopBackStack: () -> Unit,
-    onNavigateToRecruiterDetail: () -> Unit,
-    onNavigateToParticipantDetail: () -> Unit,
+    onNavigateToRecruiterDetail: (Long) -> Unit,
+    onNavigateToParticipantDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HistoryListViewModel = hiltViewModel(),
 ) {
@@ -54,14 +54,8 @@ fun HistoryListRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             HistoryListUiEffect.NavigateBack -> onPopBackStack()
-            is HistoryListUiEffect.NavigateToDetail -> {
-                // TODO: [예림] effect.id 전달
-                if (uiState.mode == HistoryMode.RECRUIT) {
-                    onNavigateToRecruiterDetail()
-                } else {
-                    onNavigateToParticipantDetail()
-                }
-            }
+            is HistoryListUiEffect.NavigateToRecruiterDetail -> onNavigateToRecruiterDetail(effect.id)
+            is HistoryListUiEffect.NavigateToParticipantDetail -> onNavigateToParticipantDetail(effect.id)
         }
     }
 
@@ -133,8 +127,8 @@ private fun HistoryListScreen(
                             imageUrl = item.imageUrl ?: "",
                             artist = item.artist,
                             title = item.title,
-                            participantStageType = item.toUiStage(),
-                            participantStatusType = item.toUiStatus(),
+                            statusTextId = item.status.labelResId,
+                            statusColor = item.status.statusColor.color,
                             onClick = { onCardClick(item.id) },
                         )
                     }
@@ -160,16 +154,14 @@ private fun HistoryListScreenPreview_Ongoing() {
                                 imageUrl = "",
                                 artist = "ive(아이브)",
                                 title = "러브다이브 위드뮤",
-                                stage = HistoryStage.DELIVERY,
-                                status = HistoryStatus.WAIT,
+                                status = HistoryListType.IN_PROGRESS,
                             ),
                             HistoryItem(
                                 id = 2L,
                                 imageUrl = "",
                                 artist = "aespa",
                                 title = "걸스 스페셜",
-                                stage = HistoryStage.DEPOSIT,
-                                status = HistoryStatus.DONE,
+                                status = HistoryListType.COMPLETED,
                             ),
                         ),
                     ),
