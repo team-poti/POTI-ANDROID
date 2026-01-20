@@ -28,8 +28,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
             is CreateUiIntent.OnAccountNumberChange -> {}
@@ -70,7 +70,7 @@ class PartyCreateViewModel @Inject constructor(
                 .onSuccess {
                     updateState {
                         copy(
-                            deliveryOptionsState = ApiState.Success(it.toPersistentList())
+                            deliveryOptionsState = ApiState.Success(it.toPersistentList()),
                         )
                     }
                 }
@@ -83,7 +83,7 @@ class PartyCreateViewModel @Inject constructor(
                 .onSuccess {
                     updateState {
                         copy(
-                            memberOptionsState = ApiState.Success(it.toPersistentList())
+                            memberOptionsState = ApiState.Success(it.toPersistentList()),
                         )
                     }
                 }
@@ -118,7 +118,7 @@ class PartyCreateViewModel @Inject constructor(
                 accountNumber = "01066152589",
                 imageUrls = listOf("https://mblogthumb-phinf.pstatic.net/20150829_137/deuxiemevie7_14408303505758j79p_JPEG/tumblr_nqvhsexuKb1s8b8vuo1_1280.jpg?type=w420"),
                 options = listOf(newMemberOption),
-                shippings = listOf(shippingOption)
+                shippings = listOf(shippingOption),
             )
         }
     }

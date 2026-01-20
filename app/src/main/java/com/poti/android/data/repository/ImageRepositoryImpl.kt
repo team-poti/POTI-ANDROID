@@ -12,7 +12,11 @@ class ImageRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val imageRemoteDataSource: ImageRemoteDataSource,
 ) : ImageRepository {
-    override suspend fun getPresignedUrls(type: String, count: Int, extension: String): Result<List<PresignedUploadInfo>> = httpResponseHandler.safeApiCall {
+    override suspend fun getPresignedUrls(
+        type: String,
+        count: Int,
+        extension: String,
+    ): Result<List<PresignedUploadInfo>> = httpResponseHandler.safeApiCall {
         imageRemoteDataSource.getPresignedUrls(type, count, extension)
             .handleApiResponse()
             .getOrThrow()

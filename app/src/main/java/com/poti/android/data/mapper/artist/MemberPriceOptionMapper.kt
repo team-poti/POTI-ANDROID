@@ -8,7 +8,7 @@ fun MemberListResponseDto.toPriceDomain(): List<MemberPriceOption> = members.map
     MemberPriceOption(
         memberId = it.memberId,
         name = it.name,
-        price = ""
+        price = "",
     )
 }
 

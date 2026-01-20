@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MemberListResponseDto (
+data class MemberListResponseDto(
     @SerialName("members")
-    val members: List<MemberResponseDto>
+    val members: List<MemberResponseDto>,
 )
 
 @Serializable

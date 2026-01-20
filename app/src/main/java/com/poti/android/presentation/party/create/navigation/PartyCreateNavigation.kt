@@ -28,12 +28,12 @@ fun NavController.navigateToPartyArtistSelect() {
 
 fun NavGraphBuilder.partyCreateNavGraph(
     paddingValues: PaddingValues,
-    ) {
+) {
     composable<PartyCreateRoute.Create> {
         PartyCreateRoute(
             onPopBackStack = {},
             onNavigateToSearch = {},
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
         )
     }
     composable<PartyCreateRoute.ArtistSelect> { }

@@ -6,6 +6,6 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 fun ArtistSearchListResponseDto.toDomain(): List<ArtistSearchResult> = artists.map {
     ArtistSearchResult(
         artistId = it.artistId,
-        name = it.name
+        name = it.name,
     )
 }

@@ -18,7 +18,10 @@ class PostRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val postRemoteDataSource: PostRemoteDataSource,
 ) : PostRepository {
-    override suspend fun searchProductTitle(artistId: Long, keyword: String): Result<List<String>> = httpResponseHandler.safeApiCall {
+    override suspend fun searchProductTitle(
+        artistId: Long,
+        keyword: String,
+    ): Result<List<String>> = httpResponseHandler.safeApiCall {
         postRemoteDataSource.searchProductTitle(artistId, keyword)
             .handleApiResponse()
             .getOrThrow()
@@ -53,8 +56,8 @@ class PostRepositoryImpl @Inject constructor(
                 accountNumber = accountNumber,
                 imageUrls = imageUrls,
                 options = options.map { it.toDto() },
-                shippings = shippings.map { it.toDto() }
-            )
+                shippings = shippings.map { it.toDto() },
+            ),
         )
             .handleApiResponse()
             .getOrThrow()

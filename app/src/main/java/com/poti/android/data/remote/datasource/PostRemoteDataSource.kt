@@ -12,7 +12,10 @@ import jakarta.inject.Inject
 class PostRemoteDataSource @Inject constructor(
     private val postService: PostService,
 ) {
-    suspend fun searchProductTitle(artistId: Long, keyword: String): BaseResponse<ProductSearchResponseDto> =
+    suspend fun searchProductTitle(
+        artistId: Long,
+        keyword: String,
+    ): BaseResponse<ProductSearchResponseDto> =
         postService.searchProductTitle(artistId, keyword)
 
     suspend fun searchArtist(keyword: String): BaseResponse<ArtistSearchListResponseDto> =

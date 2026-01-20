@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ShippingOptionResponseDto (
+data class ShippingOptionResponseDto(
     @SerialName("deliveryId")
     val deliveryId: Long,
     @SerialName("name")
