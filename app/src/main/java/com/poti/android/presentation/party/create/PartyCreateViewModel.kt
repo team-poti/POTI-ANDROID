@@ -6,10 +6,10 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
-import com.poti.android.domain.usecase.post.CreatePostUseCase
-import com.poti.android.domain.usecase.post.GetDeliveryOptionsUseCase
-import com.poti.android.domain.usecase.post.SearchArtistUseCase
-import com.poti.android.domain.usecase.post.SearchProductUseCase
+import com.poti.android.domain.usecase.party.CreatePartyUseCase
+import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
+import com.poti.android.domain.usecase.party.SearchArtistUseCase
+import com.poti.android.domain.usecase.party.SearchProductUseCase
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class PartyCreateViewModel @Inject constructor(
     private val getMembersWithPriceUseCase: GetMembersWithPriceUseCase,
     private val uploadImagesUseCase: UploadImagesUseCase,
-    private val createPostUseCase: CreatePostUseCase,
+    private val createPartyUseCase: CreatePartyUseCase,
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
@@ -109,7 +109,7 @@ class PartyCreateViewModel @Inject constructor(
 
             val shippingOption = uiState.value.deliveryOptionsState.getSuccessDataOrNull()!![0]
 
-            createPostUseCase(
+            createPartyUseCase(
                 artistId = 1,
                 product = "하이",
                 description = "하이",

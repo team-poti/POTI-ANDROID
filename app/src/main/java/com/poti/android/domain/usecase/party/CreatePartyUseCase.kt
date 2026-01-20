@@ -1,12 +1,12 @@
-package com.poti.android.domain.usecase.post
+package com.poti.android.domain.usecase.party
 
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.repository.PostRepository
+import com.poti.android.domain.repository.PartyRepository
 import javax.inject.Inject
 
-class CreatePostUseCase @Inject constructor(
-    private val postRepository: PostRepository,
+class CreatePartyUseCase @Inject constructor(
+    private val partyRepository: PartyRepository,
 ) {
     suspend operator fun invoke(
         artistId: Long,
@@ -18,7 +18,7 @@ class CreatePostUseCase @Inject constructor(
         imageUrls: List<String>,
         options: List<MemberPriceOption>,
         shippings: List<DeliveryOption>,
-    ): Result<Long> = postRepository.createPost(
+    ): Result<Long> = partyRepository.createPost(
         artistId = artistId,
         product = product,
         description = description,

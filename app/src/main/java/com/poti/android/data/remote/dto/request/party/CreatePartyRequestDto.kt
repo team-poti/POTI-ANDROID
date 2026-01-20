@@ -1,10 +1,10 @@
-package com.poti.android.data.remote.dto.request.post
+package com.poti.android.data.remote.dto.request.party
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CreatePostRequestDto(
+data class CreatePartyRequestDto(
     @SerialName("artistId")
     val artistId: Long,
     @SerialName("title")

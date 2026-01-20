@@ -3,7 +3,7 @@ package com.poti.android.data.di
 import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.ImageService
-import com.poti.android.data.remote.service.PostService
+import com.poti.android.data.remote.service.PartyService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -27,8 +27,8 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun providesPostService(retrofit: Retrofit): PostService =
-        retrofit.create(PostService::class.java)
+    fun providesPostService(retrofit: Retrofit): PartyService =
+        retrofit.create(PartyService::class.java)
 
     @Provides
     @Singleton

@@ -6,30 +6,30 @@ import com.poti.android.data.mapper.artist.toDomain
 import com.poti.android.data.mapper.artist.toDto
 import com.poti.android.data.mapper.delivery.toDomain
 import com.poti.android.data.mapper.delivery.toDto
-import com.poti.android.data.remote.datasource.PostRemoteDataSource
-import com.poti.android.data.remote.dto.request.post.CreatePostRequestDto
+import com.poti.android.data.remote.datasource.PartyRemoteDataSource
+import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.repository.PostRepository
+import com.poti.android.domain.repository.PartyRepository
 import javax.inject.Inject
 
-class PostRepositoryImpl @Inject constructor(
+class PartyRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    private val postRemoteDataSource: PostRemoteDataSource,
-) : PostRepository {
+    private val partyRemoteDataSource: PartyRemoteDataSource,
+) : PartyRepository {
     override suspend fun searchProductTitle(
         artistId: Long,
         keyword: String,
     ): Result<List<String>> = httpResponseHandler.safeApiCall {
-        postRemoteDataSource.searchProductTitle(artistId, keyword)
+        partyRemoteDataSource.searchProductTitle(artistId, keyword)
             .handleApiResponse()
             .getOrThrow()
             .titles
     }
 
     override suspend fun searchArtist(keyword: String): Result<List<ArtistSearchResult>> = httpResponseHandler.safeApiCall {
-        postRemoteDataSource.searchArtist(keyword)
+        partyRemoteDataSource.searchArtist(keyword)
             .handleApiResponse()
             .getOrThrow()
             .toDomain()
@@ -46,8 +46,8 @@ class PostRepositoryImpl @Inject constructor(
         options: List<MemberPriceOption>,
         shippings: List<DeliveryOption>,
     ): Result<Long> = httpResponseHandler.safeApiCall {
-        postRemoteDataSource.createPost(
-            body = CreatePostRequestDto(
+        partyRemoteDataSource.createParty(
+            body = CreatePartyRequestDto(
                 artistId = artistId,
                 title = product,
                 content = description,
@@ -65,7 +65,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getShippingOptions(): Result<List<DeliveryOption>> = httpResponseHandler.safeApiCall {
-        postRemoteDataSource
+        partyRemoteDataSource
             .getShippingOptions()
             .handleApiResponse()
             .getOrThrow()

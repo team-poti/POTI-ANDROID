@@ -4,7 +4,7 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 
-interface PostRepository {
+interface PartyRepository {
     suspend fun searchProductTitle(
         artistId: Long,
         keyword: String,
