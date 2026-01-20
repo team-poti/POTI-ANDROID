@@ -41,7 +41,7 @@ fun HistoryDeliveryBottomSheet(
                 onDeliveryMethodChanged = { deliveryMethod = it },
                 trackingNumber = trackingNumber,
                 onTrackingNumberChanged = { trackingNumber = it },
-                modifier = modifier
+                modifier = Modifier
                     .padding(horizontal = 16.dp),
             )
         },
