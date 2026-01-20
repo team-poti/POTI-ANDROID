@@ -3,7 +3,6 @@ package com.poti.android.core.designsystem.component.display
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,14 +41,13 @@ fun PotiListOptionPrice(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         PotiItemOption(
             optionType = itemOptionType,
-            sizeType = sizeType.optionSize(),
+            sizeType = PotiListOptionPriceSize.SMALL.optionSize(),
             text = itemOptionText,
             modifier = Modifier.weight(1f),
         )

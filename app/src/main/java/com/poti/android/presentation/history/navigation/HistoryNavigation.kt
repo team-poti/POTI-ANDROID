@@ -44,10 +44,17 @@ fun NavController.navigateToParticipantManage() {
 }
 
 fun NavGraphBuilder.historyNavGraph(
+    navController: NavController,
     paddingValues: PaddingValues,
+    onPopBackStack: () -> Unit,
 ) {
     composable<HistoryRoute.HistoryList> {
-        HistoryListRoute(modifier = Modifier.padding(paddingValues))
+        HistoryListRoute(
+            onPopBackStack = onPopBackStack,
+            onNavigateToRecruiterDetail = navController::navigateToRecruiterDetail,
+            onNavigateToParticipantDetail = navController::navigateToParticipantDetail,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
     composable<HistoryRoute.ParticipantDetail> {
         ParticipantDetailRoute(modifier = Modifier.padding(paddingValues))
