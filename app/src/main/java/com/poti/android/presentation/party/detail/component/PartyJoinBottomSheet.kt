@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.screenHeightDp
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -53,10 +54,10 @@ fun PartyJoinBottomSheet(
         Column(
             modifier = Modifier
                 .padding(top = 8.dp, bottom = 16.dp)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = screenWidthDp(16.dp)),
         ) {
             PotiDropdownField(
-                value = "",
+                value = uiState.selectedDelivery?.option ?: "",
                 placeholder = stringResource(R.string.party_join_option_member_placeholder),
                 onItemClick = onMemberSelect,
                 menuItems = uiState.memberMenuItems,
