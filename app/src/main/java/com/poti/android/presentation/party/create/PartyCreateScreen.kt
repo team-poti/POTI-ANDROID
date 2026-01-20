@@ -24,7 +24,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.extension.onSuccess
@@ -96,10 +95,16 @@ fun PartyCreateRoute(
             title = R.string.create_title_bottomsheet,
             onDismiss = { showBottomSheet = false },
             mainBtnText = R.string.action_button_done,
-            onMainBtnClick = { viewModel.processIntent(CreateUiIntent.OnMemberSelectDone) },
+            onMainBtnClick = {
+                viewModel.processIntent(CreateUiIntent.OnMemberSelectDone)
+                showBottomSheet = false
+            },
             mainEnabled = uiState.isSheetTouched,
             subBtnText = R.string.action_button_select_all,
-            onSubBtnClick = { viewModel.processIntent(CreateUiIntent.OnAllMemberSelect) },
+            onSubBtnClick = {
+                viewModel.processIntent(CreateUiIntent.OnAllMemberSelect)
+                showBottomSheet = false
+            },
             subEnabled = true,
             members = uiState.sheetDisplayMemberNames,
             onMemberClick = { viewModel.processIntent(CreateUiIntent.OnMemberSelect(it)) },
@@ -110,13 +115,12 @@ fun PartyCreateRoute(
     if (showDialog) {
         PotiSmallModal(
             onDismissRequest = { showDialog = false },
-            title = "지금 나가면 내용이 저장되지 않아요",
-            text = "계속 작성할까요?",
-            dismissBtnText = "나가기",
-            confirmBtnText = "계속 작성하기",
+            title = stringResource(R.string.create_exit_dialog_title),
+            text = stringResource(R.string.create_exit_dialog_content),
+            dismissBtnText = stringResource(R.string.create_exit_dialog_dismiss_text),
+            confirmBtnText = stringResource(R.string.create_exit_dialog_confirm_text),
             onDismissBtnClick = { viewModel.processIntent(CreateUiIntent.OnBackConfirm) },
             onConfirmBtnClick = { showDialog = false },
-            dismissOnClickOutside = false,
         )
     }
 

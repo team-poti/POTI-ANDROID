@@ -43,7 +43,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
             }
 
             is CreateUiIntent.OnArtistSelect -> {
-                handleArtistSelect(newAritst = intent.artist)
+                handleArtistSelect(newArtist = intent.artist)
             }
 
             is CreateUiIntent.OnAccountNumberChange -> {
@@ -119,15 +119,15 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         }
     }
 
-    private fun handleArtistSelect(newAritst: Artist) {
-        if (newAritst == uiState.value.selectedArtist) return
+    private fun handleArtistSelect(newArtist: Artist) {
+        if (newArtist == uiState.value.selectedArtist) return
 
         // TODO: [도연] GetMember / settingStatus IN_PROGRESS 변경
 
         updateState {
             copy(
                 isDirty = true,
-                selectedArtist = newAritst,
+                selectedArtist = newArtist,
                 artistError = null,
                 // memberOptions =
             )
@@ -211,8 +211,8 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         var currentPrice: String? = null
 
         val newOptions = uiState.value.editableMemberOptions.map { option ->
-            if (option == newOption) {
-                currentPrice = newOption.price
+            if (option.memberId == newOption.memberId) {
+                currentPrice = option.price
                 newOption
             } else {
                 option
