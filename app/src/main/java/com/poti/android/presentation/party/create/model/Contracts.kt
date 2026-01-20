@@ -36,6 +36,7 @@ enum class FieldError(
 }
 
 data class CreateUiState(
+    val isDirty: Boolean = false,
     val selectedImages: ImmutableList<Uri> = persistentListOf(),
     val selectedArtist: Artist? = null,
     val productName: String = "",
@@ -72,6 +73,7 @@ data class CreateUiState(
 sealed interface CreateUiIntent : UiIntent {
     data object OnBackClick : CreateUiIntent
 
+    data object OnBackConfirm: CreateUiIntent
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 
     data object OnSearchClick : CreateUiIntent
@@ -113,4 +115,6 @@ sealed interface CreateUiEffect : UiEffect {
     data object NavigateToSearch : CreateUiEffect
 
     data object ShowBottomSheet : CreateUiEffect
+
+    data object ShowDialog: CreateUiEffect
 }

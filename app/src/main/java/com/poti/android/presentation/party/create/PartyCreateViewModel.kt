@@ -20,6 +20,19 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 ) {
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
+            CreateUiIntent.OnBackClick -> {
+                if (uiState.value.isDirty) {
+                    sendEffect(CreateUiEffect.ShowDialog)
+                } else {
+                    sendEffect(CreateUiEffect.NavigateToBack)
+                }
+            }
+
+            is CreateUiIntent.OnBackConfirm -> {
+                updateState { CreateUiState() }
+                sendEffect(CreateUiEffect.NavigateToBack)
+            }
+
             is CreateUiIntent.OnImagesChanged -> {
                 updateState { copy(selectedImages = intent.uris.toPersistentList()) }
             }
@@ -68,10 +81,6 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
                 sendEffect(CreateUiEffect.NavigateToSearch)
             }
 
-            CreateUiIntent.OnBackClick -> {
-                sendEffect(CreateUiEffect.NavigateToBack)
-            }
-
             CreateUiIntent.OnAllMemberSelect -> {
                 handleAllMemberSelect()
             }
@@ -98,6 +107,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
     private fun handleAccountNumberChange(newValue: String) {
         updateState {
             copy(
+                isDirty = true,
                 accountNumber = newValue.filter { it.isDigit() },
                 accountNumberError = if (newValue.isNotBlank()) null else this.accountNumberError
             )
@@ -107,10 +117,11 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
     private fun handleArtistSelect(newAritst: Artist) {
         if (newAritst == uiState.value.selectedArtist) return
 
-        // TODO: [도연] GetMember
+        // TODO: [도연] GetMember / settingStatus IN_PROGRESS 변경
 
         updateState {
             copy(
+                isDirty = true,
                 selectedArtist = newAritst,
                 artistError = null,
                 // memberOptions =
@@ -123,6 +134,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
         updateState {
             copy(
+                isDirty = true,
                 artistSearchKeyword = newValue,
                 // artistSearchResults =
             )
@@ -134,6 +146,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
         updateState {
             copy(
+                isDirty = true,
                 productName = newValue,
                 productError = if (newValue.isNotBlank()) null else this.productError,
                 // productSearchResults =
@@ -144,6 +157,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
     private fun handleBankChange(newValue: String) {
         updateState {
             copy(
+                isDirty = true,
                 bank = newValue,
                 bankError = if (newValue.isNotBlank()) null else this.bankError,
             )
@@ -153,6 +167,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
     private fun handleDeadlineChange(newValue: String) {
         updateState {
             copy(
+                isDirty = true,
                 deadline = newValue,
                 deadlineError = if (newValue.isNotBlank()) null else this.deadlineError
             )
@@ -162,6 +177,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
     private fun handleDescriptionChange(newValue: String) {
         updateState {
             copy(
+                isDirty = true,
                 description = newValue,
                 descriptionError = if (newValue.isNotBlank()) null else this.descriptionError
             )
@@ -180,6 +196,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
 
         updateState {
             copy(
+                isDirty = true,
                 selectedDeliveryIds = newIds
             )
         }
@@ -287,6 +304,7 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         val selectedMemberIds = uiState.value.selectedMemberIds
         val currentSettingStatus = when {
             selectedMemberIds.isEmpty() -> MemberSettingStatus.ERROR_NO_MEMBER
+            uiState.value.editableMemberOptions.isEmpty() -> MemberSettingStatus.DEFAULT
             uiState.value.editableMemberOptions.any { option -> option.memberId in selectedMemberIds && option.price.isBlank() } -> MemberSettingStatus.ERROR_NO_PRICE
             else -> uiState.value.memberSettingStatus
         }
