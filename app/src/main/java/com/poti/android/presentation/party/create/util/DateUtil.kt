@@ -1,6 +1,5 @@
 package com.poti.android.presentation.party.create.util
 
-import android.util.Log
 import androidx.core.text.isDigitsOnly
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
