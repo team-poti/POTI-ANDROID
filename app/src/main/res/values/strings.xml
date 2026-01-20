@@ -20,7 +20,7 @@
     <string name="action_button_select_all">전체 선택</string>
 
     <!-- Field Component -->
-    <string name="filed_label_name">이름</string>
+    <string name="field_label_name">이름</string>
 
 
     <!-- LoginScreen -->
