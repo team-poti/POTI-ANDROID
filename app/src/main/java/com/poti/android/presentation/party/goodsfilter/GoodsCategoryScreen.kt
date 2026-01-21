@@ -26,6 +26,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.GoodsCategory
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
+import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiIntent
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 
 @Composable
@@ -49,10 +50,18 @@ fun GoodsCategoryRoute(
     uiState.goodsCategoryLoadState.onSuccess { goodsCategory ->
         GoodsCategoryScreen(
             goodsCategory = goodsCategory,
-            onBackClick = onPopBackStack,
-            onFloatingClick = onNavigateToPartyCreate,
-            onSortFilterClick = {},
-            onCardClick = onNavigateToGoodsPartyList,
+            onBackClick = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnBackClick)
+            },
+            onFloatingClick = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnFloatingClick)
+            },
+            onSortFilterClick = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnSortFilterClick)
+            },
+            onCardClick = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick)
+            },
             modifier = modifier,
         )
     }
