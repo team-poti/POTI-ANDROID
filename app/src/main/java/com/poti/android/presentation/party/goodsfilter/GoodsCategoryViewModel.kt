@@ -7,6 +7,7 @@ import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiState
+import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -22,12 +23,32 @@ class GoodsCategoryViewModel @Inject constructor(
 
         override fun processIntent(intent: GoodsCategoryUiIntent) {
             when (intent) {
-                GoodsCategoryUiIntent.OnBackClick -> sendEffect(GoodsCategoryUiEffect.NavigateBack)
-                GoodsCategoryUiIntent.OnFloatingClick -> sendEffect(GoodsCategoryUiEffect.NavigateToPartyCreate)
+                GoodsCategoryUiIntent.OnBackClick ->
+                    sendEffect(GoodsCategoryUiEffect.NavigateBack)
+
+                GoodsCategoryUiIntent.OnFloatingClick ->
+                    sendEffect(GoodsCategoryUiEffect.NavigateToPartyCreate)
+
                 GoodsCategoryUiIntent.OnSortFilterClick -> {
-                    // TODO: [예림] 정렬 바텀시트
+                    updateState { copy(isSortBottomSheetVisible = true) }
                 }
-                GoodsCategoryUiIntent.OnCardClick -> sendEffect(GoodsCategoryUiEffect.NavigateToGoodsFilter)
+
+                is GoodsCategoryUiIntent.OnSortSelected -> {
+                    updateState {
+                        copy(
+                            selectedSortType = intent.sortType,
+                            isSortBottomSheetVisible = false,
+                        )
+                    }
+                    loadGoodsCategoryList(intent.sortType)
+                }
+
+                GoodsCategoryUiIntent.OnSortDismiss -> {
+                    updateState { copy(isSortBottomSheetVisible = false) }
+                }
+
+                GoodsCategoryUiIntent.OnCardClick ->
+                    sendEffect(GoodsCategoryUiEffect.NavigateToGoodsFilter)
             }
         }
 
@@ -35,28 +56,29 @@ class GoodsCategoryViewModel @Inject constructor(
             loadGoodsCategoryList()
         }
 
-        private fun loadGoodsCategoryList() = launchScope {
-            updateState { copy(goodsCategoryLoadState = ApiState.Loading) }
+        private fun loadGoodsCategoryList(sortType: GoodsSortType = uiState.value.selectedSortType) =
+            launchScope {
+                updateState { copy(goodsCategoryLoadState = ApiState.Loading) }
 
-            homeRepository.getGoodsCategoryList(
-                page = 0,
-                size = 10,
-                sort = "LATEST", // TODO
-                artistId = artistId,
-            )
-                .onSuccess { goodsCategory ->
-                    updateState {
-                        copy(goodsCategoryLoadState = ApiState.Success(goodsCategory))
+                homeRepository.getGoodsCategoryList(
+                    page = 0,
+                    size = 10,
+                    sort = sortType.name,
+                    artistId = artistId,
+                )
+                    .onSuccess { goodsCategory ->
+                        updateState {
+                            copy(goodsCategoryLoadState = ApiState.Success(goodsCategory))
+                        }
                     }
-                }
-                .onFailure { throwable ->
-                    updateState {
-                        copy(
-                            goodsCategoryLoadState = ApiState.Failure(
-                                throwable.message ?: "Failed to load goods category",
-                            ),
-                        )
+                    .onFailure { throwable ->
+                        updateState {
+                            copy(
+                                goodsCategoryLoadState = ApiState.Failure(
+                                    throwable.message ?: "Failed to load goods category",
+                                ),
+                            )
+                        }
                     }
-                }
-        }
+            }
     }
