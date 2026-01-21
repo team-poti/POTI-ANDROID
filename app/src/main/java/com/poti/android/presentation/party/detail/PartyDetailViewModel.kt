@@ -168,8 +168,8 @@ class PartyDetailViewModel @Inject constructor(
                 .onSuccess {
                     updateState { copy(isJoinSuccessDialogVisible = true) }
                 }
-                .onFailure {
-                    // TODO: [지현] 에러 처리
+                .onFailure { error ->
+                    Timber.e(error, "postPartyJoin 실패")
                 }
         }
     }
