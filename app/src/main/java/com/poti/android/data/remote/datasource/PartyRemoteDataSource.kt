@@ -8,6 +8,7 @@ import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
+import com.poti.android.data.remote.dto.response.party.PartyListResponseDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import com.poti.android.data.remote.service.PartyService
@@ -39,4 +40,21 @@ class PartyRemoteDataSource @Inject constructor(
 
     suspend fun postPartyJoin(partyJoinRequest: PartyJoinRequestDto): BaseResponse<PartyJoinResponseDto> =
         partyService.postPartyJoin(partyJoinRequest = partyJoinRequest)
+
+    suspend fun getPartyList(
+        page: Int?,
+        size: Int?,
+        title: String,
+        artistId: Long,
+        sort: String,
+        memberIds: List<Long>?,
+    ): BaseResponse<PartyListResponseDto> =
+        partyService.getPartyList(
+            page = page,
+            size = size,
+            title = title,
+            artistId = artistId,
+            sort = sort,
+            memberIds = memberIds,
+        )
 }
