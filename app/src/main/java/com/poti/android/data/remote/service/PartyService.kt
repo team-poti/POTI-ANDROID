@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.data.remote.dto.request.party.PartyJoinRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
+import com.poti.android.data.remote.dto.response.participant.MyPartyListDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
@@ -50,4 +51,9 @@ interface PartyService {
     suspend fun postPartyJoin(
         @Body partyJoinRequest: PartyJoinRequestDto,
     ): BaseResponse<PartyJoinResponseDto>
+
+    @GET("/api/v1/posts/me")
+    suspend fun getMyRecruitList(
+        @Query("status") status: String,
+    ): BaseResponse<MyPartyListDto>
 }

@@ -26,7 +26,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
 import com.poti.android.domain.model.user.UserMyPage
-import com.poti.android.presentation.history.list.HistoryMode
+import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.user.component.BadgeButton
 import com.poti.android.presentation.user.component.HistorySummaryCard
 import com.poti.android.presentation.user.component.HistorySummaryType
