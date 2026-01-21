@@ -9,6 +9,6 @@ import javax.inject.Inject
 class DeliveryRemoteDataSource @Inject constructor(
     private val deliveryService: DeliveryService
 ) {
-    suspend fun fetchDelivery(orderId: Long, deliveryReq: DeliveryRequestDto): BaseResponse<DeliveryResponseDto> =
+    suspend fun patchDelivery(orderId: Long, deliveryReq: DeliveryRequestDto): BaseResponse<DeliveryResponseDto> =
         deliveryService.patchDelivery(orderId, deliveryReq)
 }

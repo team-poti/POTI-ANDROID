@@ -7,5 +7,5 @@ fun DeliveryResponseDto.toDomain(): DeliveryDetail = DeliveryDetail(
     orderId = this.orderId,
     deliveryStatus = this.status,
     trackingNumber = this.trackingNumber,
-    shippedTo = this.shippedAt
+    shippedAt = this.shippedAt
 )

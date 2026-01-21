@@ -5,20 +5,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.data.remote.dto.request.history.DeliveryRequestDto
-import com.poti.android.domain.model.history.DepositInfo
-import com.poti.android.domain.model.history.MemberPriceInfo
-import com.poti.android.domain.model.history.ShippingInfo
 import com.poti.android.domain.repository.DeliveryRepository
 import com.poti.android.domain.repository.GroupBuyRepository
 import com.poti.android.domain.repository.PaymentRepository
-import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.manage.model.ManageModalState
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiIntent
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiState
-import com.poti.android.presentation.history.manage.model.ParticipantUiModel
-import com.poti.android.presentation.history.manage.model.RecruiterManageDetailUiModel
 import com.poti.android.presentation.history.manage.model.toUiModel
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -103,10 +96,8 @@ class ParticipantManageViewModel @Inject constructor(
 
             deliveryRepository.patchDelivery(
                 orderId = id,
-                deliveryReq =  DeliveryRequestDto(
-                    carrier = method,
-                    trackingNumber = number
-                )
+                deliveryMethod = method,
+                trackingNumber = number,
             ).onSuccess {
                 Timber.d("success: ${it.orderId}, ${it.deliveryStatus}, ${it.trackingNumber}")
             }.onFailure { error ->
