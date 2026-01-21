@@ -43,8 +43,8 @@ class PartyCreateViewModel @Inject constructor(
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
-    private val _artistSearchKeyword = MutableStateFlow("")
-    private val _productSearchKeyword = MutableStateFlow("")
+    private val artistSearchKeywordForDebounce = MutableStateFlow("")
+    private val productSearchKeywordForDebounce = MutableStateFlow("")
 
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
@@ -163,7 +163,7 @@ class PartyCreateViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _artistSearchKeyword
+            artistSearchKeywordForDebounce
                 .debounce(500)
                 .distinctUntilChanged()
                 .filter { it.isNotBlank() }
@@ -173,7 +173,7 @@ class PartyCreateViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            _productSearchKeyword
+            productSearchKeywordForDebounce
                 .debounce(500)
                 .distinctUntilChanged()
                 .filter { it.isNotBlank() }
@@ -255,7 +255,7 @@ class PartyCreateViewModel @Inject constructor(
             )
         }
 
-        _artistSearchKeyword.value = newValue
+        artistSearchKeywordForDebounce.value = newValue
     }
 
     private suspend fun searchArtist(keyword: String) {
@@ -284,7 +284,7 @@ class PartyCreateViewModel @Inject constructor(
                 productError = if (newValue.isNotBlank()) null else this.productError,
             )
         }
-        _productSearchKeyword.value = newValue
+        productSearchKeywordForDebounce.value = newValue
     }
 
     private suspend fun searchProdut(keyword: String) {
