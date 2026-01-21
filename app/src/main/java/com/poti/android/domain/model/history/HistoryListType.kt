@@ -1,7 +1,6 @@
 package com.poti.android.domain.model.history
 
-import com.poti.android.domain.type.HistoryStage
-import com.poti.android.domain.type.HistoryStatus
+import com.poti.android.domain.type.HistoryListType
 
 data class HistoryListContent(
     val ongoingCount: Int,
@@ -14,6 +13,5 @@ data class HistoryItem(
     val imageUrl: String?,
     val artist: String,
     val title: String,
-    val stage: HistoryStage,
-    val status: HistoryStatus,
+    val status: HistoryListType,
 )
