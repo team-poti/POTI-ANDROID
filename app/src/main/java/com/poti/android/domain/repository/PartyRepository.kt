@@ -4,6 +4,7 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.PartyDetail
+import com.poti.android.domain.model.party.PartyJoinOption
 
 interface PartyRepository {
     suspend fun searchProductTitle(
@@ -30,4 +31,6 @@ interface PartyRepository {
     suspend fun getShippingOptions(): Result<List<DeliveryOption>>
 
     suspend fun getPartyDetail(partyId: Long): Result<PartyDetail>
+
+    suspend fun getPartyJoinOptions(partyId: Long): Result<PartyJoinOption>
 }

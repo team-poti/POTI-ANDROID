@@ -1,10 +1,10 @@
-package com.poti.android.data.remote.dto.response.post
+package com.poti.android.data.remote.dto.response.party
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PostDetailResponseDto(
+data class PartyDetailResponseDto(
     @SerialName("postId")
     val postId: Long,
     @SerialName("isMyPost")

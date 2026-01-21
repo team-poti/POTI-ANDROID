@@ -4,6 +4,8 @@ import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
+import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
+import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import com.poti.android.data.remote.service.PartyService
@@ -26,4 +28,10 @@ class PartyRemoteDataSource @Inject constructor(
 
     suspend fun getShippingOptions(): BaseResponse<List<ShippingOptionResponseDto>> =
         partyService.getShippingOptions()
+
+    suspend fun getPartyDetail(partyId: Long): BaseResponse<PartyDetailResponseDto> =
+        partyService.getPartyDetail(partyId = partyId)
+
+    suspend fun getPartyJoinOptions(partyId: Long): BaseResponse<PartyJoinOptionsDto> =
+        partyService.getPartyJoinOptions(partyId = partyId)
 }

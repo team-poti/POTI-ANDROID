@@ -1,10 +1,10 @@
-package com.poti.android.data.mapper.post
+package com.poti.android.data.mapper.party
 
-import com.poti.android.data.remote.dto.response.post.ImageResponseDto
-import com.poti.android.data.remote.dto.response.post.ParticipantDto
-import com.poti.android.data.remote.dto.response.post.PostDetailResponseDto
-import com.poti.android.data.remote.dto.response.post.ShippingOptionDto
-import com.poti.android.data.remote.dto.response.post.UploaderDto
+import com.poti.android.data.remote.dto.response.party.ImageResponseDto
+import com.poti.android.data.remote.dto.response.party.ParticipantDto
+import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
+import com.poti.android.data.remote.dto.response.party.ShippingOptionDto
+import com.poti.android.data.remote.dto.response.party.UploaderDto
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.Participant
 import com.poti.android.domain.model.party.PartyDetail
@@ -12,7 +12,7 @@ import com.poti.android.domain.model.party.PartyImage
 import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.PartyStatusType
 
-fun PostDetailResponseDto.toDomain(): PartyDetail = PartyDetail(
+fun PartyDetailResponseDto.toDomain(): PartyDetail = PartyDetail(
     postId = postId,
     isMyPost = isMyPost,
     status = mapToPartyStatus(status),

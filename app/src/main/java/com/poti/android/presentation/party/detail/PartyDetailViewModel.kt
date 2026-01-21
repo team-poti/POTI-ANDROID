@@ -26,7 +26,7 @@ class PartyDetailViewModel @Inject constructor(
         initialState = PartyDetailUiState(),
     ) {
     private val args = savedStateHandle.toRoute<PartyDetailGraph>()
-    private val partyId = args.partyId
+    private val partyId = 3L
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -76,14 +76,20 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun fetchPartyJoinOption() = launchScope {
         updateState { copy(partyJoinOption = ApiState.Loading) }
-        // TODO: [지현] 서버 연결
-        updateState {
-            copy(
-                partyJoinOption = ApiState.Success(dummyJoinOption),
-                memberMenuItems = dummyJoinOption.memberOptions.map { it.toFieldMenuItem() }.toImmutableList(),
-                deliveryMenuItems = dummyJoinOption.deliveryOptions.map { it.toFieldMenuItem() }.toImmutableList(),
-            )
-        }
+
+        partyRepository.getPartyJoinOptions(partyId = partyId)
+            .onSuccess { joinOptions ->
+                updateState {
+                    copy(
+                        partyJoinOption = ApiState.Success(joinOptions),
+                        memberMenuItems = joinOptions.memberOptions.map { it.toFieldMenuItem() }.toImmutableList(),
+                        deliveryMenuItems = joinOptions.deliveryOptions.map { it.toFieldMenuItem() }.toImmutableList(),
+                    )
+                }
+            }
+            .onFailure { error ->
+                updateState { copy(partyJoinOption = ApiState.Failure(error.message ?: "Failed")) }
+            }
     }
 
     private fun handleMemberSelect(selectedId: String) {
