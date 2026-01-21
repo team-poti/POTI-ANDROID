@@ -27,8 +27,10 @@ import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.GoodsCategory
+import com.poti.android.presentation.party.goodsfilter.component.GoodsSortBottomSheet
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiIntent
+import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 
 @Composable
@@ -53,6 +55,8 @@ fun GoodsCategoryRoute(
     uiState.goodsCategoryLoadState.onSuccess { goodsCategory ->
         GoodsCategoryScreen(
             goodsCategory = goodsCategory,
+            selectedSortType = uiState.selectedSortType,
+            isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
             onBackClick = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnBackClick)
             },
@@ -61,6 +65,12 @@ fun GoodsCategoryRoute(
             },
             onSortFilterClick = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnSortFilterClick)
+            },
+            onSortSelect = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnSortSelected(it))
+            },
+            onSortDismiss = {
+                viewModel.processIntent(GoodsCategoryUiIntent.OnSortDismiss)
             },
             onCardClick = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick)
@@ -73,12 +83,24 @@ fun GoodsCategoryRoute(
 @Composable
 private fun GoodsCategoryScreen(
     goodsCategory: GoodsCategory,
+    selectedSortType: GoodsSortType,
+    isSortBottomSheetVisible: Boolean,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
     onSortFilterClick: () -> Unit,
+    onSortSelect: (GoodsSortType) -> Unit,
+    onSortDismiss: () -> Unit,
     onCardClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (isSortBottomSheetVisible) {
+        GoodsSortBottomSheet(
+            selectedSortType = selectedSortType,
+            onSelect = onSortSelect,
+            onDismissRequest = onSortDismiss,
+        )
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = PotiTheme.colors.white,
@@ -90,7 +112,7 @@ private fun GoodsCategoryScreen(
         },
         floatingActionButton = {
             PotiFloatingButton(
-                onClick = onFloatingClick, // 아티스트 입력 상태로 등록 화면 이동, 아티스트 아이디?
+                onClick = onFloatingClick, // TODO: 아티스트 입력 상태로 등록 화면 이동; 아티스트 아이디, 아티스트 이름
             )
         },
     ) { innerPadding ->
@@ -102,7 +124,7 @@ private fun GoodsCategoryScreen(
         ) {
             item {
                 PotiSmallButton(
-                    text = "인기순", // TODO: 바텀시트 연결
+                    text = stringResource(selectedSortType.displayRes),
                     onClick = onSortFilterClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,7 +139,7 @@ private fun GoodsCategoryScreen(
                     title = groupItem.postTitle,
                     partyCount = groupItem.postCount,
                     tag = groupItem.tag,
-                    onClick = onCardClick, // 굿즈별 페이지로 이동 타이틀, 아티스트 아이디?
+                    onClick = onCardClick, // TODO: [예림] 굿즈별 페이지로 이동; 타이틀, 아티스트 아이디
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
@@ -136,9 +158,13 @@ private fun GoodsCategoryScreenPreview() {
     PotiTheme {
         GoodsCategoryScreen(
             goodsCategory = dummyGoodsCategory,
+            selectedSortType = GoodsSortType.LATEST,
+            isSortBottomSheetVisible = false,
             onBackClick = {},
             onFloatingClick = {},
             onSortFilterClick = {},
+            onSortSelect = {},
+            onSortDismiss = {},
             onCardClick = {},
         )
     }

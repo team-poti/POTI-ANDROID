@@ -8,7 +8,6 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
-import com.poti.android.presentation.history.list.HistoryMode
 
 data class HistoryListUiState(
     val historyListLoadState: ApiState<HistoryListContent> = ApiState.Init,
