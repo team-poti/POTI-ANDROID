@@ -29,8 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.extension.onSuccess
-import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet

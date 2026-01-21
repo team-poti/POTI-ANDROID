@@ -35,7 +35,10 @@ class UploadImagesUseCase @Inject constructor(
             }
     }
 
-    private suspend fun getPresignedUrl(type: String, imageInfos: List<ImageInfoForPresigned>): Result<List<PresignedUploadInfo>> {
+    private suspend fun getPresignedUrl(
+        type: String,
+        imageInfos: List<ImageInfoForPresigned>,
+    ): Result<List<PresignedUploadInfo>> {
         val extensions = imageInfos.map { info -> info.extension }
 
         return imageRepository.getPresignedUrls(type, extensions)

@@ -8,7 +8,6 @@ import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.artist.Artist
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
@@ -127,5 +126,5 @@ sealed interface CreateUiEffect : UiEffect {
 
     data object ConvertUris : CreateUiEffect
 
-    data class NavigateToDetail(val partyId: Long): CreateUiEffect
+    data class NavigateToDetail(val partyId: Long) : CreateUiEffect
 }

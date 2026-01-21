@@ -17,7 +17,7 @@ fun Uri.toImageInfoForPresigned(context: Context): ImageInfoForPresigned? {
         null,
         null,
         null,
-        null
+        null,
     )?.use { cursor ->
         if (!cursor.moveToFirst()) return@use null
 

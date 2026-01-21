@@ -1,6 +1,5 @@
 package com.poti.android.presentation.party.create
 
-import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -18,9 +17,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
-import com.poti.android.presentation.party.util.toImageInfosForPresigned
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
@@ -44,8 +41,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     private val _artistSearchKeyword = MutableStateFlow("")
     private val _productSearchKeyword = MutableStateFlow("")
 
@@ -193,13 +190,13 @@ class PartyCreateViewModel @Inject constructor(
                     copy(
                         deliveryOptionsState = ApiState.Success(result.toPersistentList()),
                         editableDeliveryOptions = result.toPersistentList(),
-                        selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId
+                        selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId,
                     )
                 }
             }.onFailure { e ->
                 updateState {
                     copy(
-                        deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail")
+                        deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail"),
                     )
                 }
             }
@@ -239,7 +236,7 @@ class PartyCreateViewModel @Inject constructor(
                 .onFailure { e ->
                     updateState {
                         copy(
-                            memberOptionsState = ApiState.Failure(e.message ?: "get members fail")
+                            memberOptionsState = ApiState.Failure(e.message ?: "get members fail"),
                         )
                     }
                 }
@@ -266,14 +263,14 @@ class PartyCreateViewModel @Inject constructor(
             .onSuccess { result ->
                 updateState {
                     copy(
-                        artistSearchResultsState = ApiState.Success(result.toPersistentList())
+                        artistSearchResultsState = ApiState.Success(result.toPersistentList()),
                     )
                 }
             }
             .onFailure {
                 updateState {
                     copy(
-                        artistSearchResultsState = ApiState.Failure(it.message ?: "FAIL")
+                        artistSearchResultsState = ApiState.Failure(it.message ?: "FAIL"),
                     )
                 }
             }
@@ -299,14 +296,14 @@ class PartyCreateViewModel @Inject constructor(
                 .onSuccess { result ->
                     updateState {
                         copy(
-                            productSearchResultsState = ApiState.Success(result.toPersistentList())
+                            productSearchResultsState = ApiState.Success(result.toPersistentList()),
                         )
                     }
                 }
                 .onFailure {
                     updateState {
                         copy(
-                            productSearchResultsState = ApiState.Failure(it.message ?: "FAIL")
+                            productSearchResultsState = ApiState.Failure(it.message ?: "FAIL"),
                         )
                     }
                 }
@@ -515,7 +512,7 @@ class PartyCreateViewModel @Inject constructor(
             accountNumber = uiState.value.accountNumber,
             imageUrls = urls,
             options = uiState.value.editableMemberOptions.filter { option -> option.memberId in uiState.value.selectedMemberIds },
-            shippings = uiState.value.editableDeliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds }
+            shippings = uiState.value.editableDeliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds },
         )
 
     private suspend fun uploadImagesAndCreateParty(
@@ -528,7 +525,7 @@ class PartyCreateViewModel @Inject constructor(
             .onFailure {
                 updateState {
                     copy(
-                        createPartyState = ApiState.Failure(it.message ?: "image upload fail")
+                        createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
                     )
                 }
             }
@@ -547,7 +544,7 @@ class PartyCreateViewModel @Inject constructor(
             .onFailure {
                 updateState {
                     copy(
-                        createPartyState = ApiState.Failure(it.message ?: "create party fail")
+                        createPartyState = ApiState.Failure(it.message ?: "create party fail"),
                     )
                 }
             }
