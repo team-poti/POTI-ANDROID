@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +37,8 @@ import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+private const val BOTTOM_BTN_HEIGHT_DP = 70
+
 @Composable
 fun CreateMemberSetting(
     status: MemberSettingStatus,
@@ -41,19 +46,26 @@ fun CreateMemberSetting(
     onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
+    neverShowHint: Boolean = false,
 ) {
-    var showHint by remember(status) {
-        mutableStateOf(status != MemberSettingStatus.DEFAULT)
+    var showHint by remember(status, neverShowHint) {
+        mutableStateOf(if (neverShowHint) false else status != MemberSettingStatus.DEFAULT)
     }
+
 
     var isEditBtnInScreen by remember { mutableStateOf(false) }
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
+    val isKeyboardVisible = WindowInsets.ime.getBottom(density) > 0
 
     val screenHeight = remember(configuration.screenHeightDp) {
         with(density) {
             configuration.screenHeightDp.dp.roundToPx()
         }
+    }
+
+    val bottomBtnHeight = remember {
+        with(density) { BOTTOM_BTN_HEIGHT_DP.dp.roundToPx() }
     }
 
     Column(
@@ -123,11 +135,11 @@ fun CreateMemberSetting(
                         .fillMaxWidth()
                         .onGloballyPositioned { coordinates ->
                             val buttonTop = coordinates.positionInWindow().y
-                            isEditBtnInScreen = buttonTop < screenHeight
+                            isEditBtnInScreen = buttonTop < screenHeight - bottomBtnHeight
                         },
                 )
 
-                if (showHint && isEditBtnInScreen) {
+                if (showHint && isEditBtnInScreen && !isKeyboardVisible) {
                     HintToolTip()
                 }
             }

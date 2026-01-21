@@ -213,6 +213,16 @@
     <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
     <string name="home_other_goods">다른 굿즈 구경하기</string>
     <string name="home_more">더보기</string>
+    <string name="create_placeholder_artist_search">분철할 그룹을 검색해보세요</string>
+    <string name="create_notice_title">모집자 안내 사항</string>
+    <string name="create_notice_first">굿즈 구매 가능 기간을 고려해 분철팟 마감 기한을 설정해주세요.</string>
+    <string name="create_notice_second">마감 기한까지 모집 인원이 과반수 이상 충족되지 않을 경우, 해당 분철팟은 자동으로 종료되며 분철은 진행되지 않습니다.</string>
+    <string name="create_notice_third">분철팟 모집, 굿즈 구매, 배송 및 참여자와의 거래 과정에서 발생하는 사항에 대한 책임은 모집자에게 있습니다.</string>
+    <string name="create_exit_dialog_title">지금 나가면 내용이 저장되지 않아요</string>
+    <string name="create_exit_dialog_content">계속 작성할까요?</string>
+    <string name="create_exit_dialog_dismiss_text">나가기</string>
+    <string name="create_exit_dialog_confirm_text">계속 작성하기</string>
+    <string name="create_error_invalid_date">유효한 날짜 형식으로 입력해주세요</string>
 
     <!-- Goods filter -->
     <string name="goods_filter_sort_latest">최신순</string>
