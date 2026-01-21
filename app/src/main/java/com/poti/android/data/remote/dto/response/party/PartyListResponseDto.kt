@@ -12,7 +12,7 @@ data class PartyListResponseDto(
     @SerialName("artist")
     val artist: String,
     @SerialName("totalCount")
-    val totalCount: Int,
+    val totalCount: Int? = null,
     @SerialName("hasNext")
     val hasNext: Boolean,
     @SerialName("pots")

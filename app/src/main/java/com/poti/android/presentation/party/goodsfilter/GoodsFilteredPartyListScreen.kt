@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.goodsfilter
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ fun GoodsFilteredPartyListRoute(
     viewModel: GoodsFilterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    Log.d("GoodsFilterUI", "recompose: ${uiState.partyListInfo}")
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {

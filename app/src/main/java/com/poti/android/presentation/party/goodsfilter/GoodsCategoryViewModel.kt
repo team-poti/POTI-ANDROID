@@ -47,8 +47,8 @@ class GoodsCategoryViewModel @Inject constructor(
                     updateState { copy(isSortBottomSheetVisible = false) }
                 }
 
-                GoodsCategoryUiIntent.OnCardClick ->
-                    sendEffect(GoodsCategoryUiEffect.NavigateToGoodsFilter)
+                is GoodsCategoryUiIntent.OnCardClick ->
+                    sendEffect(GoodsCategoryUiEffect.NavigateToGoodsPartyList(intent.title, intent.artistId))
             }
         }
 

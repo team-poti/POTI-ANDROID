@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.goodsfilter
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -18,6 +19,7 @@ class GoodsFilterViewModel @Inject constructor(
     BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
             initialState = GoodsFilterUiState(),
         ) {
+        private val title: String = checkNotNull(savedStateHandle["title"])
         private val artistId: Long = checkNotNull(savedStateHandle["artistId"])
 
         init {
@@ -55,7 +57,7 @@ class GoodsFilterViewModel @Inject constructor(
             partyRepository.getPartyList(
                 page = 0,
                 size = 10,
-                title = "", // TODO 타이틀 받아오기
+                title = title,
                 artistId = artistId,
                 sort = sort,
                 memberIds = memberIds, // TODO 바텀시트 연결
@@ -69,6 +71,7 @@ class GoodsFilterViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
+                    Log.e("GoodsFilterVM", "loadPartyList failed", throwable)
                     updateState {
                         copy(
                             partyListInfo = ApiState.Failure(

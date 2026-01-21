@@ -64,7 +64,7 @@ val fakeMyGroupItems = listOf(
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToPartyDetail: (Long) -> Unit,
-    onNavigateToGoodsPartyList: (Long) -> Unit,
+    onNavigateToGoodsPartyList: (String, Long) -> Unit,
     onNavigateToGoodsCategory: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -75,7 +75,7 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.postId)
-            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId)
+            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.title, effect.artistId)
             is HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory(effect.artistId)
         }
     }
@@ -90,8 +90,8 @@ fun HomeRoute(
             onMoreClick = { artistId ->
                 viewModel.processIntent(HomeUiIntent.OnMoreClick(artistId))
             },
-            onCardClick = { artistId ->
-                viewModel.processIntent(HomeUiIntent.OnCardClick(artistId))
+            onCardClick = { title, artistId ->
+                viewModel.processIntent(HomeUiIntent.OnCardClick(title, artistId))
             },
             modifier = modifier,
         )
@@ -104,7 +104,7 @@ private fun HomeScreen(
     onFloatingClick: () -> Unit,
     onBannerClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
-    onCardClick: (Long) -> Unit,
+    onCardClick: (String, Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -148,7 +148,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 HomeGoodsSection(
-                    artistId = 0L,
+                    artistId = homeContent.mainArtistId,
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
@@ -188,7 +188,7 @@ private fun HomeScreenPreview() {
             onFloatingClick = { },
             onBannerClick = { },
             onMoreClick = { },
-            onCardClick = { },
+            onCardClick = { _, _ -> },
         )
     }
 }
