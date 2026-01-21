@@ -47,7 +47,7 @@ fun NavGraphBuilder.goodsFilterNavGraph(
     onPopBackStack: () -> Unit,
 ) {
     composable<GoodsRoute.GoodsCategory> { backStackEntry ->
-        val artistId = backStackEntry.toRoute<GoodsRoute.GoodsPartyList>().artistId
+        val artistId = backStackEntry.toRoute<GoodsRoute.GoodsCategory>().artistId
 
         GoodsCategoryRoute(
             artistId = artistId,
