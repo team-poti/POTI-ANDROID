@@ -91,7 +91,7 @@ internal fun PotiBasicField(
                 Box(
                     modifier = Modifier
                         .weight(1f),
-                    contentAlignment = Alignment.CenterStart,
+                    contentAlignment = Alignment.TopStart,
                 ) {
                     innerTextField()
 
