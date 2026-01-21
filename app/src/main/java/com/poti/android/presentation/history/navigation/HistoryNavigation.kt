@@ -19,8 +19,8 @@ import kotlinx.serialization.Serializable
 sealed interface HistoryRoute : Route {
     @Serializable
     data class HistoryList(
-        val mode: HistoryMode? = HistoryMode.RECRUIT,
-        val type: HistorySummaryType? = HistorySummaryType.ALL,
+        val mode: HistoryMode? = null,
+        val type: HistorySummaryType? = null,
     ) : HistoryRoute
 
     @Serializable
