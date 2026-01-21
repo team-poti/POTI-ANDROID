@@ -17,7 +17,11 @@ sealed interface ParticipantDetailUiIntent : UiIntent {
 
     data object OnPartyDetailClick : ParticipantDetailUiIntent
 
+    data object OnDepositCompleteClick : ParticipantDetailUiIntent
+
     data class SubmitDeposit(val depositor: String, val depositTime: String) : ParticipantDetailUiIntent
+
+    data object OnDeliveredClick : ParticipantDetailUiIntent
 
     data object ConfirmDelivery : ParticipantDetailUiIntent
 

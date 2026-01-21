@@ -3,6 +3,7 @@ package com.poti.android.presentation.history.participant
 import ParticipantDetailUiModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +17,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.button.ActionButtonType
+import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
@@ -24,6 +27,7 @@ import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.participant.component.DeliveryStatusContent
 import com.poti.android.presentation.history.participant.component.DepositStatusContent
+import com.poti.android.presentation.history.participant.model.ParticipantButtonState
 
 @Composable
 fun ParticipantDetailRoute(
@@ -38,6 +42,7 @@ fun ParticipantDetailRoute(
             participantDetail = participantDetail,
             onBackClick = onPopBackStack,
             onDetailClick = {},
+            onActionButtonClick = {},
             modifier = modifier,
         )
     }
@@ -48,6 +53,7 @@ private fun ParticipantDetailScreen(
     participantDetail: ParticipantDetailUiModel,
     onBackClick: () -> Unit,
     onDetailClick: () -> Unit,
+    onActionButtonClick: (ParticipantButtonState) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -58,6 +64,7 @@ private fun ParticipantDetailScreen(
 
         Column(
             modifier = Modifier
+                .weight(1f)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 50.dp),
         ) {
@@ -96,6 +103,26 @@ private fun ParticipantDetailScreen(
                 shippingInfo = participantDetail.shippingInfo,
                 participantStatusType = participantDetail.shippingInfo.shippingStatus,
             )
+        }
+
+        when (participantDetail.buttonState) {
+            ParticipantButtonState.DEPOSIT_DONE -> {
+                PotiActionButton(
+                    text = stringResource(R.string.history_deposit_done_button),
+                    onClick = { onActionButtonClick(ParticipantButtonState.DEPOSIT_DONE) },
+                    type = ActionButtonType.SECONDARY_MAIN,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                )
+            }
+            ParticipantButtonState.DELIVERY_RECEIVED -> {
+                PotiActionButton(
+                    text = stringResource(R.string.history_delivery_done_button),
+                    onClick = { onActionButtonClick(ParticipantButtonState.DELIVERY_RECEIVED) },
+                    type = ActionButtonType.SECONDARY_MAIN,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                )
+            }
+            ParticipantButtonState.NONE -> {}
         }
     }
 }

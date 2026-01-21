@@ -12,6 +12,7 @@ import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
 import com.poti.android.presentation.history.navigation.HistoryRoute
+import com.poti.android.presentation.history.participant.model.ParticipantButtonState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiIntent
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiState
@@ -32,12 +33,14 @@ class ParticipantViewModel @Inject constructor(
 
     override fun processIntent(intent: ParticipantDetailUiIntent) {
         when (intent) {
-            ParticipantDetailUiIntent.ConfirmDelivery -> TODO()
             is ParticipantDetailUiIntent.LoadDetail -> TODO()
             ParticipantDetailUiIntent.OnBackClick -> TODO()
             ParticipantDetailUiIntent.OnPartyDetailClick -> TODO()
-            ParticipantDetailUiIntent.SkipReview -> TODO()
+            ParticipantDetailUiIntent.OnDepositCompleteClick -> TODO()
             is ParticipantDetailUiIntent.SubmitDeposit -> TODO()
+            ParticipantDetailUiIntent.OnDeliveredClick -> TODO()
+            ParticipantDetailUiIntent.ConfirmDelivery -> TODO()
+            ParticipantDetailUiIntent.SkipReview -> TODO()
             is ParticipantDetailUiIntent.SubmitReview -> TODO()
         }
     }
@@ -78,6 +81,7 @@ class ParticipantViewModel @Inject constructor(
                             trackingNumber = null,
                             shippingStatus = ParticipantStatusType.SHIPPED,
                         ),
+                        buttonState = ParticipantButtonState.DEPOSIT_DONE,
                     ),
                 ),
             )
