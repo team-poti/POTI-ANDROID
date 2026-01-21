@@ -14,7 +14,6 @@ class ImageRepositoryImpl @Inject constructor(
 ) : ImageRepository {
     override suspend fun getPresignedUrls(
         type: String,
-        count: Int,
         extensions: List<String>,
     ): Result<List<PresignedUploadInfo>> = httpResponseHandler.safeApiCall {
         imageRemoteDataSource.getPresignedUrls(type, extensions)
