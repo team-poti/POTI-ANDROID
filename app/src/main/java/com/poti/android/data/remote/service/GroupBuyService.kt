@@ -7,5 +7,7 @@ import retrofit2.http.Path
 
 interface GroupBuyService {
     @GET("/api/v1/posts/sale/{postId}")
-    suspend fun getPostSale(@Path("postId") postId: Long): BaseResponse<GroupBuyPostSaleDto>
+    suspend fun getPostSale(
+        @Path("postId") postId: Long,
+    ): BaseResponse<GroupBuyPostSaleDto>
 }

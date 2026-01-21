@@ -22,7 +22,7 @@ data class GroupBuyPostSaleDto(
     @SerialName("statusMessage")
     val statusMessage: String,
     @SerialName("participant")
-    val participant: List<ParticipantDto>
+    val participant: List<ParticipantDto>,
 )
 
 @Serializable
@@ -38,7 +38,7 @@ data class ParticipantDto(
     @SerialName("priceInfo")
     val priceInfo: PriceInfoDto,
     @SerialName("shippingInfo")
-    val shippingInfo: ShippingInfoDto
+    val shippingInfo: ShippingInfoDto,
 )
 
 @Serializable

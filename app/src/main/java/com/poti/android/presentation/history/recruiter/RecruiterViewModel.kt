@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecruiterViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val groupBuyRepository: GroupBuyRepository
+    private val groupBuyRepository: GroupBuyRepository,
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
         initialState = RecruiterDetailUiState(),
     ) {
@@ -49,7 +49,7 @@ class RecruiterViewModel @Inject constructor(
                 updateState {
                     copy(
                         recruiterDetailState =
-                            ApiState.Failure(error.message ?: "failed: getRecruiterDetail")
+                            ApiState.Failure(error.message ?: "failed: getRecruiterDetail"),
                     )
                 }
             }

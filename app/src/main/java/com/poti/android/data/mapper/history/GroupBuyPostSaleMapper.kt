@@ -16,26 +16,28 @@ fun GroupBuyPostSaleDto.toDomain(): RecruiterDetail = RecruiterDetail(
         artist = this.artistName,
         title = this.title,
         partyStatus = toPartyStatus(this.postStatus),
-        statusMessage = this.statusMessage
+        statusMessage = this.statusMessage,
     ),
-    participantInfoList = this.participant.map { ParticipantInfo(
-        userId = it.userId,
-        memberNames = it.memberNames,
-        participantStatus = toParticipantStatus(it.status),
-        deliveryMethod = it.priceInfo.shippingName,
-        totalPrice = it.priceInfo.totalPrice,
-        shippingInfo = ShippingInfo(
-            receiverName = it.shippingInfo.receiverName,
-            address = it.shippingInfo.address,
-            phone = it.shippingInfo.phone,
-            trackingNumber = null
+    participantInfoList = this.participant.map {
+        ParticipantInfo(
+            userId = it.userId,
+            memberNames = it.memberNames,
+            participantStatus = toParticipantStatus(it.status),
+            deliveryMethod = it.priceInfo.shippingName,
+            totalPrice = it.priceInfo.totalPrice,
+            shippingInfo = ShippingInfo(
+                receiverName = it.shippingInfo.receiverName,
+                address = it.shippingInfo.address,
+                phone = it.shippingInfo.phone,
+                trackingNumber = null,
+            ),
         )
-    ) },
-    participantCount = this.totalCount
+    },
+    participantCount = this.totalCount,
 )
 
 private fun toPartyStatus(status: String): PartyStatusType =
-    when(status) {
+    when (status) {
         "RECRUITING" -> PartyStatusType.RECRUITING
         "CLOSED" -> PartyStatusType.CLOSED
         "PAYMENT_DONE" -> PartyStatusType.PAYMENT_DONE
@@ -46,7 +48,7 @@ private fun toPartyStatus(status: String): PartyStatusType =
     }
 
 private fun toParticipantStatus(status: String): ParticipantStatusType =
-    when(status) {
+    when (status) {
         "RECRUITING" -> ParticipantStatusType.RECRUITING
         "WAIT_PAY" -> ParticipantStatusType.WAIT_PAY
         "WAIT_PAY_CHECK" -> ParticipantStatusType.WAIT_PAY_CHECK
