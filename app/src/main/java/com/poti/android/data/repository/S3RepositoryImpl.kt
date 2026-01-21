@@ -61,7 +61,7 @@ class S3RepositoryImpl @Inject constructor(
         okHttpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
                 throw IllegalStateException(
-                    "S3 upload failed: ${response.code}"
+                    "S3 upload failed: ${response.code}",
                 )
             }
         }
