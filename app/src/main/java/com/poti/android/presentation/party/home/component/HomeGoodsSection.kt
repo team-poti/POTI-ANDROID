@@ -25,11 +25,12 @@ import com.poti.android.presentation.party.home.fakeMyGroupItems
 
 @Composable
 fun HomeGoodsSection(
+    artistId: Long,
     @StringRes title: Int,
     nickname: String,
     groupItems: List<GroupItem>,
-    onMoreClick: () -> Unit,
-    onCardClick: () -> Unit,
+    onMoreClick: (Long) -> Unit,
+    onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -54,7 +55,7 @@ fun HomeGoodsSection(
 
             PotiTextButton(
                 text = stringResource(R.string.home_more),
-                onClick = onMoreClick,
+                onClick = { onMoreClick(artistId) },
             )
         }
 
@@ -70,7 +71,7 @@ fun HomeGoodsSection(
                     goodsType = item.postTitle,
                     partyCount = item.postCount.toInt(),
                     tag = item.tag,
-                    onClick = { onCardClick() },
+                    onClick = { onCardClick(artistId) },
                 )
             }
         }
@@ -82,6 +83,7 @@ fun HomeGoodsSection(
 private fun HomeGoodsSectionPreview() {
     PotiTheme {
         HomeGoodsSection(
+            artistId = 0L,
             title = R.string.home_recommend_goods,
             nickname = "포티",
             groupItems = fakeMyGroupItems,
