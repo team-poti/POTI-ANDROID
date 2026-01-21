@@ -38,7 +38,7 @@ fun GoodsCategoryRoute(
     artistId: Long,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToGoodsPartyList: (Long) -> Unit,
+    onNavigateToGoodsPartyList: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GoodsCategoryViewModel = hiltViewModel(),
 ) {
@@ -48,7 +48,7 @@ fun GoodsCategoryRoute(
         when (effect) {
             GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
             GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsPartyList(artistId)
+            is GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsPartyList(artistId, effect.title)
         }
     }
 
@@ -72,8 +72,8 @@ fun GoodsCategoryRoute(
             onSortDismiss = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnSortDismiss)
             },
-            onCardClick = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick)
+            onCardClick = { title ->
+                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick(title))
             },
             modifier = modifier,
         )
@@ -90,7 +90,7 @@ private fun GoodsCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (GoodsSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: () -> Unit,
+    onCardClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isSortBottomSheetVisible) {
@@ -139,7 +139,7 @@ private fun GoodsCategoryScreen(
                     title = groupItem.postTitle,
                     partyCount = groupItem.postCount,
                     tag = groupItem.tag,
-                    onClick = onCardClick, // TODO: [예림] 굿즈별 페이지로 이동; 타이틀, 아티스트 아이디
+                    onClick = { onCardClick(groupItem.postTitle) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),

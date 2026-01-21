@@ -4,15 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PartyListResponseDto(
+data class ProductPartyListResponseDto(
     @SerialName("postTitle")
     val postTitle: String,
     @SerialName("artistId")
     val artistId: Long,
     @SerialName("artist")
     val artist: String,
-    @SerialName("totalCount")
-    val totalCount: Int,
+    @SerialName("currentPage")
+    val currentPage: Int,
     @SerialName("hasNext")
     val hasNext: Boolean,
     @SerialName("pots")

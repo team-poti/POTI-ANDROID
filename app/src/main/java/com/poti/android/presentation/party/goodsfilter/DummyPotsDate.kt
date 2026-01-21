@@ -1,9 +1,9 @@
 package com.poti.android.presentation.party.goodsfilter
 
-import com.poti.android.domain.model.party.PartyList
 import com.poti.android.domain.model.party.PartySummary
+import com.poti.android.domain.model.party.ProductPartyList
 
-val dummyPartyList = PartyList(
+val dummyProductPartyList = ProductPartyList(
     partyTitle = "러브다이브 위드뮤",
     artistName = "IVE(아이브)",
     partySummaries = listOf(

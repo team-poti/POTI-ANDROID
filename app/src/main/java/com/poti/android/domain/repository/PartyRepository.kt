@@ -7,7 +7,7 @@ import com.poti.android.domain.model.history.MyPartyList
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
-import com.poti.android.domain.model.party.PartyList
+import com.poti.android.domain.model.party.ProductPartyList
 
 interface PartyRepository {
     suspend fun searchProductTitle(
@@ -41,12 +41,12 @@ interface PartyRepository {
 
     suspend fun getMyRecruitList(status: String): Result<MyPartyList>
 
-    suspend fun getPartyList(
+    suspend fun getProductPartyList(
         page: Int?,
         size: Int?,
         title: String,
         artistId: Long,
         sort: String,
         memberIds: List<Long>?,
-    ): Result<PartyList>
+    ): Result<ProductPartyList>
 }

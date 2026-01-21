@@ -30,7 +30,7 @@ fun HomeGoodsSection(
     nickname: String,
     groupItems: List<GroupItem>,
     onMoreClick: (Long) -> Unit,
-    onCardClick: (Long) -> Unit,
+    onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -71,7 +71,7 @@ fun HomeGoodsSection(
                     goodsType = item.postTitle,
                     partyCount = item.postCount.toInt(),
                     tag = item.tag,
-                    onClick = { onCardClick(artistId) },
+                    onClick = { onCardClick(item.artistId, item.postTitle) },
                 )
             }
         }
@@ -88,7 +88,7 @@ private fun HomeGoodsSectionPreview() {
             nickname = "포티",
             groupItems = fakeMyGroupItems,
             onMoreClick = {},
-            onCardClick = {},
+            onCardClick = { id, title -> },
         )
     }
 }

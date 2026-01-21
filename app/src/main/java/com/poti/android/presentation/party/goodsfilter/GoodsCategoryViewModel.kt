@@ -23,16 +23,9 @@ class GoodsCategoryViewModel @Inject constructor(
 
         override fun processIntent(intent: GoodsCategoryUiIntent) {
             when (intent) {
-                GoodsCategoryUiIntent.OnBackClick ->
-                    sendEffect(GoodsCategoryUiEffect.NavigateBack)
-
-                GoodsCategoryUiIntent.OnFloatingClick ->
-                    sendEffect(GoodsCategoryUiEffect.NavigateToPartyCreate)
-
-                GoodsCategoryUiIntent.OnSortFilterClick -> {
-                    updateState { copy(isSortBottomSheetVisible = true) }
-                }
-
+                GoodsCategoryUiIntent.OnBackClick -> sendEffect(GoodsCategoryUiEffect.NavigateBack)
+                GoodsCategoryUiIntent.OnFloatingClick -> sendEffect(GoodsCategoryUiEffect.NavigateToPartyCreate)
+                GoodsCategoryUiIntent.OnSortFilterClick -> updateState { copy(isSortBottomSheetVisible = true) }
                 is GoodsCategoryUiIntent.OnSortSelected -> {
                     updateState {
                         copy(
@@ -42,13 +35,8 @@ class GoodsCategoryViewModel @Inject constructor(
                     }
                     loadGoodsCategoryList(intent.sortType)
                 }
-
-                GoodsCategoryUiIntent.OnSortDismiss -> {
-                    updateState { copy(isSortBottomSheetVisible = false) }
-                }
-
-                GoodsCategoryUiIntent.OnCardClick ->
-                    sendEffect(GoodsCategoryUiEffect.NavigateToGoodsFilter)
+                GoodsCategoryUiIntent.OnSortDismiss -> updateState { copy(isSortBottomSheetVisible = false) }
+                is GoodsCategoryUiIntent.OnCardClick -> sendEffect(GoodsCategoryUiEffect.NavigateToGoodsFilter(intent.title))
             }
         }
 

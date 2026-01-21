@@ -8,7 +8,7 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.party.PartyList
+import com.poti.android.domain.model.party.ProductPartyList
 
 enum class PartySortType(
     val request: String,
@@ -25,7 +25,7 @@ data class FilterMember(
 )
 
 data class GoodsFilterUiState(
-    val partyListInfo: ApiState<PartyList> = ApiState.Loading,
+    val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
     val membersLoadState: ApiState<List<FilterMember>> = ApiState.Loading,
     val displayMembers: List<FilterMember> = emptyList(),
     val selectedMembers: List<FilterMember> = emptyList(),
@@ -60,13 +60,13 @@ data class GoodsFilterUiState(
 
     val loadState: ApiState<Unit>
         get() = when {
-            partyListInfo is ApiState.Loading &&
+            productPartyListInfo is ApiState.Loading &&
                 membersLoadState is ApiState.Loading -> ApiState.Loading
 
-            partyListInfo is ApiState.Failure ||
+            productPartyListInfo is ApiState.Failure ||
                 membersLoadState is ApiState.Failure -> ApiState.Failure("")
 
-            partyListInfo is ApiState.Success &&
+            productPartyListInfo is ApiState.Success &&
                 membersLoadState is ApiState.Success -> ApiState.Success(Unit)
 
             else -> ApiState.Loading

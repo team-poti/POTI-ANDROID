@@ -1,6 +1,6 @@
 package com.poti.android.domain.model.party
 
-data class PartyList(
+data class ProductPartyList(
     val partyTitle: String,
     val artistName: String,
     val partySummaries: List<PartySummary>,

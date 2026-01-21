@@ -25,8 +25,8 @@ import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.party.PartyList
 import com.poti.android.domain.model.party.PartySummary
+import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
 import com.poti.android.presentation.party.goodsfilter.model.FilterMember
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
@@ -55,9 +55,9 @@ fun GoodsFilteredPartyListRoute(
         }
     }
 
-    uiState.partyListInfo.onSuccess { partyListInfo ->
+    uiState.productPartyListInfo.onSuccess { partyListInfo ->
         GoodsFilteredPartyListScreen(
-            partyListInfo = partyListInfo,
+            productPartyListInfo = partyListInfo,
             displayMembers = uiState.displayMembers,
             selectedMember = uiState.selectedMembers,
             partySortType = uiState.goodsPartySortType,
@@ -84,7 +84,7 @@ fun GoodsFilteredPartyListRoute(
 
 @Composable
 private fun GoodsFilteredPartyListScreen(
-    partyListInfo: PartyList,
+    productPartyListInfo: ProductPartyList,
     displayMembers: List<FilterMember>,
     selectedMember: List<FilterMember>,
     partySortType: PartySortType,
@@ -102,8 +102,8 @@ private fun GoodsFilteredPartyListScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = partyListInfo.partyTitle,
-                subTitle = partyListInfo.artistName,
+                title = productPartyListInfo.partyTitle,
+                subTitle = productPartyListInfo.artistName,
             )
         },
         floatingActionButton = {
@@ -135,7 +135,7 @@ private fun GoodsFilteredPartyListScreen(
                 }
             }
 
-            items(partyListInfo.partySummaries) { party ->
+            items(productPartyListInfo.partySummaries) { party ->
                 PartyCard(
                     potId = party.partyId,
                     profileImageUrl = party.profileImageUrl ?: "",
@@ -164,7 +164,7 @@ private fun GoodsFilteredPartyListScreen(
 @Composable
 private fun GoodsFilteredPartyListScreenPreveiw() {
     GoodsFilteredPartyListScreen(
-        partyListInfo = PartyList(
+        productPartyListInfo = ProductPartyList(
             partyTitle = "헤더 타이틀",
             artistName = "서브타이틀",
             partySummaries = listOf(
