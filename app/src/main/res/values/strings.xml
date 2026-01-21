@@ -59,7 +59,12 @@
     <string name="party_detail_participants">참여자</string>
     <string name="party_detail_review_count">%d개의 평가</string>
     <string name="party_detail_participants_count">%1$d/%2$d</string>
-    <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
+    <string-array name="party_detail_announcement">
+        <item>참여자 안내 사항</item>
+        <item>모집 완료 후 24시간 이내 입금이 확인되지 않을 경우, 참여는 자동으로 취소되며 이후 서비스 이용에 불이익이 있을 수 있습니다.</item>
+        <item>입금 후, 모집자가 굿즈를 주문하고 수령하는 과정이 필요하여 배송 시작 상태로 전환되기까지 다소 시간이 소요될 수 있습니다.</item>
+        <item>마감 기한까지 모집 인원이 과반수 이상 충족되지 않을 경우, 해당 분철팟은 자동으로 종료되며 분철은 진행되지 않습니다.</item>
+    </string-array>
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
 
