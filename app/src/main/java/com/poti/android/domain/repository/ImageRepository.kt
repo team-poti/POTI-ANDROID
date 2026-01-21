@@ -5,7 +5,6 @@ import com.poti.android.domain.model.image.PresignedUploadInfo
 interface ImageRepository {
     suspend fun getPresignedUrls(
         type: String,
-        count: Int,
-        extension: String,
+        extensions: List<String>,
     ): Result<List<PresignedUploadInfo>>
 }

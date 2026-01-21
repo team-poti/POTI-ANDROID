@@ -1,6 +1,7 @@
 package com.poti.android.presentation.party.create
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,61 +17,131 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.extension.onSuccess
-import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.component.field.PotiLongTextField
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
+import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
-import com.poti.android.presentation.party.create.component.CreateProductDropdownField
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.util.toImageInfosForPresigned
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PartyCreateRoute(
     onPopBackStack: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    viewModel: PartyCreateViewModel = hiltViewModel(),
+    onNavigateToDetail: (Long) -> Unit,
+    viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (uiState.isDirty) {
+        BackHandler {
+            showDialog = true
+        }
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            CreateUiEffect.NavigateToBack -> onPopBackStack()
+            CreateUiEffect.NavigateToBack -> {
+                showDialog = false
+                onPopBackStack()
+            }
+
             CreateUiEffect.NavigateToSearch -> onNavigateToSearch()
+
+            CreateUiEffect.ShowBottomSheet -> {
+                showBottomSheet = true
+            }
+
+            CreateUiEffect.ShowDialog -> {
+                showDialog = true
+            }
+
+            CreateUiEffect.ConvertUris -> {
+                val result = uiState.selectedImages.toImageInfosForPresigned(context)
+                viewModel.processIntent(OnConvertDone(result))
+            }
+
+            is CreateUiEffect.NavigateToDetail -> {
+                onNavigateToDetail(effect.partyId)
+            }
         }
+    }
+
+    if (showBottomSheet) {
+        MemberSelectBottomSheet(
+            title = R.string.create_title_bottomsheet,
+            onDismiss = { showBottomSheet = false },
+            mainBtnText = R.string.action_button_done,
+            onMainBtnClick = {
+                viewModel.processIntent(CreateUiIntent.OnMemberSelectDone)
+                showBottomSheet = false
+            },
+            mainEnabled = uiState.isSheetTouched,
+            subBtnText = R.string.action_button_select_all,
+            onSubBtnClick = {
+                viewModel.processIntent(CreateUiIntent.OnAllMemberSelect)
+                showBottomSheet = false
+            },
+            subEnabled = true,
+            members = uiState.sheetDisplayMemberNames,
+            onMemberClick = { viewModel.processIntent(CreateUiIntent.OnMemberSelect(it)) },
+            selectedIndices = uiState.sheetDisplayMemberIndices,
+        )
+    }
+
+    if (showDialog) {
+        PotiSmallModal(
+            onDismissRequest = { showDialog = false },
+            title = stringResource(R.string.create_exit_dialog_title),
+            text = stringResource(R.string.create_exit_dialog_content),
+            dismissBtnText = stringResource(R.string.create_exit_dialog_dismiss_text),
+            confirmBtnText = stringResource(R.string.create_exit_dialog_confirm_text),
+            onDismissBtnClick = { viewModel.processIntent(CreateUiIntent.OnBackConfirm) },
+            onConfirmBtnClick = { showDialog = false },
+        )
     }
 
     PartyCreateScreen(
         uiState = uiState,
-        onPopBackStack = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
+        onBackClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
         onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
         onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
         onProductChanged = { viewModel.processIntent(CreateUiIntent.OnProductChange(it)) },
@@ -79,7 +150,7 @@ fun PartyCreateRoute(
         onDescriptionChanged = { viewModel.processIntent(CreateUiIntent.OnDescriptionChange(it)) },
         onAccountNumberChanged = { viewModel.processIntent(CreateUiIntent.OnAccountNumberChange(it)) },
         onBankChanged = { viewModel.processIntent(CreateUiIntent.OnBankChange(it)) },
-        onMemberPriceChanged = { viewModel.processIntent(CreateUiIntent.OnPriceChange(it)) },
+        onMemberPriceChanged = { viewModel.processIntent(CreateUiIntent.OnMemberPriceChange(it)) },
         onMemberEditBtnClick = { viewModel.processIntent(CreateUiIntent.OnMemberEditClick) },
         onDeliveryRadioBtnClick = { viewModel.processIntent(CreateUiIntent.OnDeliverySelect(it)) },
         onCreateBtnClick = { viewModel.processIntent(CreateUiIntent.OnCreateClick) },
@@ -90,7 +161,7 @@ fun PartyCreateRoute(
 @Composable
 private fun PartyCreateScreen(
     uiState: CreateUiState,
-    onPopBackStack: () -> Unit,
+    onBackClick: () -> Unit,
     onImageChanged: (List<Uri>) -> Unit,
     onSearchArtist: () -> Unit,
     onProductChanged: (String) -> Unit,
@@ -138,7 +209,7 @@ private fun PartyCreateScreen(
         modifier = modifier,
         topBar = {
             PotiHeaderPage(
-                onNavigationClick = onPopBackStack,
+                onNavigationClick = onBackClick,
             )
         },
     ) { innerPadding ->
@@ -151,7 +222,7 @@ private fun PartyCreateScreen(
                     text = stringResource(R.string.create_label_product_info),
                     modifier = Modifier
                         .padding(horizontal = screenWidthDp(16.dp))
-                        .padding(top = 24.dp),
+                        .padding(top = 24.dp, bottom = 20.dp),
                     color = PotiTheme.colors.black,
                     style = PotiTheme.typography.title18sb,
                 )
@@ -159,14 +230,14 @@ private fun PartyCreateScreen(
                 CreatePhotoUpload(
                     imageUris = uiState.selectedImages,
                     onImageChanged = onImageChanged,
-                    modifier = Modifier.padding(vertical = 20.dp),
                 )
 
                 uiState.imageError?.let { error ->
                     PotiErrorMessage(
                         message = stringResource(error.message),
                         modifier = Modifier
-                            .padding(horizontal = screenWidthDp(16.dp)),
+                            .padding(horizontal = screenWidthDp(16.dp))
+                            .padding(top = 2.dp, bottom = 8.dp),
                     )
                 }
             }
@@ -179,7 +250,7 @@ private fun PartyCreateScreen(
                     modifier = Modifier
                         .noRippleClickable(onClick = onSearchArtist)
                         .padding(horizontal = screenWidthDp(16.dp))
-                        .padding(bottom = 28.dp),
+                        .padding(top = 20.dp, bottom = 28.dp),
                     enabled = false,
                     label = stringResource(R.string.create_label_artist),
                     error = uiState.artistError?.let { stringResource(it.message) } ?: "",
@@ -195,11 +266,14 @@ private fun PartyCreateScreen(
             }
 
             item {
-                CreateProductDropdownField(
+                CreateDropdownField(
                     value = uiState.productName,
                     onValueChanged = onProductChanged,
-                    searchResults = uiState.productSearchResults,
+                    searchResults = uiState.productSearchResultsState.getSuccessDataOrNull() ?: emptyList(),
                     onItemClick = onProductSearchItemClick,
+                    placeholder = stringResource(R.string.create_placeholder_product),
+                    label = stringResource(R.string.create_label_product),
+                    resultToString = { it },
                     modifier = Modifier
                         .padding(bottom = 28.dp),
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
@@ -267,14 +341,12 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                uiState.memberOptionsState.onSuccess {
-                    CreateMemberSetting(
-                        status = uiState.memberSettingStatus,
-                        selectedMembersOption = it,
-                        onPriceChange = onMemberPriceChanged,
-                        onEditBtnClick = onMemberEditBtnClick,
-                    )
-                }
+                CreateMemberSetting(
+                    status = uiState.memberSettingStatus,
+                    selectedMembersOption = uiState.editOptionDisplayMembers,
+                    onPriceChange = onMemberPriceChanged,
+                    onEditBtnClick = onMemberEditBtnClick,
+                )
             }
 
             item {
@@ -282,13 +354,11 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                uiState.deliveryOptionsState.onSuccess {
-                    CreateDeliverySetting(
-                        deliveryOptions = it,
-                        selectedOptionIds = uiState.selectedDeliveryIds,
-                        onDeliveryOptionClick = onDeliveryRadioBtnClick,
-                    )
-                }
+                CreateDeliverySetting(
+                    deliveryOptions = uiState.editableDeliveryOptions,
+                    selectedOptionIds = uiState.selectedDeliveryIds,
+                    onDeliveryOptionClick = onDeliveryRadioBtnClick,
+                )
             }
 
             item {
@@ -313,21 +383,20 @@ private fun PartyCreateScreen(
 @Preview
 @Composable
 private fun PartyCreateScreenDefaultPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
     val selectedDeliveryIds = setOf(1.toLong())
 
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptionsState = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 selectedDeliveryIds = selectedDeliveryIds,
             ),
-            onPopBackStack = {},
+            onBackClick = {},
             onImageChanged = {},
             onSearchArtist = {},
             onProductChanged = {},
@@ -347,21 +416,20 @@ private fun PartyCreateScreenDefaultPreview() {
 @Preview
 @Composable
 private fun PartyCreateScreenAccountNumberErrorPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
     var accountNumberError by remember { mutableStateOf<FieldError?>(null) }
 
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptionsState = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 accountNumberError = accountNumberError,
             ),
-            onPopBackStack = {},
+            onBackClick = {},
             onImageChanged = {},
             onSearchArtist = {},
             onProductChanged = {},
@@ -381,20 +449,19 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
 @Preview
 @Composable
 private fun PartyCreateMemberPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
 
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptionsState = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 memberSettingStatus = MemberSettingStatus.ERROR_NO_MEMBER,
             ),
-            onPopBackStack = {},
+            onBackClick = {},
             onImageChanged = {},
             onSearchArtist = {},
             onProductChanged = {},

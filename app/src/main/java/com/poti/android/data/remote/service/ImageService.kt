@@ -9,7 +9,6 @@ interface ImageService {
     @GET("/api/v1/images/presigned-url")
     suspend fun getPresignedUrls(
         @Query("type") type: String,
-        @Query("count") count: Int,
-        @Query("extension") extension: String,
+        @Query("extensions") extensions: List<String>,
     ): BaseResponse<PresignedUrlListResponseDto>
 }

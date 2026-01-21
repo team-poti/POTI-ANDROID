@@ -37,6 +37,7 @@ fun NavGraphBuilder.partyNavGraph(
         )
         partyCreateNavGraph(
             paddingValues = paddingValues,
+            navController = navController,
         )
     }
 }

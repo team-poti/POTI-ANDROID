@@ -39,12 +39,15 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 private const val MAX_HEIGHT = 156
 
 @Composable
-fun CreateProductDropdownField(
+fun <T> CreateDropdownField(
     value: String,
     onValueChanged: (String) -> Unit,
-    searchResults: List<String>,
-    onItemClick: (String) -> Unit,
+    searchResults: List<T>,
+    resultToString: (T) -> String,
+    onItemClick: (T) -> Unit,
+    placeholder: String,
     modifier: Modifier = Modifier,
+    label: String = "",
     fieldErrorMsg: String = "",
 ) {
     val scrollState = rememberLazyListState()
@@ -69,11 +72,11 @@ fun CreateProductDropdownField(
         PotiShortTextField(
             value = value,
             onValueChanged = onValueChanged,
-            placeholder = stringResource(R.string.create_placeholder_product),
+            placeholder = placeholder,
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(1f),
-            label = stringResource(R.string.create_label_product),
+            label = label,
             error = fieldErrorMsg,
             onFocusChanged = { isFocused = it },
         )
@@ -99,11 +102,12 @@ fun CreateProductDropdownField(
                     modifier = Modifier.heightIn(max = MAX_HEIGHT.dp),
                 ) {
                     itemsIndexed(searchResults) { index, result ->
+                        val stringResult = resultToString(result)
                         PotiMenuItem(
-                            option = result,
+                            option = stringResult,
                             onClick = {
                                 onItemClick(result)
-                                selectedOption = result
+                                selectedOption = stringResult
 
                                 expandedState.targetState = false
 
@@ -122,14 +126,14 @@ fun CreateProductDropdownField(
 
 @Preview
 @Composable
-private fun CreateProductDropdownFieldPrev() {
+private fun CreateDropdownFieldPrev() {
     var text by remember { mutableStateOf("") }
     val searchResults1 = emptyList<String>()
     val searchResults2 = listOf("옵션1", "옵션2")
     val searchResults3 = listOf("옵션1", "옵션2", "옵션3", "옵션4", "옵션5".repeat(50))
 
     PotiTheme {
-        CreateProductDropdownField(
+        CreateDropdownField(
             value = text,
             onValueChanged = { text = it },
             searchResults = when (text) {
@@ -139,7 +143,10 @@ private fun CreateProductDropdownFieldPrev() {
             },
             onItemClick = { text = it },
             fieldErrorMsg = "에러 메시지",
+            placeholder = stringResource(R.string.create_placeholder_product),
+            label = stringResource(R.string.create_label_product),
             modifier = Modifier.padding(top = 100.dp),
+            resultToString = { text },
         )
     }
 }

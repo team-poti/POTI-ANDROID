@@ -1,5 +1,7 @@
 package com.poti.android.presentation.party.create.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -15,19 +17,31 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 fun SellerNotice(
     modifier: Modifier = Modifier,
-    notice: String = stringResource(R.string.create_notice),
 ) {
-    Text(
-        text = notice,
+    val texts = listOf(
+        stringResource(R.string.create_notice_title),
+        stringResource(R.string.create_notice_first),
+        stringResource(R.string.create_notice_second),
+        stringResource(R.string.create_notice_third),
+    )
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(
                 horizontal = screenWidthDp(16.dp),
                 vertical = 24.dp,
             ),
-        color = PotiTheme.colors.gray800,
-        style = PotiTheme.typography.caption12m,
-    )
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        texts.forEach { text ->
+            Text(
+                text = text,
+                color = PotiTheme.colors.gray800,
+                style = PotiTheme.typography.caption12m,
+            )
+        }
+    }
 }
 
 @Preview

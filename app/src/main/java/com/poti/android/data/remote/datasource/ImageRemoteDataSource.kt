@@ -10,8 +10,7 @@ class ImageRemoteDataSource @Inject constructor(
 ) {
     suspend fun getPresignedUrls(
         type: String,
-        count: Int,
-        extension: String,
+        extensions: List<String>,
     ): BaseResponse<PresignedUrlListResponseDto> =
-        imageService.getPresignedUrls(type, count, extension)
+        imageService.getPresignedUrls(type, extensions)
 }
