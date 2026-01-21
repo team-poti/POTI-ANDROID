@@ -11,7 +11,6 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.PartyArtistSelectRoute
 import com.poti.android.presentation.party.create.PartyCreateRoute
 import com.poti.android.presentation.party.create.PartyCreateViewModel
-import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetailFromCreate
 import kotlinx.serialization.Serializable
 

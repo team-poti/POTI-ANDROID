@@ -76,15 +76,15 @@ data class CreateUiState(
 }
 
 sealed interface CreateUiIntent : UiIntent {
-    data object InitializeScreen: CreateUiIntent
+    data object InitializeScreen : CreateUiIntent
 
-    data object CleanScreen: CreateUiIntent
+    data object CleanScreen : CreateUiIntent
 
     data object OnBackClick : CreateUiIntent
 
     data object OnBackConfirm : CreateUiIntent
 
-    data object OnBackToCreate: CreateUiIntent
+    data object OnBackToCreate : CreateUiIntent
 
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 

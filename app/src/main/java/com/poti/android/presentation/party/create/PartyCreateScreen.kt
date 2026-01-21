@@ -222,7 +222,7 @@ private fun PartyCreateScreen(
                 text = stringResource(R.string.create_btn_create),
                 onClick = onCreateBtnClick,
             )
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
             state = listState,

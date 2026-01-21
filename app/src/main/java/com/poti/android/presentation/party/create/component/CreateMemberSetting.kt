@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,7 +50,6 @@ fun CreateMemberSetting(
     var showHint by remember(status, neverShowHint) {
         mutableStateOf(if (neverShowHint) false else status != MemberSettingStatus.DEFAULT)
     }
-
 
     var isEditBtnInScreen by remember { mutableStateOf(false) }
     val density = LocalDensity.current

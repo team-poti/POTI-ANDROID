@@ -45,8 +45,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     private val artistSearchKeywordForDebounce = MutableStateFlow("")
     private val productSearchKeywordForDebounce = MutableStateFlow("")
 
@@ -77,7 +77,7 @@ class PartyCreateViewModel @Inject constructor(
                     copy(
                         isDirty = true,
                         selectedImages = intent.uris.toPersistentList(),
-                        imageError = if (intent.uris.isNotEmpty()) null else this.imageError
+                        imageError = if (intent.uris.isNotEmpty()) null else this.imageError,
                     )
                 }
             }
@@ -241,7 +241,7 @@ class PartyCreateViewModel @Inject constructor(
                             editableMemberOptions = members.toPersistentList(),
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
-                            neverShowHint = errorBefore
+                            neverShowHint = errorBefore,
                         )
                     }
                 }

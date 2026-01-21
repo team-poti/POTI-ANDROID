@@ -54,7 +54,7 @@ fun PotiShortTextField(
     onFocusChanged: ((Boolean) -> Unit)? = null,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
-    ) {
+) {
     var isFocused by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
