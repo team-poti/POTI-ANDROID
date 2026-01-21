@@ -1,5 +1,7 @@
 package com.poti.android.domain.repository
 
+import com.poti.android.domain.model.user.UserMyPage
+
 interface UserRepository {
     suspend fun patchOnboarding(
         nickname: String,
@@ -9,4 +11,6 @@ interface UserRepository {
     suspend fun postNicknameDuplicate(
         nickname: String,
     ): Result<Boolean>
+
+    suspend fun getUserMyPage(): Result<UserMyPage>
 }

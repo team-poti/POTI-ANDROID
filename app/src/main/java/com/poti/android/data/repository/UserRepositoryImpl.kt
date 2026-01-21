@@ -2,9 +2,12 @@ package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
+import com.poti.android.data.mapper.artist.toDomain
+import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
+import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.repository.UserRepository
 import javax.inject.Inject
 
@@ -34,4 +37,11 @@ class UserRepositoryImpl @Inject constructor(
                 .getOrThrow()
                 .isDuplicated
         }
+
+    override suspend fun getUserMyPage(): Result<UserMyPage> = httpResponseHandler.safeApiCall {
+        userRemoteDataSource.getUserMyPage()
+            .handleApiResponse()
+            .getOrThrow()
+            .toDomain()
+    }
 }
