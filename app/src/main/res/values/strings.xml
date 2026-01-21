@@ -225,6 +225,7 @@
     <string name="create_exit_dialog_content">계속 작성할까요?</string>
     <string name="create_exit_dialog_dismiss_text">나가기</string>
     <string name="create_exit_dialog_confirm_text">계속 작성하기</string>
+    <string name="create_error_invalid_date">유효한 날짜 형식으로 입력해주세요</string>
 
     <!-- Goods filter -->
     <string name="goods_filter_sort_latest">최신순</string>

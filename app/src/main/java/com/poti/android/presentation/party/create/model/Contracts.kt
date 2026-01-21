@@ -30,6 +30,7 @@ enum class FieldError(
     ARTIST_EMPTY_ERROR(R.string.create_error_need_artist),
     PRODUCT_EMPTY_ERROR(R.string.create_error_need_product),
     DEADLINE_EMPTY_ERROR(R.string.create_error_need_deadline),
+    DEADLINE_INVALID_ERROR(R.string.create_error_invalid_date),
     DEADLINE_PAST_ERROR(R.string.create_error_past_deadline),
     DESCRIPTION_ERROR(R.string.create_error_need_description),
     ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
@@ -38,6 +39,7 @@ enum class FieldError(
 
 data class CreateUiState(
     val isDirty: Boolean = false,
+    val neverShowHint: Boolean = false,
     val selectedImages: ImmutableList<Uri> = persistentListOf(),
     val selectedArtist: ArtistSearchResult? = null,
     val productName: String = "",
@@ -74,9 +76,15 @@ data class CreateUiState(
 }
 
 sealed interface CreateUiIntent : UiIntent {
+    data object InitializeScreen : CreateUiIntent
+
+    data object CleanScreen : CreateUiIntent
+
     data object OnBackClick : CreateUiIntent
 
     data object OnBackConfirm : CreateUiIntent
+
+    data object OnBackToCreate : CreateUiIntent
 
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 

@@ -53,6 +53,7 @@ fun PotiShortTextField(
     focusRequester: FocusRequester? = null,
     onFocusChanged: ((Boolean) -> Unit)? = null,
     visualTransformation: VisualTransformation? = null,
+    neverCoverField: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -98,6 +99,7 @@ fun PotiShortTextField(
             singleLine = true,
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,
+            neverCoverField = neverCoverField,
         )
 
         if (error.isNotBlank()) {

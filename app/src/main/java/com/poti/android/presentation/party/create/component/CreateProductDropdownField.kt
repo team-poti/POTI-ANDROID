@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.poti.android.R
@@ -36,10 +37,16 @@ import com.poti.android.core.designsystem.component.field.PotiMenuItem
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.theme.PotiTheme
 
-private const val MAX_HEIGHT = 156
+enum class ViewType(
+    val maxHeight: Dp,
+) {
+    CREATE_PARTY(156.dp),
+    ARTSIT_SELECT(500.dp),
+}
 
 @Composable
 fun <T> CreateDropdownField(
+    viewType: ViewType,
     value: String,
     onValueChanged: (String) -> Unit,
     searchResults: List<T>,
@@ -99,7 +106,7 @@ fun <T> CreateDropdownField(
             ) {
                 LazyColumn(
                     state = scrollState,
-                    modifier = Modifier.heightIn(max = MAX_HEIGHT.dp),
+                    modifier = Modifier.heightIn(max = viewType.maxHeight),
                 ) {
                     itemsIndexed(searchResults) { index, result ->
                         val stringResult = resultToString(result)
@@ -147,6 +154,7 @@ private fun CreateDropdownFieldPrev() {
             label = stringResource(R.string.create_label_product),
             modifier = Modifier.padding(top = 100.dp),
             resultToString = { text },
+            viewType = ViewType.ARTSIT_SELECT,
         )
     }
 }

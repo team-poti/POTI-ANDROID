@@ -48,6 +48,7 @@ internal fun PotiBasicField(
     trailingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
     visualTransformation: VisualTransformation? = null,
+    neverCoverField: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val requester = remember {
@@ -107,7 +108,7 @@ internal fun PotiBasicField(
                         )
                     }
 
-                    if (singleLine && !isFocused && value.isNotEmpty()) {
+                    if (!neverCoverField && singleLine && !isFocused && value.isNotEmpty()) {
                         Text(
                             text = value,
                             modifier = Modifier

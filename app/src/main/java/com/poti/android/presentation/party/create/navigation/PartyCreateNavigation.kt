@@ -11,7 +11,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.PartyArtistSelectRoute
 import com.poti.android.presentation.party.create.PartyCreateRoute
 import com.poti.android.presentation.party.create.PartyCreateViewModel
-import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
+import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetailFromCreate
 import kotlinx.serialization.Serializable
 
 sealed interface PartyCreateRoute : Route {
@@ -30,6 +30,15 @@ fun NavController.navigateToPartyArtistSelect() {
     navigate(PartyCreateRoute.ArtistSelect)
 }
 
+fun NavController.navigateToPartyCreateFromArtistSelect() {
+    navigate(PartyCreateRoute.Create) {
+        popUpTo(PartyCreateRoute.Create) {
+            inclusive = false
+        }
+        launchSingleTop = true
+    }
+}
+
 fun NavGraphBuilder.partyCreateNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
@@ -39,7 +48,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
         PartyCreateRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToSearch = navController::navigateToPartyArtistSelect,
-            onNavigateToDetail = navController::navigateToPartyDetail,
+            onNavigateToDetail = navController::navigateToPartyDetailFromCreate,
             viewModel = viewModel,
             modifier = Modifier.padding(paddingValues),
         )
@@ -47,7 +56,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
     composable<PartyCreateRoute.ArtistSelect> { entry ->
         val viewModel: PartyCreateViewModel = entry.sharedViewModel(navController)
         PartyArtistSelectRoute(
-            onPopBackStack = navController::popBackStack,
+            onPopBackStack = navController::navigateToPartyCreateFromArtistSelect,
             viewModel = viewModel,
             modifier = Modifier.padding(paddingValues),
         )

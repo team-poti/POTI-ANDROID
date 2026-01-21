@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
@@ -48,13 +47,15 @@ import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
+import com.poti.android.presentation.party.create.component.ViewType
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
-import com.poti.android.presentation.party.util.toImageInfosForPresigned
+import com.poti.android.presentation.party.create.util.DateTransformation
+import com.poti.android.presentation.party.create.util.toImageInfosForPresigned
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -75,6 +76,10 @@ fun PartyCreateRoute(
         BackHandler {
             showDialog = true
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(CreateUiIntent.InitializeScreen)
     }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
@@ -118,7 +123,6 @@ fun PartyCreateRoute(
             subBtnText = R.string.action_button_select_all,
             onSubBtnClick = {
                 viewModel.processIntent(CreateUiIntent.OnAllMemberSelect)
-                showBottomSheet = false
             },
             subEnabled = true,
             members = uiState.sheetDisplayMemberNames,
@@ -177,6 +181,7 @@ private fun PartyCreateScreen(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
+    val dateTransformation = remember { DateTransformation() }
 
     LaunchedEffect(
         uiState.imageError,
@@ -210,6 +215,12 @@ private fun PartyCreateScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
+            )
+        },
+        bottomBar = {
+            PotiBottomButton(
+                text = stringResource(R.string.create_btn_create),
+                onClick = onCreateBtnClick,
             )
         },
     ) { innerPadding ->
@@ -267,6 +278,7 @@ private fun PartyCreateScreen(
 
             item {
                 CreateDropdownField(
+                    viewType = ViewType.CREATE_PARTY,
                     value = uiState.productName,
                     onValueChanged = onProductChanged,
                     searchResults = uiState.productSearchResultsState.getSuccessDataOrNull() ?: emptyList(),
@@ -292,6 +304,8 @@ private fun PartyCreateScreen(
                     error = uiState.deadlineError?.let { stringResource(it.message) } ?: "",
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next,
+                    visualTransformation = dateTransformation,
+                    neverCoverField = true,
                 )
             }
 
@@ -318,7 +332,7 @@ private fun PartyCreateScreen(
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_account_number),
                     error = uiState.accountNumberError?.let { stringResource(it.message) } ?: "",
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next,
                 )
             }
@@ -342,6 +356,7 @@ private fun PartyCreateScreen(
                 )
 
                 CreateMemberSetting(
+                    neverShowHint = uiState.neverShowHint,
                     status = uiState.memberSettingStatus,
                     selectedMembersOption = uiState.editOptionDisplayMembers,
                     onPriceChange = onMemberPriceChanged,
@@ -369,11 +384,6 @@ private fun PartyCreateScreen(
                 SellerNotice(
                     modifier = Modifier
                         .padding(bottom = 40.dp),
-                )
-
-                PotiBottomButton(
-                    text = stringResource(R.string.create_btn_create),
-                    onClick = onCreateBtnClick,
                 )
             }
         }

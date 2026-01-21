@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.create
 
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -17,6 +18,9 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.create.util.isTodayOrAfter
+import com.poti.android.presentation.party.create.util.toDashedDate
+import com.poti.android.presentation.party.create.util.toDateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -48,10 +52,15 @@ class PartyCreateViewModel @Inject constructor(
 
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
+            CreateUiIntent.InitializeScreen -> initializeDeliveryOptions()
+
+            CreateUiIntent.CleanScreen -> updateState { CreateUiState() }
+
             CreateUiIntent.OnBackClick -> {
                 if (uiState.value.isDirty) {
                     sendEffect(CreateUiEffect.ShowDialog)
                 } else {
+                    updateState { CreateUiState() }
                     sendEffect(CreateUiEffect.NavigateToBack)
                 }
             }
@@ -61,11 +70,14 @@ class PartyCreateViewModel @Inject constructor(
                 sendEffect(CreateUiEffect.NavigateToBack)
             }
 
+            is CreateUiIntent.OnBackToCreate -> sendEffect(CreateUiEffect.NavigateToBack)
+
             is CreateUiIntent.OnImagesChanged -> {
                 updateState {
                     copy(
                         isDirty = true,
                         selectedImages = intent.uris.toPersistentList(),
+                        imageError = if (intent.uris.isNotEmpty()) null else this.imageError,
                     )
                 }
             }
@@ -159,10 +171,6 @@ class PartyCreateViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            initializeDeliveryOptions()
-        }
-
-        viewModelScope.launch {
             artistSearchKeywordForDebounce
                 .debounce(500)
                 .distinctUntilChanged()
@@ -183,23 +191,25 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun initializeDeliveryOptions() {
-        getDeliveryOptionsUseCase()
-            .onSuccess { result ->
-                updateState {
-                    copy(
-                        deliveryOptionsState = ApiState.Success(result.toPersistentList()),
-                        editableDeliveryOptions = result.toPersistentList(),
-                        selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId,
-                    )
+    private fun initializeDeliveryOptions() {
+        viewModelScope.launch {
+            getDeliveryOptionsUseCase()
+                .onSuccess { result ->
+                    updateState {
+                        copy(
+                            deliveryOptionsState = ApiState.Success(result.toPersistentList()),
+                            editableDeliveryOptions = result.toPersistentList(),
+                            selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId,
+                        )
+                    }
+                }.onFailure { e ->
+                    updateState {
+                        copy(
+                            deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail"),
+                        )
+                    }
                 }
-            }.onFailure { e ->
-                updateState {
-                    copy(
-                        deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail"),
-                    )
-                }
-            }
+        }
     }
 
     private fun handleAccountNumberChange(newValue: String) {
@@ -221,6 +231,7 @@ class PartyCreateViewModel @Inject constructor(
                     val selectedMemberIds = getAllMemberIdSet(members)
 
                     updateState {
+                        val errorBefore = this.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || this.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER
                         copy(
                             isDirty = true,
                             selectedArtist = newArtist,
@@ -230,6 +241,7 @@ class PartyCreateViewModel @Inject constructor(
                             editableMemberOptions = members.toPersistentList(),
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
+                            neverShowHint = errorBefore,
                         )
                     }
                 }
@@ -321,6 +333,8 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleDeadlineChange(newValue: String) {
+        if (!newValue.isDigitsOnly() || newValue.length > 8) return
+
         updateState {
             copy(
                 isDirty = true,
@@ -415,10 +429,10 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleAllMemberSelect() {
-        val newIndices = if (uiState.value.sheetDisplayMemberIndices.isEmpty()) {
-            uiState.value.editableMemberOptions.indices.toSet()
-        } else {
+        val newIndices = if (uiState.value.sheetDisplayMemberIndices.size == uiState.value.editableMemberOptions.size) {
             setOf()
+        } else {
+            uiState.value.editableMemberOptions.indices.toSet()
         }
 
         updateState {
@@ -463,7 +477,15 @@ class PartyCreateViewModel @Inject constructor(
         val imageError = if (uiState.value.selectedImages.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
         val artistError = if (uiState.value.selectedArtist == null) FieldError.ARTIST_EMPTY_ERROR else null
         val productError = if (uiState.value.productName.isBlank()) FieldError.PRODUCT_EMPTY_ERROR else null
-        val deadlineError = if (uiState.value.deadline.isBlank()) FieldError.DEADLINE_EMPTY_ERROR else null
+        val deadlineError = when (val date = uiState.value.deadline.toDateOrNull()) {
+            null -> if (uiState.value.deadline.isBlank()) {
+                FieldError.DEADLINE_EMPTY_ERROR
+            } else {
+                FieldError.DEADLINE_INVALID_ERROR
+            }
+
+            else -> if (!date.isTodayOrAfter()) FieldError.DEADLINE_PAST_ERROR else null
+        }
         val descriptionError = if (uiState.value.description.isBlank()) FieldError.DESCRIPTION_ERROR else null
         val accountNumberError = if (uiState.value.accountNumber.isBlank()) FieldError.ACCOUNT_NUMBER_ERROR else null
         val bankError = if (uiState.value.bank.isBlank()) FieldError.BANK_ERROR else null
@@ -493,6 +515,7 @@ class PartyCreateViewModel @Inject constructor(
                     accountNumberError = accountNumberError,
                     bankError = bankError,
                     memberSettingStatus = currentSettingStatus,
+                    neverShowHint = if (hasMemberOptionError) true else this.neverShowHint,
                 )
             }
         }
@@ -507,7 +530,7 @@ class PartyCreateViewModel @Inject constructor(
             artistId = uiState.value.selectedArtist?.artistId ?: 0L,
             product = uiState.value.productName,
             description = uiState.value.description,
-            deadline = uiState.value.deadline,
+            deadline = uiState.value.deadline.toDashedDate(),
             bank = uiState.value.bank,
             accountNumber = uiState.value.accountNumber,
             imageUrls = urls,
@@ -540,6 +563,7 @@ class PartyCreateViewModel @Inject constructor(
                     copy(createPartyState = ApiState.Success(partyId))
                 }
                 sendEffect(CreateUiEffect.NavigateToDetail(partyId))
+                updateState { CreateUiState() }
             }
             .onFailure {
                 updateState {
