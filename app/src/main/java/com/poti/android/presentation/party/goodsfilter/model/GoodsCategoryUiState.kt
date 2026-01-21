@@ -21,7 +21,7 @@ enum class GoodsSortType(
         displayRes = R.string.goods_filter_sort_hot,
     ),
     RANDOM(
-        request = "RANDOM ",
+        request = "RANDOM",
         displayRes = R.string.goods_filter_sort_random,
     ),
 }
