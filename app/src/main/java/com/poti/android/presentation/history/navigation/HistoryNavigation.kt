@@ -8,15 +8,20 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
+import com.poti.android.presentation.history.list.model.HistoryMode
+import com.poti.android.presentation.history.manage.ParticipantManageRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
-import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
+import com.poti.android.presentation.user.component.HistorySummaryType
 import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
     @Serializable
-    data object HistoryList : HistoryRoute
+    data class HistoryList(
+        val mode: HistoryMode? = HistoryMode.RECRUIT,
+        val type: HistorySummaryType? = HistorySummaryType.ALL,
+    ) : HistoryRoute
 
     @Serializable
     data class ParticipantDetail(val participantId: Long) : HistoryRoute
@@ -28,8 +33,16 @@ sealed interface HistoryRoute : Route {
     data class ParticipantManage(val recruitId: Long) : HistoryRoute
 }
 
-fun NavController.navigateToHistoryList() {
-    navigate(HistoryRoute.HistoryList)
+fun NavController.navigateToHistoryList(
+    mode: HistoryMode,
+    type: HistorySummaryType,
+) {
+    navigate(
+        HistoryRoute.HistoryList(
+            mode = mode,
+            type = type,
+        ),
+    )
 }
 
 fun NavController.navigateToParticipantDetail(participantId: Long) {
@@ -47,11 +60,10 @@ fun NavController.navigateToParticipantManage(recruitId: Long) {
 fun NavGraphBuilder.historyNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
-    onPopBackStack: () -> Unit,
 ) {
     composable<HistoryRoute.HistoryList> {
         HistoryListRoute(
-            onPopBackStack = onPopBackStack,
+            onPopBackStack = navController::popBackStack,
             onNavigateToRecruiterDetail = navController::navigateToRecruiterDetail,
             onNavigateToParticipantDetail = navController::navigateToParticipantDetail,
             modifier = Modifier.padding(paddingValues),
@@ -69,6 +81,9 @@ fun NavGraphBuilder.historyNavGraph(
         )
     }
     composable<HistoryRoute.ParticipantManage> {
-        ParticipantManageRoute(modifier = Modifier.padding(paddingValues))
+        ParticipantManageRoute(
+            modifier = Modifier.padding(paddingValues),
+            popBackStack = navController::popBackStack,
+        )
     }
 }

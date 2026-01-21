@@ -37,9 +37,9 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun GoodsLargeCard(
     imageUrl: String,
     artist: String,
-    goodsType: String,
+    title: String,
     partyCount: Int,
-    tag: String,
+    tag: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -71,7 +71,7 @@ fun GoodsLargeCard(
                 modifier = Modifier.fillMaxSize(),
             )
 
-            if (tag.isNotBlank()) {
+            if (!tag.isNullOrBlank()) {
                 PotiSecondaryTag(
                     text = tag,
                     sizeType = PotiTagSize.SMALL,
@@ -106,7 +106,7 @@ fun GoodsLargeCard(
                 )
 
                 Text(
-                    text = goodsType,
+                    text = title,
                     modifier = Modifier,
                     color = PotiTheme.colors.black,
                     overflow = TextOverflow.Ellipsis,
@@ -136,7 +136,7 @@ private fun GoodsLargeCardPreview() {
             GoodsLargeCard(
                 imageUrl = "",
                 artist = "아티스트명",
-                goodsType = "상품 종류명",
+                title = "상품 종류명",
                 partyCount = 3,
                 tag = "인기",
                 onClick = {},
@@ -146,7 +146,7 @@ private fun GoodsLargeCardPreview() {
             GoodsLargeCard(
                 imageUrl = "",
                 artist = "아티스트명 ".repeat(10),
-                goodsType = "상품 종류명 ".repeat(10),
+                title = "상품 종류명 ".repeat(10),
                 partyCount = 3,
                 tag = "인기",
                 onClick = {},

@@ -36,11 +36,6 @@ import com.poti.android.presentation.history.mapper.color
 import com.poti.android.presentation.history.mapper.labelResId
 import com.poti.android.presentation.history.mapper.statusColor
 
-enum class HistoryMode {
-    RECRUIT,
-    PARTICIPATION,
-}
-
 @Composable
 fun HistoryListRoute(
     onPopBackStack: () -> Unit,
