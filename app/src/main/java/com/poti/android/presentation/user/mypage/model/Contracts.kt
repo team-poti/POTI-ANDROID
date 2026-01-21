@@ -5,7 +5,7 @@ import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.user.UserMyPage
-import com.poti.android.presentation.history.list.HistoryMode
+import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.user.component.HistorySummaryType
 
 data class MyPageUiState(
