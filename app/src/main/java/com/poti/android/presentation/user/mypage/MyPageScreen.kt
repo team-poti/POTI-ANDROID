@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,8 +26,10 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
 import com.poti.android.domain.model.user.UserMyPage
+import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.user.component.BadgeButton
 import com.poti.android.presentation.user.component.HistorySummaryCard
+import com.poti.android.presentation.user.component.HistorySummaryType
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
@@ -38,6 +39,7 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 @Composable
 fun MyPageRoute(
     onNavigateToArtist: () -> Unit,
+    onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
@@ -46,6 +48,10 @@ fun MyPageRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             MyPageUiEffect.NavigateToArtist -> onNavigateToArtist()
+
+            is MyPageUiEffect.NavigateToHistoryList -> {
+                onNavigateToHistoryList(effect.mode, effect.tab)
+            }
         }
     }
 
@@ -53,6 +59,11 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) }, // TODO: [예림] 선택 최애 없을 때만 이동
+            onHistoryClick = { mode, type ->
+                viewModel.processIntent(
+                    MyPageUiIntent.OnHistoryClick(mode, type),
+                )
+            },
             modifier = modifier,
         )
     }
@@ -62,28 +73,25 @@ fun MyPageRoute(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     val biasText = userMyPage.favoriteArtistName ?: stringResource(R.string.user_select_favorite_artist)
 
-    Scaffold(
+    Column(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            PotiHeaderPrimary(
-                title = stringResource(R.string.user_my_page_title),
-                firstIconRes = R.drawable.ic_setting,
-                onFirstIconClick = {},
-                secondIconRes = R.drawable.ic_alarm,
-                onSecondIconClick = {},
-            )
-        },
-    ) { innerPadding ->
-
+    ) {
+        PotiHeaderPrimary(
+            title = stringResource(R.string.user_my_page_title),
+            firstIconRes = R.drawable.ic_setting,
+            onFirstIconClick = {},
+            secondIconRes = R.drawable.ic_alarm,
+            onSecondIconClick = {},
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .verticalScroll(scrollState)
                 .padding(
                     horizontal = screenWidthDp(16.dp),
@@ -123,14 +131,14 @@ private fun MyPageScreen(
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_participate),
                 summary = userMyPage.participationSummary,
-                onItemClick = { type -> }, // TODO: [예림] 분철 내역 뷰 연결
+                onItemClick = { type -> onHistoryClick(HistoryMode.PARTICIPATION, type) },
                 modifier = Modifier.fillMaxWidth(),
             )
 
             HistorySummaryCard(
                 title = stringResource(R.string.user_history_recruit),
                 summary = userMyPage.recruitSummary,
-                onItemClick = { type -> }, // TODO: [예림] 분철 내역 뷰 연결
+                onItemClick = { type -> onHistoryClick(HistoryMode.RECRUIT, type) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -163,6 +171,7 @@ private fun ProfileScreenPreview() {
                 ),
             ),
             onArtistClick = {},
+            onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
     }
@@ -194,6 +203,7 @@ private fun ProfileScreenPreview2() {
                 ),
             ),
             onArtistClick = {},
+            onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
     }

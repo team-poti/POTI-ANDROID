@@ -47,7 +47,7 @@ val dummyPartyDetail = PartyDetail(
             price = 1800,
         ),
     ),
-    userSummary = UserSummary(
+    uploader = UserSummary(
         userId = 1,
         nickname = "닉네임",
         profileImage = null,

@@ -6,19 +6,28 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
+import com.poti.android.domain.repository.ParticipationRepository
+import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.type.HistoryListType
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
+import com.poti.android.presentation.history.list.model.HistoryMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
-    initialState = HistoryListUiState(),
-) {
+class HistoryListViewModel @Inject constructor(
+    private val participationRepository: ParticipationRepository,
+    private val partyRepository: PartyRepository,
+) : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
+        initialState = HistoryListUiState(
+            mode = HistoryMode.PARTICIPATION,
+            selectedTab = PotiHeaderTabType.ONGOING,
+        ),
+    ) {
     override fun processIntent(intent: HistoryListUiIntent) {
         when (intent) {
             HistoryListUiIntent.OnBackClick -> sendEffect(HistoryListUiEffect.NavigateBack)
@@ -48,7 +57,7 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
         updateState {
             copy(
                 mode = newMode,
-                selectedTab = PotiHeaderTabType.ONGOING, // 초기 탭 재설정
+                selectedTab = PotiHeaderTabType.ONGOING,
             )
         }
 
@@ -66,56 +75,41 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
         fetchJob?.cancel()
 
         fetchJob = viewModelScope.launch {
-            val dummyContent = createDummyContent()
+            val requestStatus = when (uiState.value.selectedTab) {
+                PotiHeaderTabType.ONGOING -> HistoryListType.IN_PROGRESS
+                PotiHeaderTabType.ENDED -> HistoryListType.COMPLETED
+            }
 
-            updateState {
-                copy(
-                    historyListLoadState = ApiState.Success(dummyContent),
+            val result = if (uiState.value.mode == HistoryMode.RECRUIT) {
+                partyRepository.getMyRecruitList(requestStatus.name)
+            } else {
+                participationRepository.getMyParticipationList(requestStatus.name)
+            }
+
+            result.onSuccess { myPartyList ->
+                val listStatus = myPartyList.currentState
+                val content = HistoryListContent(
+                    ongoingCount = myPartyList.inProgressCount,
+                    endedCount = myPartyList.completedCount,
+                    items = myPartyList.partyList.map { item ->
+                        HistoryItem(
+                            id = item.participationId,
+                            imageUrl = item.thumbnailUrl,
+                            artist = item.artistName,
+                            title = item.productName,
+                            status = listStatus,
+                        )
+                    },
                 )
+
+                updateState {
+                    copy(historyListLoadState = ApiState.Success(content))
+                }
+            }.onFailure { error ->
+                updateState {
+                    copy(historyListLoadState = ApiState.Failure(error.message ?: "Failed"))
+                }
             }
         }
     }
-
-    fun createDummyContent(): HistoryListContent {
-        val isOngoing = uiState.value.selectedTab == PotiHeaderTabType.ONGOING
-        val isRecruit = uiState.value.mode == HistoryMode.RECRUIT
-
-        val ongoingItems = listOf(
-            HistoryItem(
-                id = 1L,
-                imageUrl = "",
-                artist = if (isRecruit) "IVE" else "aespa",
-                title = if (isRecruit) "러브다이브 공동구매" else "걸스 앨범 분철",
-                status = HistoryListType.IN_PROGRESS,
-            ),
-            HistoryItem(
-                id = 2L,
-                imageUrl = "",
-                artist = "NewJeans",
-                title = "OMG 한정판",
-                status = HistoryListType.IN_PROGRESS,
-            ),
-        )
-
-        val endedItems = listOf(
-            HistoryItem(
-                id = 3L,
-                imageUrl = "",
-                artist = "LE SSERAFIM",
-                title = "ANTIFRAGILE",
-                status = HistoryListType.COMPLETED,
-            ),
-        )
-
-        return HistoryListContent(
-            ongoingCount = ongoingItems.size,
-            endedCount = endedItems.size,
-            items = if (isOngoing) ongoingItems else endedItems,
-        )
-    }
-
-    // TODO: [예림] API 분기
-    // mode == RECRUIT -> 모집내역 API
-    // mode == PARTICIPATION -> 참여내역 API
-    // selectedTab -> IN_PROGRESS / COMPLETED
 }

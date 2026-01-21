@@ -4,6 +4,7 @@ import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
+import com.poti.android.data.remote.service.ParticipationService
 import com.poti.android.data.remote.service.PartyService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
@@ -18,18 +19,8 @@ import javax.inject.Singleton
 object ServiceModule {
     @Provides
     @Singleton
-    fun providesArtistService(retrofit: Retrofit): ArtistService =
-        retrofit.create(ArtistService::class.java)
-
-    @Provides
-    @Singleton
-    fun providesImageService(retrofit: Retrofit): ImageService =
+    fun provideImageService(retrofit: Retrofit): ImageService =
         retrofit.create(ImageService::class.java)
-
-    @Provides
-    @Singleton
-    fun providesPartyService(retrofit: Retrofit): PartyService =
-        retrofit.create(PartyService::class.java)
 
     @Provides
     @Singleton
@@ -43,6 +34,21 @@ object ServiceModule {
 
     @Provides
     @Singleton
+    fun provideArtistService(retrofit: Retrofit): ArtistService =
+        retrofit.create(ArtistService::class.java)
+
+    @Provides
+    @Singleton
     fun provideHomeService(retrofit: Retrofit): HomeService =
         retrofit.create(HomeService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePartyService(retrofit: Retrofit): PartyService =
+        retrofit.create(PartyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideParticipationService(retrofit: Retrofit): ParticipationService =
+        retrofit.create(ParticipationService::class.java)
 }

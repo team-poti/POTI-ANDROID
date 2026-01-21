@@ -114,7 +114,7 @@ private fun PartyJoinScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title, uiState.partyDetail.getSuccessDataOrNull()?.userSummary?.nickname ?: ""),
+                title = stringResource(R.string.party_detail_title, uiState.partyDetail.getSuccessDataOrNull()?.uploader?.nickname ?: ""),
             )
         },
         bottomBar = {
