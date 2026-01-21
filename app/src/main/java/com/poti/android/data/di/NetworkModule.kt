@@ -70,8 +70,8 @@ object NetworkModule {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
 
-    @ImageUpload
+    @S3UploadClient
     @Provides
     @Singleton
-    fun provideOkHttpClientForImage(): OkHttpClient = OkHttpClient.Builder().build()
+    fun provideOkHttpClientForS3(): OkHttpClient = OkHttpClient.Builder().build()
 }
