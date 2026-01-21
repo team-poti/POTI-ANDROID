@@ -15,6 +15,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
@@ -59,11 +63,21 @@ fun PartyJoinRoute(
             text = stringResource(R.string.party_join_confirm_modal_text),
             btnText = stringResource(R.string.action_button_next),
             onBtnClick = { viewModel.processIntent(PartyDetailIntent.OnJoinSuccessConfirm) },
-            image = R.drawable.ic_launcher_background,
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
             modifier = modifier,
-        )
+        ) {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.join))
+            val progress by animateLottieCompositionAsState(
+                composition = composition,
+                iterations = 1,
+            )
+
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+            )
+        }
     }
 
     PartyJoinScreen(
