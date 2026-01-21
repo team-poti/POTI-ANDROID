@@ -143,7 +143,7 @@ class PartyCreateViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getDeliveryOptions()
+            initializeDeliveryOptions()
         }
 
         viewModelScope.launch {
@@ -167,13 +167,20 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getDeliveryOptions() {
+    private suspend fun initializeDeliveryOptions() {
         getDeliveryOptionsUseCase()
             .onSuccess { result ->
                 updateState {
                     copy(
                         deliveryOptionsState = ApiState.Success(result.toPersistentList()),
-                        deliveryOptions = result.toPersistentList()
+                        editableDeliveryOptions = result.toPersistentList(),
+                        selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId
+                    )
+                }
+            }.onFailure { e ->
+                updateState {
+                    copy(
+                        deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail")
                     )
                 }
             }
@@ -489,7 +496,7 @@ class PartyCreateViewModel @Inject constructor(
             accountNumber = uiState.value.accountNumber,
             imageUrls = urls,
             options = uiState.value.editableMemberOptions.filter { option -> option.memberId in uiState.value.selectedMemberIds },
-            shippings = uiState.value.deliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds }
+            shippings = uiState.value.editableDeliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds }
         )
 
     private fun createParty() {

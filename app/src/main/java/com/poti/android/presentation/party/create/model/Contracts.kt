@@ -53,7 +53,7 @@ data class CreateUiState(
     val selectedMemberIds: Set<Long> = setOf(),
     val deliveryOptionsState: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
     val sheetDisplayMemberIndices: Set<Int> = setOf(),
-    val deliveryOptions: ImmutableList<DeliveryOption> = persistentListOf(),
+    val editableDeliveryOptions: ImmutableList<DeliveryOption> = persistentListOf(),
     val selectedDeliveryIds: Set<Long> = setOf(),
     val imageError: FieldError? = null,
     val artistError: FieldError? = null,

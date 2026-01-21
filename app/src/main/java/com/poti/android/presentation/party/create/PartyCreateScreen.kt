@@ -343,7 +343,7 @@ private fun PartyCreateScreen(
                 )
 
                 CreateDeliverySetting(
-                    deliveryOptions = uiState.deliveryOptions,
+                    deliveryOptions = uiState.editableDeliveryOptions,
                     selectedOptionIds = uiState.selectedDeliveryIds,
                     onDeliveryOptionClick = onDeliveryRadioBtnClick,
                 )
@@ -381,7 +381,7 @@ private fun PartyCreateScreenDefaultPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 selectedDeliveryIds = selectedDeliveryIds,
             ),
             onBackClick = {},
@@ -414,7 +414,7 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 accountNumberError = accountNumberError,
             ),
             onBackClick = {},
@@ -446,7 +446,7 @@ private fun PartyCreateMemberPreview() {
     PotiTheme {
         PartyCreateScreen(
             uiState = CreateUiState(
-                deliveryOptions = deliveryOptions,
+                editableDeliveryOptions = deliveryOptions,
                 memberSettingStatus = MemberSettingStatus.ERROR_NO_MEMBER,
             ),
             onBackClick = {},
