@@ -22,12 +22,12 @@ fun GroupBuyPostSaleDto.toDomain(): RecruiterDetail = RecruiterDetail(
         userId = it.userId,
         memberNames = it.memberNames,
         participantStatus = toParticipantStatus(it.status),
-        deliveryMethod = this.priceInfo.shippingName,
-        totalPrice = this.priceInfo.totalPrice,
+        deliveryMethod = it.priceInfo.shippingName,
+        totalPrice = it.priceInfo.totalPrice,
         shippingInfo = ShippingInfo(
-            receiverName = this.shippingInfo.receiverName,
-            address = this.shippingInfo.address,
-            phone = this.shippingInfo.phone,
+            receiverName = it.shippingInfo.receiverName,
+            address = it.shippingInfo.address,
+            phone = it.shippingInfo.phone,
             trackingNumber = null
         )
     ) },
