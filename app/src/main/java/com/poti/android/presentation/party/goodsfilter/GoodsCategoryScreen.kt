@@ -143,7 +143,7 @@ private fun GoodsCategoryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
-                    artistId = TODO(),
+                    artistId = groupItem.artistId,
                 )
             }
             item {
