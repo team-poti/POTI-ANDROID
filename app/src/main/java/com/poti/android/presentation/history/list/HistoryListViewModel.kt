@@ -28,9 +28,8 @@ class HistoryListViewModel @Inject constructor(
     private val partyRepository: PartyRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
-    initialState = HistoryListUiState(),
-) {
-
+        initialState = HistoryListUiState(),
+    ) {
     private val route = savedStateHandle.toRoute<HistoryRoute.HistoryList>()
     private val initialMode = route.mode
     private val initialType = route.type
@@ -50,13 +49,6 @@ class HistoryListViewModel @Inject constructor(
         }
     }
 
-    //enum class HistorySummaryType {
-    //    ALL,
-    //    IN_PROGRESS,
-    //    COMPLETED,
-    //}
-
-    // ONGOIDN / COMP;LETED
     init {
         updateState {
             copy(
