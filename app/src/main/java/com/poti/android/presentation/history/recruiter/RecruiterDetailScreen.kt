@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -44,13 +44,11 @@ fun RecruiterDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                RecruiterDetailUiEffect.NavigateBack -> onPopBackStack()
-                is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(sideEffect.recruitId)
-                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(sideEffect.recruitId)
-            }
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            RecruiterDetailUiEffect.NavigateBack -> onPopBackStack()
+            is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(effect.recruitId)
+            is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.recruitId)
         }
     }
 
