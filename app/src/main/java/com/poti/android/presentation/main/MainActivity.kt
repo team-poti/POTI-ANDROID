@@ -8,11 +8,8 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import com.poti.android.core.designsystem.theme.PotiTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,26 +19,19 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        var isSplashTimeFinished = false
-
-        lifecycleScope.launch {
-            delay(2000)
-            isSplashTimeFinished = true
-        }
-
         splashScreen.setKeepOnScreenCondition {
-            viewModel.startDestination.value == null || !isSplashTimeFinished
+            viewModel.startDestination.value == null
         }
 
         enableEdgeToEdge()
         setContent {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
-            val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+            val targetDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
             PotiTheme {
-                startDestination?.let { destination ->
+                targetDestination?.let { destination ->
                     MainScreen(
-                        startDestination = destination,
+                        targetDestination = destination,
                         navigator = mainNavigator,
                     )
                 }

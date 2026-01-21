@@ -10,6 +10,7 @@ import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
 import com.poti.android.presentation.party.partyNavGraph
+import com.poti.android.presentation.splash.SplashRoute
 import com.poti.android.presentation.splash.splashNavGraph
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
@@ -17,17 +18,18 @@ import com.poti.android.presentation.user.profile.navigation.profileNavGraph
 @Composable
 fun MainNavHost(
     navigator: MainNavigator,
-    startDestination: Route,
+    targetDestination: Route,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navigator.navController,
-        startDestination = startDestination,
+        startDestination = SplashRoute,
         modifier = modifier.fillMaxSize(),
     ) {
         splashNavGraph(
             navController = navigator.navController,
+            destination = targetDestination,
         )
         authNavGraph(
             navController = navigator.navController,

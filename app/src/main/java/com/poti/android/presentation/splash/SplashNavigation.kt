@@ -15,8 +15,16 @@ fun NavController.navigateToSplash() {
 
 fun NavGraphBuilder.splashNavGraph(
     navController: NavController,
+    destination: Route,
 ) {
     composable<SplashRoute> {
-        SplashRoute()
+        SplashRoute(
+            onAnimationFinished = {
+                navController.navigate(destination) {
+                    popUpTo(SplashRoute) { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+        )
     }
 }

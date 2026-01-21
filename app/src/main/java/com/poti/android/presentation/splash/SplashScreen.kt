@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,21 +20,34 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun SplashRoute(
+    onAnimationFinished: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SplashScreen(modifier = modifier)
+    SplashScreen(
+        onAnimationFinished = onAnimationFinished,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun SplashScreen(modifier: Modifier = Modifier) {
+fun SplashScreen(
+    onAnimationFinished: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.splash))
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = 1,
     )
 
+    LaunchedEffect(progress) {
+        if (composition != null && progress == 1f) {
+            onAnimationFinished()
+        }
+    }
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(PotiTheme.colors.poti600),
         contentAlignment = Alignment.Center,
@@ -50,6 +64,8 @@ fun SplashScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun SplashScreenPreview() {
     PotiTheme {
-        SplashScreen()
+        SplashScreen(
+            onAnimationFinished = {},
+        )
     }
 }
