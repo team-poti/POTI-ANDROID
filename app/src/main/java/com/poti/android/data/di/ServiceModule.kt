@@ -2,6 +2,7 @@ package com.poti.android.data.di
 
 import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
+import com.poti.android.data.remote.service.DeliveryService
 import com.poti.android.data.remote.service.GroupBuyService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
@@ -59,5 +60,11 @@ object ServiceModule {
     @Singleton
     fun providePaymentService(retrofit: Retrofit): PaymentService {
         return retrofit.create(PaymentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeliveryService(retrofit: Retrofit): DeliveryService {
+        return retrofit.create(DeliveryService::class.java)
     }
 }

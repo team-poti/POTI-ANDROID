@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.data.remote.dto.request.history.DeliveryRequestDto
 import com.poti.android.domain.model.history.DepositInfo
 import com.poti.android.domain.model.history.MemberPriceInfo
 import com.poti.android.domain.model.history.ShippingInfo
+import com.poti.android.domain.repository.DeliveryRepository
 import com.poti.android.domain.repository.GroupBuyRepository
 import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.domain.type.ParticipantStatusType
@@ -28,7 +30,8 @@ import javax.inject.Inject
 class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val groupBuyRepository: GroupBuyRepository,
-    private val paymentRepository: PaymentRepository
+    private val paymentRepository: PaymentRepository,
+    private val deliveryRepository: DeliveryRepository
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
         initialState = ParticipantManageUiState(),
     ) {
@@ -80,12 +83,12 @@ class ParticipantManageViewModel @Inject constructor(
 
             paymentRepository.patchPaymentConfirm(id)
                 .onSuccess {
-                    Timber.d("success: confirmDeposit(${id})")
-                }
-                .onFailure { error ->
+                    Timber.d("success: confirmDeposit(${id})\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
+                }.onFailure { error ->
                     Timber.d("fail: confirmDeposit(${id}) - ${error.message}")
                 }
 
+            updateState { copy(activeModal = ManageModalState.None) }
             loadParticipantManageDetail()
         }
     }
@@ -96,9 +99,21 @@ class ParticipantManageViewModel @Inject constructor(
         number: String,
     ) {
         viewModelScope.launch {
-            updateState { copy(activeModal = ManageModalState.None) }
+            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            // TODO: [천민재] API 전달
+            deliveryRepository.patchDelivery(
+                orderId = id,
+                deliveryReq =  DeliveryRequestDto(
+                    carrier = method,
+                    trackingNumber = number
+                )
+            ).onSuccess {
+                Timber.d("success: ${it.orderId}, ${it.deliveryStatus}, ${it.trackingNumber}")
+            }.onFailure { error ->
+                Timber.d("fail: ${error.message}")
+            }
+
+            loadParticipantManageDetail()
         }
     }
 }
