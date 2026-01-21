@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.model.manage
+package com.poti.android.presentation.history.manage.model
 
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -6,7 +6,7 @@ import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 
 data class ParticipantManageUiState(
-    val participantManageDetail: ApiState<List<RecruiterManageDetailUiModel>> = ApiState.Loading,
+    val participantManageDetailLoadState: ApiState<RecruiterManageDetailUiModel> = ApiState.Loading,
     val activeModal: ManageModalState = ManageModalState.None,
 ) : UiState
 
@@ -25,9 +25,9 @@ sealed interface ParticipantManageUiIntent : UiIntent {
 
     data class OnDeliveryInputClick(val participantId: Long) : ParticipantManageUiIntent
 
-    data object DismissModal : ParticipantManageUiIntent
+    data object OnDepositModalDismiss : ParticipantManageUiIntent
 
-    data class ConfirmDeposit(val participantId: Long) : ParticipantManageUiIntent
+    data class OnDepositModalConfirm(val participantId: Long) : ParticipantManageUiIntent
 
     data class RegisterDelivery(
         val participantId: Long,

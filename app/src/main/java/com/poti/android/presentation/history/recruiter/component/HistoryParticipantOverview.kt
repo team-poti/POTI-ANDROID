@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.recruiter.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

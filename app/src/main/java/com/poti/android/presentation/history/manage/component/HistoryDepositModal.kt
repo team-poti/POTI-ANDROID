@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.manage.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource

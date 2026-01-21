@@ -10,7 +10,6 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.manage.ParticipantManageRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
-import com.poti.android.presentation.history.recruiter.ParticipantManageRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import kotlinx.serialization.Serializable

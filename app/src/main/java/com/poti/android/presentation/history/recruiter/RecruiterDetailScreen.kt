@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -26,10 +25,10 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.component.HistoryParticipantOverview
-import com.poti.android.presentation.history.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
+import com.poti.android.presentation.history.recruiter.component.HistoryParticipantOverview
+import com.poti.android.presentation.history.recruiter.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel

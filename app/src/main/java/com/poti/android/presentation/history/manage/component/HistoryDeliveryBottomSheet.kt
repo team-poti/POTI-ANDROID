@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.manage.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,13 +32,15 @@ fun HistoryDeliveryBottomSheet(
     var deliveryMethod by remember { mutableStateOf("") }
     var trackingNumber by remember { mutableStateOf("") }
 
-    // TODO: [천민재] #65 머지 후 enabled 반영
+    val isButtonEnabled = deliveryMethod.isNotBlank() && trackingNumber.isNotBlank()
+
     PotiBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         text = stringResource(R.string.history_delivery_bottomsheet_button),
         onClick = { onConfirmClick(deliveryMethod, trackingNumber) },
+        enabled = isButtonEnabled,
         content = {
             BottomSheetContent(
                 deliveryMethod = deliveryMethod,

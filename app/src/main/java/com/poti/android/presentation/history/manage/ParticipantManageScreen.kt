@@ -4,98 +4,93 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
-import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.history.ParticipantManageDetail
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.DetailState
-import com.poti.android.presentation.history.component.HistoryDeliveryBottomSheet
-import com.poti.android.presentation.history.component.HistoryDepositConfirmModal
-import com.poti.android.presentation.history.component.HistoryParticipantDropdown
-import com.poti.android.presentation.history.mapper.toUiModel
-import com.poti.android.presentation.history.model.manage.ManageModalState
-import com.poti.android.presentation.history.model.manage.ParticipantManageUiEffect
-import com.poti.android.presentation.history.model.manage.ParticipantManageUiIntent
-import com.poti.android.presentation.history.model.manage.RecruiterManageDetailUiModel
-import com.poti.android.presentation.history.model.manage.RecruiterManageStateUiModel
+import com.poti.android.presentation.history.manage.component.HistoryDeliveryBottomSheet
+import com.poti.android.presentation.history.manage.component.HistoryDepositConfirmModal
+import com.poti.android.presentation.history.manage.component.HistoryParticipantDropdown
+import com.poti.android.presentation.history.manage.component.ParticipantDeliveredContent
+import com.poti.android.presentation.history.manage.component.ParticipantPayCheckContent
+import com.poti.android.presentation.history.manage.component.ParticipantShippingContent
+import com.poti.android.presentation.history.manage.model.ManageModalState
+import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
+import com.poti.android.presentation.history.manage.model.ParticipantManageUiIntent
+import com.poti.android.presentation.history.manage.model.RecruiterManageDetailUiModel
 
 @Composable
 fun ParticipantManageRoute(
-    modifier: Modifier = Modifier,
     popBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: ParticipantManageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { effect ->
-            when (effect) {
-                ParticipantManageUiEffect.NavigateBack -> popBackStack()
-            }
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            ParticipantManageUiEffect.NavigateBack -> popBackStack()
         }
     }
 
-    when (val state = uiState.participantManageDetail) {
-        is ApiState.Success -> {
-            ParticipantManageScreen(
-                uiModels = state.data,
-                activeModal = uiState.activeModal,
-                onBackClick = { viewModel.processIntent(ParticipantManageUiIntent.OnBackClick) },
-                onDepositConfirmClick = { id -> viewModel.processIntent(ParticipantManageUiIntent.OnDepositConfirmClick(id)) },
-                onDeliveryInputClick = { id -> viewModel.processIntent(ParticipantManageUiIntent.OnDeliveryInputClick(id)) },
-                onDismissModal = { viewModel.processIntent(ParticipantManageUiIntent.DismissModal) },
-                onDepositModalConfirm = { id ->
-                    viewModel.processIntent(ParticipantManageUiIntent.ConfirmDeposit(participantId = id))
-                },
-                onDeliveryModalConfirm = { participantId, deliveryMethod, trackingNumber ->
+    when (val modal = uiState.activeModal) {
+        is ManageModalState.DepositConfirm -> {
+            HistoryDepositConfirmModal(
+                onConfirm = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositModalConfirm(modal.participantId)) },
+                onDismiss = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositModalDismiss) },
+            )
+        }
+        is ManageModalState.DeliveryInput -> {
+            HistoryDeliveryBottomSheet(
+                onDismissRequest = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositModalDismiss) },
+                onConfirmClick = { deliveryMethod, trackingNumber ->
                     viewModel.processIntent(
                         ParticipantManageUiIntent.RegisterDelivery(
-                            participantId = participantId,
+                            participantId = modal.participantId,
                             deliveryMethod = deliveryMethod,
                             trackingNumber = trackingNumber,
                         ),
                     )
                 },
-                modifier = modifier,
             )
         }
-        else -> Unit
+        ManageModalState.None -> {}
+    }
+
+    uiState.participantManageDetailLoadState.onSuccess { participants ->
+        ParticipantManageScreen(
+            uiState = participants,
+            onBackClick = { viewModel.processIntent(ParticipantManageUiIntent.OnBackClick) },
+            onConfirmDepositClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositConfirmClick(it)) },
+            onInputTrackingNumberClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDeliveryInputClick(it)) },
+            modifier = modifier,
+        )
     }
 }
 
 @Composable
 private fun ParticipantManageScreen(
-    uiModels: List<RecruiterManageDetailUiModel>,
-    activeModal: ManageModalState,
+    uiState: RecruiterManageDetailUiModel,
     onBackClick: () -> Unit,
-    onDepositConfirmClick: (Long) -> Unit,
-    onDeliveryInputClick: (Long) -> Unit,
-    onDismissModal: () -> Unit,
-    onDepositModalConfirm: (Long) -> Unit,
-    onDeliveryModalConfirm: (participantId: Long, deliveryMethod: String, trackingNumber: String) -> Unit,
+    onConfirmDepositClick: (Long) -> Unit,
+    onInputTrackingNumberClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val expandedIds = remember(uiModels) { mutableStateListOf<Long>() }
+    val expandedIds = remember(uiState) { mutableStateListOf<Long>() }
     val scrollState = rememberScrollState()
 
     Column(
@@ -107,6 +102,7 @@ private fun ParticipantManageScreen(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.history_participant_management_title),
         )
+        PotiDivider(styleType = PotiDividerStyle.SMALL)
 
         Column(
             modifier = Modifier
@@ -114,204 +110,66 @@ private fun ParticipantManageScreen(
                 .verticalScroll(scrollState)
                 .animateContentSize(),
         ) {
-            uiModels.forEachIndexed { index, uiModel ->
-                if (index == 0) {
-                    PotiDivider(
-                        styleType = PotiDividerStyle.SMALL,
-                    )
-                }
+            uiState.participants.forEachIndexed { index, participant ->
 
-                val isExpanded = uiModel.participantId in expandedIds
-
-                val detailState = uiModel.detailState.toDetailState(
-                    onDepositConfirm = { onDepositConfirmClick(uiModel.participantId) },
-                    onDeliveryInput = { onDeliveryInputClick(uiModel.participantId) },
-                )
+                val isExpanded = participant.userId in expandedIds
 
                 HistoryParticipantDropdown(
-                    userName = uiModel.nickname,
-                    userImageUrl = uiModel.profileImage,
-                    depositItems = uiModel.depositItems,
-                    depositTotalPrice = uiModel.depositTotalPrice,
-                    detailState = detailState,
-                    stageType = uiModel.stage,
-                    statusType = uiModel.status,
+                    participant = participant,
                     isExpanded = isExpanded,
                     onToggle = {
                         if (isExpanded) {
-                            expandedIds.remove(uiModel.participantId)
+                            expandedIds.remove(participant.userId)
                         } else {
-                            expandedIds.add(uiModel.participantId)
+                            expandedIds.add(participant.userId)
                         }
                     },
-                )
+                ) {
+                    when (participant.participantStatus) {
+                        ParticipantStatusType.WAIT_PAY_CHECK -> {
+                            participant.depositInfo?.let { depositInfo ->
+                                ParticipantPayCheckContent(
+                                    depositName = depositInfo.depositorName,
+                                    depositTime = depositInfo.depositTime,
+                                    onClick = { onConfirmDepositClick(participant.userId) },
+                                )
+                            }
+                        }
+                        ParticipantStatusType.PAID, ParticipantStatusType.READY -> {
+                            participant.shippingInfo?.let { shippingInfo ->
+                                ParticipantShippingContent(
+                                    receiverName = shippingInfo.receiverName,
+                                    address = shippingInfo.address,
+                                    phone = shippingInfo.phone,
+                                    onClick = { onInputTrackingNumberClick(participant.userId) },
+                                )
+                            }
+                        }
+                        ParticipantStatusType.SHIPPED -> {
+                            participant.shippingInfo?.let { shippingInfo ->
+                                ParticipantShippingContent(
+                                    receiverName = shippingInfo.receiverName,
+                                    address = shippingInfo.address,
+                                    phone = shippingInfo.phone,
+                                    trackingNumber = shippingInfo.trackingNumber,
+                                )
+                            }
+                        }
+                        ParticipantStatusType.DELIVERED -> {
+                            participant.shippingInfo?.trackingNumber?.let { trackingNumber ->
+                                ParticipantDeliveredContent(
+                                    trackingNumber = trackingNumber,
+                                )
+                            }
+                        }
+                        else -> {}
+                    }
+                }
 
                 PotiDivider(
                     styleType = PotiDividerStyle.SMALL,
                 )
             }
-        }
-    }
-
-    when (activeModal) {
-        is ManageModalState.DepositConfirm -> {
-            HistoryDepositConfirmModal(
-                onConfirm = { onDepositModalConfirm(activeModal.participantId) },
-                onDismiss = onDismissModal,
-            )
-        }
-        is ManageModalState.DeliveryInput -> {
-            HistoryDeliveryBottomSheet(
-                onDismissRequest = onDismissModal,
-                onConfirmClick = { deliveryMethod, trackingNumber ->
-                    onDeliveryModalConfirm(
-                        // participantId =
-                        activeModal.participantId,
-                        // deliveryMethod =
-                        deliveryMethod,
-                        // trackingNumber =
-                        trackingNumber,
-                    )
-                },
-            )
-        }
-        ManageModalState.None -> Unit
-    }
-}
-
-private fun RecruiterManageStateUiModel.toDetailState(
-    onDepositConfirm: () -> Unit,
-    onDeliveryInput: () -> Unit,
-): DetailState {
-    return when (this) {
-        RecruiterManageStateUiModel.Default -> DetailState.Default
-        is RecruiterManageStateUiModel.DepositCheck -> DetailState.DepositCheck(
-            deposit = this.deposit,
-            onButtonClick = onDepositConfirm,
-        )
-        is RecruiterManageStateUiModel.Delivery -> DetailState.Delivery(
-            name = this.name,
-            delivery = this.delivery,
-            contact = this.contact,
-            onButtonClick = onDeliveryInput,
-        )
-        is RecruiterManageStateUiModel.AfterDelivery -> DetailState.AfterDelivery(
-            name = this.name,
-            delivery = this.delivery,
-            contact = this.contact,
-            invoice = this.invoice,
-        )
-        is RecruiterManageStateUiModel.Finished -> DetailState.Finished(
-            invoice = this.invoice,
-        )
-    }
-}
-
-@Preview(showBackground = true, heightDp = 1000)
-@Composable
-private fun ParticipantManageScreenAllStatesPreview() {
-    val participants = listOf(
-        // 1. 입금 확인 (Deposit Check)
-        ParticipantManageDetail(
-            participantId = 1,
-            nickname = "포티_입금확인중",
-            profileImage = null,
-            participantState = ParticipantStatusType.DEPOSIT_CHECK,
-            selectedMember = "해린",
-            memberPrice = 15000,
-            deliveryMethod = "GS반값택배",
-            deliveryPrice = 1800,
-            depositTime = "2024.12.31 15:30",
-            depositorName = "김입금",
-            recipient = null,
-            phoneNumber = null,
-            zipcode = null,
-            address = null,
-            trackingNumber = null,
-        ),
-        // 2. 입금 완료 (Deposit Done)
-        ParticipantManageDetail(
-            participantId = 2,
-            nickname = "포티_입금완료",
-            profileImage = null,
-            participantState = ParticipantStatusType.DEPOSIT_DONE,
-            selectedMember = "민지",
-            memberPrice = 15000,
-            deliveryMethod = "준등기",
-            deliveryPrice = 1800,
-            depositTime = null,
-            depositorName = null,
-            recipient = null,
-            phoneNumber = null,
-            zipcode = null,
-            address = null,
-            trackingNumber = null,
-        ),
-        // 3. 배송 대기 (Delivery Wait)
-        ParticipantManageDetail(
-            participantId = 3,
-            nickname = "포티_배송대기",
-            profileImage = null,
-            participantState = ParticipantStatusType.DELIVERY_WAIT,
-            selectedMember = "카리나",
-            memberPrice = 20000,
-            deliveryMethod = "CU끼리택배",
-            deliveryPrice = 1600,
-            depositTime = null,
-            depositorName = null,
-            recipient = "이수령",
-            phoneNumber = "010-1234-5678",
-            zipcode = "12345",
-            address = "서울특별시 강남구 테헤란로 123 포티타워",
-            trackingNumber = null,
-        ),
-        // 4. 배송 중/완료 (Delivery Done/Start)
-        ParticipantManageDetail(
-            participantId = 4,
-            nickname = "포티_배송완료",
-            profileImage = null,
-            participantState = ParticipantStatusType.DELIVERY_DONE,
-            selectedMember = "안유진",
-            memberPrice = 18000,
-            deliveryMethod = "일반택배",
-            deliveryPrice = 3500,
-            depositTime = null,
-            depositorName = null,
-            recipient = "박완료",
-            phoneNumber = "010-9876-5432",
-            zipcode = "54321",
-            address = "경기도 성남시 분당구 판교로 999",
-            trackingNumber = "1234-5678-9012",
-        ),
-    ).map { it.toUiModel() }
-
-    var fakeModalState by remember { mutableStateOf<ManageModalState>(ManageModalState.None) }
-
-    PotiTheme {
-        Scaffold { innerPadding ->
-            ParticipantManageScreen(
-                uiModels = participants,
-                activeModal = fakeModalState,
-                onBackClick = {},
-                onDepositConfirmClick = { id ->
-                    fakeModalState = ManageModalState.DepositConfirm(id)
-                },
-                onDeliveryInputClick = { id ->
-                    fakeModalState = ManageModalState.DeliveryInput(id)
-                },
-                onDismissModal = {
-                    fakeModalState = ManageModalState.None
-                },
-                onDepositModalConfirm = {
-                    fakeModalState = ManageModalState.None
-                },
-                onDeliveryModalConfirm = { _, _, _ ->
-                    fakeModalState = ManageModalState.None
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            )
         }
     }
 }
