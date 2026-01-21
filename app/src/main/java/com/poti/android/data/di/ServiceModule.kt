@@ -6,6 +6,7 @@ import com.poti.android.data.remote.service.GroupBuyService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
 import com.poti.android.data.remote.service.PartyService
+import com.poti.android.data.remote.service.PaymentService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -52,5 +53,11 @@ object ServiceModule {
     @Singleton
     fun provideGroupBuyService(retrofit: Retrofit): GroupBuyService {
         return retrofit.create(GroupBuyService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePaymentService(retrofit: Retrofit): PaymentService {
+        return retrofit.create(PaymentService::class.java)
     }
 }

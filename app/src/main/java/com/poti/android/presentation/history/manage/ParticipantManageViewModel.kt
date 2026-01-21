@@ -9,6 +9,7 @@ import com.poti.android.domain.model.history.DepositInfo
 import com.poti.android.domain.model.history.MemberPriceInfo
 import com.poti.android.domain.model.history.ShippingInfo
 import com.poti.android.domain.repository.GroupBuyRepository
+import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.manage.model.ManageModalState
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val groupBuyRepository: GroupBuyRepository
+    private val groupBuyRepository: GroupBuyRepository,
+    private val paymentRepository: PaymentRepository
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
         initialState = ParticipantManageUiState(),
     ) {
@@ -74,9 +76,17 @@ class ParticipantManageViewModel @Inject constructor(
 
     private fun confirmDeposit(id: Long) {
         viewModelScope.launch {
-            updateState { copy(activeModal = ManageModalState.None) }
+            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            // TODO: [천민재] API 전달
+            paymentRepository.patchPaymentConfirm(id)
+                .onSuccess {
+                    Timber.d("success: confirmDeposit(${id})")
+                }
+                .onFailure { error ->
+                    Timber.d("fail: confirmDeposit(${id}) - ${error.message}")
+                }
+
+            loadParticipantManageDetail()
         }
     }
 
