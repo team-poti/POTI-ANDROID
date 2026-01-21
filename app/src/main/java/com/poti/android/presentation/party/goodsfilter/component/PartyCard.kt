@@ -36,7 +36,8 @@ import com.poti.android.core.designsystem.component.display.PotiProfileSummarySi
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun PotsCard(
+fun PartyCard(
+    potId: Long,
     profileImageUrl: String,
     nickname: String,
     rating: String,
@@ -45,7 +46,7 @@ fun PotsCard(
     price: String,
     currentCount: Int,
     totalCount: Int,
-    onClick: () -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isClosed = totalCount - currentCount == 0
@@ -60,7 +61,7 @@ fun PotsCard(
                 color = PotiTheme.colors.gray300,
                 shape = RoundedCornerShape(12.dp),
             )
-            .noRippleClickable(onClick)
+            .noRippleClickable { onClick(potId) }
             .padding(16.dp)
             .alpha(contentAlpha),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -173,13 +174,14 @@ fun PotsCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun PotsCardPreview() {
+private fun PartyCardPreview() {
     PotiTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PotsCard(
+            PartyCard(
+                potId = 0L,
                 profileImageUrl = "",
                 nickname = "닉네임",
                 rating = "4.8",
@@ -192,7 +194,8 @@ private fun PotsCardPreview() {
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            PotsCard(
+            PartyCard(
+                potId = 0L,
                 profileImageUrl = "",
                 nickname = "닉네임",
                 rating = "4.8",
