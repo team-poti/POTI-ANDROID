@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.state.ApiState
@@ -52,6 +54,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.util.toImageInfosForPresigned
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -254,7 +257,7 @@ private fun PartyCreateScreen(
                 CreateDropdownField(
                     value = uiState.productName,
                     onValueChanged = onProductChanged,
-                    searchResults = uiState.productSearchResults,
+                    searchResults = uiState.productSearchResultsState.getSuccessDataOrNull() ?: emptyList(),
                     onItemClick = onProductSearchItemClick,
                     placeholder = stringResource(R.string.create_placeholder_product),
                     label = stringResource(R.string.create_label_product),
@@ -339,13 +342,11 @@ private fun PartyCreateScreen(
                     styleType = PotiDividerStyle.LARGE,
                 )
 
-                uiState.deliveryOptions.onSuccess {
-                    CreateDeliverySetting(
-                        deliveryOptions = it,
-                        selectedOptionIds = uiState.selectedDeliveryIds,
-                        onDeliveryOptionClick = onDeliveryRadioBtnClick,
-                    )
-                }
+                CreateDeliverySetting(
+                    deliveryOptions = uiState.deliveryOptions,
+                    selectedOptionIds = uiState.selectedDeliveryIds,
+                    onDeliveryOptionClick = onDeliveryRadioBtnClick,
+                )
             }
 
             item {
@@ -370,12 +371,11 @@ private fun PartyCreateScreen(
 @Preview
 @Composable
 private fun PartyCreateScreenDefaultPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
     val selectedDeliveryIds = setOf(1.toLong())
 
     PotiTheme {
@@ -404,12 +404,11 @@ private fun PartyCreateScreenDefaultPreview() {
 @Preview
 @Composable
 private fun PartyCreateScreenAccountNumberErrorPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
     var accountNumberError by remember { mutableStateOf<FieldError?>(null) }
 
     PotiTheme {
@@ -438,12 +437,11 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
 @Preview
 @Composable
 private fun PartyCreateMemberPreview() {
-    val deliveryOptions = ApiState.Success(
+    val deliveryOptions =
         persistentListOf(
             DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
             DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        ),
-    )
+        )
 
     PotiTheme {
         PartyCreateScreen(

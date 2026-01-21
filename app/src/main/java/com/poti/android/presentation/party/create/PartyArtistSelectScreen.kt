@@ -22,7 +22,7 @@ import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.artist.Artist
+import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
@@ -57,7 +57,7 @@ fun PartyArtistSelectRoute(
 private fun PartyArtistSelectScreen(
     uiState: CreateUiState,
     onSearchKeywordChange: (String) -> Unit,
-    onArtistSelect: (Artist) -> Unit,
+    onArtistSelect: (ArtistSearchResult) -> Unit,
     onConfirmClick: () -> Unit,
     onPopBackStack: () -> Unit,
     modifier: Modifier = Modifier,

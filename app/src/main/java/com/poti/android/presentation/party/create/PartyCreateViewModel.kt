@@ -1,23 +1,55 @@
 package com.poti.android.presentation.party.create
 
+import android.content.Context
+import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.artist.Artist
+import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
+import com.poti.android.domain.model.image.ImageInfoForPresigned
+import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
+import com.poti.android.domain.usecase.image.UploadImagesUseCase
+import com.poti.android.domain.usecase.party.CreatePartyUseCase
+import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
+import com.poti.android.domain.usecase.party.SearchArtistUseCase
+import com.poti.android.domain.usecase.party.SearchProductUseCase
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.util.toImageInfosForPresigned
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val IMAGE_TYPE = "POST"
+
+@OptIn(FlowPreview::class)
 @HiltViewModel
-class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
+class PartyCreateViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val getMembersWithPriceUseCase: GetMembersWithPriceUseCase,
+    private val uploadImagesUseCase: UploadImagesUseCase,
+    private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
+    private val searchArtistUseCase: SearchArtistUseCase,
+    private val searchProductUseCase: SearchProductUseCase,
+    private val createPartyUseCase: CreatePartyUseCase,
+) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
     initialState = CreateUiState(),
 ) {
+    private val _artistSearchKeyword = MutableStateFlow("")
+    private val _productSearchKeyword = MutableStateFlow("")
+
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
             CreateUiIntent.OnBackClick -> {
@@ -109,6 +141,44 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         }
     }
 
+    init {
+        viewModelScope.launch {
+            getDeliveryOptions()
+        }
+
+        viewModelScope.launch {
+            _artistSearchKeyword
+                .debounce(500)
+                .distinctUntilChanged()
+                .filter { it.isNotBlank() }
+                .collectLatest { keyword ->
+                    searchArtist(keyword)
+                }
+        }
+
+        viewModelScope.launch {
+            _productSearchKeyword
+                .debounce(500)
+                .distinctUntilChanged()
+                .filter { it.isNotBlank() }
+                .collectLatest { keyword ->
+                    searchProdut(keyword)
+                }
+        }
+    }
+
+    private suspend fun getDeliveryOptions() {
+        getDeliveryOptionsUseCase()
+            .onSuccess { result ->
+                updateState {
+                    copy(
+                        deliveryOptionsState = ApiState.Success(result.toPersistentList()),
+                        deliveryOptions = result.toPersistentList()
+                    )
+                }
+            }
+    }
+
     private fun handleAccountNumberChange(newValue: String) {
         updateState {
             copy(
@@ -119,43 +189,94 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         }
     }
 
-    private fun handleArtistSelect(newArtist: Artist) {
+    private fun handleArtistSelect(newArtist: ArtistSearchResult) {
         if (newArtist == uiState.value.selectedArtist) return
 
-        // TODO: [도연] GetMember / settingStatus IN_PROGRESS 변경
-
-        updateState {
-            copy(
-                isDirty = true,
-                selectedArtist = newArtist,
-                artistError = null,
-                // memberOptions =
-            )
+        viewModelScope.launch {
+            getMembersWithPriceUseCase(newArtist.artistId)
+                .onSuccess { result ->
+                    updateState {
+                        copy(
+                            isDirty = true,
+                            selectedArtist = newArtist,
+                            artistSearchKeyword = newArtist.name,
+                            artistError = null,
+                            memberOptionsState = ApiState.Success(result.toPersistentList()),
+                            editableMemberOptions = result.toPersistentList(),
+                            memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
+                        )
+                    }
+                }
+                .onFailure {
+                    updateState {
+                        copy(
+                            memberOptionsState = ApiState.Failure(it.message ?: "FAIL")
+                        )
+                    }
+                }
         }
     }
 
     private fun handleArtistSearchKeywordChange(newValue: String) {
-        // TODO: [도연] SearchArtist
-
         updateState {
             copy(
                 isDirty = true,
                 artistSearchKeyword = newValue,
-                // artistSearchResults =
             )
         }
+
+        _artistSearchKeyword.value = newValue
+    }
+
+    private suspend fun searchArtist(keyword: String) {
+        searchArtistUseCase(keyword = keyword)
+            .onSuccess { result ->
+                updateState {
+                    copy(
+                        artistSearchResultsState = ApiState.Success(result.toPersistentList())
+                    )
+                }
+            }
+            .onFailure {
+                updateState {
+                    copy(
+                        artistSearchResultsState = ApiState.Failure(it.message ?: "FAIL")
+                    )
+                }
+            }
     }
 
     private fun handleProductChange(newValue: String) {
-        // TODO: [도연] SearchProduct
-
         updateState {
             copy(
                 isDirty = true,
                 productName = newValue,
                 productError = if (newValue.isNotBlank()) null else this.productError,
-                // productSearchResults =
             )
+        }
+        _productSearchKeyword.value = newValue
+    }
+
+    private suspend fun searchProdut(keyword: String) {
+        uiState.value.selectedArtist?.let { artist ->
+            searchProductUseCase(
+                keyword = keyword,
+                artistId = artist.artistId,
+            )
+                .onSuccess { result ->
+                    updateState {
+                        copy(
+                            productSearchResultsState = ApiState.Success(result.toPersistentList())
+                        )
+                    }
+                }
+                .onFailure {
+                    updateState {
+                        copy(
+                            productSearchResultsState = ApiState.Failure(it.message ?: "FAIL")
+                        )
+                    }
+                }
         }
     }
 
@@ -349,6 +470,28 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
         return hasError
     }
 
+    private fun getConvertedImages(
+    ): List<ImageInfoForPresigned> = uiState.value.selectedImages.toImageInfosForPresigned(context)
+
+    private suspend fun getImageUrls(
+        imageInfos: List<ImageInfoForPresigned>,
+    ): Result<List<String>> = uploadImagesUseCase(IMAGE_TYPE, imageInfos)
+
+    private suspend fun uploadPartyInfo(
+        urls: List<String>,
+    ): Result<Long> =
+        createPartyUseCase(
+            artistId = uiState.value.selectedArtist?.artistId ?: 0L,
+            product = uiState.value.productName,
+            description = uiState.value.description,
+            deadline = uiState.value.deadline,
+            bank = uiState.value.bank,
+            accountNumber = uiState.value.accountNumber,
+            imageUrls = urls,
+            options = uiState.value.editableMemberOptions.filter { option -> option.memberId in uiState.value.selectedMemberIds },
+            shippings = uiState.value.deliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds }
+        )
+
     private fun createParty() {
         if (validateInputs() || uiState.value.createPartyState is ApiState.Loading) return
 
@@ -357,14 +500,32 @@ class PartyCreateViewModel @Inject constructor() : BaseViewModel<CreateUiState, 
                 createPartyState = ApiState.Loading,
             )
         }
-        // TODO: [도연] 이미지 전처리
-        // TODO: [도연] 이미지 업로드
-        // TODO: [도연] 포스트 업로드
 
-        updateState {
-            copy(
-                createPartyState = ApiState.Success(Unit),
-            )
+        val imageInfos = getConvertedImages()
+
+        when {
+            imageInfos.isEmpty() -> {
+                updateState {
+                    copy(
+                        createPartyState = ApiState.Failure("convert fail"),
+                    )
+                }
+                return
+            }
+
+            else -> {
+                viewModelScope.launch {
+                    getImageUrls(imageInfos)
+                        .onSuccess { urls ->
+                            uploadPartyInfo(urls)
+                        }
+                        .onFailure {
+                            updateState {
+                                copy(createPartyState = ApiState.Failure(it.message ?: "upload fail"))
+                            }
+                        }
+                }
+            }
         }
     }
 }

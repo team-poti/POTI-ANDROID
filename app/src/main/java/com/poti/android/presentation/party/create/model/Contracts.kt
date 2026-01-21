@@ -9,8 +9,10 @@ import com.poti.android.core.base.UiState
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Artist
+import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.image.ImageInfoForPresigned
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -38,9 +40,9 @@ enum class FieldError(
 data class CreateUiState(
     val isDirty: Boolean = false,
     val selectedImages: ImmutableList<Uri> = persistentListOf(),
-    val selectedArtist: Artist? = null,
+    val selectedArtist: ArtistSearchResult? = null,
     val productName: String = "",
-    val productSearchResults: ImmutableList<String> = persistentListOf(),
+    val productSearchResultsState: ApiState<ImmutableList<String>> = ApiState.Init,
     val deadline: String = "",
     val description: String = "",
     val accountNumber: String = "",
@@ -51,7 +53,7 @@ data class CreateUiState(
     val selectedMemberIds: Set<Long> = setOf(),
     val deliveryOptionsState: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
     val sheetDisplayMemberIndices: Set<Int> = setOf(),
-    val deliveryOptions: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
+    val deliveryOptions: ImmutableList<DeliveryOption> = persistentListOf(),
     val selectedDeliveryIds: Set<Long> = setOf(),
     val imageError: FieldError? = null,
     val artistError: FieldError? = null,
@@ -63,7 +65,7 @@ data class CreateUiState(
     val artistSearchKeyword: String = "",
     val isSheetTouched: Boolean = false,
     val createPartyState: ApiState<Unit> = ApiState.Init,
-    val artistSearchResultsState: ApiState<ImmutableList<Artist>> = ApiState.Init,
+    val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
 ) : UiState {
     val selectedMembersOption = memberOptionsState.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
     val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
@@ -83,7 +85,7 @@ sealed interface CreateUiIntent : UiIntent {
 
     data class OnArtistSearchKeywordChange(val value: String) : CreateUiIntent
 
-    data class OnArtistSelect(val artist: Artist) : CreateUiIntent
+    data class OnArtistSelect(val artist: ArtistSearchResult) : CreateUiIntent
 
     data class OnProductChange(val value: String) : CreateUiIntent
 
