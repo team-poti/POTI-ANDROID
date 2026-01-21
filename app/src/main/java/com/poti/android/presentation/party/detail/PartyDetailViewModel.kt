@@ -7,7 +7,10 @@ import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.party.DeliveryInfo
+import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
+import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
@@ -16,6 +19,7 @@ import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +30,7 @@ class PartyDetailViewModel @Inject constructor(
         initialState = PartyDetailUiState(),
     ) {
     private val args = savedStateHandle.toRoute<PartyDetailGraph>()
-    private val partyId = 3L
+    private val partyId = 5L
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -62,9 +66,11 @@ class PartyDetailViewModel @Inject constructor(
 
         partyRepository.getPartyDetail(partyId = partyId)
             .onSuccess { partyDetail ->
+                Timber.d("getPartyDetail 실행: $partyDetail")
                 updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
             }
             .onFailure { error ->
+                Timber.d("getPartyDetail 실패: $error")
                 updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
             }
     }
@@ -135,7 +141,38 @@ class PartyDetailViewModel @Inject constructor(
     }
 
     private fun postOrder() = launchScope {
-        updateState { copy(isJoinSuccessDialogVisible = true) }
+        val currentState = uiState.value
+
+        currentState.selectedDeliveryIds.firstOrNull()?.toLong()?.let { shippingOptionId ->
+            val joinItems = currentState.selectedMemberIds.map { idStr ->
+                JoinOption(
+                    optionId = idStr.toLong(),
+                    count = 1,
+                )
+            }
+
+            val deliveryInfo = DeliveryInfo(
+                receiverName = currentState.orderName,
+                zipcode = currentState.postalCode,
+                address = currentState.address,
+                phoneNumber = currentState.contact,
+            )
+
+            val joinInfo = PartyJoinInfo(
+                partyId = partyId,
+                shippingOptionId = shippingOptionId,
+                deliveryInfo = deliveryInfo,
+                joinItems = joinItems,
+            )
+
+            partyRepository.postPartyJoin(joinInfo = joinInfo)
+                .onSuccess {
+                    updateState { copy(isJoinSuccessDialogVisible = true) }
+                }
+                .onFailure {
+                    // TODO: [지현] 에러 처리
+                }
+        }
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =

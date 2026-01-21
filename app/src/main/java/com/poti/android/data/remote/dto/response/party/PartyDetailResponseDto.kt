@@ -64,7 +64,7 @@ data class UploaderDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("profileImage")
-    val profileImage: String,
+    val profileImage: String?,
     @SerialName("rating")
     val rating: Double,
     @SerialName("reviewCount")
@@ -78,7 +78,7 @@ data class ParticipantDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("profileImage")
-    val profileImage: String,
+    val profileImage: String?,
     @SerialName("rating")
     val rating: Double,
     @SerialName("selectedMembers")

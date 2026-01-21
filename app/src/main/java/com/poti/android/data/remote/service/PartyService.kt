@@ -2,10 +2,12 @@ package com.poti.android.data.remote.service
 
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
+import com.poti.android.data.remote.dto.request.party.PartyJoinRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
+import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import retrofit2.http.Body
@@ -28,7 +30,7 @@ interface PartyService {
 
     @POST("/api/v1/posts")
     suspend fun createParty(
-        @Body body: CreatePartyRequestDto,
+        @Body createPartyRequest: CreatePartyRequestDto,
     ): BaseResponse<CreatePartyResponseDto>
 
     @GET("/api/v1/shippings")
@@ -43,4 +45,9 @@ interface PartyService {
     suspend fun getPartyJoinOptions(
         @Path("postId") partyId: Long,
     ): BaseResponse<PartyJoinOptionsDto>
+
+    @POST("/api/v1/orders")
+    suspend fun postPartyJoin(
+        @Body partyJoinRequest: PartyJoinRequestDto,
+    ): BaseResponse<PartyJoinResponseDto>
 }

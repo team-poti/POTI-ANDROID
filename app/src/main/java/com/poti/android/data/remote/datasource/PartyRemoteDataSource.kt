@@ -2,10 +2,12 @@ package com.poti.android.data.remote.datasource
 
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
+import com.poti.android.data.remote.dto.request.party.PartyJoinRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
+import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import com.poti.android.data.remote.service.PartyService
@@ -34,4 +36,7 @@ class PartyRemoteDataSource @Inject constructor(
 
     suspend fun getPartyJoinOptions(partyId: Long): BaseResponse<PartyJoinOptionsDto> =
         partyService.getPartyJoinOptions(partyId = partyId)
+
+    suspend fun postPartyJoin(partyJoinRequest: PartyJoinRequestDto): BaseResponse<PartyJoinResponseDto> =
+        partyService.postPartyJoin(partyJoinRequest = partyJoinRequest)
 }
