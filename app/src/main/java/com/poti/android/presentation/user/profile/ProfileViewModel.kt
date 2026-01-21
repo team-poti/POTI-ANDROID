@@ -1,12 +1,14 @@
 package com.poti.android.presentation.user.profile
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.UserRepository
 import com.poti.android.presentation.user.profile.model.ProfileUiEffect
 import com.poti.android.presentation.user.profile.model.ProfileUiIntent
 import com.poti.android.presentation.user.profile.model.ProfileUiState
+import com.poti.android.presentation.user.profile.navigation.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,9 +19,7 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel<ProfileUiState, ProfileUiIntent, ProfileUiEffect>(
         initialState = ProfileUiState(),
     ) {
-    private val userId: Long = checkNotNull(
-        savedStateHandle.get<Long>("userId"),
-    )
+    private val userId = savedStateHandle.toRoute<ProfileRoute.Profile>().userId
 
     override fun processIntent(intent: ProfileUiIntent) {
         when (intent) {
