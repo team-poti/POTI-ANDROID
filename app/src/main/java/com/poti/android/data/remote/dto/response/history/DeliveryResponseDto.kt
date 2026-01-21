@@ -12,5 +12,5 @@ data class DeliveryResponseDto(
     @SerialName("trackingNumber")
     val trackingNumber: String,
     @SerialName("shippedAt")
-    val shippedAt: String
+    val shippedAt: String,
 )

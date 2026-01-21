@@ -10,5 +10,5 @@ data class ParticipantPaymentConfirmResponseDto(
     @SerialName("status")
     val status: String,
     @SerialName("confirmedAt")
-    val confirmedAt: String
+    val confirmedAt: String,
 )

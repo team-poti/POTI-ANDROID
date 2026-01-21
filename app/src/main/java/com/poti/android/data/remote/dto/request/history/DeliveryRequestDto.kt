@@ -8,5 +8,5 @@ data class DeliveryRequestDto(
     @SerialName("carrier")
     val carrier: String,
     @SerialName("trackingNumber")
-    val trackingNumber: String
+    val trackingNumber: String,
 )

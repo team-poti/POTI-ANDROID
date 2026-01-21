@@ -10,8 +10,8 @@ import javax.inject.Inject
 
 class GroupBuyRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    private val groupBuyService: GroupBuyService
-): GroupBuyRepository {
+    private val groupBuyService: GroupBuyService,
+) : GroupBuyRepository {
     override suspend fun getGroupBuyPostParticipant(postId: Long): Result<ParticipantManageDetail> =
         httpResponseHandler.safeApiCall {
             groupBuyService.getPostParticipant(postId)
@@ -19,5 +19,4 @@ class GroupBuyRepositoryImpl @Inject constructor(
                 .getOrThrow()
                 .toDomain()
         }
-
 }

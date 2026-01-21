@@ -24,7 +24,7 @@ class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val groupBuyRepository: GroupBuyRepository,
     private val paymentRepository: PaymentRepository,
-    private val deliveryRepository: DeliveryRepository
+    private val deliveryRepository: DeliveryRepository,
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
         initialState = ParticipantManageUiState(),
     ) {
@@ -61,12 +61,13 @@ class ParticipantManageViewModel @Inject constructor(
                 .onFailure { error ->
                     Timber.d("fail: loadParticipantManageDetail")
                     updateState {
-                        copy(participantManageDetailLoadState = ApiState.Failure(
-                            error.message ?: "Fail: loadParticipantManageDetail"
-                        ))
+                        copy(
+                            participantManageDetailLoadState = ApiState.Failure(
+                                error.message ?: "Fail: loadParticipantManageDetail",
+                            ),
+                        )
                     }
                 }
-
         }
     }
 
@@ -76,9 +77,9 @@ class ParticipantManageViewModel @Inject constructor(
 
             paymentRepository.patchPaymentConfirm(id)
                 .onSuccess {
-                    Timber.d("success: confirmDeposit(${id})\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
+                    Timber.d("success: confirmDeposit($id)\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
                 }.onFailure { error ->
-                    Timber.d("fail: confirmDeposit(${id}) - ${error.message}")
+                    Timber.d("fail: confirmDeposit($id) - ${error.message}")
                 }
 
             updateState { copy(activeModal = ManageModalState.None) }

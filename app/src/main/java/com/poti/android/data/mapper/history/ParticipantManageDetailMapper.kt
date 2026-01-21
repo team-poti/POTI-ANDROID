@@ -19,30 +19,32 @@ fun GroupBuyPostParticipantDetailDto.toDomain(): ParticipantManageDetail = Parti
             priceInfo = it.priceInfo.memberPerPrices.map { memberPerPriceDto ->
                 MemberPriceInfo(
                     name = memberPerPriceDto.name,
-                    price = memberPerPriceDto.price
+                    price = memberPerPriceDto.price,
                 )
-            } ,
+            },
             shippingName = it.priceInfo.shippingName,
             shippingPrice = it.priceInfo.shippingPrice,
             totalPrice = it.priceInfo.totalPrice,
-            depositInfo = it.depositInfo?.run { DepositInfo(
-                depositorName = depositorName,
-                depositTime = depositTime
-            ) },
+            depositInfo = it.depositInfo?.run {
+                DepositInfo(
+                    depositorName = depositorName,
+                    depositTime = depositTime,
+                )
+            },
             shippingInfo = it.shippingInfo?.run {
                 ShippingInfo(
                     receiverName = receiverName,
                     address = address,
                     phone = phone,
-                    trackingNumber = trackingNumber
+                    trackingNumber = trackingNumber,
                 )
-            }
+            },
         )
-    }
+    },
 )
 
 private fun toParticipantStatus(status: String): ParticipantStatusType =
-    when(status) {
+    when (status) {
         "RECRUITING" -> ParticipantStatusType.RECRUITING
         "WAIT_PAY" -> ParticipantStatusType.WAIT_PAY
         "WAIT_PAY_CHECK" -> ParticipantStatusType.WAIT_PAY_CHECK

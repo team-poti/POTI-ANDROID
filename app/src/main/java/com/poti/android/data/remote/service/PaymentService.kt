@@ -7,5 +7,7 @@ import retrofit2.http.Path
 
 interface PaymentService {
     @PATCH("/api/v1/payments/{orderId}/confirm")
-    suspend fun patchPaymentConfirm(@Path("orderId") orderId: Long): BaseResponse<ParticipantPaymentConfirmResponseDto>
+    suspend fun patchPaymentConfirm(
+        @Path("orderId") orderId: Long,
+    ): BaseResponse<ParticipantPaymentConfirmResponseDto>
 }

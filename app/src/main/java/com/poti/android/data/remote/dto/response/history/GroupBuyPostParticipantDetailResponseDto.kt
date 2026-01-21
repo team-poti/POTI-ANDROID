@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GroupBuyPostParticipantDetailDto(
     @SerialName("participants")
-    val participants: List<ParticipantDetailDto>
+    val participants: List<ParticipantDetailDto>,
 )
 
 @Serializable

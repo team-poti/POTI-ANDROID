@@ -10,8 +10,8 @@ import javax.inject.Inject
 
 class PaymentRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    private val paymentRemoteDataSource: PaymentRemoteDataSource
-): PaymentRepository {
+    private val paymentRemoteDataSource: PaymentRemoteDataSource,
+) : PaymentRepository {
     override suspend fun patchPaymentConfirm(orderId: Long): Result<ParticipantPaymentConfirm> =
         httpResponseHandler.safeApiCall {
             paymentRemoteDataSource.patchPaymentConfirm(orderId)

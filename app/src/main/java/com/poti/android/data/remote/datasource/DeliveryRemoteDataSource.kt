@@ -7,8 +7,11 @@ import com.poti.android.data.remote.service.DeliveryService
 import javax.inject.Inject
 
 class DeliveryRemoteDataSource @Inject constructor(
-    private val deliveryService: DeliveryService
+    private val deliveryService: DeliveryService,
 ) {
-    suspend fun patchDelivery(orderId: Long, deliveryReq: DeliveryRequestDto): BaseResponse<DeliveryResponseDto> =
+    suspend fun patchDelivery(
+        orderId: Long,
+        deliveryReq: DeliveryRequestDto,
+    ): BaseResponse<DeliveryResponseDto> =
         deliveryService.patchDelivery(orderId, deliveryReq)
 }

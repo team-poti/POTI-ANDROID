@@ -9,5 +9,8 @@ import retrofit2.http.Path
 
 interface DeliveryService {
     @PATCH("/api/v1/orders/{orderId}/deliveries")
-    suspend fun patchDelivery(@Path("orderId") orderId: Long, @Body deliveryReq: DeliveryRequestDto): BaseResponse<DeliveryResponseDto>
+    suspend fun patchDelivery(
+        @Path("orderId") orderId: Long,
+        @Body deliveryReq: DeliveryRequestDto,
+    ): BaseResponse<DeliveryResponseDto>
 }

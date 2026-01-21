@@ -6,5 +6,5 @@ import com.poti.android.domain.model.history.ParticipantPaymentConfirm
 fun ParticipantPaymentConfirmResponseDto.toDomain(): ParticipantPaymentConfirm = ParticipantPaymentConfirm(
     orderId = this.orderId,
     orderStatus = this.status,
-    confirmedAt = this.confirmedAt
+    confirmedAt = this.confirmedAt,
 )

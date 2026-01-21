@@ -6,7 +6,7 @@ import com.poti.android.data.remote.service.GroupBuyService
 import javax.inject.Inject
 
 class GroupBuyRemoteDataSource @Inject constructor(
-    private val groupBuyService: GroupBuyService
+    private val groupBuyService: GroupBuyService,
 ) {
     suspend fun getPostParticipant(postId: Long): BaseResponse<GroupBuyPostParticipantDetailDto> =
         groupBuyService.getPostParticipant(postId)

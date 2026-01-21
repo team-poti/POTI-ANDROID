@@ -5,5 +5,5 @@ data class DeliveryDetail(
     // TODO: [천민재] 로깅용 domain model 이라 enum X
     val deliveryStatus: String,
     val trackingNumber: String,
-    val shippedAt: String
+    val shippedAt: String,
 )
