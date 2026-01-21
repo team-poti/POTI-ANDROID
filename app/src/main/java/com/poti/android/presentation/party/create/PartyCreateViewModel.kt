@@ -201,28 +201,35 @@ class PartyCreateViewModel @Inject constructor(
 
         viewModelScope.launch {
             getMembersWithPriceUseCase(newArtist.artistId)
-                .onSuccess { result ->
+                .onSuccess { members ->
+                    val selectedMemberIds = getAllMemberIdSet(members)
+
                     updateState {
                         copy(
                             isDirty = true,
                             selectedArtist = newArtist,
                             artistSearchKeyword = newArtist.name,
                             artistError = null,
-                            memberOptionsState = ApiState.Success(result.toPersistentList()),
-                            editableMemberOptions = result.toPersistentList(),
+                            memberOptionsState = ApiState.Success(members.toPersistentList()),
+                            editableMemberOptions = members.toPersistentList(),
+                            selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
                         )
                     }
                 }
-                .onFailure {
+                .onFailure { e ->
                     updateState {
                         copy(
-                            memberOptionsState = ApiState.Failure(it.message ?: "FAIL")
+                            memberOptionsState = ApiState.Failure(e.message ?: "get members fail")
                         )
                     }
                 }
         }
     }
+
+    private fun getAllMemberIdSet(
+        members: List<MemberPriceOption>,
+    ): Set<Long> = members.map { option -> option.memberId }.toSet()
 
     private fun handleArtistSearchKeywordChange(newValue: String) {
         updateState {
