@@ -25,13 +25,13 @@ import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PartyList
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
+import com.poti.android.presentation.party.goodsfilter.model.FilterMember
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
-import com.poti.android.presentation.party.goodsfilter.model.SortFilter
+import com.poti.android.presentation.party.goodsfilter.model.PartySortType
 import com.poti.android.presentation.party.goodsfilter.model.membersText
 import com.poti.android.presentation.party.goodsfilter.model.priceText
 import com.poti.android.presentation.party.goodsfilter.model.ratingText
@@ -55,12 +55,12 @@ fun GoodsFilteredPartyListRoute(
         }
     }
 
-    uiState.partyListInfo.onSuccess { potsInfo ->
+    uiState.partyListInfo.onSuccess { partyListInfo ->
         GoodsFilteredPartyListScreen(
-            partyListInfo = potsInfo,
+            partyListInfo = partyListInfo,
             displayMembers = uiState.displayMembers,
-            selectedMember = uiState.selectedMember,
-            sortFilter = uiState.goodsSortFilter,
+            selectedMember = uiState.selectedMembers,
+            partySortType = uiState.goodsPartySortType,
             memberFilterText = uiState.memberFilterText,
             onBackClick = {
                 viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
@@ -85,9 +85,9 @@ fun GoodsFilteredPartyListRoute(
 @Composable
 private fun GoodsFilteredPartyListScreen(
     partyListInfo: PartyList,
-    displayMembers: List<Member>,
-    selectedMember: List<Member>,
-    sortFilter: SortFilter,
+    displayMembers: List<FilterMember>,
+    selectedMember: List<FilterMember>,
+    partySortType: PartySortType,
     memberFilterText: String,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
@@ -129,7 +129,7 @@ private fun GoodsFilteredPartyListScreen(
                     )
 
                     PotiSmallButton(
-                        text = stringResource(sortFilter.displayRes),
+                        text = stringResource(partySortType.displayRes),
                         onClick = onSortFilterClick,
                     )
                 }
@@ -174,10 +174,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 5,
                     totalCount = 7,
-                    availableMembers = listOf(
-                        Member(1, "원영"),
-                        Member(2, "유진"),
-                    ),
+                    availableMembers = listOf("원영", "유진", "이서"),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,
@@ -188,10 +185,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 6,
                     totalCount = 6,
-                    availableMembers = listOf(
-                        Member(1, "원영"),
-                        Member(2, "유진"),
-                    ),
+                    availableMembers = listOf("원영", "유진"),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,
@@ -200,7 +194,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
         ),
         displayMembers = emptyList(),
         selectedMember = emptyList(),
-        sortFilter = SortFilter.LATEST,
+        partySortType = PartySortType.LATEST,
         memberFilterText = "",
         onBackClick = {},
         onFloatingClick = {},
