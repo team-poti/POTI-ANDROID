@@ -2,12 +2,10 @@ package com.poti.android.core.designsystem.component.modal
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -135,10 +133,6 @@ private fun PotiLarge1Preview() {
             subBtnText = "넘어갈래요",
             onSubBtnClick = {},
         ) {
-            Box(
-                modifier = Modifier
-                    .height(184.dp),
-            )
         }
     }
 }

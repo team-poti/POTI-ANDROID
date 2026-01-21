@@ -93,7 +93,7 @@ class HistoryListViewModel @Inject constructor(
                     endedCount = myPartyList.completedCount,
                     items = myPartyList.partyList.map { item ->
                         HistoryItem(
-                            id = item.participationId,
+                            id = item.groupBuyId,
                             imageUrl = item.thumbnailUrl,
                             artist = item.artistName,
                             title = item.productName,

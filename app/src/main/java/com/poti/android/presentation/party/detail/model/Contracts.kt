@@ -1,4 +1,3 @@
-@file:Suppress("ktlint:standard:filename")
 package com.poti.android.presentation.party.detail.model
 
 import com.poti.android.core.base.UiEffect
