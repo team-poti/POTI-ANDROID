@@ -2,12 +2,14 @@ package com.poti.android.data.di
 
 import com.poti.android.data.repository.ArtistRepositoryImpl
 import com.poti.android.data.repository.AuthRepositoryImpl
+import com.poti.android.data.repository.GroupBuyRepositoryImpl
 import com.poti.android.data.repository.HomeRepositoryImpl
 import com.poti.android.data.repository.ImageRepositoryImpl
 import com.poti.android.data.repository.PartyRepositoryImpl
 import com.poti.android.data.repository.UserRepositoryImpl
 import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.repository.GroupBuyRepository
 import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.domain.repository.ImageRepository
 import com.poti.android.domain.repository.PartyRepository
@@ -44,4 +46,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGroupBuyRepository(groupBuyRepositoryImpl: GroupBuyRepositoryImpl): GroupBuyRepository
 }

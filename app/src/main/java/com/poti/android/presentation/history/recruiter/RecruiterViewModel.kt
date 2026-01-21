@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.repository.GroupBuyRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecruiterViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val groupBuyRepository: GroupBuyRepository
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
         initialState = RecruiterDetailUiState(),
     ) {
@@ -24,7 +26,7 @@ class RecruiterViewModel @Inject constructor(
         if (recruitId != -1L) {
             getRecruiterDetail(recruitId)
         } else {
-            updateState { copy(recruiterDetailState = ApiState.Loading) }
+            updateState { copy(recruiterDetailState = ApiState.Init) }
         }
     }
 
@@ -37,9 +39,19 @@ class RecruiterViewModel @Inject constructor(
     }
 
     private fun getRecruiterDetail(recruitId: Long) = launchScope {
-        // TODO: [천민재] 서버 연결 필요
-        updateState {
-            copy(recruiterDetailState = ApiState.Success(dummyRecruiterData.toUiModel()))
-        }
+        groupBuyRepository.getPostSale(recruitId)
+            .onSuccess {
+                updateState {
+                    copy(recruiterDetailState = ApiState.Success(it.toUiModel()))
+                }
+            }
+            .onFailure { error ->
+                updateState {
+                    copy(
+                        recruiterDetailState =
+                            ApiState.Failure(error.message ?: "failed: getRecruiterDetail")
+                    )
+                }
+            }
     }
 }
