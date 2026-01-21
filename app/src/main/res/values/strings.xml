@@ -154,7 +154,7 @@
     <string name="history_recruit_number">모집번호 %s</string>
     <string name="history_progress_status_title">진행 상황</string>
     <string name="history_state_guide_waiting">참여자들을 기다리고 있어요</string>
-    <string name="history_participant_management_title">참여자 관리 (%d)</string>
+    <string name="history_recruiter_participant_management_title">참여자 관리 (%d)</string>
     <string name="history_no_participants">아직 참여자가 없어요</string>
     <string name="history_participant_detail_title">진행 중인 분철</string>
     <string name="history_participation_number">참여번호 %s</string>
@@ -178,6 +178,16 @@
     <string name="history_delivery_review_modal_sub_button">건너뛰기</string>
     <string name="history_ongoing_title_done">종료된 분철</string>
     <string name="history_participant_detail_title_done">종료된 분철</string>
+    <string name="history_participant_management_title">참여자 관리</string>
+    <string name="history_deposit_confirm_modal_title">잠깐! 정말 입금이 완료되었나요?</string>
+    <string name="history_deposit_confirm_modal_text">확인 후에는 되돌릴 수 없어요</string>
+    <string name="history_deposit_confirm_modal_dismiss">이전</string>
+    <string name="history_deposit_confirm_modal_confirm">입금 확인</string>
+    <string name="history_delivery_bottomsheet_button">완료</string>
+    <string name="history_delivery_bottomsheet_method_placeholder">배송업체를 입력해주세요</string>
+    <string name="history_delivery_bottomsheet_method_label">배송업체</string>
+    <string name="history_delivery_bottomsheet_tracking_placeholder">송장번호를 입력해주세요</string>
+    <string name="history_delivery_bottomsheet_tracking_label">송장번호</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

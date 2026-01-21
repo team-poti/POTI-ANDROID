@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.recruiter.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -37,7 +37,7 @@ fun ParticipantManagementHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = stringResource(id = R.string.history_participant_management_title, participantCount),
+            text = stringResource(id = R.string.history_recruiter_participant_management_title, participantCount),
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
         )
