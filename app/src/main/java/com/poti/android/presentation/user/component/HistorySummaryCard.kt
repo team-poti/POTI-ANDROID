@@ -29,7 +29,9 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class HistorySummaryType {
     ALL,
     IN_PROGRESS,

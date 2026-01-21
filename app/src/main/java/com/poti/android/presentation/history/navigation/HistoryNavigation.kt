@@ -21,8 +21,8 @@ sealed interface HistoryRoute : Route {
 
     @Serializable
     data class HistoryList(
-        val mode: HistoryMode,
-        val type: HistorySummaryType,
+        val mode: HistoryMode? = HistoryMode.RECRUIT,
+        val type: HistorySummaryType? = HistorySummaryType.ALL,
     ) : HistoryRoute
 
     @Serializable

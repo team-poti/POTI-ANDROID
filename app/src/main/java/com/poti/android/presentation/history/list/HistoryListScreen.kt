@@ -35,7 +35,9 @@ import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.list.model.toUiStage
 import com.poti.android.presentation.history.list.model.toUiStatus
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class HistoryMode {
     RECRUIT,
     PARTICIPATION,
