@@ -4,15 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MyPageResponseDto(
+data class ProfileResponseDto(
     @SerialName("userId")
     val userId: Long,
-    @SerialName("nickname")
-    val nickname: String,
     @SerialName("email")
     val email: String,
+    @SerialName("nickname")
+    val nickname: String,
     @SerialName("profileImageUrl")
-    val profileImageUrl: String?,
+    val profileImageUrl: String,
     @SerialName("ratingAvg")
     val ratingAvg: Double,
     @SerialName("activityMessage")
@@ -21,10 +21,6 @@ data class MyPageResponseDto(
     val joinedAt: String,
     @SerialName("hasFavoriteArtist")
     val hasFavoriteArtist: Boolean,
-    @SerialName("favoriteArtistName")
-    val favoriteArtistName: String?,
-    @SerialName("participationSummary")
-    val participationSummary: ParticipationSummaryDto,
     @SerialName("recruitSummary")
     val recruitSummary: RecruitSummaryDto,
 )
