@@ -30,8 +30,7 @@ fun HistoryDetailContentHeader(
             .padding(
                 start = screenWidthDp(16.dp),
                 end = screenWidthDp(4.dp),
-            )
-            .padding(vertical = 8.dp),
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -39,6 +38,7 @@ fun HistoryDetailContentHeader(
             text = text,
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
+            modifier = Modifier.padding(vertical = 20.dp),
         )
 
         onHeaderClick?.let {

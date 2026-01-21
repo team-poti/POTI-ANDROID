@@ -27,6 +27,7 @@ import com.poti.android.presentation.history.participant.component.DepositStatus
 
 @Composable
 fun ParticipantDetailRoute(
+    onPopBackStack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ParticipantViewModel = hiltViewModel(),
 ) {
@@ -35,7 +36,7 @@ fun ParticipantDetailRoute(
     uiState.participantDetailState.onSuccess { participantDetail ->
         ParticipantDetailScreen(
             participantDetail = participantDetail,
-            onBackClick = {},
+            onBackClick = onPopBackStack,
             onDetailClick = {},
             modifier = modifier,
         )

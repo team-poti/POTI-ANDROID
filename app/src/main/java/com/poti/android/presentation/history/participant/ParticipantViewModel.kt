@@ -2,13 +2,13 @@ package com.poti.android.presentation.history.participant
 
 import ParticipantDetailUiModel
 import ParticipantShippingUiModel
+import PaymentInfoUiModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.history.MemberPayment
 import com.poti.android.domain.model.history.PartySummary
-import com.poti.android.domain.model.history.PaymentInfo
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
 import com.poti.android.presentation.history.navigation.HistoryRoute
@@ -25,6 +25,10 @@ class ParticipantViewModel @Inject constructor(
         initialState = ParticipantDetailUiState(),
     ) {
     private val participantId: Long = savedStateHandle.toRoute<HistoryRoute.ParticipantDetail>().participantId
+
+    init {
+        getParticipantDetail(participantId)
+    }
 
     override fun processIntent(intent: ParticipantDetailUiIntent) {
         when (intent) {
@@ -49,7 +53,7 @@ class ParticipantViewModel @Inject constructor(
                             imageUrl = "",
                             artist = "아이브(아이브)",
                             title = "러브다이브 위드뮤",
-                            partyStatus = PartyStatusType.RECRUITING,
+                            partyStatus = PartyStatusType.CLOSED,
                             statusMessage = "다른 참여자를 기다리고 있어요",
                         ),
                         memberPayments = listOf(
@@ -58,20 +62,21 @@ class ParticipantViewModel @Inject constructor(
                                 price = 9000,
                             ),
                         ),
-                        paymentInfo = PaymentInfo(
+                        paymentInfo = PaymentInfoUiModel(
                             shippingFee = 9000,
                             totalAmount = 18000,
-                            depositStatus = ParticipantStatusType.RECRUITING,
-                            bank = null,
-                            accountNumber = null,
-                            depositDeadline = null,
+                            depositStatus = ParticipantStatusType.SHIPPED,
+                            accountInfo = "카카오뱅크 3333-19-1234123 이포티",
+                            depositDeadline = "2026-01-01 23:50 까지",
                         ),
                         shippingInfo = ParticipantShippingUiModel(
                             shippingMethod = "일반택",
+                            deliveryTrackingInfo = "우체국 20203344656423232",
+                            receiver = "이포티",
                             addressInfo = "이포티\n(01234) 서울특별시 솝트구 다솝로 456\n010-1234-5678",
                             carrier = null,
                             trackingNumber = null,
-                            shippingStatus = ParticipantStatusType.RECRUITING,
+                            shippingStatus = ParticipantStatusType.SHIPPED,
                         ),
                     ),
                 ),
