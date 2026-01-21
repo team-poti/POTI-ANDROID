@@ -18,9 +18,6 @@ import kotlinx.serialization.Serializable
 
 sealed interface HistoryRoute : Route {
     @Serializable
-    data object History : HistoryRoute
-
-    @Serializable
     data class HistoryList(
         val mode: HistoryMode? = HistoryMode.RECRUIT,
         val type: HistorySummaryType? = HistorySummaryType.ALL,
@@ -64,14 +61,6 @@ fun NavGraphBuilder.historyNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
 ) {
-    composable<HistoryRoute.History> {
-        HistoryListRoute(
-            onPopBackStack = onPopBackStack,
-            onNavigateToRecruiterDetail = navController::navigateToRecruiterDetail,
-            onNavigateToParticipantDetail = navController::navigateToParticipantDetail,
-            modifier = Modifier.padding(paddingValues),
-        )
-    }
     composable<HistoryRoute.HistoryList> {
         HistoryListRoute(
             onPopBackStack = navController::popBackStack,

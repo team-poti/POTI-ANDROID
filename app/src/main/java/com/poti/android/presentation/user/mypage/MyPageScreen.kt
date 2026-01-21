@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -80,23 +79,19 @@ private fun MyPageScreen(
     val scrollState = rememberScrollState()
     val biasText = userMyPage.favoriteArtistName ?: stringResource(R.string.user_select_favorite_artist)
 
-    Scaffold(
+    Column(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            PotiHeaderPrimary(
-                title = stringResource(R.string.user_my_page_title),
-                firstIconRes = R.drawable.ic_setting,
-                onFirstIconClick = {},
-                secondIconRes = R.drawable.ic_alarm,
-                onSecondIconClick = {},
-            )
-        },
-    ) { innerPadding ->
-
+    ) {
+        PotiHeaderPrimary(
+            title = stringResource(R.string.user_my_page_title),
+            firstIconRes = R.drawable.ic_setting,
+            onFirstIconClick = {},
+            secondIconRes = R.drawable.ic_alarm,
+            onSecondIconClick = {},
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .verticalScroll(scrollState)
                 .padding(
                     horizontal = screenWidthDp(16.dp),
