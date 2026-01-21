@@ -131,5 +131,9 @@
     <string name="goods_filter_member_select">멤버 선택</string>
     <string name="goods_filter_member_two_format">%1$s, %2$s</string>
     <string name="goods_filter_member_more_format">%1$s, %2$s 외 %3$d명</string>
+    <string name="goods_filter_price_format">%1$s원~</string>
+    <string name="goods_filter_rating_format">%.2f</string>
+    <string name="goods_filter_members_separator">&#160;|&#160;</string>
+
 
 </resources>
