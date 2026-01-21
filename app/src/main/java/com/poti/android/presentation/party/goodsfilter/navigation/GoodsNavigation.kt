@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
+import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.goodsfilter.GoodsCategoryRoute
 import com.poti.android.presentation.party.goodsfilter.GoodsFilteredPartyListRoute
 import kotlinx.serialization.Serializable
@@ -48,6 +49,9 @@ fun NavGraphBuilder.goodsFilterNavGraph(
 ) {
     composable<GoodsRoute.GoodsList> {
         GoodsCategoryRoute(
+            onPopBackStack = navController::popBackStack,
+            onNavigateToPartyCreate = navController::navigateToPartyCreate,
+            onNavigateToGoodsPartyList = navController::navigateToGoodsPartyList,
             modifier = Modifier.padding(paddingValues),
         )
     }

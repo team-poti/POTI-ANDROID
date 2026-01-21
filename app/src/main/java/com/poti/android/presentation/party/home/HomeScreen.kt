@@ -37,6 +37,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "2026 시즌 콘서트 후드",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 3,
         tag = "인기",
@@ -44,6 +45,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "공식 응원봉 Ver.2",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 12,
         tag = "NEW",
@@ -51,6 +53,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "월드투어 포토북",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 7,
         tag = "",

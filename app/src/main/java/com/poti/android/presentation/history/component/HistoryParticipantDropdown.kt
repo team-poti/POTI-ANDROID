@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +35,8 @@ fun HistoryParticipantDropdown(
     depositItems: List<DepositItem>,
     depositTotalPrice: Int,
     detailState: DetailState,
-    stageType: ParticipantStateLabelStage,
-    statusType: ParticipantStateLabelStatus,
+    stageType: StateLabelStage,
+    statusType: StateLabelStatus,
     isExpanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -46,7 +44,6 @@ fun HistoryParticipantDropdown(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.white)
             .padding(
                 vertical = 20.dp,
@@ -76,8 +73,8 @@ fun HistoryParticipantDropdown(
 @Composable
 private fun ParticipantDropdownHeader(
     name: String,
-    stageType: ParticipantStateLabelStage,
-    statusType: ParticipantStateLabelStatus,
+    stageType: StateLabelStage,
+    statusType: StateLabelStatus,
     expanded: Boolean,
     onToggle: () -> Unit,
 ) {
@@ -97,8 +94,8 @@ private fun ParticipantDropdownHeader(
                 .weight(1f)
                 .padding(end = 12.dp),
         )
-        HistoryParticipantStateLabel(
-            sizeType = ParticipantStateLabelSize.SMALL,
+        HistoryStateLabel(
+            sizeType = StateLabelSize.SMALL,
             stageType = stageType,
             statusType = statusType,
             modifier = Modifier.padding(vertical = 2.dp),
@@ -167,8 +164,8 @@ fun HistoryParticipantDropdownPreview() {
                 contact = "010-xxxx-xxxx",
                 invoice = "우체국 37249720348093",
             ),
-            stageType = ParticipantStateLabelStage.DELIVERY,
-            statusType = ParticipantStateLabelStatus.DONE,
+            stageType = StateLabelStage.DELIVERY,
+            statusType = StateLabelStatus.DONE,
             isExpanded = isExpanded,
             onToggle = { isExpanded = !isExpanded },
             modifier = Modifier
