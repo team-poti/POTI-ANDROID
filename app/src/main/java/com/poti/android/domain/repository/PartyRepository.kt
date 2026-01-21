@@ -6,6 +6,7 @@ import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
+import com.poti.android.domain.model.party.PartyList
 
 interface PartyRepository {
     suspend fun searchProductTitle(
@@ -36,4 +37,13 @@ interface PartyRepository {
     suspend fun getPartyJoinOptions(partyId: Long): Result<PartyJoinOption>
 
     suspend fun postPartyJoin(joinInfo: PartyJoinInfo): Result<Long>
+
+    suspend fun getPartyList(
+        page: Int?,
+        size: Int?,
+        title: String,
+        artistId: Long,
+        sort: String,
+        memberIds: List<Long>?,
+    ): Result<PartyList>
 }

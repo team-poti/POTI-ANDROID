@@ -1,7 +1,5 @@
 package com.poti.android.domain.model.party
 
-import com.poti.android.domain.model.artist.Member
-
 data class PartyList(
     val partyTitle: String,
     val artistName: String,
@@ -14,7 +12,7 @@ data class PartySummary(
     val goodsImageUrl: String,
     val currentCount: Int,
     val totalCount: Int,
-    val availableMembers: List<Member>,
+    val availableMembers: List<String>,
     val profileImageUrl: String?,
     val nickname: String,
     val rating: Double,
