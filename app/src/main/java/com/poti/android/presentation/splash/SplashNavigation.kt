@@ -9,10 +9,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object SplashRoute : Route
 
-fun NavController.navigateToSplash() {
-    navigate(SplashRoute)
-}
-
 fun NavGraphBuilder.splashNavGraph(
     navController: NavController,
     destination: Route,
