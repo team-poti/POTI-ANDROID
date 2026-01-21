@@ -65,6 +65,7 @@ fun MemberSelectBottomSheet(
     members: List<String>,
     selectedIndices: Set<Int>,
     onMemberClick: (Int) -> Unit,
+    autoCloseSubBtn: Boolean = true,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -77,6 +78,7 @@ fun MemberSelectBottomSheet(
         subEnabled = subEnabled,
         enabled = mainEnabled,
         sheetState = sheetState,
+        autoCloseSub = autoCloseSubBtn,
     ) {
         Text(
             text = stringResource(title),
