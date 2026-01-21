@@ -68,8 +68,9 @@ fun HomeGoodsSection(
                 GoodsSmallCard(
                     imageUrl = item.postImage,
                     artist = item.artist,
-                    goodsType = item.postTitle,
-                    partyCount = item.postCount.toInt(),
+                    artistId = item.artistId,
+                    title = item.postTitle,
+                    partyCount = item.postCount,
                     tag = item.tag,
                     onClick = { onCardClick(item.artistId, item.postTitle) },
                 )

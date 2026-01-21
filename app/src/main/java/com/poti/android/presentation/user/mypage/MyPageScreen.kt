@@ -117,7 +117,7 @@ private fun MyPageScreen(
 
                 BadgeButton(
                     bias = biasText,
-                    onClick = onArtistClick,
+                    onClick = { },
                     modifier = Modifier,
                 )
             }

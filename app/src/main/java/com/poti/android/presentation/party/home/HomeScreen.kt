@@ -148,7 +148,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 HomeGoodsSection(
-                    artistId = 0L,
+                    artistId = homeContent.mainArtistId,
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
@@ -188,7 +188,7 @@ private fun HomeScreenPreview() {
             onFloatingClick = { },
             onBannerClick = { },
             onMoreClick = { },
-            onCardClick = { id, title -> },
+            onCardClick = { _, _ -> },
         )
     }
 }

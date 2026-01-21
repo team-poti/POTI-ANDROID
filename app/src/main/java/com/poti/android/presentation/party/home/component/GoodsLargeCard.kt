@@ -37,10 +37,11 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun GoodsLargeCard(
     imageUrl: String,
     artist: String,
+    artistId: Long,
     title: String,
     partyCount: Int,
     tag: String?,
-    onClick: () -> Unit,
+    onClick: (String, Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,7 +53,7 @@ fun GoodsLargeCard(
                 color = PotiTheme.colors.gray300,
                 shape = RoundedCornerShape(12.dp),
             )
-            .noRippleClickable(onClick),
+            .noRippleClickable { onClick(title, artistId) },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -136,20 +137,22 @@ private fun GoodsLargeCardPreview() {
             GoodsLargeCard(
                 imageUrl = "",
                 artist = "아티스트명",
+                artistId = 0L,
                 title = "상품 종류명",
                 partyCount = 3,
                 tag = "인기",
-                onClick = {},
+                onClick = { _, _ -> },
                 modifier = Modifier.fillMaxWidth(),
             )
 
             GoodsLargeCard(
                 imageUrl = "",
                 artist = "아티스트명 ".repeat(10),
+                artistId = 0L,
                 title = "상품 종류명 ".repeat(10),
                 partyCount = 3,
                 tag = "인기",
-                onClick = {},
+                onClick = { _, _ -> },
                 modifier = Modifier.fillMaxWidth(),
             )
         }

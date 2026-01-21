@@ -43,7 +43,7 @@ sealed interface GoodsCategoryUiIntent : UiIntent {
 
     data object OnSortDismiss : GoodsCategoryUiIntent
 
-    data class OnCardClick(val title: String) : GoodsCategoryUiIntent
+    data class OnCardClick(val artistId: Long, val title: String) : GoodsCategoryUiIntent
 }
 
 sealed interface GoodsCategoryUiEffect : UiEffect {
@@ -51,5 +51,5 @@ sealed interface GoodsCategoryUiEffect : UiEffect {
 
     data object NavigateToPartyCreate : GoodsCategoryUiEffect
 
-    data class NavigateToGoodsFilter(val title: String) : GoodsCategoryUiEffect
+    data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : GoodsCategoryUiEffect
 }

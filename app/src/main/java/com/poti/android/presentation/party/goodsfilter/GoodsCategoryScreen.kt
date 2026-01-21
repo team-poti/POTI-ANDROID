@@ -90,7 +90,7 @@ private fun GoodsCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (GoodsSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: (String) -> Unit,
+    onCardClick: (String, Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isSortBottomSheetVisible) {
@@ -165,7 +165,7 @@ private fun GoodsCategoryScreenPreview() {
             onSortFilterClick = {},
             onSortSelect = {},
             onSortDismiss = {},
-            onCardClick = {},
+            onCardClick = { _, _ -> },
         )
     }
 }
