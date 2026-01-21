@@ -16,7 +16,7 @@ sealed interface HomeUiIntent : UiIntent {
 
     data class OnMoreClick(val artistId: Long) : HomeUiIntent
 
-    data class OnCardClick(val title: String, val artistId: Long) : HomeUiIntent
+    data class OnCardClick(val artistId: Long, val title: String) : HomeUiIntent
 
     data object OnFloatingClick : HomeUiIntent
 
@@ -30,5 +30,5 @@ sealed interface HomeUiEffect : UiEffect {
 
     data class NavigateToGoodsCategory(val artistId: Long) : HomeUiEffect
 
-    data class NavigateToGoodsPartyList(val title: String, val artistId: Long) : HomeUiEffect
+    data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 }

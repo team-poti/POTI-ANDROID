@@ -41,7 +41,7 @@ fun GoodsLargeCard(
     title: String,
     partyCount: Int,
     tag: String?,
-    onClick: (String, Long) -> Unit,
+    onClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -53,7 +53,7 @@ fun GoodsLargeCard(
                 color = PotiTheme.colors.gray300,
                 shape = RoundedCornerShape(12.dp),
             )
-            .noRippleClickable { onClick(title, artistId) },
+            .noRippleClickable { onClick(artistId, title) },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

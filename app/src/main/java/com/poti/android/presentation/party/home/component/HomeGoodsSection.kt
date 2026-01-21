@@ -72,7 +72,7 @@ fun HomeGoodsSection(
                     title = item.postTitle,
                     partyCount = item.postCount,
                     tag = item.tag,
-                    onClick = { onCardClick(item.artistId, item.postTitle) },
+                    onClick = { id, title -> onCardClick(id, title) },
                 )
             }
         }

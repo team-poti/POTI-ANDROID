@@ -48,7 +48,7 @@ fun GoodsCategoryRoute(
         when (effect) {
             GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
             GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            is GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsPartyList(artistId, effect.title)
+            is GoodsCategoryUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(artistId, effect.title)
         }
     }
 
@@ -72,8 +72,8 @@ fun GoodsCategoryRoute(
             onSortDismiss = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnSortDismiss)
             },
-            onCardClick = { title ->
-                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick(title))
+            onCardClick = { artistId, title ->
+                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick(artistId, title))
             },
             modifier = modifier,
         )
@@ -90,7 +90,7 @@ private fun GoodsCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (GoodsSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: (String, Long) -> Unit,
+    onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isSortBottomSheetVisible) {
@@ -139,10 +139,11 @@ private fun GoodsCategoryScreen(
                     title = groupItem.postTitle,
                     partyCount = groupItem.postCount,
                     tag = groupItem.tag,
-                    onClick = { onCardClick(groupItem.postTitle) },
+                    onClick = { id, title -> onCardClick(id, title) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
+                    artistId = TODO(),
                 )
             }
             item {
