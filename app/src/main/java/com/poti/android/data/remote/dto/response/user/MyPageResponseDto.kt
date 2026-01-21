@@ -28,23 +28,3 @@ data class MyPageResponseDto(
     @SerialName("recruitSummary")
     val recruitSummary: RecruitSummaryDto,
 )
-
-@Serializable
-data class ParticipationSummaryDto(
-    @SerialName("total")
-    val total: Int,
-    @SerialName("inProgress")
-    val inProgress: Int,
-    @SerialName("completed")
-    val completed: Int,
-)
-
-@Serializable
-data class RecruitSummaryDto(
-    @SerialName("total")
-    val total: Int,
-    @SerialName("inProgress")
-    val inProgress: Int,
-    @SerialName("completed")
-    val completed: Int,
-)

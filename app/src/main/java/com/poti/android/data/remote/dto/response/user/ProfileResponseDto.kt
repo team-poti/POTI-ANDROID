@@ -24,13 +24,3 @@ data class ProfileResponseDto(
     @SerialName("recruitSummary")
     val recruitSummary: RecruitSummaryDto,
 )
-
-@Serializable
-data class RecruitSummaryDto(
-    @SerialName("total")
-    val total: Int,
-    @SerialName("inProgress")
-    val inProgress: Int,
-    @SerialName("completed")
-    val completed: Int,
-)
