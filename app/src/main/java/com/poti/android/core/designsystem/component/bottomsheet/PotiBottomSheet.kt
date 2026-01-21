@@ -55,12 +55,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun PotiBottomSheet(
     onDismissRequest: () -> Unit,
-    text: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    text: String? = null,
+    onClick: (() -> Unit)? = null,
     sheetState: SheetState = rememberModalBottomSheetState(),
     subText: String? = null,
     onSubClick: (() -> Unit)? = null,
+    autoCloseSub: Boolean = true,
     enabled: Boolean = true,
     subEnabled: Boolean = true,
     shouldDismissOnBackPress: Boolean = true,
@@ -73,6 +74,8 @@ fun PotiBottomSheet(
             shouldDismissOnBackPress = shouldDismissOnBackPress,
         )
     }
+
+    val hasButton = text != null && onClick != null
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -98,30 +101,36 @@ fun PotiBottomSheet(
 
         content()
 
-        BottomSheetButton(
-            text = text,
-            onClick = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        onClick()
-                        onDismissRequest()
-                    }
-                }
-            },
-            enabled = enabled,
-            subText = subText,
-            onSubClick = {
-                onSubClick?.let {
+        if (hasButton) {
+            BottomSheetButton(
+                text = text,
+                onClick = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
-                            onSubClick()
+                            onClick()
                             onDismissRequest()
                         }
                     }
-                }
-            },
-            subEnabled = subEnabled,
-        )
+                },
+                enabled = enabled,
+                subText = subText,
+                onSubClick = {
+                    onSubClick?.let {
+                        if (autoCloseSub) {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    onSubClick()
+                                    onDismissRequest()
+                                }
+                            }
+                        } else {
+                            onSubClick()
+                        }
+                    }
+                },
+                subEnabled = subEnabled,
+            )
+        }
     }
 }
 

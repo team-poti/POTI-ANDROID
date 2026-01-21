@@ -19,3 +19,8 @@ fun LocalDate.isTodayOrAfter(): Boolean {
     val today = LocalDate.now()
     return this.isAfter(today) || this.isEqual(today)
 }
+
+fun String.toDashedDate(): String {
+    if (this.length != 8) return this
+    return "${this.substring(0, 4)}-${this.substring(4, 6)}-${this.substring(6, 8)}"
+}

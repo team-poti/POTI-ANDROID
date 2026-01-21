@@ -35,13 +35,6 @@ import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.mapper.color
 import com.poti.android.presentation.history.mapper.labelResId
 import com.poti.android.presentation.history.mapper.statusColor
-import kotlinx.serialization.Serializable
-
-@Serializable
-enum class HistoryMode {
-    RECRUIT,
-    PARTICIPATION,
-}
 
 @Composable
 fun HistoryListRoute(

@@ -137,7 +137,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(screenHeightDp(36.dp)))
 
                 HomeGoodsSection(
-                    artistId = 0L,
+                    artistId = homeContent.mainArtistId,
                     title = R.string.home_recommend_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
