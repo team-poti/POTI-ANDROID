@@ -6,8 +6,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
-import com.poti.android.domain.type.HistoryStage
-import com.poti.android.domain.type.HistoryStatus
+import com.poti.android.domain.type.HistoryListType
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
@@ -26,7 +25,11 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
             HistoryListUiIntent.OnSwitchModeClick -> switchMode()
             is HistoryListUiIntent.OnTabSelected -> selectTab(intent.tab)
             is HistoryListUiIntent.OnCardClick -> {
-                sendEffect(HistoryListUiEffect.NavigateToDetail(intent.id))
+                if (uiState.value.mode == HistoryMode.RECRUIT) {
+                    sendEffect(HistoryListUiEffect.NavigateToRecruiterDetail(intent.id))
+                } else {
+                    sendEffect(HistoryListUiEffect.NavigateToParticipantDetail(intent.id))
+                }
             }
         }
     }
@@ -83,16 +86,14 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                 imageUrl = "",
                 artist = if (isRecruit) "IVE" else "aespa",
                 title = if (isRecruit) "러브다이브 공동구매" else "걸스 앨범 분철",
-                stage = HistoryStage.DELIVERY,
-                status = HistoryStatus.WAIT,
+                status = HistoryListType.IN_PROGRESS,
             ),
             HistoryItem(
                 id = 2L,
                 imageUrl = "",
                 artist = "NewJeans",
                 title = "OMG 한정판",
-                stage = HistoryStage.DEPOSIT,
-                status = HistoryStatus.DONE,
+                status = HistoryListType.IN_PROGRESS,
             ),
         )
 
@@ -102,8 +103,7 @@ class HistoryListViewModel @Inject constructor() : BaseViewModel<HistoryListUiSt
                 imageUrl = "",
                 artist = "LE SSERAFIM",
                 title = "ANTIFRAGILE",
-                stage = HistoryStage.DELIVERY,
-                status = HistoryStatus.DONE,
+                status = HistoryListType.COMPLETED,
             ),
         )
 

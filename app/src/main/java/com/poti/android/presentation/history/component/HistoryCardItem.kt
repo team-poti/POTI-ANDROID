@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -23,8 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,8 +62,8 @@ fun HistoryCardItem(
     imageUrl: String,
     artist: String,
     title: String,
-    participantStageType: ParticipantStateLabelStage,
-    participantStatusType: ParticipantStateLabelStatus,
+    @StringRes statusTextId: Int,
+    statusColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -72,10 +75,6 @@ fun HistoryCardItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(if (isPressed) colors.gray100 else colors.white)
-            .noRippleClickable(
-                interactionSource = interactionSource,
-                onClick = onClick,
-            )
             .padding(8.dp)
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
@@ -129,10 +128,10 @@ fun HistoryCardItem(
                 ),
             )
 
-            HistoryParticipantStateLabel(
-                sizeType = ParticipantStateLabelSize.SMALL,
-                stageType = participantStageType,
-                statusType = participantStatusType,
+            Text(
+                text = stringResource(statusTextId),
+                style = typography.body14sb,
+                color = statusColor,
             )
         }
 
@@ -140,6 +139,12 @@ fun HistoryCardItem(
             painter = painterResource(id = R.drawable.ic_arrow_right_lg),
             contentDescription = null,
             tint = colors.gray700,
+            modifier = Modifier
+                .fillMaxHeight()
+                .noRippleClickable(
+                    interactionSource = interactionSource,
+                    onClick = onClick,
+                ),
         )
     }
 }
@@ -157,8 +162,8 @@ private fun HistoryCardItemPreview() {
                 imageUrl = "",
                 artist = "ive(아이브)",
                 title = "러브다이브 위드뮤",
-                participantStageType = ParticipantStateLabelStage.DELIVERY,
-                participantStatusType = ParticipantStateLabelStatus.WAIT,
+                statusTextId = R.string.party_status_shipping,
+                statusColor = PotiTheme.colors.sementicRed,
                 onClick = {},
             )
 
@@ -168,8 +173,8 @@ private fun HistoryCardItemPreview() {
                 imageUrl = "",
                 artist = "ive(아이브)",
                 title = "러브다이브 위드뮤",
-                participantStageType = ParticipantStateLabelStage.DEPOSIT,
-                participantStatusType = ParticipantStateLabelStatus.DONE,
+                statusTextId = R.string.party_status_closed,
+                statusColor = PotiTheme.colors.poti600,
                 onClick = {},
             )
         }

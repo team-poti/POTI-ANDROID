@@ -2,8 +2,7 @@ package com.poti.android.presentation.party.home
 
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.home.Banner
-import com.poti.android.domain.model.home.HomeContent
+import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.presentation.party.home.model.HomeUiEffect
 import com.poti.android.presentation.party.home.model.HomeUiIntent
 import com.poti.android.presentation.party.home.model.HomeUiState
@@ -11,15 +10,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : BaseViewModel<HomeUiState, HomeUiIntent, HomeUiEffect>(
-    initialState = HomeUiState(),
-) {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+) : BaseViewModel<HomeUiState, HomeUiIntent, HomeUiEffect>(
+        initialState = HomeUiState(),
+    ) {
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
             HomeUiIntent.OnFloatingClick -> sendEffect(HomeUiEffect.NavigateToPartyCreate)
             is HomeUiIntent.OnBannerClick -> sendEffect(HomeUiEffect.NavigateToPartyDetail(intent.postId))
-            HomeUiIntent.OnMoreClick -> sendEffect(HomeUiEffect.NavigateToGoodsCategory)
-            HomeUiIntent.OnCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList)
+            is HomeUiIntent.OnMoreClick -> sendEffect(HomeUiEffect.NavigateToGoodsCategory(intent.artistId))
+            is HomeUiIntent.OnCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList(intent.artistId))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
         }
     }
@@ -29,21 +30,18 @@ class HomeViewModel @Inject constructor() : BaseViewModel<HomeUiState, HomeUiInt
     }
 
     private fun loadHomeContent() = launchScope {
-        updateState {
-            copy(
-                homeContentLoadState = ApiState.Success(
-                    HomeContent(
-                        nickname = "포티",
-                        banners = listOf(
-                            Banner(1, ""),
-                            Banner(2, ""),
-                            Banner(3, ""),
-                        ),
-                        myGroupItems = fakeMyGroupItems,
-                        otherGroupItems = fakeMyGroupItems,
-                    ),
-                ),
-            )
-        }
+        homeRepository.getHomeContent()
+            .onSuccess { homeContent ->
+                updateState {
+                    copy(homeContentLoadState = ApiState.Success(homeContent))
+                }
+            }
+            .onFailure { throwable ->
+                updateState {
+                    copy(
+                        homeContentLoadState = ApiState.Failure(throwable.message ?: "Failed"),
+                    )
+                }
+            }
     }
 }

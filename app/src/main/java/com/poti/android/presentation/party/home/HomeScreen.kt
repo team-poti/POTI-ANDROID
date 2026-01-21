@@ -37,6 +37,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "2026 시즌 콘서트 후드",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 3,
         tag = "인기",
@@ -44,6 +45,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "공식 응원봉 Ver.2",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 12,
         tag = "NEW",
@@ -51,6 +53,7 @@ val fakeMyGroupItems = listOf(
     GroupItem(
         postTitle = "월드투어 포토북",
         artist = "아이유",
+        artistId = 0L,
         postImage = "",
         postCount = 7,
         tag = "",
@@ -61,8 +64,8 @@ val fakeMyGroupItems = listOf(
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToPartyDetail: (Long) -> Unit,
-    onNavigateToGoodsPartyList: () -> Unit,
-    onNavigateToGoodsCategory: () -> Unit,
+    onNavigateToGoodsPartyList: (Long) -> Unit,
+    onNavigateToGoodsCategory: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -72,8 +75,8 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.postId)
-            HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList()
-            HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory()
+            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId)
+            is HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory(effect.artistId)
         }
     }
 
@@ -84,8 +87,12 @@ fun HomeRoute(
             onBannerClick = { postId ->
                 viewModel.processIntent(HomeUiIntent.OnBannerClick(postId))
             },
-            onMoreClick = { viewModel.processIntent(HomeUiIntent.OnMoreClick) },
-            onCardClick = { viewModel.processIntent(HomeUiIntent.OnCardClick) },
+            onMoreClick = { artistId ->
+                viewModel.processIntent(HomeUiIntent.OnMoreClick(artistId))
+            },
+            onCardClick = { artistId ->
+                viewModel.processIntent(HomeUiIntent.OnCardClick(artistId))
+            },
             modifier = modifier,
         )
     }
@@ -96,8 +103,8 @@ private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
     onBannerClick: (Long) -> Unit,
-    onMoreClick: () -> Unit,
-    onCardClick: () -> Unit,
+    onMoreClick: (Long) -> Unit,
+    onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -130,6 +137,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(screenHeightDp(36.dp)))
 
                 HomeGoodsSection(
+                    artistId = 0L,
                     title = R.string.home_recommend_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
@@ -140,6 +148,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 HomeGoodsSection(
+                    artistId = 0L,
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
