@@ -2,10 +2,12 @@ package com.poti.android.presentation.party.goodsfilter.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,6 +18,7 @@ import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiListRadio
 import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,9 +35,13 @@ fun GoodsSortBottomSheet(
     }
 
     val selectedIndex = sortTypes.indexOf(selectedSortType)
+    val sheetState = rememberModalBottomSheetState()
+
+    val scope = rememberCoroutineScope()
 
     PotiBottomSheet(
         onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
         modifier = modifier.padding(),
     ) {
         PotiListRadio(
@@ -42,7 +49,9 @@ fun GoodsSortBottomSheet(
             selectedOptionIndex = selectedIndex,
             onClick = { index ->
                 onSelect(sortTypes[index])
-                onDismissRequest()
+                scope.launch {
+                    sheetState.hide()
+                }
             },
             modifier = Modifier
                 .padding(horizontal = screenWidthDp(16.dp))
