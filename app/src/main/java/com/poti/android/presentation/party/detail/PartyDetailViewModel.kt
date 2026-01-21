@@ -29,8 +29,7 @@ class PartyDetailViewModel @Inject constructor(
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
     ) {
-    private val args = savedStateHandle.toRoute<PartyDetailGraph>()
-    private val partyId = 5L
+    private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
