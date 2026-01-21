@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.recruiter.component
+package com.poti.android.presentation.history.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -20,10 +19,10 @@ import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun ParticipantManagementHeader(
-    participantCount: Int,
-    onHeaderClick: () -> Unit,
+fun HistoryDetailContentHeader(
+    text: String,
     modifier: Modifier = Modifier,
+    onHeaderClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
@@ -37,20 +36,22 @@ fun ParticipantManagementHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = stringResource(id = R.string.history_recruiter_participant_management_title, participantCount),
+            text = text,
             style = PotiTheme.typography.body16sb,
             color = PotiTheme.colors.black,
         )
 
-        Icon(
-            painter = painterResource(id = R.drawable.ic_arrow_right_lg),
-            contentDescription = null,
-            tint = PotiTheme.colors.gray700,
-            modifier = Modifier
-                .padding(10.dp)
-                .size(24.dp)
-                .noRippleClickable(onHeaderClick),
-        )
+        onHeaderClick?.let {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_right_lg),
+                contentDescription = null,
+                tint = PotiTheme.colors.gray700,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(24.dp)
+                    .noRippleClickable(onHeaderClick),
+            )
+        }
     }
 }
 
@@ -58,30 +59,8 @@ fun ParticipantManagementHeader(
 @Composable
 private fun ParticipantManagementHeaderEmptyPreview() {
     PotiTheme {
-        ParticipantManagementHeader(
-            participantCount = 0,
-            onHeaderClick = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Participants 5")
-@Composable
-private fun ParticipantManagementHeaderMultiPreview() {
-    PotiTheme {
-        ParticipantManagementHeader(
-            participantCount = 5,
-            onHeaderClick = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Participants 99+")
-@Composable
-private fun ParticipantManagementHeaderManyPreview() {
-    PotiTheme {
-        ParticipantManagementHeader(
-            participantCount = 100,
+        HistoryDetailContentHeader(
+            text = "입금 정보",
             onHeaderClick = {},
         )
     }

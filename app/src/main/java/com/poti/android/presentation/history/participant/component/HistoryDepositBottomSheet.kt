@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.participant.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
