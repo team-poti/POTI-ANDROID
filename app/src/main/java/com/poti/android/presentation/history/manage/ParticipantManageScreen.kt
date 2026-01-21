@@ -1,7 +1,6 @@
 package com.poti.android.presentation.history.manage
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +19,6 @@ import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
-import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.manage.component.HistoryDeliveryBottomSheet
 import com.poti.android.presentation.history.manage.component.HistoryDepositConfirmModal
@@ -94,9 +92,7 @@ private fun ParticipantManageScreen(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(PotiTheme.colors.gray100),
+        modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
