@@ -1,5 +1,6 @@
 package com.poti.android.data.repository
 
+import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.di.S3UploadClient
 import com.poti.android.domain.model.image.PresignedUploadInfo
 import com.poti.android.domain.repository.S3Repository
@@ -11,18 +12,23 @@ import java.io.File
 import javax.inject.Inject
 
 class S3RepositoryImpl @Inject constructor(
+    private val httpResponseHandler: HttpResponseHandler,
     @param:S3UploadClient private val okHttpClient: OkHttpClient,
 ) : S3Repository {
     override suspend fun uploadImages(
         uploadInfos: List<PresignedUploadInfo>,
         files: List<File>,
         extensions: List<String>,
-    ): Result<Unit> = runCatching {
+    ): Result<Unit> = httpResponseHandler.safeApiCall {
         uploadInfos
             .zip(files.zip(extensions))
             .forEach { (info, pair) ->
                 val (file, extension) = pair
-                uploadSingleImage(info.url, file, extension).getOrThrow()
+                uploadSingleImageInternal(
+                    presignedUrl = info.url,
+                    file = file,
+                    extension = extension,
+                )
             }
     }
 
@@ -30,9 +36,20 @@ class S3RepositoryImpl @Inject constructor(
         presignedUrl: String,
         file: File,
         extension: String,
-    ): Result<Unit> = runCatching {
-        val contentType = extension.toContentType()
+    ): Result<Unit> = httpResponseHandler.safeApiCall {
+        uploadSingleImageInternal(
+            presignedUrl = presignedUrl,
+            file = file,
+            extension = extension,
+        )
+    }
 
+    private fun uploadSingleImageInternal(
+        presignedUrl: String,
+        file: File,
+        extension: String,
+    ) {
+        val contentType = extension.toContentType()
         val requestBody = file.asRequestBody(contentType.toMediaType())
 
         val request = Request.Builder()
@@ -43,7 +60,9 @@ class S3RepositoryImpl @Inject constructor(
 
         okHttpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
-                throw IllegalStateException("S3 upload failed: ${response.code}")
+                throw IllegalStateException(
+                    "S3 upload failed: ${response.code}"
+                )
             }
         }
     }
