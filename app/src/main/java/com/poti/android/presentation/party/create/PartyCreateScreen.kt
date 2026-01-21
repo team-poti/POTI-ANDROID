@@ -63,6 +63,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun PartyCreateRoute(
     onPopBackStack: () -> Unit,
     onNavigateToSearch: () -> Unit,
+    onNavigateToDetail: (Long) -> Unit,
     viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -98,6 +99,10 @@ fun PartyCreateRoute(
             CreateUiEffect.ConvertUris -> {
                 val result = uiState.selectedImages.toImageInfosForPresigned(context)
                 viewModel.processIntent(OnConvertDone(result))
+            }
+
+            is CreateUiEffect.NavigateToDetail -> {
+                onNavigateToDetail(effect.partyId)
             }
         }
     }

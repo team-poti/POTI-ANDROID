@@ -126,4 +126,6 @@ sealed interface CreateUiEffect : UiEffect {
     data object ShowDialog : CreateUiEffect
 
     data object ConvertUris : CreateUiEffect
+
+    data class NavigateToDetail(val partyId: Long): CreateUiEffect
 }

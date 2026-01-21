@@ -11,6 +11,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.PartyArtistSelectRoute
 import com.poti.android.presentation.party.create.PartyCreateRoute
 import com.poti.android.presentation.party.create.PartyCreateViewModel
+import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import kotlinx.serialization.Serializable
 
 sealed interface PartyCreateRoute : Route {
@@ -38,6 +39,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
         PartyCreateRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToSearch = navController::navigateToPartyArtistSelect,
+            onNavigateToDetail = navController::navigateToPartyDetail,
             viewModel = viewModel,
             modifier = Modifier.padding(paddingValues),
         )

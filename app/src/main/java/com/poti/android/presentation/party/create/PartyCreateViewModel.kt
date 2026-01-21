@@ -542,6 +542,7 @@ class PartyCreateViewModel @Inject constructor(
                 updateState {
                     copy(createPartyState = ApiState.Success(partyId))
                 }
+                sendEffect(CreateUiEffect.NavigateToDetail(partyId))
             }
             .onFailure {
                 updateState {
