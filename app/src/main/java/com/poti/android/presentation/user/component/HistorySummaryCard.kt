@@ -29,11 +29,13 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class HistorySummaryType {
     ALL,
     IN_PROGRESS,
-    FINISHED,
+    COMPLETED,
 }
 
 @Composable
@@ -98,7 +100,7 @@ fun HistorySummaryCard(
             HistoryItem(
                 title = stringResource(R.string.user_history_ended),
                 count = summary.completed,
-                onClick = { onItemClick(HistorySummaryType.FINISHED) },
+                onClick = { onItemClick(HistorySummaryType.COMPLETED) },
                 modifier = Modifier.weight(1f),
             )
         }

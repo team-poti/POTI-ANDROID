@@ -61,7 +61,7 @@ fun PartyUploaderInfo(
 private fun PartyUploaderInfoPreview() {
     PotiTheme {
         PartyUploaderInfo(
-            userSummary = dummyPartyDetail.userSummary,
+            userSummary = dummyPartyDetail.uploader,
             onClick = {},
         )
     }
