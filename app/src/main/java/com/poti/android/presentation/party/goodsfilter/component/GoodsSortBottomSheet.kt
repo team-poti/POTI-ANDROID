@@ -1,7 +1,5 @@
 package com.poti.android.presentation.party.goodsfilter.component
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -46,10 +44,10 @@ fun GoodsSortBottomSheet(
                 onSelect(sortTypes[index])
                 onDismissRequest()
             },
-            modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 15.dp),
+            modifier = Modifier
+                .padding(horizontal = screenWidthDp(16.dp))
+                .padding(top = 16.dp, bottom = 48.dp),
         )
-
-        Spacer(modifier = Modifier.height(65.dp))
     }
 }
 
