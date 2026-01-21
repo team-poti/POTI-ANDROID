@@ -64,7 +64,7 @@ data class CreateUiState(
     val bankError: FieldError? = null,
     val artistSearchKeyword: String = "",
     val isSheetTouched: Boolean = false,
-    val createPartyState: ApiState<Unit> = ApiState.Init,
+    val createPartyState: ApiState<Long> = ApiState.Init,
     val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
 ) : UiState {
     val selectedMembersOption = memberOptionsState.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
@@ -112,6 +112,8 @@ sealed interface CreateUiIntent : UiIntent {
     data class OnDeliverySelect(val deliveryId: Long) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
+
+    data class OnConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
 }
 
 sealed interface CreateUiEffect : UiEffect {
@@ -122,4 +124,6 @@ sealed interface CreateUiEffect : UiEffect {
     data object ShowBottomSheet : CreateUiEffect
 
     data object ShowDialog : CreateUiEffect
+
+    data object ConvertUris : CreateUiEffect
 }

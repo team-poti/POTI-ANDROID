@@ -37,7 +37,6 @@ const val IMAGE_TYPE = "POST"
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class PartyCreateViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val getMembersWithPriceUseCase: GetMembersWithPriceUseCase,
     private val uploadImagesUseCase: UploadImagesUseCase,
     private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
@@ -84,10 +83,6 @@ class PartyCreateViewModel @Inject constructor(
 
             is CreateUiIntent.OnBankChange -> {
                 handleBankChange(newValue = intent.value)
-            }
-
-            CreateUiIntent.OnCreateClick -> {
-                createParty()
             }
 
             is CreateUiIntent.OnDeadlineChange -> {
@@ -137,6 +132,30 @@ class PartyCreateViewModel @Inject constructor(
 
             is CreateUiIntent.OnArtistSearchKeywordChange -> {
                 handleArtistSearchKeywordChange(intent.value)
+            }
+
+            CreateUiIntent.OnCreateClick -> {
+                if (uiState.value.createPartyState is ApiState.Loading) return
+                if (validateInputs()) return
+
+                updateState {
+                    copy(createPartyState = ApiState.Loading)
+                }
+
+                sendEffect(CreateUiEffect.ConvertUris)
+            }
+
+            is CreateUiIntent.OnConvertDone -> {
+                if (intent.result.isEmpty()) {
+                    updateState {
+                        copy(createPartyState = ApiState.Failure("convert fail"))
+                    }
+                    return
+                }
+
+                viewModelScope.launch {
+                    uploadImagesAndCreateParty(intent.result)
+                }
             }
         }
     }
@@ -484,13 +503,6 @@ class PartyCreateViewModel @Inject constructor(
         return hasError
     }
 
-    private fun getConvertedImages(
-    ): List<ImageInfoForPresigned> = uiState.value.selectedImages.toImageInfosForPresigned(context)
-
-    private suspend fun getImageUrls(
-        imageInfos: List<ImageInfoForPresigned>,
-    ): Result<List<String>> = uploadImagesUseCase(IMAGE_TYPE, imageInfos)
-
     private suspend fun uploadPartyInfo(
         urls: List<String>,
     ): Result<Long> =
@@ -506,40 +518,37 @@ class PartyCreateViewModel @Inject constructor(
             shippings = uiState.value.editableDeliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds }
         )
 
-    private fun createParty() {
-        if (validateInputs() || uiState.value.createPartyState is ApiState.Loading) return
-
-        updateState {
-            copy(
-                createPartyState = ApiState.Loading,
-            )
-        }
-
-        val imageInfos = getConvertedImages()
-
-        when {
-            imageInfos.isEmpty() -> {
+    private suspend fun uploadImagesAndCreateParty(
+        imageInfos: List<ImageInfoForPresigned>,
+    ) {
+        uploadImagesUseCase(IMAGE_TYPE, imageInfos)
+            .onSuccess { urls ->
+                createParty(urls)
+            }
+            .onFailure {
                 updateState {
                     copy(
-                        createPartyState = ApiState.Failure("convert fail"),
+                        createPartyState = ApiState.Failure(it.message ?: "image upload fail")
                     )
                 }
-                return
             }
+    }
 
-            else -> {
-                viewModelScope.launch {
-                    getImageUrls(imageInfos)
-                        .onSuccess { urls ->
-                            uploadPartyInfo(urls)
-                        }
-                        .onFailure {
-                            updateState {
-                                copy(createPartyState = ApiState.Failure(it.message ?: "upload fail"))
-                            }
-                        }
+    private suspend fun createParty(
+        urls: List<String>,
+    ) {
+        uploadPartyInfo(urls)
+            .onSuccess { partyId ->
+                updateState {
+                    copy(createPartyState = ApiState.Success(partyId))
                 }
             }
-        }
+            .onFailure {
+                updateState {
+                    copy(
+                        createPartyState = ApiState.Failure(it.message ?: "create party fail")
+                    )
+                }
+            }
     }
 }

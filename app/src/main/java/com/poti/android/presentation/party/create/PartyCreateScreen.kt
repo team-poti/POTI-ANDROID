@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
@@ -51,6 +52,7 @@ import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
@@ -64,6 +66,8 @@ fun PartyCreateRoute(
     viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
@@ -89,6 +93,11 @@ fun PartyCreateRoute(
 
             CreateUiEffect.ShowDialog -> {
                 showDialog = true
+            }
+
+            CreateUiEffect.ConvertUris -> {
+                val result = uiState.selectedImages.toImageInfosForPresigned(context)
+                viewModel.processIntent(OnConvertDone(result))
             }
         }
     }
