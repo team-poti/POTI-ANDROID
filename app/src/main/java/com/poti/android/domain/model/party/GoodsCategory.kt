@@ -3,11 +3,14 @@ package com.poti.android.domain.model.party
 data class GoodsCategory(
     val nickname: String,
     val mainArtist: String?,
+    val mainArtistId: Long?,
     val groupItems: List<GroupItem>,
+    val myGroupItems: List<GroupItem>,
 )
 
 data class GroupItem(
     val artist: String,
+    val artistId: Long,
     val postImage: String,
     val postTitle: String,
     val postCount: Int,

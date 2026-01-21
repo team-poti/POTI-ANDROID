@@ -8,7 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
-import com.poti.android.presentation.history.list.HistoryMode
+import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.history.manage.ParticipantManageRoute
 import com.poti.android.presentation.history.participant.ParticipantDetailRoute
 import com.poti.android.presentation.history.recruiter.RecruiterDetailRoute

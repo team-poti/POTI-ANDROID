@@ -4,6 +4,7 @@ import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
+import com.poti.android.data.remote.service.ParticipationService
 import com.poti.android.data.remote.service.PartyService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
@@ -43,7 +44,11 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun providePartyService(retrofit: Retrofit): PartyService {
-        return retrofit.create(PartyService::class.java)
-    }
+    fun providePartyService(retrofit: Retrofit): PartyService =
+        retrofit.create(PartyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideParticipationService(retrofit: Retrofit): ParticipationService =
+        retrofit.create(ParticipationService::class.java)
 }
