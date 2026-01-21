@@ -67,6 +67,7 @@
     </string-array>
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
+    <string name="party_detail_upload_date_label">"%s 등록"</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>
