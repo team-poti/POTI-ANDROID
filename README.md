@@ -42,8 +42,7 @@
 
 | [손예림](https://github.com/sonyerim) | [이지현(👑)](https://github.com/jyvnee) | [전도연](https://github.com/doyeon0307) | [천민재](https://github.com/cmj7271) |
 | --- | --- | --- | --- |
-
-<!-- 사진 넣어야 함! -->
+| <img width="540" height="860" alt="예누" src="https://github.com/user-attachments/assets/b85a5f6d-7328-4ccb-b3e7-7d474c5075f1" />| <img width="540" height="860" alt="지누" src="https://github.com/user-attachments/assets/9895ca59-93e0-461d-b7b7-0de8852511e7" />|<img width="540" height="860" alt="도누" src="https://github.com/user-attachments/assets/05da9d15-d85d-4501-beaa-d9569bd3c9dd" /> | <img width="540" height="860" alt="민누" src="https://github.com/user-attachments/assets/092dc12c-f1a8-497b-bddd-c72d7efbc52c" /> |
 
 <br>
 
@@ -80,20 +79,34 @@
 
 > Tech Stacks
 
-| **카테고리** | **기술/라이브러리** | **선정 이유** |
-| --- | --- | --- |
-| **Language** | Kotlin | - |
-| **UI** | **Jetpack Compose** (Material3) | 복잡한 UI 상태 관리 |
-| **Architecture** | **Clean Architecture** | 비즈니스 로직과 UI 분리 |
-| **Module** | **Single Module** | 단기간 완성을 위한 프로젝트 복잡도 간소화 |
-| **Pattern** | **MVI** | 단방향 데이터 흐름으로 이벤트 처리 용이  |
-| **DI** | **Hilt** | 안드로이드 표준. 설정이 쉽고 레퍼런스가 많음 |
-| **Async** | Coroutines & Flow | 비동기 처리 표준 |
-| **Network** | Retrofit2 + OkHttp | 네트워크 표준 |
-| **Serialization** | **Kotlinx Serialization** | Gson/Moshi보다 빠르고, Kotlin 친화적이며 Type-safe함 |
-| **Image** | **Coil** | Compose에 최적화된 가벼운 이미지 로더 |
-| **Local DB** | DataStore (Preferences) | 로그인 토큰 등 간단한 저장소 (Room은 채팅 구현 시 고려) |
-| **Navigation** | **Compose Navigation** | 단일 액티비티 구조에 필수 |
+| 카테고리 | 기술/라이브러리 |
+| --- | --- |
+| Language | Kotlin |
+| UI | Jetpack Compose (Material3) |
+| Architecture | Clean Architecture |
+| Module | Single Module |
+| Pattern | MVI |
+| DI | Hilt |
+| Async | Coroutines & Flow |
+| Network | Retrofit2 + OkHttp |
+| Serialization | Kotlinx Serialization |
+| Image | Coil |
+| Local DB | DataStore (Preferences) |
+| Navigation | Compose Navigation |
+
+**클린 아키텍쳐 선정 이유**
+
+클린 아키텍쳐는 도메인 레이어를 두어 데이터와 UI를 분리합니다.
+도메인 레이어는 코틀린 언어로 작성되었기 때문에 데이터 또는 UI 레이어에 사용되는 외부 도구에 문제가 생기더라도 순수하게 보존됩니다.
+구글 권장 아키텍쳐에 비해 코드 작성량이 많다는 단점이 있으나, 엄격한 의존성 분리와 정형화된 프로젝트 구조를 유도합니다.
+
+<br>
+
+**MVI 패턴 선정 이유**
+
+MVVM과 달리 UI 액션을 Intent라는 객체로 관리합니다.
+보일러 플레이트 코드가 많고 매번 객체가 생성된다는 단점이 있으나, 데이터가 단방향으로 처리되어 추적이 용이합니다.
+뷰모델이 처리하는 요청이 하나의 데이터 흐름으로서 관리되기 때문에 순서 보장이나 디바운스 처리와 같은 동시성 문제가 비교적 쉽게 해소됩니다.
 
 <br>
 
