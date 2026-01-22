@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.participant.component
 
 import android.content.ClipData
 import androidx.compose.foundation.background

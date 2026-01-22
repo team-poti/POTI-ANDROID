@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
+import com.poti.android.core.common.extension.toPartyUploadDate
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartyDetail
@@ -65,7 +66,7 @@ fun PartyDetailHeaderInfo(
             }
 
             Text(
-                text = partyDetail.uploadTime,
+                text = stringResource(R.string.party_detail_upload_date_label, (partyDetail.uploadTime.toPartyUploadDate() ?: "")),
                 style = PotiTheme.typography.body14m,
                 color = PotiTheme.colors.gray800,
             )

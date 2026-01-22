@@ -7,6 +7,7 @@ import com.poti.android.core.common.state.ApiState
 
 data class ParticipantDetailUiState(
     val participantDetailState: ApiState<ParticipantDetailUiModel> = ApiState.Loading,
+    val overlayState: ParticipantDetailOverlayState = ParticipantDetailOverlayState.None,
 ) : UiState
 
 sealed interface ParticipantDetailUiIntent : UiIntent {
@@ -14,9 +15,15 @@ sealed interface ParticipantDetailUiIntent : UiIntent {
 
     data object OnBackClick : ParticipantDetailUiIntent
 
-    data object OnPartyDetailClick : ParticipantDetailUiIntent
+    data class OnPartyDetailClick(val partyId: Long) : ParticipantDetailUiIntent
+
+    data object OnDepositCompleteClick : ParticipantDetailUiIntent
+
+    data object CloseOverlay : ParticipantDetailUiIntent
 
     data class SubmitDeposit(val depositor: String, val depositTime: String) : ParticipantDetailUiIntent
+
+    data object OnDeliveredClick : ParticipantDetailUiIntent
 
     data object ConfirmDelivery : ParticipantDetailUiIntent
 
@@ -28,5 +35,5 @@ sealed interface ParticipantDetailUiIntent : UiIntent {
 sealed interface ParticipantDetailUiEffect : UiEffect {
     data object NavigateBack : ParticipantDetailUiEffect
 
-    data class NavigateToPartyDetail(val recruitId: Long) : ParticipantDetailUiEffect
+    data class NavigateToPartyDetail(val partyId: Long) : ParticipantDetailUiEffect
 }

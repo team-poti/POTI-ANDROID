@@ -1,4 +1,4 @@
-package com.poti.android.presentation.history.component
+package com.poti.android.presentation.history.participant.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

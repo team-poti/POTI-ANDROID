@@ -128,6 +128,7 @@ fun PartyCreateRoute(
             members = uiState.sheetDisplayMemberNames,
             onMemberClick = { viewModel.processIntent(CreateUiIntent.OnMemberSelect(it)) },
             selectedIndices = uiState.sheetDisplayMemberIndices,
+            autoCloseSubBtn = false,
         )
     }
 

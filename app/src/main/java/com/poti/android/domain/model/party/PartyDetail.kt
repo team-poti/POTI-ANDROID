@@ -12,7 +12,7 @@ data class PartyDetail(
     val artistId: Long, // 아티스트 아이디
     val title: String, // 분철글 제목
     val price: Int, // 1인당 가격 (원)
-    val uploadTime: String, // 업로드 시간 (예: "4시간 전")
+    val uploadTime: String, // 업로드 시간 (예: "2026-01-22T06:21:20.697608")
     val deadline: String, // 모집 마감일
     val images: List<PartyImage>, // 상품 이미지 리스트
     val content: String, // 분철글 본문 내용

@@ -67,6 +67,7 @@
     </string-array>
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
+    <string name="party_detail_upload_date_label">"%s 등록"</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>
@@ -206,6 +207,7 @@
     <string name="history_delivery_bottomsheet_method_label">배송업체</string>
     <string name="history_delivery_bottomsheet_tracking_placeholder">송장번호를 입력해주세요</string>
     <string name="history_delivery_bottomsheet_tracking_label">송장번호</string>
+    <string name="history_delivery_method">배송방법</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
