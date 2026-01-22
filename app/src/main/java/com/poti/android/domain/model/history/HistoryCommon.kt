@@ -3,7 +3,7 @@ package com.poti.android.domain.model.history
 import com.poti.android.domain.type.PartyStatusType
 
 data class PartySummary(
-    val imageUrl: String?,
+    val imageUrl: String,
     val artist: String,
     val title: String,
     val partyStatus: PartyStatusType,
