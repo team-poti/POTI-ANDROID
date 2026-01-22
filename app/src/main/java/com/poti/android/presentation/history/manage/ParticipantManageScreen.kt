@@ -89,7 +89,6 @@ private fun ParticipantManageScreen(
     modifier: Modifier = Modifier,
 ) {
     val expandedIds = remember(uiState) { mutableStateListOf<Long>() }
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -103,21 +102,21 @@ private fun ParticipantManageScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .verticalScroll(rememberScrollState())
                 .animateContentSize(),
         ) {
-            uiState.participants.forEachIndexed { index, participant ->
+            uiState.participants.forEach { participant ->
 
-                val isExpanded = participant.userId in expandedIds
+                val isExpanded = participant.orderId in expandedIds
 
                 HistoryParticipantDropdown(
                     participant = participant,
                     isExpanded = isExpanded,
                     onToggle = {
                         if (isExpanded) {
-                            expandedIds.remove(participant.userId)
+                            expandedIds.remove(participant.orderId)
                         } else {
-                            expandedIds.add(participant.userId)
+                            expandedIds.add(participant.orderId)
                         }
                     },
                 ) {
@@ -127,7 +126,7 @@ private fun ParticipantManageScreen(
                                 ParticipantPayCheckContent(
                                     depositName = depositInfo.depositorName,
                                     depositTime = depositInfo.depositTime,
-                                    onClick = { onConfirmDepositClick(participant.userId) },
+                                    onClick = { onConfirmDepositClick(participant.orderId) },
                                 )
                             }
                         }
@@ -137,7 +136,7 @@ private fun ParticipantManageScreen(
                                     receiverName = shippingInfo.receiverName,
                                     address = shippingInfo.address,
                                     phone = shippingInfo.phone,
-                                    onClick = { onInputTrackingNumberClick(participant.userId) },
+                                    onClick = { onInputTrackingNumberClick(participant.orderId) },
                                 )
                             }
                         }

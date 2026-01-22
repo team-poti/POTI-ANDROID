@@ -69,6 +69,7 @@ fun HistoryDeliveryReviewModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, bottom = 28.dp)
+                .padding(horizontal = 9.dp)
                 .border(
                     width = 1.dp,
                     color = PotiTheme.colors.gray300,

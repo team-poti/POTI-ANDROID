@@ -122,7 +122,7 @@ private fun RecruiterDetailScreen(
             } else {
                 itemsIndexed(
                     items = recruiterDetail.participants,
-                    key = { _, participant -> participant.userId },
+                    key = { _, participant -> participant.orderId },
                 ) { index, participant ->
                     Column {
                         HistoryParticipantOverview(

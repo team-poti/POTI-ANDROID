@@ -12,6 +12,7 @@ data class RecruiterManageDetailUiModel(
 )
 
 data class ParticipantUiModel(
+    val orderId: Long,
     val userId: Long,
     val profileImage: String?,
     val nickname: String,
@@ -33,6 +34,7 @@ fun ParticipantManageDetail.toUiModel(): RecruiterManageDetailUiModel {
 
 fun ParticipantDetailInfo.toUiModel(): ParticipantUiModel {
     return ParticipantUiModel(
+        orderId = this.orderId,
         userId = this.userId,
         profileImage = this.profileImage,
         nickname = this.nickname,

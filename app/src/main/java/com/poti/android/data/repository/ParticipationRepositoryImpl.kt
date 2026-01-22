@@ -6,7 +6,6 @@ import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.remote.datasource.ParticipantRemoteDataSource
 import com.poti.android.domain.model.history.MyPartyList
 import com.poti.android.domain.model.history.ParticipantDetail
-import com.poti.android.domain.model.history.PartyLeader
 import com.poti.android.domain.repository.ParticipationRepository
 import jakarta.inject.Inject
 
@@ -29,11 +28,11 @@ class ParticipationRepositoryImpl @Inject constructor(
                 .toDomain()
         }
 
-    override suspend fun patchDeliveryConfirm(participationId: Long): Result<PartyLeader> =
+    override suspend fun patchDeliveryConfirm(participationId: Long): Result<Long> =
         httpResponseHandler.safeApiCall {
             participationRemoteDataSource.patchDeliveryConfirm(participationId)
                 .handleApiResponse()
                 .getOrThrow()
-                .toDomain()
+                .leaderUserId
         }
 }

@@ -7,13 +7,11 @@ import com.poti.android.data.remote.service.ReviewService
 import javax.inject.Inject
 
 class ReviewRemoteDataSource @Inject constructor(
-    private val reviewService: ReviewService
+    private val reviewService: ReviewService,
 ) {
-    suspend fun postReview(transactionId: Long, star: Int): BaseResponse<ReviewResponseDto> =
-        reviewService.postReview(
-            reviewReq = ReviewRequestDto(
-                transactionId = transactionId,
-                star = star
-            )
-        )
+    suspend fun postReview(
+        transactionId: Long,
+        star: Int,
+    ): BaseResponse<ReviewResponseDto> =
+        reviewService.postReview(reviewReq = ReviewRequestDto(transactionId = transactionId, star = star))
 }

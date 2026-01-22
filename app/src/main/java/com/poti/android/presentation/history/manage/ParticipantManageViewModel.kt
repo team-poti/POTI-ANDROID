@@ -51,7 +51,9 @@ class ParticipantManageViewModel @Inject constructor(
 
     private fun loadParticipantManageDetail() {
         launchScope {
-            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
+            if (uiState.value.participantManageDetailLoadState !is ApiState.Success) {
+                updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
+            }
 
             partyRepository.getRecruitPostParticipant(recruitId)
                 .onSuccess {
@@ -73,11 +75,11 @@ class ParticipantManageViewModel @Inject constructor(
 
     private fun confirmDeposit(id: Long) {
         viewModelScope.launch {
-            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
-
             paymentRepository.patchPaymentConfirm(id)
                 .onSuccess {
                     Timber.d("success: confirmDeposit($id)\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
+                    updateState { copy(activeModal = ManageModalState.None) }
+                    loadParticipantManageDetail()
                 }.onFailure { error ->
                     Timber.d("fail: confirmDeposit($id) - ${error.message}")
                 }
@@ -93,19 +95,17 @@ class ParticipantManageViewModel @Inject constructor(
         number: String,
     ) {
         viewModelScope.launch {
-            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
-
             deliveryRepository.patchDelivery(
                 orderId = id,
                 deliveryMethod = method,
                 trackingNumber = number,
             ).onSuccess {
+                updateState { copy(activeModal = ManageModalState.None) }
+                loadParticipantManageDetail()
                 Timber.d("success: ${it.orderId}, ${it.deliveryStatus}, ${it.trackingNumber}")
             }.onFailure { error ->
                 Timber.d("fail: ${error.message}")
             }
-
-            loadParticipantManageDetail()
         }
     }
 }

@@ -57,25 +57,25 @@ fun ParticipantDetailRoute(
             participantDetail = participantDetail,
             overlayState = uiState.overlayState,
             onBackClick = onPopBackStack,
-            onDetailClick = {
-                viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.partyId))
-            },
+            onDetailClick = { viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.partyId)) },
             onActionButtonClick = { buttonState ->
-                if (buttonState == ParticipantButtonState.DEPOSIT_DONE) {
-                    viewModel.processIntent(ParticipantDetailUiIntent.OnDepositCompleteClick)
-                } else {
-                    viewModel.processIntent(ParticipantDetailUiIntent.OnDeliveredClick)
+                when (buttonState) {
+                    ParticipantButtonState.DEPOSIT_DONE -> viewModel.processIntent(ParticipantDetailUiIntent.OnDepositCompleteClick)
+                    ParticipantButtonState.DELIVERY_RECEIVED -> viewModel.processIntent(ParticipantDetailUiIntent.OnDeliveredClick)
+                    ParticipantButtonState.NONE -> {}
                 }
             },
             onOverlayClose = { viewModel.processIntent(ParticipantDetailUiIntent.CloseOverlay) },
-            onSubmitDeposit = { depositor, depositTime ->
-                viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime))
-            },
+            onSubmitDeposit = { depositor, depositTime -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime)) },
             onConfirmDelivery = { viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery) },
-            onSubmitReview = { rating -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitReview(
-                transactionId = participantDetail.participationId,
-                rating = rating
-            )) },
+            onSubmitReview = { rating ->
+                viewModel.processIntent(
+                    ParticipantDetailUiIntent.SubmitReview(
+                        transactionId = participantDetail.participationId,
+                        rating = rating,
+                    ),
+                )
+            },
             onSkipReview = { viewModel.processIntent(ParticipantDetailUiIntent.SkipReview) },
             modifier = modifier,
         )

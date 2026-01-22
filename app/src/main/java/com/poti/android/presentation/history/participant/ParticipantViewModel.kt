@@ -24,7 +24,7 @@ class ParticipantViewModel @Inject constructor(
     private val participantRepository: ParticipationRepository,
     private val paymentRepository: PaymentRepository,
     private val userRepository: UserRepository,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -38,56 +38,31 @@ class ParticipantViewModel @Inject constructor(
         when (intent) {
             is ParticipantDetailUiIntent.LoadDetail -> getParticipantDetail(intent.recruitId)
             ParticipantDetailUiIntent.OnBackClick -> sendEffect(ParticipantDetailUiEffect.NavigateBack)
-            is ParticipantDetailUiIntent.OnPartyDetailClick ->
-                sendEffect(ParticipantDetailUiEffect.NavigateToPartyDetail(intent.partyId))
-
-            ParticipantDetailUiIntent.OnDepositCompleteClick -> {
-                updateState { copy(overlayState = ParticipantDetailOverlayState.DepositBottomSheet) }
-            }
-
-            ParticipantDetailUiIntent.CloseOverlay -> {
-                updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
-            }
-
+            is ParticipantDetailUiIntent.OnPartyDetailClick -> sendEffect(ParticipantDetailUiEffect.NavigateToPartyDetail(intent.partyId))
+            ParticipantDetailUiIntent.OnDepositCompleteClick -> updateState { copy(overlayState = ParticipantDetailOverlayState.DepositBottomSheet) }
+            ParticipantDetailUiIntent.CloseOverlay -> updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
             is ParticipantDetailUiIntent.SubmitDeposit -> patchSubmitDeposit(intent.depositor, intent.depositTime)
-
-            ParticipantDetailUiIntent.OnDeliveredClick -> {
-                updateState { copy(overlayState = ParticipantDetailOverlayState.DeliveryConfirmModal) }
-            }
-
+            ParticipantDetailUiIntent.OnDeliveredClick -> updateState { copy(overlayState = ParticipantDetailOverlayState.DeliveryConfirmModal) }
             ParticipantDetailUiIntent.ConfirmDelivery -> confirmDelivery()
-
-            ParticipantDetailUiIntent.SkipReview -> {
-                updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
-            }
-
-            is ParticipantDetailUiIntent.SubmitReview ->
-                submitReview(intent.transactionId, intent.rating)
+            ParticipantDetailUiIntent.SkipReview -> updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
+            is ParticipantDetailUiIntent.SubmitReview -> submitReview(intent.transactionId, intent.rating)
         }
     }
 
     private fun getParticipantDetail(participantId: Long) = launchScope {
-        updateState {
-            copy(participantDetailState = ApiState.Loading)
+        if (uiState.value.participantDetailState !is ApiState.Success) {
+            updateState { copy(participantDetailState = ApiState.Loading) }
         }
 
         participantRepository.getParticipantDetail(participantId)
             .onSuccess {
                 Timber.d("success: getParticipantDetail")
 
-                updateState {
-                    copy(
-                        participantDetailState = ApiState.Success(
-                            it.toUiModel(),
-                        ),
-                    )
-                }
+                updateState { copy(participantDetailState = ApiState.Success(it.toUiModel())) }
             }.onFailure { error ->
                 Timber.d("fail: getParticipantDetail")
 
-                updateState {
-                    copy(participantDetailState = ApiState.Failure(error.message ?: "fail"))
-                }
+                updateState { copy(participantDetailState = ApiState.Failure(error.message ?: "fail")) }
             }
     }
 
@@ -112,40 +87,45 @@ class ParticipantViewModel @Inject constructor(
     }
 
     private fun confirmDelivery() = launchScope {
-        updateState { copy(participantDetailState = ApiState.Loading) }
-
         participantRepository.patchDeliveryConfirm(participantId)
             .onSuccess { leaderUser ->
                 Timber.d("success: confirmDelivery")
+                getParticipantDetail(participantId)
 
-                 userRepository.getUserProfile(leaderUser.leaderUserId)
-                     .onSuccess { leader ->
-                         updateState {
-                             copy(
-                                 overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
-                                     recruiterName = leader.nickname,
-                                     recruiterProfileUrl = leader.profileImageUrl,
-                                     partnerRating = leader.ratingAvg.toString()
-                                 ),
-                             )
-                     }
-                }
+                userRepository.getUserProfile(leaderUser)
+                    .onSuccess { leader ->
+                        Timber.d("confirmDelivery Success")
+                        updateState {
+                            copy(
+                                overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
+                                    recruiterName = leader.nickname,
+                                    recruiterProfileUrl = leader.profileImageUrl,
+                                    partnerRating = leader.ratingAvg.toString(),
+                                ),
+                            )
+                        }
+                    }
+                    .onFailure {
+                        Timber.e("리더 프로필 조회 실패: ${it.message}")
+                        updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
+                    }
             }.onFailure {
                 Timber.d("fail: confirmDelivery")
+                updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
             }
     }
 
-    private fun submitReview(transactionId: Long, star: Int) = launchScope {
-        updateState {  copy(participantDetailState = ApiState.Loading) }
-
+    private fun submitReview(
+        transactionId: Long,
+        star: Int,
+    ) = launchScope {
         reviewRepository.postReview(transactionId, star)
             .onSuccess { result ->
                 Timber.d("success: $result")
+                updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
+                getParticipantDetail(participantId)
             }.onFailure { error ->
-                Timber.d("fail: $error")
+                Timber.e(error, "submit review failed")
             }
-
-        getParticipantDetail(participantId)
-        updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
     }
 }

@@ -8,5 +8,7 @@ import retrofit2.http.POST
 
 interface ReviewService {
     @POST("/api/v1/reviews")
-    suspend fun postReview(@Body reviewReq: ReviewRequestDto): BaseResponse<ReviewResponseDto>
+    suspend fun postReview(
+        @Body reviewReq: ReviewRequestDto,
+    ): BaseResponse<ReviewResponseDto>
 }
