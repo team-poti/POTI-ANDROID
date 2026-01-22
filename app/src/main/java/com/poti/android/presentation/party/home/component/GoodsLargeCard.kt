@@ -75,7 +75,7 @@ fun GoodsLargeCard(
             if (!tag.isNullOrBlank()) {
                 PotiSecondaryTag(
                     text = tag,
-                    sizeType = PotiTagSize.SMALL,
+                    sizeType = PotiTagSize.LARGE,
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(12.dp),
@@ -119,7 +119,7 @@ fun GoodsLargeCard(
 
             PotiPrimaryTag(
                 text = stringResource(R.string.goods_card_party_count, partyCount),
-                sizeType = PotiPrimaryTagSize.LARGE,
+                sizeType = PotiPrimaryTagSize.SMALL,
                 colorType = PotiPrimaryTagColor.WHITE,
             )
         }
