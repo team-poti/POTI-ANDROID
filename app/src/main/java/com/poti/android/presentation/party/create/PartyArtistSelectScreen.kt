@@ -1,7 +1,6 @@
 package com.poti.android.presentation.party.create
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -71,6 +70,18 @@ private fun PartyArtistSelectScreen(
                 title = stringResource(R.string.create_header_artist_search),
             )
         },
+        bottomBar = {
+            PotiActionButton(
+                text = stringResource(R.string.action_button_done),
+                onClick = onConfirmClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = screenWidthDp(16.dp))
+                    .padding(top = 4.dp, bottom = 16.dp),
+                type = if (uiState.isArtistSelectDoneBtnEnabled) ActionButtonType.SECONDARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
+                enabled = uiState.isArtistSelectDoneBtnEnabled,
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -96,19 +107,6 @@ private fun PartyArtistSelectScreen(
                     modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
                 )
             }
-
-            Spacer(Modifier.weight(1f))
-
-            PotiActionButton(
-                text = stringResource(R.string.action_button_done),
-                onClick = onConfirmClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = screenWidthDp(16.dp))
-                    .padding(top = 4.dp, bottom = 16.dp),
-                type = if (uiState.isArtistSelectDoneBtnEnabled) ActionButtonType.SECONDARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
-                enabled = uiState.isArtistSelectDoneBtnEnabled,
-            )
         }
     }
 }
