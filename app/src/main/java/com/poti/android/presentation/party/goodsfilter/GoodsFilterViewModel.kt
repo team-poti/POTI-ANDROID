@@ -19,8 +19,8 @@ class GoodsFilterViewModel @Inject constructor(
     private val partyRepository: PartyRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
-    initialState = GoodsFilterUiState(),
-) {
+        initialState = GoodsFilterUiState(),
+    ) {
     private val artistId: Long = savedStateHandle.toRoute<GoodsPartyList>().artistId
     private val title: String = savedStateHandle.toRoute<GoodsPartyList>().title
 
@@ -45,11 +45,15 @@ class GoodsFilterViewModel @Inject constructor(
             }
 
             GoodsFilterUiIntent.OnSortFilterClick -> {
-                // TODO: [예림] 바텀시트 open
+                updateState { copy(isSortFilterBottomSheetVisible = true) }
+            }
+
+            GoodsFilterUiIntent.CloseSortFilterBottomSheet -> {
+                updateState { copy(isSortFilterBottomSheetVisible = false) }
             }
 
             is GoodsFilterUiIntent.OnSortSelect -> {
-                updateState { copy(goodsPartySortType = intent.sort) }
+                updateState { copy(goodsPartySortType = intent.sort, isSortFilterBottomSheetVisible = false) }
                 loadPartyList()
             }
 
@@ -124,7 +128,7 @@ class GoodsFilterViewModel @Inject constructor(
         updateState {
             copy(
                 bottomSheetSelectedMembersIdices = newSelectedIndices,
-                isMemberBottomSheetToucehd = false
+                isMemberBottomSheetToucehd = false,
             )
         }
     }

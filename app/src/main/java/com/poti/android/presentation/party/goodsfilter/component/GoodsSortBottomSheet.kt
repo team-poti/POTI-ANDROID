@@ -16,19 +16,19 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiListRadio
-import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
+import com.poti.android.presentation.party.goodsfilter.model.PartySortType
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoodsSortBottomSheet(
-    selectedSortType: GoodsSortType,
-    onSelect: (GoodsSortType) -> Unit,
+    selectedSortType: PartySortType,
+    onSelect: (PartySortType) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sortTypes = remember { GoodsSortType.entries.toList() }
+    val sortTypes = remember { PartySortType.entries.toList() }
 
     val options = remember {
         sortTypes.map { it.displayRes }.toImmutableList()
@@ -64,7 +64,7 @@ fun GoodsSortBottomSheet(
 @Composable
 private fun GoodsSortBottomSheetPreview() {
     var show by remember { mutableStateOf(true) }
-    var selected by remember { mutableStateOf(GoodsSortType.LATEST) }
+    var selected by remember { mutableStateOf(PartySortType.LATEST) }
 
     if (show) {
         GoodsSortBottomSheet(

@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
@@ -30,6 +31,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
+import com.poti.android.presentation.party.goodsfilter.component.GoodsSortBottomSheet
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
@@ -70,7 +72,15 @@ fun GoodsFilteredPartyListRoute(
             members = uiState.allMemberNames,
             selectedIndices = uiState.bottomSheetSelectedMembersIdices,
             onMemberClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberSelect(it)) },
-            autoCloseSubBtn = false
+            autoCloseSubBtn = false,
+        )
+    }
+
+    if (uiState.isSortFilterBottomSheetVisible) {
+        GoodsSortBottomSheet(
+            selectedSortType = uiState.goodsPartySortType,
+            onSelect = { viewModel.processIntent(GoodsFilterUiIntent.OnSortSelect(it)) },
+            onDismissRequest = { viewModel.processIntent(GoodsFilterUiIntent.CloseSortFilterBottomSheet) },
         )
     }
 

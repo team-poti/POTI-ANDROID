@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,11 +21,9 @@ import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
-import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.GoodsCategory
-import com.poti.android.presentation.party.goodsfilter.component.GoodsSortBottomSheet
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
@@ -93,14 +89,6 @@ private fun GoodsCategoryScreen(
     onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isSortBottomSheetVisible) {
-        GoodsSortBottomSheet(
-            selectedSortType = selectedSortType,
-            onSelect = onSortSelect,
-            onDismissRequest = onSortDismiss,
-        )
-    }
-
     Scaffold(
         modifier = modifier,
         containerColor = PotiTheme.colors.white,
@@ -122,16 +110,6 @@ private fun GoodsCategoryScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp)),
         ) {
-            item {
-                PotiSmallButton(
-                    text = stringResource(selectedSortType.displayRes),
-                    onClick = onSortFilterClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.End),
-                )
-            }
-
             items(goodsCategory.groupItems) { groupItem ->
                 GoodsLargeCard(
                     imageUrl = groupItem.postImage,
