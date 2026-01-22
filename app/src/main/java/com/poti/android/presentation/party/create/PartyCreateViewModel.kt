@@ -538,6 +538,7 @@ class PartyCreateViewModel @Inject constructor(
         if (hasError) {
             updateState {
                 copy(
+                    isDirty = true,
                     imageError = imageError,
                     artistError = artistError,
                     productError = productError,
