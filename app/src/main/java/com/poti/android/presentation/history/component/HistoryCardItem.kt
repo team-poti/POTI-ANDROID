@@ -59,7 +59,7 @@ val CardHistorySize.titleStyle: TextStyle
 @Composable
 fun HistoryCardItem(
     sizeType: CardHistorySize,
-    imageUrl: String?,
+    imageUrl: String,
     artist: String,
     title: String,
     @StringRes statusTextId: Int,

@@ -1,6 +1,5 @@
 package com.poti.android.presentation.history.participant.model
 
-import ParticipantDetailUiModel
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState

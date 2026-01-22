@@ -1,6 +1,5 @@
 package com.poti.android.presentation.history.participant
 
-import ParticipantDetailUiModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +34,7 @@ import com.poti.android.presentation.history.participant.model.ParticipantButton
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiIntent
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiModel
 
 @Composable
 fun ParticipantDetailRoute(

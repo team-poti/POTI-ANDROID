@@ -1,8 +1,5 @@
 package com.poti.android.presentation.history.participant
 
-import ParticipantDetailUiModel
-import ParticipantShippingUiModel
-import PaymentInfoUiModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
@@ -16,7 +13,10 @@ import com.poti.android.presentation.history.participant.model.ParticipantButton
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiIntent
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiModel
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiState
+import com.poti.android.presentation.history.participant.model.ParticipantShippingUiModel
+import com.poti.android.presentation.history.participant.model.PaymentInfoUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,7 +1,5 @@
 package com.poti.android.presentation.history.participant.component
 
-import ParticipantShippingUiModel
-import PaymentInfoUiModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -25,6 +23,8 @@ import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.mapper.color
 import com.poti.android.presentation.history.mapper.labelResId
 import com.poti.android.presentation.history.mapper.statusColor
+import com.poti.android.presentation.history.participant.model.ParticipantShippingUiModel
+import com.poti.android.presentation.history.participant.model.PaymentInfoUiModel
 
 @Composable
 fun DepositStatusContent(

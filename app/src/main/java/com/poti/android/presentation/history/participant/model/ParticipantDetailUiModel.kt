@@ -1,9 +1,10 @@
+package com.poti.android.presentation.history.participant.model
+
 import com.poti.android.domain.model.history.MemberPayment
 import com.poti.android.domain.model.history.ParticipantDetail
 import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
-import com.poti.android.presentation.history.participant.model.ParticipantButtonState
 
 data class ParticipantDetailUiModel(
     val participationId: Long,
