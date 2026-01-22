@@ -394,7 +394,7 @@ private fun PartyCreateScreen(
                 )
             }
 
-     git pu       item {
+            item {
                 PotiDivider(
                     styleType = PotiDividerStyle.LARGE,
                 )
