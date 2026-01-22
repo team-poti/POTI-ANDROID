@@ -67,11 +67,12 @@ data class CreateUiState(
     val isSheetTouched: Boolean = false,
     val createPartyState: ApiState<Long> = ApiState.Init,
     val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
+    val neverShowSearchEmptyScreen: Boolean = false,
 ) : UiState {
     val selectedMembersOption = memberOptionsState.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
     val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
     val editOptionDisplayMembers = editableMemberOptions.filter { option -> option.memberId in selectedMemberIds }.toPersistentList()
-    val isArtistSearchResultsEmpty = artistSearchKeyword.isNotEmpty() && (artistSearchResultsState.getSuccessDataOrNull()?.isEmpty() ?: true)
+    val isArtistSearchResultsEmpty = !neverShowSearchEmptyScreen && artistSearchKeyword.isNotEmpty() && (artistSearchResultsState.getSuccessDataOrNull()?.isEmpty() ?: true)
     val isArtistSelectDoneBtnEnabled = selectedArtist != null
 }
 

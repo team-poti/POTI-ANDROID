@@ -52,7 +52,6 @@ class PartyCreateViewModel @Inject constructor(
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
-    private val params = savedStateHandle.toRoute<PartyCreateRoute.Create>()
     private val artistSearchKeywordForDebounce = MutableStateFlow("")
     private val productSearchKeywordForDebounce = MutableStateFlow("")
 
@@ -219,7 +218,7 @@ class PartyCreateViewModel @Inject constructor(
         )
 
         handleArtistSelect(initialArtist)
-        updateState { copy(productName = productName) }
+        updateState { copy(productName = productName, neverShowSearchEmptyScreen =true) }
     }
 
     private fun initializeDeliveryOptions() {
@@ -295,6 +294,7 @@ class PartyCreateViewModel @Inject constructor(
             copy(
                 isDirty = true,
                 artistSearchKeyword = newValue,
+                neverShowSearchEmptyScreen =false,
             )
         }
 
