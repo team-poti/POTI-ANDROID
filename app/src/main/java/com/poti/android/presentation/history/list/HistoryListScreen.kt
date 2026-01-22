@@ -29,6 +29,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
 import com.poti.android.domain.type.HistoryListType
+import com.poti.android.domain.type.PartyStatusType
 import com.poti.android.presentation.history.component.CardHistorySize
 import com.poti.android.presentation.history.component.HistoryCardItem
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
@@ -135,8 +136,8 @@ private fun HistoryListScreen(
                             imageUrl = item.imageUrl ?: "",
                             artist = item.artist,
                             title = item.title,
-                            statusTextId = item.status.labelResId,
-                            statusColor = item.status.statusColor.color,
+                            statusTextId = item.partyStatus.labelResId,
+                            statusColor = item.partyStatus.statusColor.color,
                             onClick = { onCardClick(item.id) },
                         )
                     }
@@ -162,14 +163,16 @@ private fun HistoryListScreenPreview_Ongoing() {
                                 imageUrl = "",
                                 artist = "ive(아이브)",
                                 title = "러브다이브 위드뮤",
-                                status = HistoryListType.IN_PROGRESS,
+                                historyListType = HistoryListType.IN_PROGRESS,
+                                partyStatus = PartyStatusType.COMPLETED,
                             ),
                             HistoryItem(
                                 id = 2L,
                                 imageUrl = "",
                                 artist = "aespa",
                                 title = "걸스 스페셜",
-                                status = HistoryListType.COMPLETED,
+                                historyListType = HistoryListType.COMPLETED,
+                                partyStatus = PartyStatusType.COMPLETED,
                             ),
                         ),
                     ),
