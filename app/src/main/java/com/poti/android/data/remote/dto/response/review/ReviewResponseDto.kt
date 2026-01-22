@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReviewResponseDto(
     @SerialName("reviewId")
-    val reviewId: Long
+    val reviewId: Long,
 )
