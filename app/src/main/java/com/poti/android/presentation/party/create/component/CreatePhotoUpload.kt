@@ -111,7 +111,7 @@ private fun UploadButton(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(PotiTheme.colors.gray100)
+            .background(PotiTheme.colors.gray300)
             .clickable(
                 onClick = onClick,
                 enabled = enabled,
