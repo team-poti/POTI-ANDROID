@@ -22,5 +22,5 @@ data class ProfileResponseDto(
     @SerialName("hasFavoriteArtist")
     val hasFavoriteArtist: Boolean,
     @SerialName("recruitSummary")
-    val recruitSummary: RecruitSummaryDto,
+    val recruitSummary: ProfileSummaryDto,
 )

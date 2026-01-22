@@ -24,7 +24,7 @@ data class MyPageResponseDto(
     @SerialName("favoriteArtistName")
     val favoriteArtistName: String?,
     @SerialName("participationSummary")
-    val participationSummary: ParticipationSummaryDto,
+    val participationSummary: ProfileSummaryDto,
     @SerialName("recruitSummary")
-    val recruitSummary: RecruitSummaryDto,
+    val recruitSummary: ProfileSummaryDto,
 )

@@ -1,7 +1,7 @@
-package com.poti.android.data.mapper
+package com.poti.android.data.mapper.user
 
 import com.poti.android.data.remote.dto.response.user.ProfileResponseDto
-import com.poti.android.data.remote.dto.response.user.RecruitSummaryDto
+import com.poti.android.data.remote.dto.response.user.ProfileSummaryDto
 import com.poti.android.domain.model.user.HistorySummary
 import com.poti.android.domain.model.user.UserProfile
 
@@ -18,7 +18,7 @@ fun ProfileResponseDto.toDomain(): UserProfile =
         recruitSummary = recruitSummary.toDomain(),
     )
 
-fun RecruitSummaryDto.toDomain(): HistorySummary =
+fun ProfileSummaryDto.toDomain(): HistorySummary =
     HistorySummary(
         total = total,
         inProgress = inProgress,
