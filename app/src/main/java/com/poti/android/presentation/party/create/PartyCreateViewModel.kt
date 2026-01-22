@@ -46,7 +46,6 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
-    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
@@ -251,7 +250,10 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleArtistSelect(newArtist: ArtistSearchResult) {
-        if (newArtist == uiState.value.selectedArtist) return
+        if (newArtist == uiState.value.selectedArtist) {
+            updateState { copy(artistSearchKeyword = newArtist.name) }
+            return
+        }
 
         viewModelScope.launch {
             getMembersWithPriceUseCase(newArtist.artistId)

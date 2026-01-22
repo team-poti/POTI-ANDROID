@@ -50,7 +50,6 @@ import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
-import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
@@ -104,7 +103,7 @@ fun PartyCreateRoute(
 
             CreateUiEffect.ConvertUris -> {
                 val result = uiState.selectedImages.toImageInfosForPresigned(context)
-                viewModel.processIntent(OnConvertDone(result))
+                viewModel.processIntent(CreateUiIntent.OnConvertDone(result))
             }
 
             is CreateUiEffect.NavigateToDetail -> {
