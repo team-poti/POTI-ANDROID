@@ -103,7 +103,7 @@ class ParticipantViewModel @Inject constructor(
                         paymentInfo = PaymentInfoUiModel(
                             shippingFee = 9000,
                             totalAmount = 18000,
-                            depositStatus = ParticipantStatusType.SHIPPED,
+                            depositStatus = ParticipantStatusType.DELIVERED,
                             accountInfo = "카카오뱅크 3333-19-1234123 이포티",
                             depositDeadline = "2026-01-01 23:50 까지",
                         ),
@@ -114,9 +114,9 @@ class ParticipantViewModel @Inject constructor(
                             addressInfo = "이포티\n(01234) 서울특별시 솝트구 다솝로 456\n010-1234-5678",
                             carrier = null,
                             trackingNumber = null,
-                            shippingStatus = ParticipantStatusType.SHIPPED,
+                            shippingStatus = ParticipantStatusType.DELIVERED,
                         ),
-                        buttonState = ParticipantButtonState.DEPOSIT_DONE,
+                        buttonState = ParticipantButtonState.DELIVERY_RECEIVED,
                     ),
                 ),
             )
