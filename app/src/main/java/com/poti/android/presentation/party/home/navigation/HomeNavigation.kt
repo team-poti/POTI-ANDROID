@@ -26,7 +26,7 @@ fun NavGraphBuilder.homeNavGraph(
         HomeRoute(
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
             onNavigateToGoodsPartyList = navController::navigateToGoodsPartyList,
-            onNavigateToGoodsCategory = navController::navigateToGoodsCategory,
+            onNavigateToMyArtistCategory = navController::navigateToGoodsCategory,
             modifier = Modifier.padding(paddingValues),
         )
     }

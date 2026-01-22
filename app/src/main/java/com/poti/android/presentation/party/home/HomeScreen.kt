@@ -36,7 +36,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long) -> Unit,
-    onNavigateToGoodsCategory: (Long) -> Unit,
+    onNavigateToMyArtistCategory: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -46,7 +46,7 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId)
-            is HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory(effect.artistId)
+            is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToMyArtistCategory(effect.artistId)
         }
     }
 
@@ -54,12 +54,8 @@ fun HomeRoute(
         HomeScreen(
             homeContent = homeContent,
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
-            onMoreClick = { artistId ->
-                viewModel.processIntent(HomeUiIntent.OnMoreClick(artistId))
-            },
-            onCardClick = { artistId ->
-                viewModel.processIntent(HomeUiIntent.OnCardClick(artistId))
-            },
+            onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
+            onProductCardClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId)) },
             modifier = modifier,
         )
     }
@@ -69,8 +65,8 @@ fun HomeRoute(
 private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
-    onMoreClick: (Long) -> Unit,
-    onCardClick: (Long) -> Unit,
+    onMyArtistCategoryClick: (Long) -> Unit,
+    onProductCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -107,8 +103,8 @@ private fun HomeScreen(
                     title = R.string.home_recommend_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
-                    onMoreClick = onMoreClick,
-                    onCardClick = onCardClick,
+                    onMoreClick = onMyArtistCategoryClick,
+                    onCardClick = onProductCardClick,
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -118,8 +114,8 @@ private fun HomeScreen(
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
-                    onMoreClick = onMoreClick,
-                    onCardClick = onCardClick,
+                    onMoreClick = onMyArtistCategoryClick,
+                    onCardClick = onProductCardClick,
                 )
             }
         }
@@ -152,8 +148,8 @@ private fun HomeScreenPreview() {
                 otherGroupItems = fakeMyGroupItems,
             ),
             onFloatingClick = { },
-            onMoreClick = { },
-            onCardClick = { },
+            onMyArtistCategoryClick = { },
+            onProductCardClick = { },
         )
     }
 }
