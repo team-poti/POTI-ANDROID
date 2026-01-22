@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -151,6 +152,7 @@ fun PartyCreateRoute(
 
     PartyCreateScreen(
         uiState = uiState,
+        onScrollComplete = {viewModel.processIntent(CreateUiIntent.OnScrollComplete)},
         onBackClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
         onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
         onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
@@ -172,6 +174,7 @@ fun PartyCreateRoute(
 @Composable
 private fun PartyCreateScreen(
     uiState: CreateUiState,
+    onScrollComplete: () -> Unit,
     onBackClick: () -> Unit,
     onImageChanged: (List<Uri>) -> Unit,
     onSearchArtist: () -> Unit,
@@ -191,31 +194,12 @@ private fun PartyCreateScreen(
     val listState = rememberLazyListState()
     val dateTransformation = remember { DateTransformation() }
 
-    LaunchedEffect(
-        uiState.imageError,
-        uiState.artistError,
-        uiState.productError,
-        uiState.deadlineError,
-        uiState.descriptionError,
-        uiState.accountNumberError,
-        uiState.bankError,
-        uiState.memberSettingStatus,
-    ) {
-        val firstErrorFieldIndex = when {
-            uiState.imageError != null -> 0
-            uiState.artistError != null -> 1
-            uiState.productError != null -> 2
-            uiState.deadlineError != null -> 3
-            uiState.descriptionError != null -> 4
-            uiState.accountNumberError != null -> 5
-            uiState.bankError != null -> 6
-            uiState.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || uiState.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER -> 7
-            else -> null
-        }
-
-        firstErrorFieldIndex?.let { index ->
+    LaunchedEffect(uiState.errorIndexToScroll) {
+        val index = uiState.errorIndexToScroll
+        index?.let {
             listState.animateScrollToItem(index)
         }
+        onScrollComplete()
     }
 
     Scaffold(
@@ -410,106 +394,5 @@ private fun PartyCreateScreen(
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun PartyCreateScreenDefaultPreview() {
-    val deliveryOptions =
-        persistentListOf(
-            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
-    val selectedDeliveryIds = setOf(1.toLong())
-
-    PotiTheme {
-        PartyCreateScreen(
-            uiState = CreateUiState(
-                editableDeliveryOptions = deliveryOptions,
-                selectedDeliveryIds = selectedDeliveryIds,
-            ),
-            onBackClick = {},
-            onImageChanged = {},
-            onSearchArtist = {},
-            onProductChanged = {},
-            onProductSearchItemClick = {},
-            onDeadlineChanged = {},
-            onDescriptionChanged = {},
-            onAccountNumberChanged = {},
-            onBankChanged = {},
-            onMemberPriceChanged = {},
-            onMemberEditBtnClick = {},
-            onDeliveryRadioBtnClick = {},
-            onCreateBtnClick = {},
-            onProductFocusChanged = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PartyCreateScreenAccountNumberErrorPreview() {
-    val deliveryOptions =
-        persistentListOf(
-            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
-    var accountNumberError by remember { mutableStateOf<FieldError?>(null) }
-
-    PotiTheme {
-        PartyCreateScreen(
-            uiState = CreateUiState(
-                editableDeliveryOptions = deliveryOptions,
-                accountNumberError = accountNumberError,
-            ),
-            onBackClick = {},
-            onImageChanged = {},
-            onSearchArtist = {},
-            onProductChanged = {},
-            onProductSearchItemClick = {},
-            onDeadlineChanged = {},
-            onDescriptionChanged = {},
-            onAccountNumberChanged = {},
-            onBankChanged = {},
-            onMemberPriceChanged = {},
-            onMemberEditBtnClick = {},
-            onDeliveryRadioBtnClick = {},
-            onCreateBtnClick = { accountNumberError = FieldError.ACCOUNT_NUMBER_ERROR },
-            onProductFocusChanged = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun PartyCreateMemberPreview() {
-    val deliveryOptions =
-        persistentListOf(
-            DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-            DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
-        )
-
-    PotiTheme {
-        PartyCreateScreen(
-            uiState = CreateUiState(
-                editableDeliveryOptions = deliveryOptions,
-                memberSettingStatus = MemberSettingStatus.ERROR_NO_MEMBER,
-            ),
-            onBackClick = {},
-            onImageChanged = {},
-            onSearchArtist = {},
-            onProductChanged = {},
-            onProductSearchItemClick = {},
-            onDeadlineChanged = {},
-            onDescriptionChanged = {},
-            onAccountNumberChanged = {},
-            onBankChanged = {},
-            onMemberPriceChanged = {},
-            onMemberEditBtnClick = {},
-            onDeliveryRadioBtnClick = {},
-            onCreateBtnClick = {},
-            onProductFocusChanged = {}
-        )
     }
 }

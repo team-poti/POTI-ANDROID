@@ -75,6 +75,8 @@ class PartyCreateViewModel @Inject constructor(
 
             is CreateUiIntent.OnBackToCreate -> sendEffect(CreateUiEffect.NavigateToBack)
 
+            CreateUiIntent.OnScrollComplete -> updateState { copy(errorIndexToScroll = null) }
+
             is CreateUiIntent.OnImagesChanged -> {
                 updateState {
                     copy(
@@ -553,9 +555,28 @@ class PartyCreateViewModel @Inject constructor(
                     neverShowHint = if (hasMemberOptionError) true else this.neverShowHint,
                 )
             }
+            getScrollIndex()?.let {
+                updateState { copy(errorIndexToScroll = it) }
+            }
         }
 
         return hasError
+    }
+
+    private fun getScrollIndex(): Int? {
+        val firstErrorFieldIndex = when {
+            uiState.value.imageError != null -> 0
+            uiState.value.artistError != null -> 1
+            uiState.value.productError != null -> 2
+            uiState.value.deadlineError != null -> 3
+            uiState.value.descriptionError != null -> 4
+            uiState.value.accountNumberError != null -> 5
+            uiState.value.bankError != null -> 6
+            uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER -> 7
+            else -> null
+        }
+
+        return firstErrorFieldIndex
     }
 
     private suspend fun uploadPartyInfo(

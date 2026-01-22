@@ -69,6 +69,7 @@ data class CreateUiState(
     val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
     val neverShowSearchEmptyScreen: Boolean = false,
     val selectedProductName: String = "",
+    val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
     val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
@@ -81,6 +82,8 @@ sealed interface CreateUiIntent : UiIntent {
     data class InitializeScreen(val artistId: Long?, val artistName: String?, val productName: String?) : CreateUiIntent
 
     data object CleanScreen : CreateUiIntent
+
+    data object OnScrollComplete: CreateUiIntent
 
     data object OnBackClick : CreateUiIntent
 
