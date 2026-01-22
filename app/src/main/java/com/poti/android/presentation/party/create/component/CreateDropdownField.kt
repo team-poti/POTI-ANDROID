@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.create.component
 
+import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.MutableTransitionState
@@ -12,10 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,9 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,6 +62,7 @@ fun <T> CreateDropdownField(
     modifier: Modifier = Modifier,
     label: String = "",
     fieldErrorMsg: String = "",
+    showTrailingIcon: Boolean = false,
 ) {
     val scrollState = rememberLazyListState()
     val expandedState = remember { MutableTransitionState(false) }
@@ -87,6 +93,14 @@ fun <T> CreateDropdownField(
             label = label,
             error = fieldErrorMsg,
             onFocusChanged = { isFocused = it },
+            trailingIcon = {
+                if (showTrailingIcon) Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                    contentDescription = null,
+                    tint = PotiTheme.colors.gray700,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
         )
 
         AnimatedVisibility(

@@ -87,6 +87,7 @@ private fun PartyArtistSelectScreen(
                 placeholder = stringResource(R.string.create_placeholder_artist_search),
                 selectedString = uiState.selectedArtist?.name ?: "",
                 modifier = Modifier.padding(vertical = 12.dp),
+                showTrailingIcon = true,
             )
 
             if (uiState.isArtistSearchResultsEmpty) {
