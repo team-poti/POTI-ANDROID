@@ -30,6 +30,8 @@ data class GoodsFilterUiState(
     val displayMembers: List<FilterMember> = emptyList(),
     val selectedMembers: List<FilterMember> = emptyList(),
     val goodsPartySortType: PartySortType = PartySortType.LATEST,
+    val isMemberFilterBottomSheetVisible: Boolean = false,
+    val isSortFilterBottomSheetVisible: Boolean = false,
 ) : UiState {
     val selectedMemberIds: List<Long>
         get() = selectedMembers.map { it.id }
