@@ -117,7 +117,7 @@ class PartyCreateViewModel @Inject constructor(
 
             is CreateUiIntent.OnProductFocus -> {
                 if (uiState.value.isProductFieldReadOnly && intent.focused) {
-                    updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
+                    updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR, isDirty = true) }
                 }
             }
 
