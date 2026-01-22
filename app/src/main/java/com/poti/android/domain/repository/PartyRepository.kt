@@ -4,6 +4,8 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.MyPartyList
+import com.poti.android.domain.model.history.ParticipantManageDetail
+import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
@@ -40,6 +42,10 @@ interface PartyRepository {
     suspend fun postPartyJoin(joinInfo: PartyJoinInfo): Result<Long>
 
     suspend fun getMyRecruitList(status: String): Result<MyPartyList>
+
+    suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail>
+
+    suspend fun getRecruitPostParticipant(postId: Long): Result<ParticipantManageDetail>
 
     suspend fun getProductPartyList(
         page: Int?,

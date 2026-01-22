@@ -6,7 +6,7 @@ import com.poti.android.data.mapper.artist.toDomain
 import com.poti.android.data.mapper.artist.toDto
 import com.poti.android.data.mapper.delivery.toDomain
 import com.poti.android.data.mapper.delivery.toDto
-import com.poti.android.data.mapper.participation.toDomain
+import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.mapper.party.toDomain
 import com.poti.android.data.mapper.party.toRequestDto
 import com.poti.android.data.remote.datasource.PartyRemoteDataSource
@@ -15,6 +15,8 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.MyPartyList
+import com.poti.android.domain.model.history.ParticipantManageDetail
+import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
@@ -107,6 +109,22 @@ class PartyRepositoryImpl @Inject constructor(
             .getOrThrow()
             .toDomain()
     }
+
+    override suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getRecruitDetail(postId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }
+
+    override suspend fun getRecruitPostParticipant(postId: Long): Result<ParticipantManageDetail> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getRecruitPostParticipant(postId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }
 
     override suspend fun getProductPartyList(
         page: Int?,

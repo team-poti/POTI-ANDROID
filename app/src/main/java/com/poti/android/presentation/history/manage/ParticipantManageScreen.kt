@@ -131,7 +131,7 @@ private fun ParticipantManageScreen(
                                 )
                             }
                         }
-                        ParticipantStatusType.PAID, ParticipantStatusType.READY -> {
+                        ParticipantStatusType.PAID -> {
                             participant.shippingInfo?.let { shippingInfo ->
                                 ParticipantShippingContent(
                                     receiverName = shippingInfo.receiverName,

@@ -2,10 +2,12 @@ package com.poti.android.data.di
 
 import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
+import com.poti.android.data.remote.service.DeliveryService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
 import com.poti.android.data.remote.service.ParticipationService
 import com.poti.android.data.remote.service.PartyService
+import com.poti.android.data.remote.service.PaymentService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -51,4 +53,16 @@ object ServiceModule {
     @Singleton
     fun provideParticipationService(retrofit: Retrofit): ParticipationService =
         retrofit.create(ParticipationService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePaymentService(retrofit: Retrofit): PaymentService {
+        return retrofit.create(PaymentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeliveryService(retrofit: Retrofit): DeliveryService {
+        return retrofit.create(DeliveryService::class.java)
+    }
 }

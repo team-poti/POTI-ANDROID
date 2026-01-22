@@ -1,4 +1,4 @@
-package com.poti.android.data.remote.dto.response.participant
+package com.poti.android.data.remote.dto.response.history
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -12,11 +12,11 @@ data class MyPartyListDto(
     @SerialName("completedCount")
     val completedCount: Int,
     @SerialName("participations")
-    val participations: List<ParticipantDto>,
+    val participations: List<ParticipationDto>,
 )
 
 @Serializable
-data class ParticipantDto(
+data class ParticipationDto(
     @SerialName("participationId")
     val participationId: Long,
     @SerialName("groupBuyId")
