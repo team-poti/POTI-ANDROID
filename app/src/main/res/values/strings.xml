@@ -59,9 +59,15 @@
     <string name="party_detail_participants">참여자</string>
     <string name="party_detail_review_count">%d개의 평가</string>
     <string name="party_detail_participants_count">%1$d/%2$d</string>
-    <string name="party_detail_announcement">안내 사항\n어쩌구 저쩌구\n어쩌구 저쩌구\n어쩌구 저쩌구\n</string>
+    <string-array name="party_detail_announcement">
+        <item>참여자 안내 사항</item>
+        <item>모집 완료 후 24시간 이내 입금이 확인되지 않을 경우, 참여는 자동으로 취소되며 이후 서비스 이용에 불이익이 있을 수 있습니다.</item>
+        <item>입금 후, 모집자가 굿즈를 주문하고 수령하는 과정이 필요하여 배송 시작 상태로 전환되기까지 다소 시간이 소요될 수 있습니다.</item>
+        <item>마감 기한까지 모집 인원이 과반수 이상 충족되지 않을 경우, 해당 분철팟은 자동으로 종료되며 분철은 진행되지 않습니다.</item>
+    </string-array>
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
+    <string name="party_detail_upload_date_label">"%s 등록"</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>
@@ -94,29 +100,32 @@
     <string name="create_placeholder_need_artist">아티스트를 먼저 선택해주세요</string>
     <string name="create_placeholder_need_member">선택한 멤버가 없어요</string>
     <string name="create_btn_member_edit">멤버 편집</string>
-    <string name="create_notice">판매자한테 안내해야 되는 내용...\n어쩌꾸 저쩌꾸\n어ㅓ어아어ㅏㅓㅏㅏㅏㅇ\n우우우우우</string>
     <string name="create_placeholder_product">상품 종류를 입력해주세요</string>
     <string name="create_label_product">상품 종류</string>
     <string name="create_label_delivery">배송 설정</string>
     <string name="create_label_product_info">상품 정보</string>
     <string name="create_placeholder_artist">아티스트 찾기</string>
     <string name="create_label_artist">아티스트</string>
-    <string name="create_placeholder_deadline">날짜를 선택해주세요</string>
+    <string name="create_placeholder_deadline">날짜를 입력해주세요 (YYYY-MM-DD)</string>
     <string name="create_label_deadline">모집 기한</string>
-    <string name="create_placeholder_description">분철 범위 등.. 에 대한 설명을 입력해주세요</string>
+    <string name="create_placeholder_description">분철팟 설명을 자세히 적어주세요\n예) 굿즈 구성 / 구매 여부 / 예상 배송일 등</string>
     <string name="create_label_description">설명</string>
     <string name="create_placeholder_bank">은행 정보를 입력해주세요</string>
     <string name="create_label_bank">은행</string>
     <string name="create_btn_create">등록하기</string>
-    <string name="create_placeholder_account_number">계좌번호를 정확히 입력해주세요</string>
+    <string name="create_placeholder_account_number">계좌번호를 입력해주세요</string>
     <string name="create_label_account_number">계좌번호</string>
     <string name="create_error_need_image">사진을 1장 이상 등록해주세요</string>
     <string name="create_error_need_artist">아티스트를 선택해주세요</string>
     <string name="create_error_need_product">상품 종류를 입력해주세요</string>
-    <string name="create_error_need_deadline">모집 기한을 선택해주세요</string>
+    <string name="create_error_need_deadline">모집 기한을 입력해주세요</string>
+    <string name="create_error_past_deadline">오늘 이전의 날짜는 입력할 수 없어요</string>
     <string name="create_error_need_description">설명을 입력해주세요</string>
     <string name="create_error_need_account_number">계좌번호를 입력해주세요</string>
     <string name="create_error_need_bank">은행 정보를 입력해주세요</string>
+    <string name="create_title_bottomsheet">멤버 편집</string>
+    <string name="create_header_artist_search">아티스트 검색</string>
+    <string name="create_message_artist_search_empty_result">검색 결과가 없어요\n다른 키워드로 다시 검색해보세요</string>
 
     <!-- Party Status -->
     <string name="party_status_recruiting">모집 중</string>
@@ -154,7 +163,7 @@
     <string name="history_recruit_number">모집번호 %s</string>
     <string name="history_progress_status_title">진행 상황</string>
     <string name="history_state_guide_waiting">참여자들을 기다리고 있어요</string>
-    <string name="history_participant_management_title">참여자 관리 (%d)</string>
+    <string name="history_recruiter_participant_management_title">참여자 관리 (%d)</string>
     <string name="history_no_participants">아직 참여자가 없어요</string>
     <string name="history_participant_detail_title">진행 중인 분철</string>
     <string name="history_participation_number">참여번호 %s</string>
@@ -178,6 +187,17 @@
     <string name="history_delivery_review_modal_sub_button">건너뛰기</string>
     <string name="history_ongoing_title_done">종료된 분철</string>
     <string name="history_participant_detail_title_done">종료된 분철</string>
+    <string name="history_participant_management_title">참여자 관리</string>
+    <string name="history_deposit_confirm_modal_title">잠깐! 정말 입금이 완료되었나요?</string>
+    <string name="history_deposit_confirm_modal_text">확인 후에는 되돌릴 수 없어요</string>
+    <string name="history_deposit_confirm_modal_dismiss">이전</string>
+    <string name="history_deposit_confirm_modal_confirm">입금 확인</string>
+    <string name="history_delivery_bottomsheet_button">완료</string>
+    <string name="history_delivery_bottomsheet_method_placeholder">배송업체를 입력해주세요</string>
+    <string name="history_delivery_bottomsheet_method_label">배송업체</string>
+    <string name="history_delivery_bottomsheet_tracking_placeholder">송장번호를 입력해주세요</string>
+    <string name="history_delivery_bottomsheet_tracking_label">송장번호</string>
+    <string name="history_delivery_method">배송방법</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
@@ -198,5 +218,29 @@
     <string name="home_recommend_goods">%1$s님을 위한 추천 굿즈</string>
     <string name="home_other_goods">다른 굿즈 구경하기</string>
     <string name="home_more">더보기</string>
+    <string name="create_placeholder_artist_search">분철할 그룹을 검색해보세요</string>
+    <string name="create_notice_title">모집자 안내 사항</string>
+    <string name="create_notice_first">굿즈 구매 가능 기간을 고려해 분철팟 마감 기한을 설정해주세요.</string>
+    <string name="create_notice_second">마감 기한까지 모집 인원이 과반수 이상 충족되지 않을 경우, 해당 분철팟은 자동으로 종료되며 분철은 진행되지 않습니다.</string>
+    <string name="create_notice_third">분철팟 모집, 굿즈 구매, 배송 및 참여자와의 거래 과정에서 발생하는 사항에 대한 책임은 모집자에게 있습니다.</string>
+    <string name="create_exit_dialog_title">지금 나가면 내용이 저장되지 않아요</string>
+    <string name="create_exit_dialog_content">계속 작성할까요?</string>
+    <string name="create_exit_dialog_dismiss_text">나가기</string>
+    <string name="create_exit_dialog_confirm_text">계속 작성하기</string>
+    <string name="create_error_invalid_date">유효한 날짜 형식으로 입력해주세요</string>
+
+    <!-- Goods filter -->
+    <string name="goods_filter_sort_latest">최신순</string>
+    <string name="goods_filter_sort_hot">인기순</string>
+    <string name="goods_filter_sort_random">랜덤순</string>
+    <string name="goods_filter_sort_deadline">마감임박순</string>
+    <string name="goods_filter_sort_rating">평점순</string>
+    <string name="goods_filter_member_select">멤버 선택</string>
+    <string name="goods_filter_member_two_format">%1$s, %2$s</string>
+    <string name="goods_filter_member_more_format">%1$s, %2$s 외 %3$d명</string>
+    <string name="goods_filter_price_format">%1$s원~</string>
+    <string name="goods_filter_rating_format">%.1f</string>
+    <string name="goods_filter_members_separator">&#160;|&#160;</string>
+
 
 </resources>

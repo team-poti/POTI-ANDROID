@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.extension.roundedBackgroundWithBorder
@@ -46,11 +47,14 @@ internal fun PotiBasicField(
     singleLine: Boolean = true,
     trailingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
+    visualTransformation: VisualTransformation? = null,
+    neverCoverField: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val requester = remember {
         focusRequester ?: FocusRequester()
     }
+    val visualTransformation = remember { visualTransformation ?: VisualTransformation.None }
 
     BasicTextField(
         value = value,
@@ -82,6 +86,7 @@ internal fun PotiBasicField(
         textStyle = PotiTheme.typography.body16m.copy(
             color = PotiTheme.colors.black,
         ),
+        visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
@@ -91,7 +96,7 @@ internal fun PotiBasicField(
                 Box(
                     modifier = Modifier
                         .weight(1f),
-                    contentAlignment = Alignment.CenterStart,
+                    contentAlignment = Alignment.TopStart,
                 ) {
                     innerTextField()
 
@@ -103,7 +108,7 @@ internal fun PotiBasicField(
                         )
                     }
 
-                    if (singleLine && !isFocused && value.isNotEmpty()) {
+                    if (!neverCoverField && singleLine && !isFocused && value.isNotEmpty()) {
                         Text(
                             text = value,
                             modifier = Modifier

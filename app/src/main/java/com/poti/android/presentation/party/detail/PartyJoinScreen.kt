@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,10 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
@@ -59,11 +66,24 @@ fun PartyJoinRoute(
             text = stringResource(R.string.party_join_confirm_modal_text),
             btnText = stringResource(R.string.action_button_next),
             onBtnClick = { viewModel.processIntent(PartyDetailIntent.OnJoinSuccessConfirm) },
-            image = R.drawable.ic_launcher_background,
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
             modifier = modifier,
-        )
+        ) {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.join))
+            val progress by animateLottieCompositionAsState(
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+            )
+
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                modifier = Modifier
+                    .padding(vertical = 36.dp)
+                    .height(208.dp),
+            )
+        }
     }
 
     PartyJoinScreen(
@@ -94,7 +114,7 @@ private fun PartyJoinScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title, uiState.partyDetail.getSuccessDataOrNull()?.userSummary?.nickname ?: ""),
+                title = stringResource(R.string.party_detail_title, uiState.partyDetail.getSuccessDataOrNull()?.uploader?.nickname ?: ""),
             )
         },
         bottomBar = {
@@ -166,6 +186,7 @@ private fun PartyJoinScreen(
                         placeholder = stringResource(R.string.party_join_order_name_placeholder),
                         label = stringResource(R.string.field_label_name),
                         error = if (uiState.isOrderNameError) stringResource(R.string.party_join_order_name_error) else "",
+                        imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
@@ -175,6 +196,7 @@ private fun PartyJoinScreen(
                         label = stringResource(R.string.party_join_order_postal_label),
                         error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
                         keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
@@ -183,6 +205,7 @@ private fun PartyJoinScreen(
                         placeholder = stringResource(R.string.party_join_order_address_placeholder),
                         label = stringResource(R.string.party_join_order_address_label),
                         error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
+                        imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(

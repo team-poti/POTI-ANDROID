@@ -74,6 +74,10 @@ fun HistoryCardItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
+            .noRippleClickable(
+                interactionSource = interactionSource,
+                onClick = onClick,
+            )
             .background(if (isPressed) colors.gray100 else colors.white)
             .padding(8.dp)
             .height(IntrinsicSize.Min),
@@ -139,12 +143,6 @@ fun HistoryCardItem(
             painter = painterResource(id = R.drawable.ic_arrow_right_lg),
             contentDescription = null,
             tint = colors.gray700,
-            modifier = Modifier
-                .fillMaxHeight()
-                .noRippleClickable(
-                    interactionSource = interactionSource,
-                    onClick = onClick,
-                ),
         )
     }
 }

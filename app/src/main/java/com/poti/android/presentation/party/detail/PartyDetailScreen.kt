@@ -97,7 +97,7 @@ private fun PartyDetailScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.party_detail_title, partyDetail.userSummary.nickname),
+                title = stringResource(R.string.party_detail_title, partyDetail.uploader.nickname),
             )
         },
         bottomBar = {
@@ -146,7 +146,7 @@ private fun PartyDetailScreen(
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
             PartyUploaderInfo(
-                userSummary = partyDetail.userSummary,
+                userSummary = partyDetail.uploader,
                 onClick = onUploaderClick,
                 modifier = Modifier.padding(start = screenWidthDp(16.dp), top = 20.dp, end = screenWidthDp(4.dp)),
             )

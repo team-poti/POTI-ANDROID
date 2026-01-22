@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,16 +17,17 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.history.component.HistoryParticipantOverview
-import com.poti.android.presentation.history.component.ParticipantManagementHeader
+import com.poti.android.presentation.history.component.HistoryDetailContentHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
+import com.poti.android.presentation.history.recruiter.component.HistoryParticipantOverview
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
@@ -45,13 +43,11 @@ fun RecruiterDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.sideEffect) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                RecruiterDetailUiEffect.NavigateBack -> onPopBackStack()
-                is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(sideEffect.recruitId)
-                is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(sideEffect.recruitId)
-            }
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            RecruiterDetailUiEffect.NavigateBack -> onPopBackStack()
+            is RecruiterDetailUiEffect.NavigateToParticipantList -> onNavigateToParticipantManage(effect.recruitId)
+            is RecruiterDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.recruitId)
         }
     }
 
@@ -74,17 +70,15 @@ private fun RecruiterDetailScreen(
     onParticipantManageDetailClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
+    Column(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            PotiHeaderPage(
-                onNavigationClick = onBackClick,
-                title = stringResource(id = R.string.history_ongoing_title),
-            )
-        },
-    ) { paddingValues ->
+    ) {
+        PotiHeaderPage(
+            onNavigationClick = onBackClick,
+            title = stringResource(id = R.string.history_ongoing_title),
+        )
+
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(bottom = 50.dp),
         ) {
@@ -113,8 +107,8 @@ private fun RecruiterDetailScreen(
             }
 
             item {
-                ParticipantManagementHeader(
-                    participantCount = recruiterDetail.participantCount,
+                HistoryDetailContentHeader(
+                    text = stringResource(id = R.string.history_recruiter_participant_management_title, recruiterDetail.participantCount),
                     onHeaderClick = onParticipantManageDetailClick,
                 )
             }

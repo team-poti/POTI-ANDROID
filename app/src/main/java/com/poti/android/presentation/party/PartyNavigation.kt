@@ -28,6 +28,8 @@ fun NavGraphBuilder.partyNavGraph(
         )
         goodsFilterNavGraph(
             paddingValues = paddingValues,
+            navController = navController,
+            onPopBackStack = navController::popBackStack,
         )
         partyDetailNavGraph(
             paddingValues = paddingValues,
@@ -35,6 +37,7 @@ fun NavGraphBuilder.partyNavGraph(
         )
         partyCreateNavGraph(
             paddingValues = paddingValues,
+            navController = navController,
         )
     }
 }

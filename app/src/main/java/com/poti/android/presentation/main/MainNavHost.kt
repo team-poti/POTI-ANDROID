@@ -8,26 +8,31 @@ import androidx.navigation.compose.NavHost
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
-import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
 import com.poti.android.presentation.party.partyNavGraph
+import com.poti.android.presentation.splash.SplashRoute
+import com.poti.android.presentation.splash.splashNavGraph
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
 
 @Composable
 fun MainNavHost(
     navigator: MainNavigator,
-    startDestination: Route,
+    targetDestination: Route,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navigator.navController,
-        startDestination = startDestination,
+        startDestination = SplashRoute,
         modifier = modifier.fillMaxSize(),
     ) {
+        splashNavGraph(
+            navController = navigator.navController,
+            destination = targetDestination,
+        )
         authNavGraph(
-            onNavigateToOnboarding = navigator.navController::navigateToOnboardingGuide,
+            navController = navigator.navController,
             onNavigateToHome = navigator::navigateToHome,
         )
         onboardingNavGraph(
@@ -42,7 +47,6 @@ fun MainNavHost(
         historyNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
-            onPopBackStack = navigator.navController::popBackStack,
         )
         myPageNavGraph(
             navController = navigator.navController,

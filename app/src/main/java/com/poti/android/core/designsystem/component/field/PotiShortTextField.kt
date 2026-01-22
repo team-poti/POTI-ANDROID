@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -51,6 +52,8 @@ fun PotiShortTextField(
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
     onFocusChanged: ((Boolean) -> Unit)? = null,
+    visualTransformation: VisualTransformation? = null,
+    neverCoverField: Boolean = false,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -95,6 +98,8 @@ fun PotiShortTextField(
             focusRequester = focusRequester,
             singleLine = true,
             trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
+            neverCoverField = neverCoverField,
         )
 
         if (error.isNotBlank()) {
