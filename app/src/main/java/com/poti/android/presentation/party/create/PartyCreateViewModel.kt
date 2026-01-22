@@ -201,14 +201,10 @@ class PartyCreateViewModel @Inject constructor(
         artistName: String?,
         productName: String?,
     ) {
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 호출 👽")
-
         if (artistId == null || artistName == null || productName == null) {
-            Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 파라미터 모두 null")
             return
         }
 
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 초기값 자동완성 시작")
         val initialArtist = ArtistSearchResult(
             artistId = artistId,
             name = artistName,
