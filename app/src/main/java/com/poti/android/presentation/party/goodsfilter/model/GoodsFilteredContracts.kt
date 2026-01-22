@@ -22,6 +22,8 @@ enum class PartySortType(
 
 data class GoodsFilterUiState(
     val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
+    val cachedTitle: String = "",
+    val cacheedSubTitle: String = "",
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMembers: List<Member> = emptyList(),
@@ -33,9 +35,6 @@ data class GoodsFilterUiState(
 ) : UiState {
     val allMemberNames: List<String>
         get() = displayMembers.map { it.name }
-
-    val selectedMemberNames: List<String>
-        get() = displayMembers.filterIndexed { index, _ -> index in bottomSheetSelectedMembersIdices }.map { it.name }
 
     val memberFilterText: String
         @Composable get() = when {

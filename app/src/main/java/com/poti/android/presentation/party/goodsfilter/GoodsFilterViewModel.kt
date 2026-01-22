@@ -87,7 +87,8 @@ class GoodsFilterViewModel @Inject constructor(
             updateState {
                 copy(
                     productPartyListInfo = ApiState.Success(partyList),
-                    membersLoadState = ApiState.Success(emptyList()), // TODO 멤버 API 연결
+                    cachedTitle = partyList.partyTitle,
+                    cacheedSubTitle = partyList.artistName,
                 )
             }
         }.onFailure { throwable ->

@@ -19,9 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
-import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
@@ -84,29 +83,31 @@ fun GoodsFilteredPartyListRoute(
         )
     }
 
-    uiState.productPartyListInfo.onSuccess { partyListInfo ->
-        GoodsFilteredPartyListScreen(
-            productPartyListInfo = partyListInfo,
-            partySortType = uiState.goodsPartySortType,
-            memberFilterText = uiState.memberFilterText,
-            onBackClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
-            },
-            onFloatingClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnFloatingClick)
-            },
-            onMemberFilterClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterClick)
-            },
-            onSortFilterClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnSortFilterClick)
-            },
-            onCardClick = { potId ->
-                viewModel.processIntent(GoodsFilterUiIntent.OnPartyClick(potId))
-            },
-            modifier = modifier,
-        )
-    }
+    GoodsFilteredPartyListScreen(
+        productPartyListInfo = uiState.productPartyListInfo.getSuccessDataOrNull() ?: ProductPartyList(
+            partyTitle = uiState.cachedTitle,
+            artistName = uiState.cacheedSubTitle,
+            partySummaries = emptyList(),
+        ),
+        partySortType = uiState.goodsPartySortType,
+        memberFilterText = uiState.memberFilterText,
+        onBackClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
+        },
+        onFloatingClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnFloatingClick)
+        },
+        onMemberFilterClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterClick)
+        },
+        onSortFilterClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnSortFilterClick)
+        },
+        onCardClick = { potId ->
+            viewModel.processIntent(GoodsFilterUiIntent.OnPartyClick(potId))
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable
