@@ -1,7 +1,7 @@
-package com.poti.android.data.mapper.participation
+package com.poti.android.data.mapper.history
 
 import com.poti.android.data.remote.dto.response.history.MyPartyListDto
-import com.poti.android.data.remote.dto.response.history.ParticipantDto
+import com.poti.android.data.remote.dto.response.history.ParticipationDto
 import com.poti.android.domain.model.history.MyParty
 import com.poti.android.domain.model.history.MyPartyList
 import com.poti.android.domain.type.HistoryListType
@@ -18,7 +18,7 @@ fun MyPartyListDto.toDomain(): MyPartyList = MyPartyList(
     partyList = participations.map { it.toDomain() },
 )
 
-fun ParticipantDto.toDomain(): MyParty = MyParty(
+fun ParticipationDto.toDomain(): MyParty = MyParty(
     participationId = participationId,
     groupBuyId = groupBuyId,
     artistName = artistName,

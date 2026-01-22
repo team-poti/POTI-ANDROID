@@ -12,11 +12,11 @@ data class MyPartyListDto(
     @SerialName("completedCount")
     val completedCount: Int,
     @SerialName("participations")
-    val participations: List<ParticipantDto>,
+    val participations: List<ParticipationDto>,
 )
 
 @Serializable
-data class ParticipantDto(
+data class ParticipationDto(
     @SerialName("participationId")
     val participationId: Long,
     @SerialName("groupBuyId")
