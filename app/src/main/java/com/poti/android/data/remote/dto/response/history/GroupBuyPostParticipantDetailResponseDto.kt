@@ -62,11 +62,11 @@ data class ParticipantDepositInfoDto(
 @Serializable
 data class ParticipantShippingInfoDto(
     @SerialName("receiverName")
-    val receiverName: String,
+    val receiverName: String?,
     @SerialName("address")
-    val address: String,
+    val address: String?,
     @SerialName("phone")
-    val phone: String,
+    val phone: String?,
     @SerialName("trackingNumber")
     val trackingNumber: String?,
 )

@@ -14,6 +14,7 @@ data class RecruiterDetailUiModel(
 )
 
 data class ParticipantUiModel(
+    val orderId: Long,
     val userId: Long,
     val memberNamesString: String,
     val participantStatus: ParticipantStatusType,
@@ -32,6 +33,7 @@ fun RecruiterDetail.toUiModel(): RecruiterDetailUiModel = RecruiterDetailUiModel
 
 fun ParticipantInfo.toUiModel(): ParticipantUiModel {
     return ParticipantUiModel(
+        orderId = this.orderId,
         userId = this.userId,
         memberNamesString = this.memberNames.joinToString(separator = ", "),
         participantStatus = this.participantStatus,

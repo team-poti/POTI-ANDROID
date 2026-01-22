@@ -19,6 +19,7 @@ val dummyRecruiterData = RecruiterDetail(
     ),
     participantInfoList = listOf(
         ParticipantInfo(
+            orderId = 1,
             userId = 1,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.RECRUITING,
@@ -32,6 +33,7 @@ val dummyRecruiterData = RecruiterDetail(
             ),
         ),
         ParticipantInfo(
+            orderId = 2,
             userId = 2,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.WAIT_PAY,
@@ -45,6 +47,7 @@ val dummyRecruiterData = RecruiterDetail(
             ),
         ),
         ParticipantInfo(
+            orderId = 3,
             userId = 3,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.WAIT_PAY_CHECK,
@@ -58,6 +61,7 @@ val dummyRecruiterData = RecruiterDetail(
             ),
         ),
         ParticipantInfo(
+            orderId = 4,
             userId = 4,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.PAID,
@@ -71,6 +75,7 @@ val dummyRecruiterData = RecruiterDetail(
             ),
         ),
         ParticipantInfo(
+            orderId = 5,
             userId = 5,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.READY,
@@ -84,6 +89,7 @@ val dummyRecruiterData = RecruiterDetail(
             ),
         ),
         ParticipantInfo(
+            orderId = 6,
             userId = 6,
             memberNames = listOf("레이", "이서"),
             participantStatus = ParticipantStatusType.DELIVERED,

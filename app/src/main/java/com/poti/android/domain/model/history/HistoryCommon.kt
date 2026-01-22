@@ -11,8 +11,8 @@ data class PartySummary(
 )
 
 data class ShippingInfo(
-    val receiverName: String,
-    val address: String,
-    val phone: String,
+    val receiverName: String?,
+    val address: String?,
+    val phone: String?,
     val trackingNumber: String?,
 )

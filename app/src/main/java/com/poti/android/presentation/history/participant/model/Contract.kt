@@ -27,7 +27,7 @@ sealed interface ParticipantDetailUiIntent : UiIntent {
 
     data object ConfirmDelivery : ParticipantDetailUiIntent
 
-    data class SubmitReview(val rating: Int) : ParticipantDetailUiIntent
+    data class SubmitReview(val transactionId: Long, val rating: Int) : ParticipantDetailUiIntent
 
     data object SkipReview : ParticipantDetailUiIntent
 }

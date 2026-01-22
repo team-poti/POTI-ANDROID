@@ -40,9 +40,9 @@ fun ParticipantPayCheckContent(
 
 @Composable
 fun ParticipantShippingContent(
-    receiverName: String,
-    address: String,
-    phone: String,
+    receiverName: String?,
+    address: String?,
+    phone: String?,
     modifier: Modifier = Modifier,
     trackingNumber: String? = null,
     onClick: (() -> Unit)? = null,
@@ -51,20 +51,26 @@ fun ParticipantShippingContent(
         modifier = modifier.padding(top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        TextWithLabel(
-            label = stringResource(R.string.history_participant_field_type_name),
-            text = receiverName,
-        )
+        receiverName?.let {
+            TextWithLabel(
+                label = stringResource(R.string.history_participant_field_type_name),
+                text = receiverName,
+            )
+        }
 
-        TextWithLabel(
-            label = stringResource(R.string.history_participant_field_type_delivery),
-            text = address,
-        )
+        address?.let {
+            TextWithLabel(
+                label = stringResource(R.string.history_participant_field_type_delivery),
+                text = address,
+            )
+        }
 
-        TextWithLabel(
-            label = stringResource(R.string.history_participant_field_type_contact),
-            text = phone,
-        )
+        phone?.let {
+            TextWithLabel(
+                label = stringResource(R.string.history_participant_field_type_contact),
+                text = phone,
+            )
+        }
 
         trackingNumber?.let { trackingNumber ->
             TextWithLabel(

@@ -20,6 +20,7 @@ fun RecruiterDetailDto.toDomain(): RecruiterDetail = RecruiterDetail(
     ),
     participantInfoList = this.participant.map {
         ParticipantInfo(
+            orderId = it.orderId,
             userId = it.userId,
             memberNames = it.memberNames,
             participantStatus = toParticipantStatus(it.status),

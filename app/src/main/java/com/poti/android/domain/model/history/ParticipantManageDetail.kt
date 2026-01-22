@@ -7,6 +7,7 @@ data class ParticipantManageDetail(
 )
 
 data class ParticipantDetailInfo(
+    val orderId: Long,
     val userId: Long,
     val profileImage: String?,
     val nickname: String,
