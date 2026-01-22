@@ -18,7 +18,6 @@ class HomeViewModel @Inject constructor(
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
             HomeUiIntent.OnFloatingClick -> sendEffect(HomeUiEffect.NavigateToPartyCreate)
-            is HomeUiIntent.OnBannerClick -> sendEffect(HomeUiEffect.NavigateToPartyDetail(intent.postId))
             is HomeUiIntent.OnMoreClick -> sendEffect(HomeUiEffect.NavigateToGoodsCategory(intent.artistId))
             is HomeUiIntent.OnCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList(intent.artistId))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()

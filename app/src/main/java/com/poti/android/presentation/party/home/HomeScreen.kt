@@ -26,44 +26,15 @@ import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.home.Banner
-import com.poti.android.domain.model.home.GroupItem
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
 import com.poti.android.presentation.party.home.model.HomeUiEffect
 import com.poti.android.presentation.party.home.model.HomeUiIntent
 
-val fakeMyGroupItems = listOf(
-    GroupItem(
-        postTitle = "2026 시즌 콘서트 후드",
-        artist = "아이유",
-        artistId = 0L,
-        postImage = "",
-        postCount = 3,
-        tag = "인기",
-    ),
-    GroupItem(
-        postTitle = "공식 응원봉 Ver.2",
-        artist = "아이유",
-        artistId = 0L,
-        postImage = "",
-        postCount = 12,
-        tag = "NEW",
-    ),
-    GroupItem(
-        postTitle = "월드투어 포토북",
-        artist = "아이유",
-        artistId = 0L,
-        postImage = "",
-        postCount = 7,
-        tag = "",
-    ),
-)
-
 @Composable
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToPartyDetail: (Long) -> Unit,
     onNavigateToGoodsPartyList: (Long) -> Unit,
     onNavigateToGoodsCategory: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -74,7 +45,6 @@ fun HomeRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            is HomeUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.postId)
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId)
             is HomeUiEffect.NavigateToGoodsCategory -> onNavigateToGoodsCategory(effect.artistId)
         }
@@ -84,9 +54,6 @@ fun HomeRoute(
         HomeScreen(
             homeContent = homeContent,
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
-            onBannerClick = { postId ->
-                viewModel.processIntent(HomeUiIntent.OnBannerClick(postId))
-            },
             onMoreClick = { artistId ->
                 viewModel.processIntent(HomeUiIntent.OnMoreClick(artistId))
             },
@@ -102,7 +69,6 @@ fun HomeRoute(
 private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
-    onBannerClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
     onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -128,7 +94,7 @@ private fun HomeScreen(
             ) {
                 HomeBannerSection(
                     banners = homeContent.banners,
-                    onBannerClick = onBannerClick,
+                    onBannerClick = {},
                     modifier = Modifier
                         .padding(top = screenHeightDp(16.dp))
                         .padding(horizontal = screenWidthDp(16.dp)),
@@ -186,7 +152,6 @@ private fun HomeScreenPreview() {
                 otherGroupItems = fakeMyGroupItems,
             ),
             onFloatingClick = { },
-            onBannerClick = { },
             onMoreClick = { },
             onCardClick = { },
         )
