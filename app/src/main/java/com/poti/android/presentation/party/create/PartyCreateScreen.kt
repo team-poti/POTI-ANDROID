@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,7 +43,6 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
@@ -55,11 +52,8 @@ import com.poti.android.presentation.party.create.component.ViewType
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
-import com.poti.android.presentation.party.create.model.FieldError
-import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import com.poti.android.presentation.party.create.util.DateTransformation
 import com.poti.android.presentation.party.create.util.toImageInfosForPresigned
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun PartyCreateRoute(
@@ -152,7 +146,7 @@ fun PartyCreateRoute(
 
     PartyCreateScreen(
         uiState = uiState,
-        onScrollComplete = {viewModel.processIntent(CreateUiIntent.OnScrollComplete)},
+        onScrollComplete = { viewModel.processIntent(CreateUiIntent.OnScrollComplete) },
         onBackClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
         onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
         onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
@@ -283,7 +277,7 @@ private fun PartyCreateScreen(
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
                     selectedString = uiState.selectedProductName,
                     readOnly = uiState.isProductFieldReadOnly,
-                    onFocusChanged = onProductFocusChanged
+                    onFocusChanged = onProductFocusChanged,
                 )
             }
 

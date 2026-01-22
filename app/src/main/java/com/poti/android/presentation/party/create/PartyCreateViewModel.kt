@@ -45,8 +45,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     private val artistSearchKeywordForDebounce = MutableStateFlow("")
     private val productSearchKeywordForDebounce = MutableStateFlow("")
 

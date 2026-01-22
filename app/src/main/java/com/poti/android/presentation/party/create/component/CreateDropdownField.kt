@@ -98,13 +98,15 @@ fun <T> CreateDropdownField(
             },
             readOnly = readOnly,
             trailingIcon = {
-                if (showTrailingIcon) Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_search),
-                    contentDescription = null,
-                    tint = PotiTheme.colors.gray700,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
+                if (showTrailingIcon) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                        contentDescription = null,
+                        tint = PotiTheme.colors.gray700,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            },
         )
 
         AnimatedVisibility(

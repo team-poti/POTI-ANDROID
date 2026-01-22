@@ -83,7 +83,7 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object CleanScreen : CreateUiIntent
 
-    data object OnScrollComplete: CreateUiIntent
+    data object OnScrollComplete : CreateUiIntent
 
     data object OnBackClick : CreateUiIntent
 

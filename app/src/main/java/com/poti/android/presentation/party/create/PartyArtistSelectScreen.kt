@@ -81,7 +81,7 @@ private fun PartyArtistSelectScreen(
                 type = if (uiState.isArtistSelectDoneBtnEnabled) ActionButtonType.SECONDARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
                 enabled = uiState.isArtistSelectDoneBtnEnabled,
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
