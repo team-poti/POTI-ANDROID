@@ -47,7 +47,7 @@ fun HistoryDepositBottomSheet(
                     .padding(horizontal = 16.dp),
             )
         },
-        enabled = depositor.isNotBlank() && depositTime.isNotBlank()
+        enabled = depositor.isNotBlank() && depositTime.isNotBlank(),
     )
 }
 

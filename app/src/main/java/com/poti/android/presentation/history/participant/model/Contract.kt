@@ -13,8 +13,11 @@ data class ParticipantDetailUiState(
 
 sealed interface ParticipantDetailOverlayState {
     data object None : ParticipantDetailOverlayState
+
     data object DepositBottomSheet : ParticipantDetailOverlayState
+
     data object DeliveryConfirmModal : ParticipantDetailOverlayState
+
     data class DeliveryReviewModal(
         val recruiterName: String,
         val recruiterProfileUrl: String,

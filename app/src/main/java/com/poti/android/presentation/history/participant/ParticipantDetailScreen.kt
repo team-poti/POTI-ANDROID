@@ -94,7 +94,6 @@ private fun ParticipantDetailScreen(
     onSkipReview: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Column(modifier = modifier.fillMaxSize()) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,

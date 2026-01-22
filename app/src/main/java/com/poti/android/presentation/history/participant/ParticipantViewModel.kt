@@ -24,8 +24,8 @@ import javax.inject.Inject
 class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
-    initialState = ParticipantDetailUiState(),
-) {
+        initialState = ParticipantDetailUiState(),
+    ) {
     private val participantId: Long = savedStateHandle.toRoute<HistoryRoute.ParticipantDetail>().participantId
 
     init {
@@ -123,7 +123,10 @@ class ParticipantViewModel @Inject constructor(
         }
     }
 
-    private fun patchSubmitDeposit(depositor: String, depositTime: String) = launchScope {
+    private fun patchSubmitDeposit(
+        depositor: String,
+        depositTime: String,
+    ) = launchScope {
         // TODO: 입금 확인 요청 API 호출
         // 성공 시 overlayState = None 및 데이터 갱신
         updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
