@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter
+package com.poti.android.presentation.party.product.productcategory
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -27,54 +27,55 @@ import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.party.GoodsCategory
-import com.poti.android.presentation.party.goodsfilter.component.GoodsSortBottomSheet
-import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiEffect
-import com.poti.android.presentation.party.goodsfilter.model.GoodsCategoryUiIntent
-import com.poti.android.presentation.party.goodsfilter.model.GoodsSortType
+import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
+import com.poti.android.presentation.party.product.component.GoodsSortBottomSheet
+import com.poti.android.presentation.party.product.dummyProductCategory
+import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
+import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiIntent
+import com.poti.android.presentation.party.product.productcategory.model.ProductSortType
 
 @Composable
-fun GoodsCategoryRoute(
+fun ProductCategoryRoute(
     artistId: Long,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
-    onNavigateToGoodsPartyList: (Long, String) -> Unit,
+    onNavigateToProductPartyList: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: GoodsCategoryViewModel = hiltViewModel(),
+    viewModel: ProductCategoryViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
-            is GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
-            is GoodsCategoryUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(artistId, effect.title)
+            ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
+            is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
+            is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(artistId, effect.title)
         }
     }
 
-    uiState.goodsCategoryLoadState.onSuccess { goodsCategory ->
-        GoodsCategoryScreen(
-            goodsCategory = goodsCategory,
+    uiState.productCategoryLoadState.onSuccess { goodsCategory ->
+        ProductCategoryScreen(
+            productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
             onBackClick = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnBackClick)
+                viewModel.processIntent(ProductCategoryUiIntent.OnBackClick)
             },
             onFloatingClick = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnFloatingClick)
+                viewModel.processIntent(ProductCategoryUiIntent.OnFloatingClick)
             },
             onSortFilterClick = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnSortFilterClick)
+                viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick)
             },
             onSortSelect = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnSortSelected(it))
+                viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it))
             },
             onSortDismiss = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnSortDismiss)
+                viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss)
             },
             onCardClick = { artistId, title ->
-                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick(artistId, title))
+                viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title))
             },
             modifier = modifier,
         )
@@ -82,14 +83,14 @@ fun GoodsCategoryRoute(
 }
 
 @Composable
-private fun GoodsCategoryScreen(
-    goodsCategory: GoodsCategory,
-    selectedSortType: GoodsSortType,
+private fun ProductCategoryScreen(
+    productCategory: ProductCategory,
+    selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
     onSortFilterClick: () -> Unit,
-    onSortSelect: (GoodsSortType) -> Unit,
+    onSortSelect: (ProductSortType) -> Unit,
     onSortDismiss: () -> Unit,
     onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
@@ -109,7 +110,7 @@ private fun GoodsCategoryScreen(
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.home_recommend_goods, goodsCategory.nickname),
+                title = stringResource(R.string.home_recommend_goods, productCategory.nickname),
             )
         },
         floatingActionButton = {
@@ -134,7 +135,7 @@ private fun GoodsCategoryScreen(
                 )
             }
 
-            items(goodsCategory.groupItems) { groupItem ->
+            items(productCategory.groupItems) { groupItem ->
                 GoodsLargeCard(
                     imageUrl = groupItem.postImage,
                     artist = groupItem.artist,
@@ -157,11 +158,11 @@ private fun GoodsCategoryScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun GoodsCategoryScreenPreview() {
+private fun ProductCategoryScreenPreview() {
     PotiTheme {
-        GoodsCategoryScreen(
-            goodsCategory = dummyGoodsCategory,
-            selectedSortType = GoodsSortType.LATEST,
+        ProductCategoryScreen(
+            productCategory = dummyProductCategory,
+            selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
             onBackClick = {},
             onFloatingClick = {},

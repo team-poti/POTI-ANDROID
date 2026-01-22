@@ -230,15 +230,15 @@
     <string name="home_other_goods">다른 굿즈 구경하기</string>
     <string name="home_more">더보기</string>
 
-    <!-- Goods filter -->
-    <string name="goods_filter_sort_latest">최신순</string>
-    <string name="goods_filter_sort_hot">인기순</string>
+    <!-- Product & Party filter -->
+    <string name="party_filter_sort_latest">최신순</string>
+    <string name="party_filter_sort_hot">인기순</string>
     <string name="goods_filter_sort_random">랜덤순</string>
-    <string name="goods_filter_sort_deadline">마감임박순</string>
-    <string name="goods_filter_sort_rating">평점순</string>
-    <string name="goods_filter_member_select">멤버 선택</string>
-    <string name="goods_filter_member_two_format">%1$s, %2$s</string>
-    <string name="goods_filter_member_more_format">%1$s, %2$s 외 %3$d명</string>
+    <string name="party_filter_sort_deadline">마감임박순</string>
+    <string name="party_filter_sort_rating">평점순</string>
+    <string name="party_filter_member_select">멤버 선택</string>
+    <string name="party_filter_member_two_format">%1$s, %2$s</string>
+    <string name="party_filter_member_more_format">%1$s, %2$s 외 %3$d명</string>
     <string name="goods_filter_price_format">%1$s원~</string>
     <string name="goods_filter_rating_format">%.1f</string>
     <string name="goods_filter_members_separator">&#160;|&#160;</string>

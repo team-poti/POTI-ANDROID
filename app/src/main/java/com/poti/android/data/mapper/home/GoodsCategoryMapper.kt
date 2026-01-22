@@ -2,11 +2,11 @@ package com.poti.android.data.mapper.home
 
 import com.poti.android.data.remote.dto.response.home.GoodsCategoryResponseDto
 import com.poti.android.data.remote.dto.response.home.GroupItemDto
-import com.poti.android.domain.model.party.GoodsCategory
 import com.poti.android.domain.model.party.GroupItem
+import com.poti.android.domain.model.party.ProductCategory
 
-fun GoodsCategoryResponseDto.toDomain(): GoodsCategory =
-    GoodsCategory(
+fun GoodsCategoryResponseDto.toDomain(): ProductCategory =
+    ProductCategory(
         nickname = nickname,
         mainArtist = mainArtist,
         mainArtistId = mainArtistId,

@@ -8,9 +8,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
-import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsCategory
-import com.poti.android.presentation.party.goodsfilter.navigation.navigateToGoodsPartyList
 import com.poti.android.presentation.party.home.HomeRoute
+import com.poti.android.presentation.party.product.navigation.navigateToProductCategory
+import com.poti.android.presentation.party.product.navigation.navigateToProductPartyList
 import kotlinx.serialization.Serializable
 
 sealed interface HomeRoute : Route {
@@ -25,8 +25,8 @@ fun NavGraphBuilder.homeNavGraph(
     composable<HomeRoute.Home> {
         HomeRoute(
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
-            onNavigateToGoodsPartyList = navController::navigateToGoodsPartyList,
-            onNavigateToMyArtistCategory = navController::navigateToGoodsCategory,
+            onNavigateToGoodsPartyList = navController::navigateToProductPartyList,
+            onNavigateToMyArtistCategory = navController::navigateToProductCategory,
             modifier = Modifier.padding(paddingValues),
         )
     }

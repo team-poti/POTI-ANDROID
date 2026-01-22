@@ -1,9 +1,9 @@
-package com.poti.android.presentation.party.goodsfilter
+package com.poti.android.presentation.party.product
 
-import com.poti.android.domain.model.party.GoodsCategory
 import com.poti.android.domain.model.party.GroupItem
+import com.poti.android.domain.model.party.ProductCategory
 
-val dummyGoodsCategory = GoodsCategory(
+val dummyProductCategory = ProductCategory(
     nickname = "포티",
     mainArtist = "아이브",
     mainArtistId = 1L,

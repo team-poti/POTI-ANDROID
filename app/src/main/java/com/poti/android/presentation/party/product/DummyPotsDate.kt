@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter
+package com.poti.android.presentation.party.product
 
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
@@ -10,7 +10,7 @@ val dummyProductPartyList = ProductPartyList(
         PartySummary(
             partyId = 1L,
             price = 21300,
-            goodsImageUrl = "",
+            productImageUrl = "",
             currentCount = 3,
             totalCount = 5,
             availableMembers = listOf("원영", "유진"),
@@ -21,7 +21,7 @@ val dummyProductPartyList = ProductPartyList(
         PartySummary(
             partyId = 2L,
             price = 21300,
-            goodsImageUrl = "",
+            productImageUrl = "",
             currentCount = 6,
             totalCount = 6,
             availableMembers = listOf("원영", "유진"),
@@ -32,7 +32,7 @@ val dummyProductPartyList = ProductPartyList(
         PartySummary(
             partyId = 3L,
             price = 21300,
-            goodsImageUrl = "",
+            productImageUrl = "",
             currentCount = 1,
             totalCount = 4,
             availableMembers = listOf("원영", "유진"),

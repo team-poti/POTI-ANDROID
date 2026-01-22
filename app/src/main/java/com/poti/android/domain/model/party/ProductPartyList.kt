@@ -9,7 +9,7 @@ data class ProductPartyList(
 data class PartySummary(
     val partyId: Long,
     val price: Int,
-    val goodsImageUrl: String,
+    val productImageUrl: String,
     val currentCount: Int,
     val totalCount: Int,
     val availableMembers: List<String>,
