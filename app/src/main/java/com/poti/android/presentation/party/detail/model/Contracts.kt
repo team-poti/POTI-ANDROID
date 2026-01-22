@@ -4,6 +4,7 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.extension.getSuccessDataOrNull
+import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.domain.model.party.PartyDetail
@@ -51,7 +52,7 @@ data class PartyDetailUiState(
         get() {
             val memberPriceSum = selectedMembers.sumOf { it.price?.replace(",", "")?.toIntOrNull() ?: 0 }
             val deliveryPrice = selectedDelivery?.price?.replace(",", "")?.toIntOrNull() ?: 0
-            return (memberPriceSum + deliveryPrice).toString()
+            return (memberPriceSum + deliveryPrice).toMoneyString()
         }
 
     val isBottomSheetButtonEnable: Boolean

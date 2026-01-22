@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.create
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -65,6 +66,7 @@ private fun PartyArtistSelectScreen(
 ) {
     Scaffold(
         modifier = modifier,
+        contentWindowInsets = WindowInsets(),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onPopBackStack,
