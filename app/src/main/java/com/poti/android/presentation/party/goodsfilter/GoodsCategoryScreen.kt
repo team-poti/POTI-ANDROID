@@ -37,7 +37,7 @@ import com.poti.android.presentation.party.home.component.GoodsLargeCard
 fun GoodsCategoryRoute(
     artistId: Long,
     onPopBackStack: () -> Unit,
-    onNavigateToPartyCreate: () -> Unit,
+    onNavigateToPartyCreate: (Long?) -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GoodsCategoryViewModel = hiltViewModel(),
@@ -47,7 +47,7 @@ fun GoodsCategoryRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
-            GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
+            is GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
             is GoodsCategoryUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(artistId, effect.title)
         }
     }

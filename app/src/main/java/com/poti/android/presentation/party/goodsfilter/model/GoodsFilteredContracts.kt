@@ -90,7 +90,7 @@ sealed interface GoodsFilterUiIntent : UiIntent {
 sealed interface GoodsFilterUiEffect : UiEffect {
     data object NavigateBack : GoodsFilterUiEffect
 
-    data object NavigateToPartyCreate : GoodsFilterUiEffect
+    data class NavigateToPartyCreate(val artistName: String, val productName: String) : GoodsFilterUiEffect
 
     data class NavigateToPartyDetail(val partyId: Long) : GoodsFilterUiEffect
 }
