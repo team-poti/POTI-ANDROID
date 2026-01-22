@@ -126,7 +126,6 @@ private fun GoodsFilteredPartyListScreen(
         modifier = modifier,
         contentWindowInsets = WindowInsets(),
         containerColor = PotiTheme.colors.white,
-        contentWindowInsets = WindowInsets(0),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,

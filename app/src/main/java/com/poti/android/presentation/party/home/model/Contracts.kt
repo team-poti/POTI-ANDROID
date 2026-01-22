@@ -14,7 +14,7 @@ data class HomeUiState(
 sealed interface HomeUiIntent : UiIntent {
     data class OnMyArtistCategoryClick(val artistId: Long) : HomeUiIntent
 
-    data class OnProductCardClick(val artistId: Long) : HomeUiIntent
+    data class OnProductCardClick(val artistId: Long, val title: String) : HomeUiIntent
 
     data object OnFloatingClick : HomeUiIntent
 

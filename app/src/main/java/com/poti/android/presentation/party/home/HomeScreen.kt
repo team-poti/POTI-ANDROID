@@ -35,7 +35,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 @Composable
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToGoodsPartyList: (Long) -> Unit,
+    onNavigateToGoodsPartyList: (Long, String) -> Unit,
     onNavigateToMyArtistCategory: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
