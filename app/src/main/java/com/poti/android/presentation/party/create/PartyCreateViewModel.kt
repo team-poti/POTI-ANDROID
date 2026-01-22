@@ -1,6 +1,8 @@
 package com.poti.android.presentation.party.create
 
+import android.util.Log
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -44,6 +46,7 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
@@ -52,7 +55,10 @@ class PartyCreateViewModel @Inject constructor(
 
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
-            CreateUiIntent.InitializeScreen -> initializeDeliveryOptions()
+            is CreateUiIntent.InitializeScreen -> {
+                initializeDeliveryOptions()
+                autoFillParams(intent.artistId, intent.artistName, intent.productName)
+            }
 
             CreateUiIntent.CleanScreen -> updateState { CreateUiState() }
 
@@ -191,6 +197,28 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
+    private fun autoFillParams(
+        artistId: Long?,
+        artistName: String?,
+        productName: String?,
+    ) {
+        Log.d("CREATE_VIEWMODEL", "autoFillParams 호출 👽")
+
+        if (artistId == null || artistName == null || productName == null) {
+            Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 파라미터 모두 null")
+            return
+        }
+
+        Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 초기값 자동완성 시작")
+        val initialArtist = ArtistSearchResult(
+            artistId = artistId,
+            name = artistName,
+        )
+
+        handleArtistSelect(initialArtist)
+        updateState { copy(productName = productName, neverShowSearchEmptyScreen = true) }
+    }
+
     private fun initializeDeliveryOptions() {
         viewModelScope.launch {
             getDeliveryOptionsUseCase()
@@ -264,6 +292,7 @@ class PartyCreateViewModel @Inject constructor(
             copy(
                 isDirty = true,
                 artistSearchKeyword = newValue,
+                neverShowSearchEmptyScreen = false,
             )
         }
 

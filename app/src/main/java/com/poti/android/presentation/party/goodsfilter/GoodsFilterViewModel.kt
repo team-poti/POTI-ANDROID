@@ -33,7 +33,12 @@ class GoodsFilterViewModel @Inject constructor(
         when (intent) {
             GoodsFilterUiIntent.LoadGoodsPots -> loadPartyList()
             GoodsFilterUiIntent.OnBackClick -> sendEffect(GoodsFilterUiEffect.NavigateBack)
-            GoodsFilterUiIntent.OnFloatingClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyCreate)
+            GoodsFilterUiIntent.OnFloatingClick -> sendEffect(
+                GoodsFilterUiEffect.NavigateToPartyCreate(
+                    artistName = uiState.value.cachedSubTitle,
+                    productName = title,
+                ),
+            )
             is GoodsFilterUiIntent.OnPartyClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.partyId))
             GoodsFilterUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()

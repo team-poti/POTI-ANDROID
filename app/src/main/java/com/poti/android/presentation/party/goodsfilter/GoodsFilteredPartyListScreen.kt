@@ -43,7 +43,7 @@ import com.poti.android.presentation.party.goodsfilter.model.ratingText
 fun GoodsFilteredPartyListRoute(
     artistId: Long,
     onPopBackStack: () -> Unit,
-    onNavigateToPartyCreate: () -> Unit,
+    onNavigateToPartyCreate: (Long, String, String) -> Unit,
     onNavigateToPartyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GoodsFilterViewModel = hiltViewModel(),
@@ -53,7 +53,7 @@ fun GoodsFilteredPartyListRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             GoodsFilterUiEffect.NavigateBack -> onPopBackStack()
-            GoodsFilterUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
+            is GoodsFilterUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId, effect.artistName, effect.productName)
             is GoodsFilterUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.partyId)
         }
     }
