@@ -4,7 +4,9 @@ import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.data.remote.dto.request.party.PartyJoinRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
+import com.poti.android.data.remote.dto.response.history.RecruiterDetailDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
+import com.poti.android.data.remote.dto.response.party.MyRecruitListDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
@@ -39,4 +41,10 @@ class PartyRemoteDataSource @Inject constructor(
 
     suspend fun postPartyJoin(partyJoinRequest: PartyJoinRequestDto): BaseResponse<PartyJoinResponseDto> =
         partyService.postPartyJoin(partyJoinRequest = partyJoinRequest)
+
+    suspend fun getMyRecruitList(status: String): BaseResponse<MyRecruitListDto> =
+        partyService.getMyRecruitList(status)
+
+    suspend fun getRecruitDetail(postId: Long): BaseResponse<RecruiterDetailDto> =
+        partyService.getRecruitDetail(postId)
 }

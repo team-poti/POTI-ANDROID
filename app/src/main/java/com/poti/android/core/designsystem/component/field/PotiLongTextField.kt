@@ -115,7 +115,7 @@ private fun PotiLongTextFieldWithLabelPreview() {
         PotiLongTextField(
             value = text,
             onValueChanged = { text = it },
-            placeholder = "플레이스홀더",
+            placeholder = "플레이스홀더\n플레이스",
             label = "라벨",
         )
     }

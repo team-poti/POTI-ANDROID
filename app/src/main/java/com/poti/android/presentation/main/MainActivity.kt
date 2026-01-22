@@ -1,5 +1,6 @@
 package com.poti.android.presentation.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,42 +11,54 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.manager.AuthSessionManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
+    @Inject
+    lateinit var authSessionManager: AuthSessionManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        var isSplashTimeFinished = false
-
-        lifecycleScope.launch {
-            delay(2000)
-            isSplashTimeFinished = true
+        splashScreen.setKeepOnScreenCondition {
+            viewModel.startDestination.value == null
         }
 
-        splashScreen.setKeepOnScreenCondition {
-            viewModel.startDestination.value == null || !isSplashTimeFinished
+        lifecycleScope.launch {
+            authSessionManager.logoutEvent.collect {
+                handleLogoutNavigation()
+            }
         }
 
         enableEdgeToEdge()
+
         setContent {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
-            val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+            val targetDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
             PotiTheme {
-                startDestination?.let { destination ->
+                targetDestination?.let { destination ->
                     MainScreen(
-                        startDestination = destination,
+                        targetDestination = destination,
                         navigator = mainNavigator,
                     )
                 }
             }
         }
+    }
+
+    private fun handleLogoutNavigation() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
+        finish()
     }
 }

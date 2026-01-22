@@ -1,15 +1,19 @@
 package com.poti.android.presentation.onboarding
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
@@ -55,6 +59,14 @@ private fun OnboardingGuideScreen(
                 style = PotiTheme.typography.title18sb,
                 color = PotiTheme.colors.black,
                 modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
+            )
+
+            Image(
+                painter = painterResource(R.drawable.img_onboarding),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = screenHeightDp(44.dp)),
             )
         },
     )

@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.list
 
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,13 +37,6 @@ import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.mapper.color
 import com.poti.android.presentation.history.mapper.labelResId
 import com.poti.android.presentation.history.mapper.statusColor
-import kotlinx.serialization.Serializable
-
-@Serializable
-enum class HistoryMode {
-    RECRUIT,
-    PARTICIPATION,
-}
 
 @Composable
 fun HistoryListRoute(
@@ -65,7 +60,7 @@ fun HistoryListRoute(
         uiState = uiState,
         onBackClick = { viewModel.processIntent(HistoryListUiIntent.OnBackClick) },
         onSwitchModeClick = { viewModel.processIntent(HistoryListUiIntent.OnSwitchModeClick) },
-        onTabSelected = { tab ->
+        onTabChanged = { tab ->
             viewModel.processIntent(HistoryListUiIntent.OnTabSelected(tab))
         },
         onCardClick = { id ->
@@ -80,7 +75,7 @@ private fun HistoryListScreen(
     uiState: HistoryListUiState,
     onBackClick: () -> Unit,
     onSwitchModeClick: () -> Unit,
-    onTabSelected: (PotiHeaderTabType) -> Unit,
+    onTabChanged: (PotiHeaderTabType) -> Unit,
     onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -97,13 +92,24 @@ private fun HistoryListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .pointerInput(uiState.selectedTab) {
+                    detectHorizontalDragGestures { change, dragAmount ->
+                        change.consume()
+
+                        if (dragAmount < 0 && uiState.selectedTab != PotiHeaderTabType.ENDED) {
+                            onTabChanged(PotiHeaderTabType.ENDED)
+                        } else if (dragAmount > 0 && uiState.selectedTab != PotiHeaderTabType.ONGOING) {
+                            onTabChanged(PotiHeaderTabType.ONGOING)
+                        }
+                    }
+                },
         ) {
             PotiHeaderSection(
                 selectedTab = uiState.selectedTab,
                 ongoingCount = uiState.ongoingCount,
                 endedCount = uiState.endedCount,
-                onTabSelected = onTabSelected,
+                onTabSelected = onTabChanged,
             )
 
             if (uiState.items.isEmpty()) {
@@ -172,7 +178,7 @@ private fun HistoryListScreenPreview_Ongoing() {
             ),
             onBackClick = {},
             onSwitchModeClick = {},
-            onTabSelected = {},
+            onTabChanged = {},
             onCardClick = {},
         )
     }
@@ -195,7 +201,7 @@ private fun HistoryListScreenPreview_Ended() {
             ),
             onBackClick = {},
             onSwitchModeClick = {},
-            onTabSelected = {},
+            onTabChanged = {},
             onCardClick = {},
         )
     }

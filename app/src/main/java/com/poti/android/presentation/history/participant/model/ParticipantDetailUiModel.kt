@@ -1,78 +1,79 @@
 package com.poti.android.presentation.history.participant.model
 
-import androidx.annotation.StringRes
-import com.poti.android.core.designsystem.component.display.PotiItemOptionType
+import com.poti.android.domain.model.history.MemberPayment
+import com.poti.android.domain.model.history.ParticipantDetail
+import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.type.ParticipantStatusType
-import com.poti.android.presentation.history.component.StateLabelStage
-import com.poti.android.presentation.history.component.StateLabelStatus
-import com.poti.android.presentation.history.model.PartySummaryUiModel
-import com.poti.android.presentation.history.model.ProgressUiModel
+import com.poti.android.domain.type.PartyStatusType
 
 data class ParticipantDetailUiModel(
-    val recruitId: Long,
-    val userState: ParticipantStatusType,
-    val partySummaryInfo: PartySummaryUiModel,
-    val progressInfo: ProgressUiModel,
-    val depositInfo: DepositInfoUiModel,
-    val shippingInfo: ShippingInfoUiModel,
-    val recruiterName: String,
-    val recruiterProfileUrl: String,
-    val recruiterRating: String,
-    @StringRes val topBarTitleResId: Int,
-    val actionButtonState: ActionButtonState,
-    val activeModal: ParticipantDetailModalUiModel,
-    val isTrackingInfoVisible: Boolean,
-    val isParticipantStatusVisible: Boolean,
+    val participationId: Long,
+    val partyId: Long,
+    val orderNumber: String,
+    val partySummary: PartySummary,
+    val memberPayments: List<MemberPayment>,
+    val paymentInfo: PaymentInfoUiModel,
+    val shippingInfo: ParticipantShippingUiModel,
+    val buttonState: ParticipantButtonState,
 )
 
-sealed interface ActionButtonState {
-    data object Gone : ActionButtonState
-
-    data class Visible(
-        @StringRes val textResId: Int,
-        val actionType: ParticipantDetailActionType,
-    ) : ActionButtonState
-}
-
-enum class ParticipantDetailActionType {
-    OPEN_DEPOSIT_INPUT,
-    OPEN_DELIVERY_CONFIRM,
-}
-
-sealed interface ParticipantDetailModalUiModel {
-    data object None : ParticipantDetailModalUiModel
-
-    data object DepositInput : ParticipantDetailModalUiModel
-
-    data object DeliveryConfirm : ParticipantDetailModalUiModel
-
-    data class DeliveryReview(
-        val recruiterName: String,
-        val recruiterProfileUrl: String,
-        val recruiterRating: String,
-    ) : ParticipantDetailModalUiModel
-}
-
-data class DepositInfoUiModel(
-    val items: List<DepositItemUiModel>,
+data class PaymentInfoUiModel(
+    val shippingFee: Int,
     val totalAmount: Int,
-    val accountNumber: String?,
-    val dueDate: String?,
-    val stage: StateLabelStage,
-    val status: StateLabelStatus,
+    val depositStatus: ParticipantStatusType,
+    val accountInfo: String,
+    val depositDeadline: String?,
 )
 
-data class DepositItemUiModel(
-    val name: String,
-    val price: Int,
-    val type: PotiItemOptionType,
-)
-
-data class ShippingInfoUiModel(
-    val recipient: String,
-    val zipcode: String,
-    val address: String,
-    val phone: String,
-    val deliveryMethod: String,
+data class ParticipantShippingUiModel(
+    val shippingMethod: String,
+    val deliveryTrackingInfo: String,
+    val receiver: String,
+    val addressInfo: String,
+    val carrier: String?,
     val trackingNumber: String?,
+    val shippingStatus: ParticipantStatusType,
 )
+
+fun ParticipantDetail.toUiModel(): ParticipantDetailUiModel {
+    return ParticipantDetailUiModel(
+        participationId = this.participationId,
+        partyId = this.partyId,
+        orderNumber = this.orderNumber,
+        partySummary = this.partySummary,
+        memberPayments = this.memberPayments,
+        paymentInfo = PaymentInfoUiModel(
+            shippingFee = this.paymentInfo.shippingFee,
+            totalAmount = this.paymentInfo.totalAmount,
+            depositStatus = this.paymentInfo.depositStatus,
+            accountInfo = if (this.paymentInfo.bank != null && this.paymentInfo.accountNumber != null) {
+                "${this.paymentInfo.bank} ${this.paymentInfo.accountNumber} ${this.shippingInfo.receiver}"
+            } else {
+                "-"
+            },
+            depositDeadline = this.paymentInfo.depositDeadline,
+        ),
+        shippingInfo = ParticipantShippingUiModel(
+            shippingMethod = this.shippingInfo.shippingMethod,
+            deliveryTrackingInfo = if (this.shippingInfo.trackingNumber != null) {
+                "${this.shippingInfo.shippingMethod} ${this.shippingInfo.trackingNumber}"
+            } else {
+                this.shippingInfo.shippingMethod
+            },
+            receiver = this.shippingInfo.receiver,
+            addressInfo = "${this.shippingInfo.receiver}\n(${this.shippingInfo.zipcode}) ${this.shippingInfo.address}\n${this.shippingInfo.phone}",
+            carrier = this.shippingInfo.carrier,
+            trackingNumber = this.shippingInfo.trackingNumber,
+            shippingStatus = this.shippingInfo.shippingStatus,
+        ),
+        buttonState = when {
+            this.partySummary.partyStatus == PartyStatusType.CLOSED && this.paymentInfo.depositStatus == ParticipantStatusType.WAIT_PAY -> {
+                ParticipantButtonState.DEPOSIT_DONE
+            }
+            this.shippingInfo.shippingStatus == ParticipantStatusType.SHIPPED -> {
+                ParticipantButtonState.DELIVERY_RECEIVED
+            }
+            else -> ParticipantButtonState.NONE
+        },
+    )
+}

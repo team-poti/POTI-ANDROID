@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.party.create.navigation.PartyCreateRoute
 import com.poti.android.presentation.party.detail.PartyDetailRoute
 import com.poti.android.presentation.party.detail.PartyJoinRoute
 import com.poti.android.presentation.user.profile.navigation.navigateToProfile
@@ -36,6 +37,14 @@ fun NavController.navigateToPartyJoin() {
 fun NavController.reloadPartyDetail(partyId: Long) {
     navigate(PartyDetailGraph(partyId)) {
         popUpTo<PartyDetailGraph> {
+            inclusive = true
+        }
+    }
+}
+
+fun NavController.navigateToPartyDetailFromCreate(partyId: Long) {
+    navigate(PartyDetailGraph(partyId)) {
+        popUpTo<PartyCreateRoute.Create> {
             inclusive = true
         }
     }
