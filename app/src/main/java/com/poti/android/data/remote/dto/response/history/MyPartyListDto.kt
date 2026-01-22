@@ -1,4 +1,4 @@
-package com.poti.android.data.remote.dto.response.participant
+package com.poti.android.data.remote.dto.response.history
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
 package com.poti.android.data.mapper.participation
 
-import com.poti.android.data.remote.dto.response.participant.MyPartyListDto
-import com.poti.android.data.remote.dto.response.participant.ParticipantDto
+import com.poti.android.data.remote.dto.response.history.MyPartyListDto
+import com.poti.android.data.remote.dto.response.history.ParticipantDto
 import com.poti.android.domain.model.history.MyParty
 import com.poti.android.domain.model.history.MyPartyList
 import com.poti.android.domain.type.HistoryListType
