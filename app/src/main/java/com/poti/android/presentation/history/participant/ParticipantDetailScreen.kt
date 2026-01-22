@@ -16,6 +16,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
@@ -27,22 +28,53 @@ import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.participant.component.DeliveryStatusContent
 import com.poti.android.presentation.history.participant.component.DepositStatusContent
+import com.poti.android.presentation.history.participant.component.HistoryDeliveryConfirmModal
+import com.poti.android.presentation.history.participant.component.HistoryDeliveryReviewModal
+import com.poti.android.presentation.history.participant.component.HistoryDepositBottomSheet
 import com.poti.android.presentation.history.participant.model.ParticipantButtonState
+import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
+import com.poti.android.presentation.history.participant.model.ParticipantDetailUiIntent
 
 @Composable
 fun ParticipantDetailRoute(
     onPopBackStack: () -> Unit,
+    onNavigateToPartyDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ParticipantViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            ParticipantDetailUiEffect.NavigateBack -> onPopBackStack()
+            is ParticipantDetailUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.partyId)
+        }
+    }
+
     uiState.participantDetailState.onSuccess { participantDetail ->
         ParticipantDetailScreen(
             participantDetail = participantDetail,
+            overlayState = uiState.overlayState,
             onBackClick = onPopBackStack,
-            onDetailClick = {},
-            onActionButtonClick = {},
+            onDetailClick = {
+                // TODO: partyId가 모델에 추가되면 사용 (현재는 임시로 detail.participationId 사용하거나 수정 필요)
+                viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.participationId))
+            },
+            onActionButtonClick = { buttonState ->
+                if (buttonState == ParticipantButtonState.DEPOSIT_DONE) {
+                    viewModel.processIntent(ParticipantDetailUiIntent.OnDepositCompleteClick)
+                } else {
+                    viewModel.processIntent(ParticipantDetailUiIntent.OnDeliveredClick)
+                }
+            },
+            onOverlayClose = { viewModel.processIntent(ParticipantDetailUiIntent.CloseOverlay) },
+            onSubmitDeposit = { depositor, depositTime ->
+                viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime))
+            },
+            onConfirmDelivery = { viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery) },
+            onSubmitReview = { rating -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitReview(rating)) },
+            onSkipReview = { viewModel.processIntent(ParticipantDetailUiIntent.SkipReview) },
             modifier = modifier,
         )
     }
@@ -51,11 +83,18 @@ fun ParticipantDetailRoute(
 @Composable
 private fun ParticipantDetailScreen(
     participantDetail: ParticipantDetailUiModel,
+    overlayState: ParticipantDetailOverlayState,
     onBackClick: () -> Unit,
     onDetailClick: () -> Unit,
     onActionButtonClick: (ParticipantButtonState) -> Unit,
+    onOverlayClose: () -> Unit,
+    onSubmitDeposit: (String, String) -> Unit,
+    onConfirmDelivery: () -> Unit,
+    onSubmitReview: (Int) -> Unit,
+    onSkipReview: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     Column(modifier = modifier.fillMaxSize()) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
@@ -111,7 +150,9 @@ private fun ParticipantDetailScreen(
                     text = stringResource(R.string.history_deposit_done_button),
                     onClick = { onActionButtonClick(ParticipantButtonState.DEPOSIT_DONE) },
                     type = ActionButtonType.SECONDARY_MAIN,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
                 )
             }
             ParticipantButtonState.DELIVERY_RECEIVED -> {
@@ -119,10 +160,38 @@ private fun ParticipantDetailScreen(
                     text = stringResource(R.string.history_delivery_done_button),
                     onClick = { onActionButtonClick(ParticipantButtonState.DELIVERY_RECEIVED) },
                     type = ActionButtonType.SECONDARY_MAIN,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
                 )
             }
             ParticipantButtonState.NONE -> {}
         }
+    }
+
+    when (overlayState) {
+        ParticipantDetailOverlayState.DepositBottomSheet -> {
+            HistoryDepositBottomSheet(
+                onDismissRequest = onOverlayClose,
+                onConfirmClick = onSubmitDeposit,
+            )
+        }
+        ParticipantDetailOverlayState.DeliveryConfirmModal -> {
+            HistoryDeliveryConfirmModal(
+                onConfirm = onConfirmDelivery,
+                onDismiss = onOverlayClose,
+            )
+        }
+        is ParticipantDetailOverlayState.DeliveryReviewModal -> {
+            HistoryDeliveryReviewModal(
+                recruiterName = overlayState.recruiterName,
+                recruiterProfileUrl = overlayState.recruiterProfileUrl,
+                partnerRating = overlayState.partnerRating,
+                onConfirm = onSubmitReview,
+                onSkip = onSkipReview,
+                onDismissRequest = onOverlayClose,
+            )
+        }
+        ParticipantDetailOverlayState.None -> {}
     }
 }

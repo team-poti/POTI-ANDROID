@@ -72,6 +72,7 @@ fun NavGraphBuilder.historyNavGraph(
     composable<HistoryRoute.ParticipantDetail> {
         ParticipantDetailRoute(
             onPopBackStack = navController::popBackStack,
+            onNavigateToPartyDetail = navController::navigateToPartyDetail,
             modifier = Modifier.padding(paddingValues),
         )
     }

@@ -4,6 +4,7 @@ import com.poti.android.domain.type.ParticipantStatusType
 
 data class ParticipantDetail(
     val participationId: Long,
+    val partyId: Long,
     val orderNumber: String,
     val partySummary: PartySummary,
     val memberPayments: List<MemberPayment>,

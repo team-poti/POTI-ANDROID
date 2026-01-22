@@ -7,6 +7,7 @@ import com.poti.android.presentation.history.participant.model.ParticipantButton
 
 data class ParticipantDetailUiModel(
     val participationId: Long,
+    val partyId: Long,
     val orderNumber: String,
     val partySummary: PartySummary,
     val memberPayments: List<MemberPayment>,
@@ -36,6 +37,7 @@ data class ParticipantShippingUiModel(
 fun ParticipantDetail.toUiModel(): ParticipantDetailUiModel {
     return ParticipantDetailUiModel(
         participationId = this.participationId,
+        partyId = this.partyId,
         orderNumber = this.orderNumber,
         partySummary = this.partySummary,
         memberPayments = this.memberPayments,
