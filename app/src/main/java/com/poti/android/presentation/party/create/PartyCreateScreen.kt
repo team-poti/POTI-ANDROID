@@ -65,6 +65,9 @@ fun PartyCreateRoute(
     onNavigateToDetail: (Long) -> Unit,
     viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
+    artistId: Long? = null,
+    artistName: String? = null,
+    productName: String? = null,
 ) {
     val context = LocalContext.current
 
@@ -79,7 +82,7 @@ fun PartyCreateRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.processIntent(CreateUiIntent.InitializeScreen)
+        viewModel.processIntent(CreateUiIntent.InitializeScreen(artistId, artistName, productName))
     }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->

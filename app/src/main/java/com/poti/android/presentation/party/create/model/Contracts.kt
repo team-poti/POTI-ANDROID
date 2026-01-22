@@ -76,7 +76,7 @@ data class CreateUiState(
 }
 
 sealed interface CreateUiIntent : UiIntent {
-    data object InitializeScreen : CreateUiIntent
+    data class InitializeScreen(val artistId: Long?, val artistName: String?, val productName: String?) : CreateUiIntent
 
     data object CleanScreen : CreateUiIntent
 
