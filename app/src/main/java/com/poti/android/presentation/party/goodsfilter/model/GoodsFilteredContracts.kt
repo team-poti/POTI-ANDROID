@@ -23,7 +23,7 @@ enum class PartySortType(
 data class GoodsFilterUiState(
     val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
     val cachedTitle: String = "",
-    val cacheedSubTitle: String = "",
+    val cachedSubTitle: String = "",
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMembers: List<Member> = emptyList(),

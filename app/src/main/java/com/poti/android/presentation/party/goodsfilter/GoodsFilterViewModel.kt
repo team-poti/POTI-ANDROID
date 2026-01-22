@@ -88,7 +88,7 @@ class GoodsFilterViewModel @Inject constructor(
                 copy(
                     productPartyListInfo = ApiState.Success(partyList),
                     cachedTitle = partyList.partyTitle,
-                    cacheedSubTitle = partyList.artistName,
+                    cachedSubTitle = partyList.artistName,
                 )
             }
         }.onFailure { throwable ->

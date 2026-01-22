@@ -86,7 +86,7 @@ fun GoodsFilteredPartyListRoute(
     GoodsFilteredPartyListScreen(
         productPartyListInfo = uiState.productPartyListInfo.getSuccessDataOrNull() ?: ProductPartyList(
             partyTitle = uiState.cachedTitle,
-            artistName = uiState.cacheedSubTitle,
+            artistName = uiState.cachedSubTitle,
             partySummaries = emptyList(),
         ),
         partySortType = uiState.goodsPartySortType,
