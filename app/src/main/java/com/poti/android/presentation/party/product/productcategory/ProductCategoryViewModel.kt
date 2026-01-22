@@ -1,9 +1,11 @@
 package com.poti.android.presentation.party.product.productcategory
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.HomeRepository
+import com.poti.android.presentation.party.product.navigation.ProductRoute.ProductCategory
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiIntent
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiState
@@ -19,7 +21,7 @@ class ProductCategoryViewModel @Inject constructor(
     BaseViewModel<ProductCategoryUiState, ProductCategoryUiIntent, ProductCategoryUiEffect>(
             initialState = ProductCategoryUiState(),
         ) {
-        private val artistId: Long = checkNotNull(savedStateHandle["artistId"])
+        private val artistId: Long? = savedStateHandle.toRoute<ProductCategory>().artistId
 
         override fun processIntent(intent: ProductCategoryUiIntent) {
             when (intent) {

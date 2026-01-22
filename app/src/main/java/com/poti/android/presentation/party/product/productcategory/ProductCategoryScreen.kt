@@ -36,7 +36,7 @@ import com.poti.android.presentation.party.product.productcategory.model.Product
 
 @Composable
 fun ProductCategoryRoute(
-    artistId: Long,
+    artistId: Long?,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
     onNavigateToProductPartyList: (Long, String) -> Unit,
@@ -49,33 +49,22 @@ fun ProductCategoryRoute(
         when (effect) {
             ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
             is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
-            is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(artistId, effect.title)
+            is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(effect.artistId, effect.title)
         }
     }
 
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
+            title = if (artistId != null) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
-            onBackClick = {
-                viewModel.processIntent(ProductCategoryUiIntent.OnBackClick)
-            },
-            onFloatingClick = {
-                viewModel.processIntent(ProductCategoryUiIntent.OnFloatingClick)
-            },
-            onSortFilterClick = {
-                viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick)
-            },
-            onSortSelect = {
-                viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it))
-            },
-            onSortDismiss = {
-                viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss)
-            },
-            onCardClick = { artistId, title ->
-                viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title))
-            },
+            onBackClick = { viewModel.processIntent(ProductCategoryUiIntent.OnBackClick) },
+            onFloatingClick = { viewModel.processIntent(ProductCategoryUiIntent.OnFloatingClick) },
+            onSortFilterClick = { viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick) },
+            onSortSelect = { viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it)) },
+            onSortDismiss = { viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss) },
+            onCardClick = { artistId, title -> viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title)) },
             modifier = modifier,
         )
     }
@@ -83,6 +72,7 @@ fun ProductCategoryRoute(
 
 @Composable
 private fun ProductCategoryScreen(
+    title: String,
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
@@ -108,7 +98,7 @@ private fun ProductCategoryScreen(
         Column {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = stringResource(R.string.home_recommend_goods, productCategory.nickname),
+                title = title,
             )
 
             LazyColumn(
@@ -136,7 +126,7 @@ private fun ProductCategoryScreen(
                         title = groupItem.postTitle,
                         partyCount = groupItem.postCount,
                         tag = groupItem.tag,
-                        onClick = { id, title -> onCardClick(id, title) },
+                        onClick = { id, title -> onCardClick(groupItem.artistId, groupItem.postTitle) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
@@ -163,6 +153,7 @@ private fun ProductCategoryScreen(
 private fun ProductCategoryScreenPreview() {
     PotiTheme {
         ProductCategoryScreen(
+            title = "",
             productCategory = dummyProductCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,

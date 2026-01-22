@@ -23,7 +23,7 @@ sealed interface ProductRoute : Route {
 
     @Serializable
     data class ProductCategory(
-        val artistId: Long,
+        val artistId: Long?,
     ) : ProductRoute
 }
 
@@ -34,7 +34,7 @@ fun NavController.navigateToProductPartyList(
     navigate(ProductRoute.ProductPartyList(artistId, title))
 }
 
-fun NavController.navigateToProductCategory(artistId: Long) {
+fun NavController.navigateToProductCategory(artistId: Long?) {
     navigate(ProductRoute.ProductCategory(artistId))
 }
 
@@ -45,7 +45,6 @@ fun NavGraphBuilder.productNavGraph(
 ) {
     composable<ProductRoute.ProductCategory> { backStackEntry ->
         val artistId = backStackEntry.toRoute<ProductRoute.ProductCategory>().artistId
-
         ProductCategoryRoute(
             artistId = artistId,
             onPopBackStack = navController::popBackStack,

@@ -36,7 +36,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
-    onNavigateToMyArtistCategory: (Long) -> Unit,
+    onNavigateToProductCategory: (Long?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -46,7 +46,7 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
-            is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToMyArtistCategory(effect.artistId)
+            is HomeUiEffect.NavigateToProductCategory -> onNavigateToProductCategory(effect.artistId)
         }
     }
 
@@ -55,6 +55,7 @@ fun HomeRoute(
             homeContent = homeContent,
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
+            onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
             onProductCardClick = { artistId, title -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title)) },
             modifier = modifier,
         )
@@ -66,6 +67,7 @@ private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
     onMyArtistCategoryClick: (Long) -> Unit,
+    onOtherProductCategoryClick: () -> Unit,
     onProductCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -114,7 +116,7 @@ private fun HomeScreen(
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
-                    onMoreClick = onMyArtistCategoryClick,
+                    onMoreClick = { onOtherProductCategoryClick() },
                     onCardClick = onProductCardClick,
                 )
             }
@@ -149,6 +151,7 @@ private fun HomeScreenPreview() {
             ),
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
+            onOtherProductCategoryClick = {},
             onProductCardClick = { _, _ -> },
         )
     }
