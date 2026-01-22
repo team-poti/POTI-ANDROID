@@ -305,7 +305,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_deadline),
                     modifier = Modifier
                         .animateItem(
-                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing)
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
@@ -325,7 +325,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_description),
                     modifier = Modifier
                         .animateItem(
-                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing)
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
@@ -341,7 +341,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_account_number),
                     modifier = Modifier
                         .animateItem(
-                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing)
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
@@ -359,7 +359,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_bank),
                     modifier = Modifier
                         .animateItem(
-                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing)
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 24.dp),

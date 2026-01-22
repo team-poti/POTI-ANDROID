@@ -1,8 +1,6 @@
 package com.poti.android.presentation.party.create
 
-import android.util.Log
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -47,8 +45,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     private val artistSearchKeywordForDebounce = MutableStateFlow("")
     private val productSearchKeywordForDebounce = MutableStateFlow("")
 
@@ -268,7 +266,7 @@ class PartyCreateViewModel @Inject constructor(
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
                             neverShowHint = errorBefore,
-                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError
+                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
                         )
                     }
                 }
@@ -325,7 +323,7 @@ class PartyCreateViewModel @Inject constructor(
                     isDirty = true,
                     productName = newValue,
                     productError = if (newValue.isNotBlank()) null else this.productError,
-                    selectedProductName = ""
+                    selectedProductName = "",
                 )
             }
             productSearchKeywordForDebounce.value = newValue
