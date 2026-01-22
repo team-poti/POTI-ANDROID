@@ -274,8 +274,8 @@ private fun PartyCreateScreen(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_search),
                             contentDescription = null,
-                            tint = PotiTheme.colors.black,
-                            modifier = Modifier.size(18.dp),
+                            tint = PotiTheme.colors.gray700,
+                            modifier = Modifier.size(24.dp),
                         )
                     },
                 )

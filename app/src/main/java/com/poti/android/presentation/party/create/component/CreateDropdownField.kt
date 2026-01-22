@@ -98,7 +98,7 @@ fun <T> CreateDropdownField(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_search),
                     contentDescription = null,
                     tint = PotiTheme.colors.gray700,
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(24.dp),
                 )
             }
         )
