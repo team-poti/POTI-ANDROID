@@ -23,7 +23,7 @@ sealed interface ProductRoute : Route {
 
     @Serializable
     data class ProductCategory(
-        val artistId: Long?,
+        val artistId: Long? = null,
     ) : ProductRoute
 }
 

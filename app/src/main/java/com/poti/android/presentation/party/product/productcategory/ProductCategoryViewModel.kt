@@ -52,7 +52,7 @@ class ProductCategoryViewModel @Inject constructor(
 
                 homeRepository.getGoodsCategoryList(
                     page = 0,
-                    size = 10,
+                    size = 100,
                     sort = sortType.name,
                     artistId = artistId,
                 )

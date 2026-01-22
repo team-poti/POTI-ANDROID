@@ -66,8 +66,8 @@ fun HomeRoute(
 private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
-    onMyArtistCategoryClick: (Long) -> Unit,
-    onOtherProductCategoryClick: () -> Unit,
+    onMyArtistCategoryClick: (Long?) -> Unit,
+    onOtherProductCategoryClick: (Long?) -> Unit,
     onProductCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -116,7 +116,7 @@ private fun HomeScreen(
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
-                    onMoreClick = { onOtherProductCategoryClick() },
+                    onMoreClick = onOtherProductCategoryClick,
                     onCardClick = onProductCardClick,
                 )
             }
@@ -148,6 +148,8 @@ private fun HomeScreenPreview() {
                 ),
                 myGroupItems = fakeMyGroupItems,
                 otherGroupItems = fakeMyGroupItems,
+                mainArtist = null,
+                mainArtistId = null,
             ),
             onFloatingClick = { },
             onMyArtistCategoryClick = { },

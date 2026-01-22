@@ -8,5 +8,5 @@ data class OnboardingRequestDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("favoriteArtistId")
-    val favoriteArtistId: Long,
+    val favoriteArtistId: Long?,
 )

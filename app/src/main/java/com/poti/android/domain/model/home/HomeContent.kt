@@ -1,12 +1,12 @@
 package com.poti.android.domain.model.home
 
 data class HomeContent(
-    val nickname: String = "",
-    val mainArtist: String = "",
-    val mainArtistId: Long = 0L,
-    val myGroupItems: List<GroupItem> = emptyList(),
-    val otherGroupItems: List<GroupItem> = emptyList(),
-    val banners: List<Banner> = emptyList(),
+    val nickname: String,
+    val mainArtist: String?,
+    val mainArtistId: Long?,
+    val myGroupItems: List<GroupItem>,
+    val otherGroupItems: List<GroupItem>,
+    val banners: List<Banner>,
 )
 
 data class GroupItem(

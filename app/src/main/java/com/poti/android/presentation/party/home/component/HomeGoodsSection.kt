@@ -25,11 +25,11 @@ import com.poti.android.presentation.party.home.fakeMyGroupItems
 
 @Composable
 fun HomeGoodsSection(
-    artistId: Long,
+    artistId: Long?,
     @StringRes title: Int,
     nickname: String,
     groupItems: List<GroupItem>,
-    onMoreClick: (Long) -> Unit,
+    onMoreClick: (Long?) -> Unit,
     onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -6,7 +6,7 @@ import com.poti.android.domain.model.user.UserProfile
 interface UserRepository {
     suspend fun patchOnboarding(
         nickname: String,
-        favoriteArtistId: Long,
+        favoriteArtistId: Long?,
     ): Result<Unit>
 
     suspend fun postNicknameDuplicate(

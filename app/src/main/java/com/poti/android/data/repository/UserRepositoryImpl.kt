@@ -17,13 +17,15 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun patchOnboarding(
         nickname: String,
-        favoriteArtistId: Long,
+        favoriteArtistId: Long?,
     ): Result<Unit> = httpResponseHandler.safeApiCall {
         val requestDto = OnboardingRequestDto(
             nickname = nickname,
             favoriteArtistId = favoriteArtistId,
         )
         userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
+            .handleApiResponse()
+            .getOrThrow()
     }
 
     override suspend fun postNicknameDuplicate(nickname: String): Result<Boolean> =

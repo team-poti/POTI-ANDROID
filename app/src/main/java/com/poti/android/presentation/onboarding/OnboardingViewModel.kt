@@ -131,7 +131,9 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun handleSkipClick() {
+    private fun handleSkipClick() = launchScope {
+        userRepository.patchOnboarding(uiState.value.nickname, null)
+            .onSuccess { }
         updateState {
             copy(
                 selectedArtistId = null,
