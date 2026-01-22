@@ -39,7 +39,7 @@ fun GoodsCategoryRoute(
     artistId: Long,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToGoodsPartyList: (Long) -> Unit,
+    onNavigateToGoodsPartyList: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: GoodsCategoryViewModel = hiltViewModel(),
 ) {
@@ -49,7 +49,7 @@ fun GoodsCategoryRoute(
         when (effect) {
             GoodsCategoryUiEffect.NavigateBack -> onPopBackStack()
             GoodsCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            GoodsCategoryUiEffect.NavigateToGoodsFilter -> onNavigateToGoodsPartyList(artistId)
+            is GoodsCategoryUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(artistId, effect.title)
         }
     }
 
@@ -73,8 +73,8 @@ fun GoodsCategoryRoute(
             onSortDismiss = {
                 viewModel.processIntent(GoodsCategoryUiIntent.OnSortDismiss)
             },
-            onCardClick = {
-                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick)
+            onCardClick = { artistId, title ->
+                viewModel.processIntent(GoodsCategoryUiIntent.OnCardClick(artistId, title))
             },
             modifier = modifier,
         )
@@ -91,7 +91,7 @@ private fun GoodsCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (GoodsSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: () -> Unit,
+    onCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isSortBottomSheetVisible) {
@@ -141,10 +141,11 @@ private fun GoodsCategoryScreen(
                     title = groupItem.postTitle,
                     partyCount = groupItem.postCount,
                     tag = groupItem.tag,
-                    onClick = onCardClick, // TODO: [예림] 굿즈별 페이지로 이동; 타이틀, 아티스트 아이디
+                    onClick = { id, title -> onCardClick(id, title) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
+                    artistId = groupItem.artistId,
                 )
             }
             item {
@@ -167,7 +168,7 @@ private fun GoodsCategoryScreenPreview() {
             onSortFilterClick = {},
             onSortSelect = {},
             onSortDismiss = {},
-            onCardClick = {},
+            onCardClick = { _, _ -> },
         )
     }
 }

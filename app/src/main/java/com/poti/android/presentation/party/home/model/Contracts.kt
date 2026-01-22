@@ -26,5 +26,5 @@ sealed interface HomeUiEffect : UiEffect {
 
     data class NavigateToMyArtistCategory(val artistId: Long) : HomeUiEffect
 
-    data class NavigateToGoodsPartyList(val artistId: Long) : HomeUiEffect
+    data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 }

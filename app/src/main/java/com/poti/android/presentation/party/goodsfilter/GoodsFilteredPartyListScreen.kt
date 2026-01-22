@@ -19,20 +19,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.R
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.artist.Member
-import com.poti.android.domain.model.party.PartyList
 import com.poti.android.domain.model.party.PartySummary
+import com.poti.android.domain.model.party.ProductPartyList
+import com.poti.android.presentation.party.goodsfilter.component.FilteredSortBottomSheet
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
+import com.poti.android.presentation.party.goodsfilter.model.FilteredSortType
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
-import com.poti.android.presentation.party.goodsfilter.model.SortFilter
 import com.poti.android.presentation.party.goodsfilter.model.membersText
 import com.poti.android.presentation.party.goodsfilter.model.priceText
 import com.poti.android.presentation.party.goodsfilter.model.ratingText
@@ -56,39 +58,62 @@ fun GoodsFilteredPartyListRoute(
         }
     }
 
-    uiState.partyListInfo.onSuccess { potsInfo ->
-        GoodsFilteredPartyListScreen(
-            partyListInfo = potsInfo,
-            displayMembers = uiState.displayMembers,
-            selectedMember = uiState.selectedMember,
-            sortFilter = uiState.goodsSortFilter,
-            memberFilterText = uiState.memberFilterText,
-            onBackClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
-            },
-            onFloatingClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnFloatingClick)
-            },
-            onMemberFilterClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterClick)
-            },
-            onSortFilterClick = {
-                viewModel.processIntent(GoodsFilterUiIntent.OnSortFilterClick)
-            },
-            onCardClick = { potId ->
-                viewModel.processIntent(GoodsFilterUiIntent.OnPartyClick(potId))
-            },
-            modifier = modifier,
+    if (uiState.isMemberFilterBottomSheetVisible) {
+        MemberSelectBottomSheet(
+            title = R.string.goods_filter_member_select_label,
+            onDismiss = { viewModel.processIntent(GoodsFilterUiIntent.CloseMemberFilterBottomSheet) },
+            mainBtnText = R.string.action_button_done,
+            onMainBtnClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterDone) },
+            mainEnabled = uiState.isMemberBottomSheetToucehd,
+            subBtnText = R.string.action_button_refresh,
+            onSubBtnClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterRefresh) },
+            subEnabled = true,
+            members = uiState.allMemberNames,
+            selectedIndices = uiState.bottomSheetSelectedMembersIdices,
+            onMemberClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberSelect(it)) },
+            autoCloseSubBtn = false,
         )
     }
+
+    if (uiState.isSortFilterBottomSheetVisible) {
+        FilteredSortBottomSheet(
+            selectedSortType = uiState.goodsPartySortType,
+            onSelect = { viewModel.processIntent(GoodsFilterUiIntent.OnSortSelect(it)) },
+            onDismissRequest = { viewModel.processIntent(GoodsFilterUiIntent.CloseSortFilterBottomSheet) },
+        )
+    }
+
+    GoodsFilteredPartyListScreen(
+        productPartyListInfo = uiState.productPartyListInfo.getSuccessDataOrNull() ?: ProductPartyList(
+            partyTitle = uiState.cachedTitle,
+            artistName = uiState.cachedSubTitle,
+            partySummaries = emptyList(),
+        ),
+        partySortType = uiState.goodsPartySortType,
+        memberFilterText = uiState.memberFilterText,
+        onBackClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnBackClick)
+        },
+        onFloatingClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnFloatingClick)
+        },
+        onMemberFilterClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterClick)
+        },
+        onSortFilterClick = {
+            viewModel.processIntent(GoodsFilterUiIntent.OnSortFilterClick)
+        },
+        onCardClick = { potId ->
+            viewModel.processIntent(GoodsFilterUiIntent.OnPartyClick(potId))
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable
 private fun GoodsFilteredPartyListScreen(
-    partyListInfo: PartyList,
-    displayMembers: List<Member>,
-    selectedMember: List<Member>,
-    sortFilter: SortFilter,
+    productPartyListInfo: ProductPartyList,
+    partySortType: FilteredSortType,
     memberFilterText: String,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
@@ -101,11 +126,12 @@ private fun GoodsFilteredPartyListScreen(
         modifier = modifier,
         contentWindowInsets = WindowInsets(),
         containerColor = PotiTheme.colors.white,
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
-                title = partyListInfo.partyTitle,
-                subTitle = partyListInfo.artistName,
+                title = productPartyListInfo.partyTitle,
+                subTitle = productPartyListInfo.artistName,
             )
         },
         floatingActionButton = {
@@ -131,13 +157,13 @@ private fun GoodsFilteredPartyListScreen(
                     )
 
                     PotiSmallButton(
-                        text = stringResource(sortFilter.displayRes),
+                        text = stringResource(partySortType.displayRes),
                         onClick = onSortFilterClick,
                     )
                 }
             }
 
-            items(partyListInfo.partySummaries) { party ->
+            items(productPartyListInfo.partySummaries) { party ->
                 PartyCard(
                     potId = party.partyId,
                     profileImageUrl = party.profileImageUrl ?: "",
@@ -166,7 +192,7 @@ private fun GoodsFilteredPartyListScreen(
 @Composable
 private fun GoodsFilteredPartyListScreenPreveiw() {
     GoodsFilteredPartyListScreen(
-        partyListInfo = PartyList(
+        productPartyListInfo = ProductPartyList(
             partyTitle = "헤더 타이틀",
             artistName = "서브타이틀",
             partySummaries = listOf(
@@ -176,10 +202,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 5,
                     totalCount = 7,
-                    availableMembers = listOf(
-                        Member(1, "원영"),
-                        Member(2, "유진"),
-                    ),
+                    availableMembers = listOf("원영", "유진", "이서"),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,
@@ -190,19 +213,14 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                     goodsImageUrl = "",
                     currentCount = 6,
                     totalCount = 6,
-                    availableMembers = listOf(
-                        Member(1, "원영"),
-                        Member(2, "유진"),
-                    ),
+                    availableMembers = listOf("원영", "유진"),
                     profileImageUrl = "",
                     nickname = "닉네임",
                     rating = 1.2,
                 ),
             ),
         ),
-        displayMembers = emptyList(),
-        selectedMember = emptyList(),
-        sortFilter = SortFilter.LATEST,
+        partySortType = FilteredSortType.DEADLINE,
         memberFilterText = "",
         onBackClick = {},
         onFloatingClick = {},

@@ -45,7 +45,7 @@ fun HomeRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId)
+            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToMyArtistCategory(effect.artistId)
         }
     }
@@ -55,7 +55,7 @@ fun HomeRoute(
             homeContent = homeContent,
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
-            onProductCardClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId)) },
+            onProductCardClick = { artistId, title -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title)) },
             modifier = modifier,
         )
     }
@@ -66,7 +66,7 @@ private fun HomeScreen(
     homeContent: HomeContent,
     onFloatingClick: () -> Unit,
     onMyArtistCategoryClick: (Long) -> Unit,
-    onProductCardClick: (Long) -> Unit,
+    onProductCardClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -110,7 +110,7 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(28.dp))
 
                 HomeGoodsSection(
-                    artistId = 0L,
+                    artistId = homeContent.mainArtistId,
                     title = R.string.home_other_goods,
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
@@ -149,7 +149,7 @@ private fun HomeScreenPreview() {
             ),
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
-            onProductCardClick = { },
+            onProductCardClick = { _, _ -> },
         )
     }
 }

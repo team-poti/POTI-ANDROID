@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
         when (intent) {
             HomeUiIntent.OnFloatingClick -> sendEffect(HomeUiEffect.NavigateToPartyCreate)
             is HomeUiIntent.OnMyArtistCategoryClick -> sendEffect(HomeUiEffect.NavigateToMyArtistCategory(intent.artistId))
-            is HomeUiIntent.OnProductCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList(intent.artistId))
+            is HomeUiIntent.OnProductCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList(intent.artistId, intent.title))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
         }
     }

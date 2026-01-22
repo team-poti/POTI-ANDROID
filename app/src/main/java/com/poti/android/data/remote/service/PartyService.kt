@@ -11,6 +11,7 @@ import com.poti.android.data.remote.dto.response.party.MyRecruitListDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
+import com.poti.android.data.remote.dto.response.party.ProductPartyListResponseDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import retrofit2.http.Body
@@ -68,4 +69,14 @@ interface PartyService {
     suspend fun getRecruitPostParticipant(
         @Path("postId") postId: Long,
     ): BaseResponse<GroupBuyPostParticipantDetailDto>
+
+    @GET("/api/v1/posts/pots")
+    suspend fun getProductPartyList(
+        @Query("page") page: Int?,
+        @Query("size") size: Int?,
+        @Query("title") title: String,
+        @Query("artistId") artistId: Long,
+        @Query("sort") sort: String,
+        @Query("memberIds") memberIds: List<Long>?,
+    ): BaseResponse<ProductPartyListResponseDto>
 }

@@ -22,4 +22,4 @@ fun PartySummary.ratingText(): String =
 fun PartySummary.membersText(): String =
     availableMembers.joinToString(
         separator = stringResource(R.string.goods_filter_members_separator),
-    ) { it.name }
+    ) { it }
