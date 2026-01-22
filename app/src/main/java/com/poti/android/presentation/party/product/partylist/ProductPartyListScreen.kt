@@ -91,21 +91,11 @@ fun ProductPartyListRoute(
         ),
         partySortType = uiState.partySortType,
         memberFilterText = uiState.memberFilterText,
-        onBackClick = {
-            viewModel.processIntent(ProductPartyListUiIntent.OnBackClick)
-        },
-        onFloatingClick = {
-            viewModel.processIntent(ProductPartyListUiIntent.OnFloatingClick)
-        },
-        onMemberFilterClick = {
-            viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterClick)
-        },
-        onSortFilterClick = {
-            viewModel.processIntent(ProductPartyListUiIntent.OnSortFilterClick)
-        },
-        onCardClick = { potId ->
-            viewModel.processIntent(ProductPartyListUiIntent.OnPartyClick(potId))
-        },
+        onBackClick = { viewModel.processIntent(ProductPartyListUiIntent.OnBackClick) },
+        onFloatingClick = { viewModel.processIntent(ProductPartyListUiIntent.OnFloatingClick) },
+        onMemberFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterClick) },
+        onSortFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnSortFilterClick) },
+        onCardClick = { potId -> viewModel.processIntent(ProductPartyListUiIntent.OnPartyClick(potId)) },
         modifier = modifier,
     )
 }
@@ -135,7 +125,7 @@ private fun ProductPartyListScreen(
         },
         floatingActionButton = {
             PotiFloatingButton(
-                onClick = onFloatingClick, // TODO: [예림] 등록 화면(PartyCreateScreen)에 (아티스트 + 굿즈명) 넘겨주기
+                onClick = onFloatingClick,
             )
         },
     ) { innerPadding ->

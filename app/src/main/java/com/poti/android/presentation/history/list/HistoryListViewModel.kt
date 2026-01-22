@@ -110,13 +110,13 @@ class HistoryListViewModel @Inject constructor(
                     endedCount = myPartyList.completedCount,
                     items = myPartyList.partyList.map { item ->
                         HistoryItem(
-                            id = item.groupBuyId,
+                            id = item.uiId,
                             imageUrl = item.thumbnailUrl,
                             artist = item.artistName,
                             title = item.productName,
                             status = listStatus,
                         )
-                    },
+                    }.distinctBy { it.id },
                 )
 
                 updateState {

@@ -17,4 +17,7 @@ data class MyParty(
     val productName: String,
     val thumbnailUrl: String?,
     val postStatus: PartyStatusType,
-)
+) {
+    val uiId: Long
+        get() = participationId ?: groupBuyId
+}
