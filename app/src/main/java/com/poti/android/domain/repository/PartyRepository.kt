@@ -3,6 +3,7 @@ package com.poti.android.domain.repository
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.history.RecruiterDetail
 
 interface PartyRepository {
     suspend fun searchProductTitle(
@@ -27,4 +28,6 @@ interface PartyRepository {
     ): Result<Long>
 
     suspend fun getShippingOptions(): Result<List<DeliveryOption>>
+
+    suspend fun getPostSale(postId: Long): Result<RecruiterDetail>
 }

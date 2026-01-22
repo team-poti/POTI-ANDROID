@@ -6,11 +6,13 @@ import com.poti.android.data.mapper.artist.toDomain
 import com.poti.android.data.mapper.artist.toDto
 import com.poti.android.data.mapper.delivery.toDomain
 import com.poti.android.data.mapper.delivery.toDto
+import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.remote.datasource.PartyRemoteDataSource
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.repository.PartyRepository
 import javax.inject.Inject
 
@@ -71,4 +73,12 @@ class PartyRepositoryImpl @Inject constructor(
             .getOrThrow()
             .map { it.toDomain() }
     }
+
+    override suspend fun getPostSale(postId: Long): Result<RecruiterDetail> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getPostSale(postId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }
 }

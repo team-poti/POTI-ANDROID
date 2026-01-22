@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.GroupBuyRepository
+import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecruiterViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val groupBuyRepository: GroupBuyRepository,
+    private val partyRepository: PartyRepository,
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
         initialState = RecruiterDetailUiState(),
     ) {
@@ -39,7 +39,7 @@ class RecruiterViewModel @Inject constructor(
     }
 
     private fun getRecruiterDetail(recruitId: Long) = launchScope {
-        groupBuyRepository.getPostSale(recruitId)
+        partyRepository.getPostSale(recruitId)
             .onSuccess {
                 updateState {
                     copy(recruiterDetailState = ApiState.Success(it.toUiModel()))
