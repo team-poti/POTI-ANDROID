@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
@@ -21,7 +20,6 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
-import com.poti.android.presentation.party.create.navigation.PartyCreateRoute
 import com.poti.android.presentation.party.create.util.isTodayOrAfter
 import com.poti.android.presentation.party.create.util.toDashedDate
 import com.poti.android.presentation.party.create.util.toDateOrNull
@@ -218,7 +216,7 @@ class PartyCreateViewModel @Inject constructor(
         )
 
         handleArtistSelect(initialArtist)
-        updateState { copy(productName = productName, neverShowSearchEmptyScreen =true) }
+        updateState { copy(productName = productName, neverShowSearchEmptyScreen = true) }
     }
 
     private fun initializeDeliveryOptions() {
@@ -294,7 +292,7 @@ class PartyCreateViewModel @Inject constructor(
             copy(
                 isDirty = true,
                 artistSearchKeyword = newValue,
-                neverShowSearchEmptyScreen =false,
+                neverShowSearchEmptyScreen = false,
             )
         }
 
