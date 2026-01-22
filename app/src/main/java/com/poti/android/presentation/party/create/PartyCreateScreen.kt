@@ -292,6 +292,7 @@ private fun PartyCreateScreen(
                     modifier = Modifier
                         .padding(bottom = 28.dp),
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
+                    selectedString = uiState.selectedProductName,
                 )
             }
 

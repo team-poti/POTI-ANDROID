@@ -68,6 +68,7 @@ data class CreateUiState(
     val createPartyState: ApiState<Long> = ApiState.Init,
     val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
     val neverShowSearchEmptyScreen: Boolean = false,
+    val selectedProductName: String = "",
 ) : UiState {
     val selectedMembersOption = memberOptionsState.getSuccessDataOrNull()?.filter { option -> option.memberId in selectedMemberIds }
     val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
