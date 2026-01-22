@@ -1,4 +1,4 @@
-package com.poti.android.data.mapper.participation
+package com.poti.android.data.mapper.history
 
 import com.poti.android.data.remote.dto.response.history.ParticipantDetailResponseDto
 import com.poti.android.domain.model.history.MemberPayment
