@@ -72,7 +72,10 @@ fun ParticipantDetailRoute(
                 viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime))
             },
             onConfirmDelivery = { viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery) },
-            onSubmitReview = { rating -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitReview(rating)) },
+            onSubmitReview = { rating -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitReview(
+                transactionId = participantDetail.participationId,
+                rating = rating
+            )) },
             onSkipReview = { viewModel.processIntent(ParticipantDetailUiIntent.SkipReview) },
             modifier = modifier,
         )

@@ -6,6 +6,7 @@ import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.ParticipationRepository
 import com.poti.android.domain.repository.PaymentRepository
+import com.poti.android.domain.repository.ReviewRepository
 import com.poti.android.domain.repository.UserRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
@@ -22,7 +23,8 @@ class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val participantRepository: ParticipationRepository,
     private val paymentRepository: PaymentRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val reviewRepository: ReviewRepository
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -56,14 +58,11 @@ class ParticipantViewModel @Inject constructor(
             ParticipantDetailUiIntent.ConfirmDelivery -> confirmDelivery()
 
             ParticipantDetailUiIntent.SkipReview -> {
-                // TODO: 리뷰 건너뛰기 처리 (필요시 API 호출)
                 updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
             }
 
-            is ParticipantDetailUiIntent.SubmitReview -> {
-                // TODO: 리뷰 제출 API 호출
-                updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
-            }
+            is ParticipantDetailUiIntent.SubmitReview ->
+                submitReview(intent.transactionId, intent.rating)
         }
     }
 
@@ -134,5 +133,19 @@ class ParticipantViewModel @Inject constructor(
             }.onFailure {
                 Timber.d("fail: confirmDelivery")
             }
+    }
+
+    private fun submitReview(transactionId: Long, star: Int) = launchScope {
+        updateState {  copy(participantDetailState = ApiState.Loading) }
+
+        reviewRepository.postReview(transactionId, star)
+            .onSuccess { result ->
+                Timber.d("success: $result")
+            }.onFailure { error ->
+                Timber.d("fail: $error")
+            }
+
+        getParticipantDetail(participantId)
+        updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
     }
 }
