@@ -47,6 +47,7 @@ internal fun PotiBasicField(
     singleLine: Boolean = true,
     trailingIcon: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
 ) {
@@ -83,6 +84,7 @@ internal fun PotiBasicField(
             onNext = { onNextAction() },
         ),
         enabled = enabled,
+        readOnly = readOnly,
         textStyle = PotiTheme.typography.body16m.copy(
             color = PotiTheme.colors.black,
         ),

@@ -45,8 +45,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-        initialState = CreateUiState(),
-    ) {
+    initialState = CreateUiState(),
+) {
     private val artistSearchKeywordForDebounce = MutableStateFlow("")
     private val productSearchKeywordForDebounce = MutableStateFlow("")
 
@@ -111,6 +111,12 @@ class PartyCreateViewModel @Inject constructor(
 
             is CreateUiIntent.OnMemberPriceChange -> {
                 handleMemberPriceChange(newOption = intent.option)
+            }
+
+            is CreateUiIntent.OnProductFocus -> {
+                if (uiState.value.isProductFieldReadOnly && intent.focused) {
+                    updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
+                }
             }
 
             is CreateUiIntent.OnProductChange -> {
@@ -315,19 +321,16 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleProductChange(newValue: String) {
-        if (uiState.value.selectedArtist == null) {
-            updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
-        } else {
-            updateState {
-                copy(
-                    isDirty = true,
-                    productName = newValue,
-                    productError = if (newValue.isNotBlank()) null else this.productError,
-                    selectedProductName = "",
-                )
-            }
-            productSearchKeywordForDebounce.value = newValue
+        updateState {
+            copy(
+                isDirty = true,
+                productName = newValue,
+                productError = if (newValue.isNotBlank()) null else this.productError,
+                selectedProductName = "",
+            )
         }
+
+        productSearchKeywordForDebounce.value = newValue
     }
 
     private suspend fun searchProdut(keyword: String) {

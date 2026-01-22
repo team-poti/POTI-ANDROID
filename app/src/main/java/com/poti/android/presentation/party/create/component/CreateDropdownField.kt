@@ -63,6 +63,8 @@ fun <T> CreateDropdownField(
     label: String = "",
     fieldErrorMsg: String = "",
     showTrailingIcon: Boolean = false,
+    readOnly: Boolean = false,
+    onFocusChanged: ((Boolean) -> Unit)? = null,
 ) {
     val scrollState = rememberLazyListState()
     val expandedState = remember { MutableTransitionState(false) }
@@ -70,8 +72,6 @@ fun <T> CreateDropdownField(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    var selectedOption by remember { mutableStateOf("") }
 
     LaunchedEffect(searchResults.size, isFocused) {
         expandedState.targetState = searchResults.isNotEmpty() && isFocused
@@ -92,7 +92,11 @@ fun <T> CreateDropdownField(
                 .zIndex(1f),
             label = label,
             error = fieldErrorMsg,
-            onFocusChanged = { isFocused = it },
+            onFocusChanged = {
+                isFocused = it
+                onFocusChanged?.invoke(it)
+            },
+            readOnly = readOnly,
             trailingIcon = {
                 if (showTrailingIcon) Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_search),
@@ -129,7 +133,6 @@ fun <T> CreateDropdownField(
                             option = stringResult,
                             onClick = {
                                 onItemClick(result)
-                                selectedOption = stringResult
 
                                 expandedState.targetState = false
 

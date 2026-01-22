@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
@@ -153,6 +154,7 @@ fun PartyCreateRoute(
         onBackClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
         onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
         onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
+        onProductFocusChanged = { viewModel.processIntent(CreateUiIntent.OnProductFocus(it)) },
         onProductChanged = { viewModel.processIntent(CreateUiIntent.OnProductChange(it)) },
         onProductSearchItemClick = { viewModel.processIntent(CreateUiIntent.OnProductSelect(it)) },
         onDeadlineChanged = { viewModel.processIntent(CreateUiIntent.OnDeadlineChange(it)) },
@@ -173,6 +175,7 @@ private fun PartyCreateScreen(
     onBackClick: () -> Unit,
     onImageChanged: (List<Uri>) -> Unit,
     onSearchArtist: () -> Unit,
+    onProductFocusChanged: (Boolean) -> Unit,
     onProductChanged: (String) -> Unit,
     onProductSearchItemClick: (String) -> Unit,
     onDeadlineChanged: (String) -> Unit,
@@ -295,6 +298,8 @@ private fun PartyCreateScreen(
                         .padding(bottom = 28.dp),
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
                     selectedString = uiState.selectedProductName,
+                    readOnly = uiState.isProductFieldReadOnly,
+                    onFocusChanged = onProductFocusChanged
                 )
             }
 
@@ -437,6 +442,7 @@ private fun PartyCreateScreenDefaultPreview() {
             onMemberEditBtnClick = {},
             onDeliveryRadioBtnClick = {},
             onCreateBtnClick = {},
+            onProductFocusChanged = {}
         )
     }
 }
@@ -470,6 +476,7 @@ private fun PartyCreateScreenAccountNumberErrorPreview() {
             onMemberEditBtnClick = {},
             onDeliveryRadioBtnClick = {},
             onCreateBtnClick = { accountNumberError = FieldError.ACCOUNT_NUMBER_ERROR },
+            onProductFocusChanged = {}
         )
     }
 }
@@ -502,6 +509,7 @@ private fun PartyCreateMemberPreview() {
             onMemberEditBtnClick = {},
             onDeliveryRadioBtnClick = {},
             onCreateBtnClick = {},
+            onProductFocusChanged = {}
         )
     }
 }

@@ -52,6 +52,7 @@ fun PotiShortTextField(
     imeAction: ImeAction = ImeAction.Done,
     focusRequester: FocusRequester? = null,
     onFocusChanged: ((Boolean) -> Unit)? = null,
+    readOnly: Boolean = false,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
 ) {
@@ -95,6 +96,7 @@ fun PotiShortTextField(
                 isFocused = focused
                 onFocusChanged?.invoke(focused)
             },
+            readOnly = readOnly,
             focusRequester = focusRequester,
             singleLine = true,
             trailingIcon = trailingIcon,
