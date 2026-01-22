@@ -40,10 +40,11 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 fun GoodsSmallCard(
     imageUrl: String,
     artist: String,
-    goodsType: String,
+    artistId: Long,
+    title: String,
     partyCount: Int,
     tag: String,
-    onClick: () -> Unit,
+    onClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -56,7 +57,7 @@ fun GoodsSmallCard(
                 color = PotiTheme.colors.gray300,
                 shape = RoundedCornerShape(12.dp),
             )
-            .noRippleClickable(onClick),
+            .noRippleClickable { onClick(artistId, title) },
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
     ) {
@@ -101,7 +102,7 @@ fun GoodsSmallCard(
             )
 
             Text(
-                text = goodsType,
+                text = title,
                 modifier = Modifier.fillMaxWidth(),
                 color = PotiTheme.colors.black,
                 overflow = TextOverflow.Ellipsis,
@@ -131,20 +132,22 @@ private fun GoodsSmallCardPreview() {
             GoodsSmallCard(
                 imageUrl = "",
                 artist = "아티스트명",
-                goodsType = "상품 종류명",
+                artistId = 0L,
+                title = "상품 종류명",
                 partyCount = 3,
                 tag = "인기",
-                onClick = {},
+                onClick = { _, _ -> },
                 modifier = Modifier,
             )
 
             GoodsSmallCard(
                 imageUrl = "",
                 artist = "아티스트명 아티스트명 아티스트명 아티스트명 ",
-                goodsType = "상품 종류명 상품 종류명 상품 종류명 ",
+                artistId = 0L,
+                title = "상품 종류명 상품 종류명 상품 종류명 ",
                 partyCount = 3,
                 tag = "인기",
-                onClick = {},
+                onClick = { _, _ -> },
                 modifier = Modifier,
             )
         }

@@ -20,10 +20,6 @@ enum class GoodsSortType(
         request = "HOT",
         displayRes = R.string.goods_filter_sort_hot,
     ),
-    RANDOM(
-        request = "RANDOM",
-        displayRes = R.string.goods_filter_sort_random,
-    ),
 }
 
 data class GoodsCategoryUiState(
@@ -43,7 +39,7 @@ sealed interface GoodsCategoryUiIntent : UiIntent {
 
     data object OnSortDismiss : GoodsCategoryUiIntent
 
-    data object OnCardClick : GoodsCategoryUiIntent
+    data class OnCardClick(val artistId: Long, val title: String) : GoodsCategoryUiIntent
 }
 
 sealed interface GoodsCategoryUiEffect : UiEffect {
@@ -51,5 +47,5 @@ sealed interface GoodsCategoryUiEffect : UiEffect {
 
     data object NavigateToPartyCreate : GoodsCategoryUiEffect
 
-    data object NavigateToGoodsFilter : GoodsCategoryUiEffect
+    data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : GoodsCategoryUiEffect
 }
