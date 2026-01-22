@@ -4,11 +4,14 @@ import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.data.remote.dto.request.party.PartyJoinRequestDto
 import com.poti.android.data.remote.dto.response.artist.ArtistSearchListResponseDto
+import com.poti.android.data.remote.dto.response.history.GroupBuyPostParticipantDetailDto
+import com.poti.android.data.remote.dto.response.history.RecruiterDetailDto
 import com.poti.android.data.remote.dto.response.party.CreatePartyResponseDto
 import com.poti.android.data.remote.dto.response.party.MyRecruitListDto
 import com.poti.android.data.remote.dto.response.party.PartyDetailResponseDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinOptionsDto
 import com.poti.android.data.remote.dto.response.party.PartyJoinResponseDto
+import com.poti.android.data.remote.dto.response.party.ProductPartyListResponseDto
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import com.poti.android.data.remote.service.PartyService
@@ -43,4 +46,27 @@ class PartyRemoteDataSource @Inject constructor(
 
     suspend fun getMyRecruitList(status: String): BaseResponse<MyRecruitListDto> =
         partyService.getMyRecruitList(status)
+
+    suspend fun getRecruitDetail(postId: Long): BaseResponse<RecruiterDetailDto> =
+        partyService.getRecruitDetail(postId)
+
+    suspend fun getRecruitPostParticipant(postId: Long): BaseResponse<GroupBuyPostParticipantDetailDto> =
+        partyService.getRecruitPostParticipant(postId)
+
+    suspend fun getProductPartyList(
+        page: Int?,
+        size: Int?,
+        title: String,
+        artistId: Long,
+        sort: String,
+        memberIds: List<Long>?,
+    ): BaseResponse<ProductPartyListResponseDto> =
+        partyService.getProductPartyList(
+            page = page,
+            size = size,
+            title = title,
+            artistId = artistId,
+            sort = sort,
+            memberIds = memberIds,
+        )
 }

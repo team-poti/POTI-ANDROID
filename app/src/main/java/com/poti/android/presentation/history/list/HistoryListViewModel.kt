@@ -1,6 +1,8 @@
 package com.poti.android.presentation.history.list
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
@@ -13,6 +15,8 @@ import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.list.model.HistoryMode
+import com.poti.android.presentation.history.navigation.HistoryRoute
+import com.poti.android.presentation.user.component.HistorySummaryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -22,12 +26,14 @@ import javax.inject.Inject
 class HistoryListViewModel @Inject constructor(
     private val participationRepository: ParticipationRepository,
     private val partyRepository: PartyRepository,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
-        initialState = HistoryListUiState(
-            mode = HistoryMode.PARTICIPATION,
-            selectedTab = PotiHeaderTabType.ONGOING,
-        ),
+        initialState = HistoryListUiState(),
     ) {
+    private val route = savedStateHandle.toRoute<HistoryRoute.HistoryList>()
+    private val initialMode = route.mode
+    private val initialType = route.type
+
     override fun processIntent(intent: HistoryListUiIntent) {
         when (intent) {
             HistoryListUiIntent.OnBackClick -> sendEffect(HistoryListUiEffect.NavigateBack)
@@ -44,6 +50,17 @@ class HistoryListViewModel @Inject constructor(
     }
 
     init {
+        updateState {
+            copy(
+                mode = initialMode ?: this.mode,
+                selectedTab = when (initialType) {
+                    null -> this.selectedTab
+                    HistorySummaryType.COMPLETED -> PotiHeaderTabType.ENDED
+                    else -> PotiHeaderTabType.ONGOING
+                },
+            )
+        }
+
         loadUserHistoryList()
     }
 

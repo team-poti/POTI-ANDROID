@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,windows,linux,kotlin
 # Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,macos,windows,linux,kotlin
 
+GEMINI.md
+.kotlin/
+
 ### Android ###
 # Gradle files
 .gradle/

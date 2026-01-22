@@ -38,7 +38,7 @@ val ParticipantStatusType.statusColor: StatusColor
         ParticipantStatusType.WAIT_PAY -> StatusColor.GRAY
         ParticipantStatusType.WAIT_PAY_CHECK -> StatusColor.RED
         ParticipantStatusType.PAID -> StatusColor.BLUE
-        ParticipantStatusType.READY -> StatusColor.BLUE
-        ParticipantStatusType.SHIPPED -> StatusColor.GRAY
+        ParticipantStatusType.READY -> StatusColor.RED
+        ParticipantStatusType.SHIPPED -> StatusColor.BLUE
         ParticipantStatusType.DELIVERED -> StatusColor.GRAY
     }

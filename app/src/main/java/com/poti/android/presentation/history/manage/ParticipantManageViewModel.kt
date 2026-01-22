@@ -5,24 +5,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.history.DepositInfo
-import com.poti.android.domain.model.history.MemberPriceInfo
-import com.poti.android.domain.model.history.ShippingInfo
-import com.poti.android.domain.type.ParticipantStatusType
+import com.poti.android.domain.repository.DeliveryRepository
+import com.poti.android.domain.repository.PartyRepository
+import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.presentation.history.manage.model.ManageModalState
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiIntent
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiState
-import com.poti.android.presentation.history.manage.model.ParticipantUiModel
-import com.poti.android.presentation.history.manage.model.RecruiterManageDetailUiModel
+import com.poti.android.presentation.history.manage.model.toUiModel
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val partyRepository: PartyRepository,
+    private val paymentRepository: PaymentRepository,
+    private val deliveryRepository: DeliveryRepository,
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
         initialState = ParticipantManageUiState(),
     ) {
@@ -48,171 +50,40 @@ class ParticipantManageViewModel @Inject constructor(
     }
 
     private fun loadParticipantManageDetail() {
-        launchScope(
-            onError = { throwable ->
-                updateState {
-                    copy(
-                        participantManageDetailLoadState = ApiState.Failure(throwable.message ?: "Unknown Error"),
-                    )
-                }
-            },
-        ) {
+        launchScope {
             updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            // TODO: [천민재] 실제 API 연동 필요 (현재 더미 데이터 사용)
-            val dummyData = RecruiterManageDetailUiModel(
-                participants = listOf(
-                    ParticipantUiModel(
-                        userId = 1,
-                        nickname = "포티",
-                        profileImage = null,
-                        participantStatus = ParticipantStatusType.RECRUITING,
-                        memberNames = "멤버1, 멤버2",
-                        priceInfo = listOf(
-                            MemberPriceInfo(
-                                name = "멤버1",
-                                price = 5000,
+            partyRepository.getRecruitPostParticipant(recruitId)
+                .onSuccess {
+                    Timber.d("success: loadParticipantManageDetail")
+                    updateState { copy(participantManageDetailLoadState = ApiState.Success(it.toUiModel())) }
+                }
+                .onFailure { error ->
+                    Timber.d("fail: loadParticipantManageDetail")
+                    updateState {
+                        copy(
+                            participantManageDetailLoadState = ApiState.Failure(
+                                error.message ?: "Fail: loadParticipantManageDetail",
                             ),
-                            MemberPriceInfo(
-                                name = "멤버2",
-                                price = 6000,
-                            ),
-                        ),
-                        shippingName = "준등기",
-                        shippingPrice = 1800,
-                        totalPrice = 12800,
-                        depositInfo = null,
-                        shippingInfo = null,
-                    ),
-                    ParticipantUiModel(
-                        userId = 2,
-                        nickname = "이영희",
-                        profileImage = null,
-                        participantStatus = ParticipantStatusType.WAIT_PAY_CHECK,
-                        memberNames = "멤버1, 멤버2",
-                        priceInfo = listOf(
-                            MemberPriceInfo(
-                                name = "멤버1",
-                                price = 5000,
-                            ),
-                            MemberPriceInfo(
-                                name = "멤버2",
-                                price = 6000,
-                            ),
-                        ),
-                        shippingName = "준등기",
-                        shippingPrice = 1800,
-                        totalPrice = 12800,
-                        depositInfo = DepositInfo(
-                            depositorName = "이름",
-                            depositTime = "2025-12-30 2:50",
-                        ),
-                        shippingInfo = null,
-                    ),
-                    ParticipantUiModel(
-                        userId = 3,
-                        nickname = "이영희",
-                        profileImage = null,
-                        participantStatus = ParticipantStatusType.PAID,
-                        memberNames = "멤버1, 멤버2",
-                        priceInfo = listOf(
-                            MemberPriceInfo(
-                                name = "멤버1",
-                                price = 5000,
-                            ),
-                            MemberPriceInfo(
-                                name = "멤버2",
-                                price = 6000,
-                            ),
-                        ),
-                        shippingName = "준등기",
-                        shippingPrice = 1800,
-                        totalPrice = 12800,
-                        depositInfo = DepositInfo(
-                            depositorName = "이름",
-                            depositTime = "2025-12-30 2:50",
-                        ),
-                        shippingInfo = ShippingInfo(
-                            receiverName = "이름",
-                            address = "(01234) 서울특별시 솝트구 다솝로 456",
-                            phone = "010-1234-5678",
-                            trackingNumber = null,
-                        ),
-                    ),
-                    ParticipantUiModel(
-                        userId = 4,
-                        nickname = "닉네임",
-                        profileImage = null,
-                        participantStatus = ParticipantStatusType.PAID,
-                        memberNames = "멤버1, 멤버2",
-                        priceInfo = listOf(
-                            MemberPriceInfo(
-                                name = "멤버1",
-                                price = 5000,
-                            ),
-                            MemberPriceInfo(
-                                name = "멤버2",
-                                price = 6000,
-                            ),
-                        ),
-                        shippingName = "준등기",
-                        shippingPrice = 1800,
-                        totalPrice = 12800,
-                        depositInfo = DepositInfo(
-                            depositorName = "이름",
-                            depositTime = "2025-12-30 2:50",
-                        ),
-                        shippingInfo = ShippingInfo(
-                            receiverName = "이름",
-                            address = "(01234) 서울특별시 솝트구 다솝로 456",
-                            phone = "010-1234-5678",
-                            trackingNumber = "우체국 345567788653221",
-                        ),
-                    ),
-                    ParticipantUiModel(
-                        userId = 5,
-                        nickname = "이영희",
-                        profileImage = null,
-                        participantStatus = ParticipantStatusType.DELIVERED,
-                        memberNames = "멤버1, 멤버2",
-                        priceInfo = listOf(
-                            MemberPriceInfo(
-                                name = "멤버1",
-                                price = 5000,
-                            ),
-                            MemberPriceInfo(
-                                name = "멤버2",
-                                price = 6000,
-                            ),
-                        ),
-                        shippingName = "준등기",
-                        shippingPrice = 1800,
-                        totalPrice = 12800,
-                        depositInfo = DepositInfo(
-                            depositorName = "이름",
-                            depositTime = "2025-12-30 2:50",
-                        ),
-                        shippingInfo = ShippingInfo(
-                            receiverName = "이름",
-                            address = "(01234) 서울특별시 솝트구 다솝로 456",
-                            phone = "010-1234-5678",
-                            trackingNumber = "우체국 345567788653221",
-                        ),
-                    ),
-                ),
-            )
-
-            updateState {
-                copy(participantManageDetailLoadState = ApiState.Success(dummyData))
-            }
+                        )
+                    }
+                }
         }
     }
 
     private fun confirmDeposit(id: Long) {
         viewModelScope.launch {
-            updateState { copy(activeModal = ManageModalState.None) }
+            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            // TODO: [천민재] API 전달
+            paymentRepository.patchPaymentConfirm(id)
+                .onSuccess {
+                    Timber.d("success: confirmDeposit($id)\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
+                }.onFailure { error ->
+                    Timber.d("fail: confirmDeposit($id) - ${error.message}")
+                }
+
+            updateState { copy(activeModal = ManageModalState.None) }
+            loadParticipantManageDetail()
         }
     }
 
@@ -222,9 +93,19 @@ class ParticipantManageViewModel @Inject constructor(
         number: String,
     ) {
         viewModelScope.launch {
-            updateState { copy(activeModal = ManageModalState.None) }
+            updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            // TODO: [천민재] API 전달
+            deliveryRepository.patchDelivery(
+                orderId = id,
+                deliveryMethod = method,
+                trackingNumber = number,
+            ).onSuccess {
+                Timber.d("success: ${it.orderId}, ${it.deliveryStatus}, ${it.trackingNumber}")
+            }.onFailure { error ->
+                Timber.d("fail: ${error.message}")
+            }
+
+            loadParticipantManageDetail()
         }
     }
 }
