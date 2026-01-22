@@ -197,6 +197,7 @@
     <string name="history_delivery_bottomsheet_method_label">배송업체</string>
     <string name="history_delivery_bottomsheet_tracking_placeholder">송장번호를 입력해주세요</string>
     <string name="history_delivery_bottomsheet_tracking_label">송장번호</string>
+    <string name="history_delivery_method">배송방법</string>
 
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>

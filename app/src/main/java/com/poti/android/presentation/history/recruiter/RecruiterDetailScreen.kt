@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,10 +24,10 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.presentation.history.component.HistoryDetailContentHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
 import com.poti.android.presentation.history.recruiter.component.HistoryParticipantOverview
-import com.poti.android.presentation.history.recruiter.component.ParticipantManagementHeader
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiModel
@@ -71,17 +70,15 @@ private fun RecruiterDetailScreen(
     onParticipantManageDetailClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
+    Column(
         modifier = modifier.fillMaxSize(),
-        topBar = {
-            PotiHeaderPage(
-                onNavigationClick = onBackClick,
-                title = stringResource(id = R.string.history_ongoing_title),
-            )
-        },
-    ) { paddingValues ->
+    ) {
+        PotiHeaderPage(
+            onNavigationClick = onBackClick,
+            title = stringResource(id = R.string.history_ongoing_title),
+        )
+
         LazyColumn(
-            modifier = Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(bottom = 50.dp),
         ) {
@@ -110,8 +107,8 @@ private fun RecruiterDetailScreen(
             }
 
             item {
-                ParticipantManagementHeader(
-                    participantCount = recruiterDetail.participantCount,
+                HistoryDetailContentHeader(
+                    text = stringResource(id = R.string.history_recruiter_participant_management_title, recruiterDetail.participantCount),
                     onHeaderClick = onParticipantManageDetailClick,
                 )
             }
