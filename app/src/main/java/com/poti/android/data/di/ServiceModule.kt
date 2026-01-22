@@ -3,7 +3,6 @@ package com.poti.android.data.di
 import com.poti.android.data.remote.service.ArtistService
 import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.DeliveryService
-import com.poti.android.data.remote.service.GroupBuyService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
 import com.poti.android.data.remote.service.ParticipationService
@@ -54,12 +53,6 @@ object ServiceModule {
     @Singleton
     fun provideParticipationService(retrofit: Retrofit): ParticipationService =
         retrofit.create(ParticipationService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideGroupBuyService(retrofit: Retrofit): GroupBuyService {
-        return retrofit.create(GroupBuyService::class.java)
-    }
 
     @Provides
     @Singleton

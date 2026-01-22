@@ -6,7 +6,7 @@ import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.DeliveryRepository
-import com.poti.android.domain.repository.GroupBuyRepository
+import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.presentation.history.manage.model.ManageModalState
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val groupBuyRepository: GroupBuyRepository,
+    private val partyRepository: PartyRepository,
     private val paymentRepository: PaymentRepository,
     private val deliveryRepository: DeliveryRepository,
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
@@ -53,7 +53,7 @@ class ParticipantManageViewModel @Inject constructor(
         launchScope {
             updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
 
-            groupBuyRepository.getGroupBuyPostParticipant(recruitId)
+            partyRepository.getRecruitPostParticipant(recruitId)
                 .onSuccess {
                     Timber.d("success: loadParticipantManageDetail")
                     updateState { copy(participantManageDetailLoadState = ApiState.Success(it.toUiModel())) }
