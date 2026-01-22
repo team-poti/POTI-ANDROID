@@ -15,6 +15,7 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.MyPartyList
+import com.poti.android.domain.model.history.ParticipantManageDetail
 import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
@@ -111,6 +112,14 @@ class PartyRepositoryImpl @Inject constructor(
     override suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail> =
         httpResponseHandler.safeApiCall {
             partyRemoteDataSource.getRecruitDetail(postId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }
+
+    override suspend fun getRecruitPostParticipant(postId: Long): Result<ParticipantManageDetail> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getRecruitPostParticipant(postId)
                 .handleApiResponse()
                 .getOrThrow()
                 .toDomain()
