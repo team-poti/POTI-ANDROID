@@ -18,6 +18,7 @@
     <string name="action_button_done">완료</string>
     <string name="action_button_continue">계속</string>
     <string name="action_button_select_all">전체 선택</string>
+    <string name="action_button_refresh">초기화</string>
 
     <!-- Field Component -->
     <string name="field_label_name">이름</string>
@@ -241,6 +242,6 @@
     <string name="goods_filter_price_format">%1$s원~</string>
     <string name="goods_filter_rating_format">%.1f</string>
     <string name="goods_filter_members_separator">&#160;|&#160;</string>
-
+    <string name="goods_filter_member_select_label">멤버 선택</string>
 
 </resources>

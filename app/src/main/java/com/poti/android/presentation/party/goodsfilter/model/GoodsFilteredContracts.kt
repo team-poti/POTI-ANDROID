@@ -8,6 +8,7 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.ProductPartyList
 
 enum class PartySortType(
@@ -19,22 +20,22 @@ enum class PartySortType(
     RATING("RATING", R.string.goods_filter_sort_rating),
 }
 
-data class FilterMember(
-    val id: Long,
-    val name: String,
-)
-
 data class GoodsFilterUiState(
     val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
-    val membersLoadState: ApiState<List<FilterMember>> = ApiState.Loading,
-    val displayMembers: List<FilterMember> = emptyList(),
-    val selectedMembers: List<FilterMember> = emptyList(),
+    val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
+    val displayMembers: List<Member> = emptyList(),
+    val selectedMembers: List<Member> = emptyList(),
     val goodsPartySortType: PartySortType = PartySortType.LATEST,
     val isMemberFilterBottomSheetVisible: Boolean = false,
     val isSortFilterBottomSheetVisible: Boolean = false,
+    val bottomSheetSelectedMembersIdices: Set<Int> = setOf(),
+    val isMemberBottomSheetToucehd: Boolean = false,
 ) : UiState {
-    val selectedMemberIds: List<Long>
-        get() = selectedMembers.map { it.id }
+    val allMemberNames: List<String>
+        get() = displayMembers.map { it.name }
+
+    val selectedMemberNames: List<String>
+        get() = displayMembers.filterIndexed { index, _ -> index in bottomSheetSelectedMembersIdices }.map { it.name }
 
     val memberFilterText: String
         @Composable get() = when {
@@ -59,20 +60,6 @@ data class GoodsFilterUiState(
                     selectedMembers.size - 2,
                 )
         }
-
-    val loadState: ApiState<Unit>
-        get() = when {
-            productPartyListInfo is ApiState.Loading &&
-                membersLoadState is ApiState.Loading -> ApiState.Loading
-
-            productPartyListInfo is ApiState.Failure ||
-                membersLoadState is ApiState.Failure -> ApiState.Failure("")
-
-            productPartyListInfo is ApiState.Success &&
-                membersLoadState is ApiState.Success -> ApiState.Success(Unit)
-
-            else -> ApiState.Loading
-        }
 }
 
 sealed interface GoodsFilterUiIntent : UiIntent {
@@ -86,11 +73,17 @@ sealed interface GoodsFilterUiIntent : UiIntent {
 
     data object OnMemberFilterClick : GoodsFilterUiIntent
 
-    data class OnMembersSelect(val members: List<FilterMember>) : GoodsFilterUiIntent
+    data class OnMemberSelect(val index: Int) : GoodsFilterUiIntent
 
     data object OnSortFilterClick : GoodsFilterUiIntent
 
     data class OnSortSelect(val sort: PartySortType) : GoodsFilterUiIntent
+
+    data object CloseMemberFilterBottomSheet : GoodsFilterUiIntent
+
+    data object OnMemberFilterDone : GoodsFilterUiIntent
+
+    data object OnMemberFilterRefresh : GoodsFilterUiIntent
 }
 
 sealed interface GoodsFilterUiEffect : UiEffect {

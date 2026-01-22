@@ -19,9 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.common.util.screenWidthDp
+import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
@@ -29,7 +31,6 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
-import com.poti.android.presentation.party.goodsfilter.model.FilterMember
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
 import com.poti.android.presentation.party.goodsfilter.model.PartySortType
@@ -56,11 +57,26 @@ fun GoodsFilteredPartyListRoute(
         }
     }
 
+    if (uiState.isMemberFilterBottomSheetVisible) {
+        MemberSelectBottomSheet(
+            title = R.string.goods_filter_member_select_label,
+            onDismiss = { viewModel.processIntent(GoodsFilterUiIntent.CloseMemberFilterBottomSheet) },
+            mainBtnText = R.string.action_button_done,
+            onMainBtnClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterDone) },
+            mainEnabled = uiState.isMemberBottomSheetToucehd,
+            subBtnText = R.string.action_button_refresh,
+            onSubBtnClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberFilterRefresh) },
+            subEnabled = true,
+            members = uiState.allMemberNames,
+            selectedIndices = uiState.bottomSheetSelectedMembersIdices,
+            onMemberClick = { viewModel.processIntent(GoodsFilterUiIntent.OnMemberSelect(it)) },
+            autoCloseSubBtn = false
+        )
+    }
+
     uiState.productPartyListInfo.onSuccess { partyListInfo ->
         GoodsFilteredPartyListScreen(
             productPartyListInfo = partyListInfo,
-            displayMembers = uiState.displayMembers,
-            selectedMember = uiState.selectedMembers,
             partySortType = uiState.goodsPartySortType,
             memberFilterText = uiState.memberFilterText,
             onBackClick = {
@@ -86,8 +102,6 @@ fun GoodsFilteredPartyListRoute(
 @Composable
 private fun GoodsFilteredPartyListScreen(
     productPartyListInfo: ProductPartyList,
-    displayMembers: List<FilterMember>,
-    selectedMember: List<FilterMember>,
     partySortType: PartySortType,
     memberFilterText: String,
     onBackClick: () -> Unit,
@@ -194,8 +208,6 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                 ),
             ),
         ),
-        displayMembers = emptyList(),
-        selectedMember = emptyList(),
         partySortType = PartySortType.LATEST,
         memberFilterText = "",
         onBackClick = {},

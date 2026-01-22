@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
@@ -14,11 +15,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GoodsFilterViewModel @Inject constructor(
+    private val artistRepository: ArtistRepository,
     private val partyRepository: PartyRepository,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
-        initialState = GoodsFilterUiState(),
-    ) {
+    initialState = GoodsFilterUiState(),
+) {
     private val artistId: Long = savedStateHandle.toRoute<GoodsPartyList>().artistId
     private val title: String = savedStateHandle.toRoute<GoodsPartyList>().title
 
@@ -34,12 +36,12 @@ class GoodsFilterViewModel @Inject constructor(
             GoodsFilterUiIntent.OnFloatingClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyCreate)
             is GoodsFilterUiIntent.OnPartyClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.partyId))
             GoodsFilterUiIntent.OnMemberFilterClick -> {
-                // TODO: [예림] 바텀시트 open
+                refreshMemberSelectBottomSheet()
+                updateState { copy(isMemberFilterBottomSheetVisible = true) }
             }
 
-            is GoodsFilterUiIntent.OnMembersSelect -> {
-                updateState { copy(selectedMembers = intent.members) }
-                loadPartyList()
+            is GoodsFilterUiIntent.OnMemberSelect -> {
+                onBottomSheetMemberChanged(intent.index)
             }
 
             GoodsFilterUiIntent.OnSortFilterClick -> {
@@ -50,6 +52,12 @@ class GoodsFilterViewModel @Inject constructor(
                 updateState { copy(goodsPartySortType = intent.sort) }
                 loadPartyList()
             }
+
+            GoodsFilterUiIntent.CloseMemberFilterBottomSheet -> updateState { copy(isMemberFilterBottomSheetVisible = false) }
+
+            GoodsFilterUiIntent.OnMemberFilterDone -> saveSelectedMember()
+
+            GoodsFilterUiIntent.OnMemberFilterRefresh -> refreshMemberSelectBottomSheet()
         }
     }
 
@@ -57,7 +65,7 @@ class GoodsFilterViewModel @Inject constructor(
         val currentState = uiState.value
         val sort = currentState.goodsPartySortType.request
         val memberIds = if (currentState.selectedMembers.isNotEmpty()) {
-            currentState.selectedMembers.map { it.id }
+            currentState.selectedMembers.map { it.memberId }
         } else {
             null
         }
@@ -92,6 +100,48 @@ class GoodsFilterViewModel @Inject constructor(
     private fun fetchArtistMembers() = launchScope {
         updateState { copy(membersLoadState = ApiState.Loading) }
 
-        updateState { copy(membersLoadState = ApiState.Success(emptyList())) }
+        artistRepository.getMemberList(artistId)
+            .onSuccess {
+                updateState {
+                    copy(
+                        membersLoadState = ApiState.Success(it),
+                        displayMembers = it,
+                    )
+                }
+            }
+            .onFailure { e ->
+                updateState { copy(membersLoadState = ApiState.Failure(e.message ?: "Failed")) }
+            }
+    }
+
+    private fun refreshMemberSelectBottomSheet() {
+        val newSelectedIndices = uiState.value.displayMembers.mapIndexed { index, member ->
+            if (member in uiState.value.selectedMembers) index else null
+        }
+            .filterNotNull()
+            .toSet()
+
+        updateState {
+            copy(
+                bottomSheetSelectedMembersIdices = newSelectedIndices,
+                isMemberBottomSheetToucehd = false
+            )
+        }
+    }
+
+    private fun saveSelectedMember() {
+        val newSelectedMembers = uiState.value.displayMembers.mapIndexedNotNull { index, member ->
+            if (index in uiState.value.bottomSheetSelectedMembersIdices) member else null
+        }
+
+        updateState { copy(selectedMembers = newSelectedMembers) }
+
+        loadPartyList()
+    }
+
+    private fun onBottomSheetMemberChanged(index: Int) {
+        val selectedIndices = uiState.value.bottomSheetSelectedMembersIdices
+        val newSelectedIndices = if (index in selectedIndices) selectedIndices - index else selectedIndices + index
+        updateState { copy(bottomSheetSelectedMembersIdices = newSelectedIndices, isMemberBottomSheetToucehd = true) }
     }
 }
