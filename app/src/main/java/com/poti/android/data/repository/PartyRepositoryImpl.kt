@@ -20,6 +20,7 @@ import com.poti.android.domain.model.history.RecruiterDetail
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
+import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.domain.repository.PartyRepository
 import javax.inject.Inject
 
@@ -124,4 +125,25 @@ class PartyRepositoryImpl @Inject constructor(
                 .getOrThrow()
                 .toDomain()
         }
+
+    override suspend fun getProductPartyList(
+        page: Int?,
+        size: Int?,
+        title: String,
+        artistId: Long,
+        sort: String,
+        memberIds: List<Long>?,
+    ): Result<ProductPartyList> = httpResponseHandler.safeApiCall {
+        partyRemoteDataSource.getProductPartyList(
+            page = page,
+            size = size,
+            title = title,
+            artistId = artistId,
+            sort = sort,
+            memberIds = memberIds,
+        )
+            .handleApiResponse()
+            .getOrThrow()
+            .toDomain()
+    }
 }
