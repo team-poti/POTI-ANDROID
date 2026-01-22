@@ -1,15 +1,13 @@
 package com.poti.android.presentation.party.product.productcategory
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
@@ -103,56 +102,59 @@ private fun ProductCategoryScreen(
         )
     }
 
-    Scaffold(
+    Box(
         modifier = modifier,
-        contentWindowInsets = WindowInsets(),
-        containerColor = PotiTheme.colors.white,
-        topBar = {
+    ) {
+        Column {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
                 title = stringResource(R.string.home_recommend_goods, productCategory.nickname),
             )
-        },
-        floatingActionButton = {
-            PotiFloatingButton(
-                onClick = onFloatingClick, // TODO: 아티스트 입력 상태로 등록 화면 이동; 아티스트 아이디, 아티스트 이름
-            )
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp)),
-        ) {
-            item {
-                PotiSmallButton(
-                    text = stringResource(selectedSortType.displayRes),
-                    onClick = onSortFilterClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentWidth(Alignment.End),
-                )
-            }
 
-            items(productCategory.groupItems) { groupItem ->
-                GoodsLargeCard(
-                    imageUrl = groupItem.postImage,
-                    artist = groupItem.artist,
-                    title = groupItem.postTitle,
-                    partyCount = groupItem.postCount,
-                    tag = groupItem.tag,
-                    onClick = { id, title -> onCardClick(id, title) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    artistId = groupItem.artistId,
-                )
-            }
-            item {
-                Spacer(Modifier.height(80.dp))
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(
+                    start = screenWidthDp(16.dp),
+                    end = screenWidthDp(16.dp),
+                    bottom = 76.dp,
+                ),
+            ) {
+                item {
+                    PotiSmallButton(
+                        text = stringResource(selectedSortType.displayRes),
+                        onClick = onSortFilterClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(Alignment.End),
+                    )
+                }
+
+                items(productCategory.groupItems) { groupItem ->
+                    GoodsLargeCard(
+                        imageUrl = groupItem.postImage,
+                        artist = groupItem.artist,
+                        title = groupItem.postTitle,
+                        partyCount = groupItem.postCount,
+                        tag = groupItem.tag,
+                        onClick = { id, title -> onCardClick(id, title) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        artistId = groupItem.artistId,
+                    )
+                }
             }
         }
+
+        PotiFloatingButton(
+            onClick = onFloatingClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    end = screenWidthDp(20.dp),
+                    bottom = screenHeightDp(12.dp),
+                ),
+        )
     }
 }
 
