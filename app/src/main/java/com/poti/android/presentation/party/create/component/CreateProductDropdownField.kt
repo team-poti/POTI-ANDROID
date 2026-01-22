@@ -51,6 +51,7 @@ fun <T> CreateDropdownField(
     onValueChanged: (String) -> Unit,
     searchResults: List<T>,
     resultToString: (T) -> String,
+    selectedString: String,
     onItemClick: (T) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
@@ -121,7 +122,7 @@ fun <T> CreateDropdownField(
                                 focusManager.clearFocus()
                                 keyboardController?.hide()
                             },
-                            isSelected = result == selectedOption,
+                            isSelected = stringResult == selectedString,
                             showBottomBorder = index < searchResults.lastIndex,
                         )
                     }
@@ -154,6 +155,7 @@ private fun CreateDropdownFieldPrev() {
             label = stringResource(R.string.create_label_product),
             modifier = Modifier.padding(top = 100.dp),
             resultToString = { text },
+            selectedString = "",
             viewType = ViewType.ARTSIT_SELECT,
         )
     }

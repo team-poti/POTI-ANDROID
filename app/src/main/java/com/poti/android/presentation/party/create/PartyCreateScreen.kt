@@ -2,6 +2,8 @@ package com.poti.android.presentation.party.create
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,7 +52,6 @@ import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiIntent
-import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
@@ -104,7 +105,7 @@ fun PartyCreateRoute(
 
             CreateUiEffect.ConvertUris -> {
                 val result = uiState.selectedImages.toImageInfosForPresigned(context)
-                viewModel.processIntent(OnConvertDone(result))
+                viewModel.processIntent(CreateUiIntent.OnConvertDone(result))
             }
 
             is CreateUiEffect.NavigateToDetail -> {
@@ -293,6 +294,7 @@ private fun PartyCreateScreen(
                     modifier = Modifier
                         .padding(bottom = 28.dp),
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
+                    selectedString = uiState.selectedProductName,
                 )
             }
 
@@ -302,6 +304,9 @@ private fun PartyCreateScreen(
                     onValueChanged = onDeadlineChanged,
                     placeholder = stringResource(R.string.create_placeholder_deadline),
                     modifier = Modifier
+                        .animateItem(
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                        )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_deadline),
@@ -319,6 +324,9 @@ private fun PartyCreateScreen(
                     onValueChanged = onDescriptionChanged,
                     placeholder = stringResource(R.string.create_placeholder_description),
                     modifier = Modifier
+                        .animateItem(
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                        )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_description),
@@ -332,6 +340,9 @@ private fun PartyCreateScreen(
                     onValueChanged = onAccountNumberChanged,
                     placeholder = stringResource(R.string.create_placeholder_account_number),
                     modifier = Modifier
+                        .animateItem(
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                        )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_account_number),
@@ -347,6 +358,9 @@ private fun PartyCreateScreen(
                     onValueChanged = onBankChanged,
                     placeholder = stringResource(R.string.create_placeholder_bank),
                     modifier = Modifier
+                        .animateItem(
+                            placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                        )
                         .padding(horizontal = screenWidthDp(16.dp))
                         .padding(bottom = 24.dp),
                     label = stringResource(R.string.create_label_bank),

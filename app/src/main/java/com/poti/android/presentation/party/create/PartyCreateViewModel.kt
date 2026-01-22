@@ -1,8 +1,6 @@
 package com.poti.android.presentation.party.create
 
-import android.util.Log
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -46,7 +44,6 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
-    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
@@ -121,7 +118,7 @@ class PartyCreateViewModel @Inject constructor(
             }
 
             is CreateUiIntent.OnProductSelect -> {
-                updateState { copy(productName = intent.product) }
+                updateState { copy(productName = intent.product, selectedProductName = intent.product) }
             }
 
             CreateUiIntent.OnSearchClick -> {
@@ -202,14 +199,10 @@ class PartyCreateViewModel @Inject constructor(
         artistName: String?,
         productName: String?,
     ) {
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 호출 👽")
-
         if (artistId == null || artistName == null || productName == null) {
-            Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 파라미터 모두 null")
             return
         }
 
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 초기값 자동완성 시작")
         val initialArtist = ArtistSearchResult(
             artistId = artistId,
             name = artistName,
@@ -251,7 +244,10 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleArtistSelect(newArtist: ArtistSearchResult) {
-        if (newArtist == uiState.value.selectedArtist) return
+        if (newArtist == uiState.value.selectedArtist) {
+            updateState { copy(artistSearchKeyword = newArtist.name) }
+            return
+        }
 
         viewModelScope.launch {
             getMembersWithPriceUseCase(newArtist.artistId)
@@ -270,6 +266,7 @@ class PartyCreateViewModel @Inject constructor(
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
                             neverShowHint = errorBefore,
+                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
                         )
                     }
                 }
@@ -318,14 +315,19 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleProductChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                productName = newValue,
-                productError = if (newValue.isNotBlank()) null else this.productError,
-            )
+        if (uiState.value.selectedArtist == null) {
+            updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
+        } else {
+            updateState {
+                copy(
+                    isDirty = true,
+                    productName = newValue,
+                    productError = if (newValue.isNotBlank()) null else this.productError,
+                    selectedProductName = "",
+                )
+            }
+            productSearchKeywordForDebounce.value = newValue
         }
-        productSearchKeywordForDebounce.value = newValue
     }
 
     private suspend fun searchProdut(keyword: String) {
