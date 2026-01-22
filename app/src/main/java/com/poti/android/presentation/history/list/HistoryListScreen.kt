@@ -97,11 +97,9 @@ private fun HistoryListScreen(
                     detectHorizontalDragGestures { change, dragAmount ->
                         change.consume()
 
-                        // 왼 → 오: dragAmount > 0
-                        // 오 → 왼: dragAmount < 0
-                        if (dragAmount > 0 && uiState.selectedTab != PotiHeaderTabType.ENDED) {
+                        if (dragAmount < 0 && uiState.selectedTab != PotiHeaderTabType.ENDED) {
                             onTabChanged(PotiHeaderTabType.ENDED)
-                        } else if (dragAmount < 0 && uiState.selectedTab != PotiHeaderTabType.ONGOING) {
+                        } else if (dragAmount > 0 && uiState.selectedTab != PotiHeaderTabType.ONGOING) {
                             onTabChanged(PotiHeaderTabType.ONGOING)
                         }
                     }
