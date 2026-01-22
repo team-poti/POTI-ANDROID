@@ -1,8 +1,6 @@
 package com.poti.android.presentation.party.create
 
-import android.util.Log
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -46,7 +44,6 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
-    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
@@ -77,6 +74,8 @@ class PartyCreateViewModel @Inject constructor(
             }
 
             is CreateUiIntent.OnBackToCreate -> sendEffect(CreateUiEffect.NavigateToBack)
+
+            CreateUiIntent.OnScrollComplete -> updateState { copy(errorIndexToScroll = null) }
 
             is CreateUiIntent.OnImagesChanged -> {
                 updateState {
@@ -116,12 +115,18 @@ class PartyCreateViewModel @Inject constructor(
                 handleMemberPriceChange(newOption = intent.option)
             }
 
+            is CreateUiIntent.OnProductFocus -> {
+                if (uiState.value.isProductFieldReadOnly && intent.focused) {
+                    updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR, isDirty = true) }
+                }
+            }
+
             is CreateUiIntent.OnProductChange -> {
                 handleProductChange(newValue = intent.value)
             }
 
             is CreateUiIntent.OnProductSelect -> {
-                updateState { copy(productName = intent.product) }
+                updateState { copy(productName = intent.product, selectedProductName = intent.product) }
             }
 
             CreateUiIntent.OnSearchClick -> {
@@ -202,14 +207,10 @@ class PartyCreateViewModel @Inject constructor(
         artistName: String?,
         productName: String?,
     ) {
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 호출 👽")
-
         if (artistId == null || artistName == null || productName == null) {
-            Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 파라미터 모두 null")
             return
         }
 
-        Log.d("CREATE_VIEWMODEL", "autoFillParams 👽 초기값 자동완성 시작")
         val initialArtist = ArtistSearchResult(
             artistId = artistId,
             name = artistName,
@@ -251,7 +252,10 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleArtistSelect(newArtist: ArtistSearchResult) {
-        if (newArtist == uiState.value.selectedArtist) return
+        if (newArtist == uiState.value.selectedArtist) {
+            updateState { copy(artistSearchKeyword = newArtist.name) }
+            return
+        }
 
         viewModelScope.launch {
             getMembersWithPriceUseCase(newArtist.artistId)
@@ -270,6 +274,7 @@ class PartyCreateViewModel @Inject constructor(
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
                             neverShowHint = errorBefore,
+                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
                         )
                     }
                 }
@@ -323,8 +328,10 @@ class PartyCreateViewModel @Inject constructor(
                 isDirty = true,
                 productName = newValue,
                 productError = if (newValue.isNotBlank()) null else this.productError,
+                selectedProductName = "",
             )
         }
+
         productSearchKeywordForDebounce.value = newValue
     }
 
@@ -536,6 +543,7 @@ class PartyCreateViewModel @Inject constructor(
         if (hasError) {
             updateState {
                 copy(
+                    isDirty = true,
                     imageError = imageError,
                     artistError = artistError,
                     productError = productError,
@@ -547,9 +555,28 @@ class PartyCreateViewModel @Inject constructor(
                     neverShowHint = if (hasMemberOptionError) true else this.neverShowHint,
                 )
             }
+            getScrollIndex()?.let {
+                updateState { copy(errorIndexToScroll = it) }
+            }
         }
 
         return hasError
+    }
+
+    private fun getScrollIndex(): Int? {
+        val firstErrorFieldIndex = when {
+            uiState.value.imageError != null -> 0
+            uiState.value.artistError != null -> 1
+            uiState.value.productError != null -> 2
+            uiState.value.deadlineError != null -> 3
+            uiState.value.descriptionError != null -> 4
+            uiState.value.accountNumberError != null -> 5
+            uiState.value.bankError != null -> 6
+            uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER -> 7
+            else -> null
+        }
+
+        return firstErrorFieldIndex
     }
 
     private suspend fun uploadPartyInfo(

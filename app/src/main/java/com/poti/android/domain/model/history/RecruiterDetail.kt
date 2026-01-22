@@ -11,6 +11,7 @@ data class RecruiterDetail(
 )
 
 data class ParticipantInfo(
+    val orderId: Long,
     val userId: Long,
     val memberNames: List<String>,
     val participantStatus: ParticipantStatusType,

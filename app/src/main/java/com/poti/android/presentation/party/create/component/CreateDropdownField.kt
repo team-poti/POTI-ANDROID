@@ -1,5 +1,6 @@
 package com.poti.android.presentation.party.create.component
 
+import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.MutableTransitionState
@@ -12,10 +13,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,9 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -51,11 +56,15 @@ fun <T> CreateDropdownField(
     onValueChanged: (String) -> Unit,
     searchResults: List<T>,
     resultToString: (T) -> String,
+    selectedString: String,
     onItemClick: (T) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
     label: String = "",
     fieldErrorMsg: String = "",
+    showTrailingIcon: Boolean = false,
+    readOnly: Boolean = false,
+    onFocusChanged: ((Boolean) -> Unit)? = null,
 ) {
     val scrollState = rememberLazyListState()
     val expandedState = remember { MutableTransitionState(false) }
@@ -63,8 +72,6 @@ fun <T> CreateDropdownField(
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    var selectedOption by remember { mutableStateOf("") }
 
     LaunchedEffect(searchResults.size, isFocused) {
         expandedState.targetState = searchResults.isNotEmpty() && isFocused
@@ -85,7 +92,21 @@ fun <T> CreateDropdownField(
                 .zIndex(1f),
             label = label,
             error = fieldErrorMsg,
-            onFocusChanged = { isFocused = it },
+            onFocusChanged = {
+                isFocused = it
+                onFocusChanged?.invoke(it)
+            },
+            readOnly = readOnly,
+            trailingIcon = {
+                if (showTrailingIcon) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                        contentDescription = null,
+                        tint = PotiTheme.colors.gray700,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
+            },
         )
 
         AnimatedVisibility(
@@ -114,14 +135,13 @@ fun <T> CreateDropdownField(
                             option = stringResult,
                             onClick = {
                                 onItemClick(result)
-                                selectedOption = stringResult
 
                                 expandedState.targetState = false
 
                                 focusManager.clearFocus()
                                 keyboardController?.hide()
                             },
-                            isSelected = result == selectedOption,
+                            isSelected = stringResult == selectedString,
                             showBottomBorder = index < searchResults.lastIndex,
                         )
                     }
@@ -154,6 +174,7 @@ private fun CreateDropdownFieldPrev() {
             label = stringResource(R.string.create_label_product),
             modifier = Modifier.padding(top = 100.dp),
             resultToString = { text },
+            selectedString = "",
             viewType = ViewType.ARTSIT_SELECT,
         )
     }

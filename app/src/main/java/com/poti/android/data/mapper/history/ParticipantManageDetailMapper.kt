@@ -11,6 +11,7 @@ import com.poti.android.domain.type.ParticipantStatusType
 fun GroupBuyPostParticipantDetailDto.toDomain(): ParticipantManageDetail = ParticipantManageDetail(
     participants = participants.map {
         ParticipantDetailInfo(
+            orderId = it.orderId,
             userId = it.userId,
             profileImage = it.profileImage,
             nickname = it.nickname,

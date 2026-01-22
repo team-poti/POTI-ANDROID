@@ -112,6 +112,7 @@ fun DepositInfo(
         deadline?.let {
             HistoryCalloutInfo(
                 text = deadline,
+                copyable = false,
             )
         }
     }

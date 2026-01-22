@@ -98,6 +98,7 @@ private fun HistoryParticipantOverviewPreview() {
     PotiTheme {
         HistoryParticipantOverview(
             participant = ParticipantUiModel(
+                orderId = 1,
                 userId = 1,
                 memberNamesString = "레이, 이서",
                 participantStatus = ParticipantStatusType.DELIVERED,

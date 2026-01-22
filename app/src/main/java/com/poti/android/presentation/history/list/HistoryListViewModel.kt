@@ -114,7 +114,8 @@ class HistoryListViewModel @Inject constructor(
                             imageUrl = item.thumbnailUrl,
                             artist = item.artistName,
                             title = item.productName,
-                            status = listStatus,
+                            historyListType = listStatus,
+                            partyStatus = item.postStatus,
                         )
                     }.distinctBy { it.id },
                 )
