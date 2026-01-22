@@ -24,6 +24,7 @@ sealed interface ProductRoute : Route {
     @Serializable
     data class ProductCategory(
         val artistId: Long? = null,
+        val isMyArtist: Boolean,
     ) : ProductRoute
 }
 
@@ -34,8 +35,11 @@ fun NavController.navigateToProductPartyList(
     navigate(ProductRoute.ProductPartyList(artistId, title))
 }
 
-fun NavController.navigateToProductCategory(artistId: Long?) {
-    navigate(ProductRoute.ProductCategory(artistId))
+fun NavController.navigateToProductCategory(
+    artistId: Long?,
+    isMyArtist: Boolean,
+) {
+    navigate(ProductRoute.ProductCategory(artistId, isMyArtist))
 }
 
 fun NavGraphBuilder.productNavGraph(

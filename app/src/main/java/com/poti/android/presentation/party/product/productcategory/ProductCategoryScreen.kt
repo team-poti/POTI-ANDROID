@@ -55,7 +55,7 @@ fun ProductCategoryRoute(
 
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
-            title = if (artistId != null) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
+            title = if (viewModel.isMyArtist) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,

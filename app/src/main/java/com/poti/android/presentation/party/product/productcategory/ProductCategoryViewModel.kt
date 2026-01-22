@@ -21,7 +21,9 @@ class ProductCategoryViewModel @Inject constructor(
     BaseViewModel<ProductCategoryUiState, ProductCategoryUiIntent, ProductCategoryUiEffect>(
             initialState = ProductCategoryUiState(),
         ) {
-        private val artistId: Long? = savedStateHandle.toRoute<ProductCategory>().artistId
+        private val args = savedStateHandle.toRoute<ProductCategory>()
+        private val artistId: Long? = args.artistId
+        val isMyArtist: Boolean = args.isMyArtist
 
         override fun processIntent(intent: ProductCategoryUiIntent) {
             when (intent) {
@@ -37,6 +39,7 @@ class ProductCategoryViewModel @Inject constructor(
                     }
                     loadGoodsCategoryList(intent.sortType)
                 }
+
                 ProductCategoryUiIntent.OnSortDismiss -> updateState { copy(isSortBottomSheetVisible = false) }
                 is ProductCategoryUiIntent.OnCardClick -> sendEffect(ProductCategoryUiEffect.NavigateToProductPartyList(intent.artistId, intent.title))
             }

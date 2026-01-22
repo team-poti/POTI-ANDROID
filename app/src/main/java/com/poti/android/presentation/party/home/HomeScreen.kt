@@ -36,7 +36,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
-    onNavigateToProductCategory: (Long?) -> Unit,
+    onNavigateToProductCategory: (Long?, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -46,7 +46,8 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
-            is HomeUiEffect.NavigateToProductCategory -> onNavigateToProductCategory(effect.artistId)
+            is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
+            HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
         }
     }
 

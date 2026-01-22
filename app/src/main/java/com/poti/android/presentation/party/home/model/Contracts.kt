@@ -25,7 +25,9 @@ sealed interface HomeUiIntent : UiIntent {
 sealed interface HomeUiEffect : UiEffect {
     data object NavigateToPartyCreate : HomeUiEffect
 
-    data class NavigateToProductCategory(val artistId: Long?) : HomeUiEffect
+    data class NavigateToMyArtistCategory(val artistId: Long?) : HomeUiEffect
+
+    data object NavigateToOtherProductCategory : HomeUiEffect
 
     data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 }
