@@ -30,11 +30,11 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
-import com.poti.android.presentation.party.goodsfilter.component.GoodsSortBottomSheet
+import com.poti.android.presentation.party.goodsfilter.component.FilteredSortBottomSheet
 import com.poti.android.presentation.party.goodsfilter.component.PartyCard
+import com.poti.android.presentation.party.goodsfilter.model.FilteredSortType
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
 import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
-import com.poti.android.presentation.party.goodsfilter.model.PartySortType
 import com.poti.android.presentation.party.goodsfilter.model.membersText
 import com.poti.android.presentation.party.goodsfilter.model.priceText
 import com.poti.android.presentation.party.goodsfilter.model.ratingText
@@ -76,7 +76,7 @@ fun GoodsFilteredPartyListRoute(
     }
 
     if (uiState.isSortFilterBottomSheetVisible) {
-        GoodsSortBottomSheet(
+        FilteredSortBottomSheet(
             selectedSortType = uiState.goodsPartySortType,
             onSelect = { viewModel.processIntent(GoodsFilterUiIntent.OnSortSelect(it)) },
             onDismissRequest = { viewModel.processIntent(GoodsFilterUiIntent.CloseSortFilterBottomSheet) },
@@ -113,7 +113,7 @@ fun GoodsFilteredPartyListRoute(
 @Composable
 private fun GoodsFilteredPartyListScreen(
     productPartyListInfo: ProductPartyList,
-    partySortType: PartySortType,
+    partySortType: FilteredSortType,
     memberFilterText: String,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
@@ -219,7 +219,7 @@ private fun GoodsFilteredPartyListScreenPreveiw() {
                 ),
             ),
         ),
-        partySortType = PartySortType.LATEST,
+        partySortType = FilteredSortType.DEADLINE,
         memberFilterText = "",
         onBackClick = {},
         onFloatingClick = {},

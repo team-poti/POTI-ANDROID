@@ -11,7 +11,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.ProductPartyList
 
-enum class PartySortType(
+enum class FilteredSortType(
     val request: String,
     @StringRes val displayRes: Int,
 ) {
@@ -27,7 +27,7 @@ data class GoodsFilterUiState(
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMembers: List<Member> = emptyList(),
-    val goodsPartySortType: PartySortType = PartySortType.DEADLINE,
+    val goodsPartySortType: FilteredSortType = FilteredSortType.DEADLINE,
     val isMemberFilterBottomSheetVisible: Boolean = false,
     val isSortFilterBottomSheetVisible: Boolean = false,
     val bottomSheetSelectedMembersIdices: Set<Int> = setOf(),
@@ -76,7 +76,7 @@ sealed interface GoodsFilterUiIntent : UiIntent {
 
     data object OnSortFilterClick : GoodsFilterUiIntent
 
-    data class OnSortSelect(val sort: PartySortType) : GoodsFilterUiIntent
+    data class OnSortSelect(val sort: FilteredSortType) : GoodsFilterUiIntent
 
     data object CloseMemberFilterBottomSheet : GoodsFilterUiIntent
 
