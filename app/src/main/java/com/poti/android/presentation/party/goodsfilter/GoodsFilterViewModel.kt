@@ -61,7 +61,11 @@ class GoodsFilterViewModel @Inject constructor(
 
             GoodsFilterUiIntent.OnMemberFilterDone -> saveSelectedMember()
 
-            GoodsFilterUiIntent.OnMemberFilterRefresh -> refreshMemberSelectBottomSheet()
+            GoodsFilterUiIntent.OnMemberFilterRefresh -> {
+                if (uiState.value.bottomSheetSelectedMembersIdices.isNotEmpty()) {
+                    clearSelectedMembers()
+                }
+            }
         }
     }
 
@@ -132,6 +136,10 @@ class GoodsFilterViewModel @Inject constructor(
                 isMemberBottomSheetToucehd = false,
             )
         }
+    }
+
+    private fun clearSelectedMembers() {
+        updateState { copy(bottomSheetSelectedMembersIdices = setOf(), isMemberBottomSheetToucehd = true) }
     }
 
     private fun saveSelectedMember() {
