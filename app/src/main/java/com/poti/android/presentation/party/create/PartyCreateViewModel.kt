@@ -268,6 +268,7 @@ class PartyCreateViewModel @Inject constructor(
                             selectedMemberIds = selectedMemberIds,
                             memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
                             neverShowHint = errorBefore,
+                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError
                         )
                     }
                 }
@@ -316,15 +317,19 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     private fun handleProductChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                productName = newValue,
-                productError = if (newValue.isNotBlank()) null else this.productError,
-                selectedProductName = ""
-            )
+        if (uiState.value.selectedArtist == null) {
+            updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
+        } else {
+            updateState {
+                copy(
+                    isDirty = true,
+                    productName = newValue,
+                    productError = if (newValue.isNotBlank()) null else this.productError,
+                    selectedProductName = ""
+                )
+            }
+            productSearchKeywordForDebounce.value = newValue
         }
-        productSearchKeywordForDebounce.value = newValue
     }
 
     private suspend fun searchProdut(keyword: String) {
