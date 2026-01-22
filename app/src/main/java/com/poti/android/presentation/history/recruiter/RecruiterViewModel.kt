@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecruiterViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val partyRepository: PartyRepository,
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
         initialState = RecruiterDetailUiState(),
