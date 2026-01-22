@@ -1,6 +1,6 @@
 package com.poti.android.data.mapper.history
 
-import com.poti.android.data.remote.dto.response.history.GroupBuyPostSaleDto
+import com.poti.android.data.remote.dto.response.history.RecruiterDetailDto
 import com.poti.android.domain.model.history.ParticipantInfo
 import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.model.history.RecruiterDetail
@@ -8,7 +8,7 @@ import com.poti.android.domain.model.history.ShippingInfo
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
 
-fun GroupBuyPostSaleDto.toDomain(): RecruiterDetail = RecruiterDetail(
+fun RecruiterDetailDto.toDomain(): RecruiterDetail = RecruiterDetail(
     recruitId = this.postId,
     orderNumber = this.orderNumber,
     partySummary = PartySummary(

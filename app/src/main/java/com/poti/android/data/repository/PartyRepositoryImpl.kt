@@ -7,7 +7,6 @@ import com.poti.android.data.mapper.artist.toDto
 import com.poti.android.data.mapper.delivery.toDomain
 import com.poti.android.data.mapper.delivery.toDto
 import com.poti.android.data.mapper.history.toDomain
-import com.poti.android.data.mapper.participation.toDomain
 import com.poti.android.data.mapper.party.toDomain
 import com.poti.android.data.mapper.party.toRequestDto
 import com.poti.android.data.remote.datasource.PartyRemoteDataSource
@@ -109,9 +108,9 @@ class PartyRepositoryImpl @Inject constructor(
             .toDomain()
     }
 
-    override suspend fun getPostSale(postId: Long): Result<RecruiterDetail> =
+    override suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail> =
         httpResponseHandler.safeApiCall {
-            partyRemoteDataSource.getPostSale(postId)
+            partyRemoteDataSource.getRecruitDetail(postId)
                 .handleApiResponse()
                 .getOrThrow()
                 .toDomain()

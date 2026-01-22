@@ -41,5 +41,5 @@ interface PartyRepository {
 
     suspend fun getMyRecruitList(status: String): Result<MyPartyList>
 
-    suspend fun getPostSale(postId: Long): Result<RecruiterDetail>
+    suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail>
 }

@@ -39,7 +39,7 @@ class RecruiterViewModel @Inject constructor(
     }
 
     private fun getRecruiterDetail(recruitId: Long) = launchScope {
-        partyRepository.getPostSale(recruitId)
+        partyRepository.getRecruitDetail(recruitId)
             .onSuccess {
                 updateState {
                     copy(recruiterDetailState = ApiState.Success(it.toUiModel()))
