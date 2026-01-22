@@ -16,8 +16,8 @@ enum class PartySortType(
     @StringRes val displayRes: Int,
 ) {
     LATEST("LATEST", R.string.goods_filter_sort_latest),
-    HOT("HOT", R.string.goods_filter_sort_hot),
-    RANDOM("RANDOM", R.string.goods_filter_sort_random),
+    DEADLINE("DEADLINE", R.string.goods_filter_sort_deadline),
+    RATING("RATING", R.string.goods_filter_sort_rating),
 }
 
 data class GoodsFilterUiState(
@@ -27,7 +27,7 @@ data class GoodsFilterUiState(
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMembers: List<Member> = emptyList(),
-    val goodsPartySortType: PartySortType = PartySortType.HOT,
+    val goodsPartySortType: PartySortType = PartySortType.DEADLINE,
     val isMemberFilterBottomSheetVisible: Boolean = false,
     val isSortFilterBottomSheetVisible: Boolean = false,
     val bottomSheetSelectedMembersIdices: Set<Int> = setOf(),
