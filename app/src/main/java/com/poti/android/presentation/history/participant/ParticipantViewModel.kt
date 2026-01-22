@@ -6,6 +6,7 @@ import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.ParticipationRepository
 import com.poti.android.domain.repository.PaymentRepository
+import com.poti.android.domain.repository.UserRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
@@ -21,6 +22,7 @@ class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val participantRepository: ParticipationRepository,
     private val paymentRepository: PaymentRepository,
+    private val userRepository: UserRepository
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -114,18 +116,20 @@ class ParticipantViewModel @Inject constructor(
         updateState { copy(participantDetailState = ApiState.Loading) }
 
         participantRepository.patchDeliveryConfirm(participantId)
-            .onSuccess { leaderUserId ->
+            .onSuccess { leaderUser ->
                 Timber.d("success: confirmDelivery")
-                // TODO: 주최자 정보 획득
 
-                updateState {
-                    copy(
-                        overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
-                            recruiterName = "장원영", // 더미 데이터
-                            recruiterProfileUrl = "", // 더미 데이터
-                            partnerRating = "4.5", // 더미 데이터
-                        ),
-                    )
+                 userRepository.getUserProfile(leaderUser.leaderUserId)
+                     .onSuccess { leader ->
+                         updateState {
+                             copy(
+                                 overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
+                                     recruiterName = leader.nickname,
+                                     recruiterProfileUrl = leader.profileImageUrl,
+                                     partnerRating = leader.ratingAvg.toString()
+                                 ),
+                             )
+                     }
                 }
             }.onFailure {
                 Timber.d("fail: confirmDelivery")
