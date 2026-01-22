@@ -9,7 +9,7 @@ import com.poti.android.core.navigation.Route
 
 @Composable
 fun MainScreen(
-    startDestination: Route,
+    targetDestination: Route,
     navigator: MainNavigator = rememberPotiNavigator(),
 ) {
     Scaffold(
@@ -25,7 +25,7 @@ fun MainScreen(
     ) { innerPadding ->
         MainNavHost(
             navigator = navigator,
-            startDestination = startDestination,
+            targetDestination = targetDestination,
             paddingValues = innerPadding,
         )
     }

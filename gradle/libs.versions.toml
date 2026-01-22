@@ -45,6 +45,7 @@ espressoCore = "3.7.0"
 
 # --- Kakao ---
 kakao = "2.23.1"
+lottieCompose = "6.6.6"
 
 
 [libraries]
@@ -96,6 +97,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 
 # -- Kakao ---
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 
 [plugins]
 # --- Android & Kotlin ---

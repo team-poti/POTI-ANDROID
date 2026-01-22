@@ -7,11 +7,11 @@ data class MyPartyList(
     val currentState: HistoryListType,
     val inProgressCount: Int,
     val completedCount: Int,
-    val partyList: List<MyParticipation>,
+    val partyList: List<MyParty>,
 )
 
-data class MyParticipation(
-    val participationId: Long,
+data class MyParty(
+    val participationId: Long?,
     val groupBuyId: Long,
     val artistName: String,
     val productName: String,
