@@ -5,6 +5,7 @@ import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.ParticipationRepository
+import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val participantRepository: ParticipationRepository
+    private val participantRepository: ParticipationRepository,
+    private val paymentRepository: PaymentRepository
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -102,8 +104,19 @@ class ParticipantViewModel @Inject constructor(
         depositor: String,
         depositTime: String,
     ) = launchScope {
-        // TODO: 입금 확인 요청 API 호출
-        // 성공 시 overlayState = None 및 데이터 갱신
+        updateState { copy(participantDetailState = ApiState.Loading) }
+
+        paymentRepository.postPayment(
+            orderId = participantId,
+            depositorName = depositor,
+            depositAt = depositTime
+        ).onSuccess {
+            Timber.d("success: ${depositor}, $depositTime")
+        }.onFailure { error ->
+            Timber.d("fail: ${error.message}")
+        }
+
+        getParticipantDetail(participantId)
         updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
     }
 }
