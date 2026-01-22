@@ -58,8 +58,7 @@ fun ParticipantDetailRoute(
             overlayState = uiState.overlayState,
             onBackClick = onPopBackStack,
             onDetailClick = {
-                // TODO: partyId가 모델에 추가되면 사용 (현재는 임시로 detail.participationId 사용하거나 수정 필요)
-                viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.participationId))
+                viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.partyId))
             },
             onActionButtonClick = { buttonState ->
                 if (buttonState == ParticipantButtonState.DEPOSIT_DONE) {
