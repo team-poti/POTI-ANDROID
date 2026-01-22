@@ -87,7 +87,7 @@ class ProductPartyListViewModel @Inject constructor(
 
         partyRepository.getProductPartyList(
             page = 0,
-            size = 10,
+            size = 100,
             title = title,
             artistId = artistId,
             sort = sort,
