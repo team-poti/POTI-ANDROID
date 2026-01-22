@@ -10,18 +10,20 @@ import javax.inject.Inject
 
 class PaymentRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    private val paymentRemoteDataSource: PaymentRemoteDataSource
-): PaymentRepository {
-    override suspend fun postPayment(orderId: Long, depositorName: String, depositAt: String): Result<PaymentResult> =
+    private val paymentRemoteDataSource: PaymentRemoteDataSource,
+) : PaymentRepository {
+    override suspend fun postPayment(
+        orderId: Long,
+        depositorName: String,
+        depositAt: String,
+    ): Result<PaymentResult> =
         httpResponseHandler.safeApiCall {
             paymentRemoteDataSource.postPayment(
                 orderId = orderId,
                 depositorName = depositorName,
-                depositAt = depositAt
+                depositAt = depositAt,
             ).handleApiResponse()
                 .getOrThrow()
                 .toDomain()
         }
-
-
 }

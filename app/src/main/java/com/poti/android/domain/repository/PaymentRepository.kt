@@ -6,6 +6,6 @@ interface PaymentRepository {
     suspend fun postPayment(
         orderId: Long,
         depositorName: String,
-        depositAt: String
+        depositAt: String,
     ): Result<PaymentResult>
 }

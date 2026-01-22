@@ -10,5 +10,5 @@ data class PaymentRequestDto(
     @SerialName("depositorName")
     val depositorName: String,
     @SerialName("depositedAt")
-    val depositedAt: String
+    val depositedAt: String,
 )

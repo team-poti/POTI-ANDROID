@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val participantRepository: ParticipationRepository,
-    private val paymentRepository: PaymentRepository
+    private val paymentRepository: PaymentRepository,
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -51,19 +51,7 @@ class ParticipantViewModel @Inject constructor(
                 updateState { copy(overlayState = ParticipantDetailOverlayState.DeliveryConfirmModal) }
             }
 
-            ParticipantDetailUiIntent.ConfirmDelivery -> {
-                // TODO: 배송 수령 확인 API 호출 및 주최자 정보 획득
-                // 성공 시 리뷰 모달로 전환하며 데이터 전달
-                updateState {
-                    copy(
-                        overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
-                            recruiterName = "장원영", // 더미 데이터
-                            recruiterProfileUrl = "", // 더미 데이터
-                            partnerRating = "4.5", // 더미 데이터
-                        ),
-                    )
-                }
-            }
+            ParticipantDetailUiIntent.ConfirmDelivery -> confirmDelivery()
 
             ParticipantDetailUiIntent.SkipReview -> {
                 // TODO: 리뷰 건너뛰기 처리 (필요시 API 호출)
@@ -87,9 +75,11 @@ class ParticipantViewModel @Inject constructor(
                 Timber.d("success: getParticipantDetail")
 
                 updateState {
-                    copy(participantDetailState = ApiState.Success(
-                        it.toUiModel()
-                    ))
+                    copy(
+                        participantDetailState = ApiState.Success(
+                            it.toUiModel(),
+                        ),
+                    )
                 }
             }.onFailure { error ->
                 Timber.d("fail: getParticipantDetail")
@@ -109,14 +99,36 @@ class ParticipantViewModel @Inject constructor(
         paymentRepository.postPayment(
             orderId = participantId,
             depositorName = depositor,
-            depositAt = depositTime
+            depositAt = depositTime,
         ).onSuccess {
-            Timber.d("success: ${depositor}, $depositTime")
+            Timber.d("success: $depositor, $depositTime")
         }.onFailure { error ->
             Timber.d("fail: ${error.message}")
         }
 
         getParticipantDetail(participantId)
         updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
+    }
+
+    private fun confirmDelivery() = launchScope {
+        updateState { copy(participantDetailState = ApiState.Loading) }
+
+        participantRepository.patchDeliveryConfirm(participantId)
+            .onSuccess { leaderUserId ->
+                Timber.d("success: confirmDelivery")
+                // TODO: 주최자 정보 획득
+
+                updateState {
+                    copy(
+                        overlayState = ParticipantDetailOverlayState.DeliveryReviewModal(
+                            recruiterName = "장원영", // 더미 데이터
+                            recruiterProfileUrl = "", // 더미 데이터
+                            partnerRating = "4.5", // 더미 데이터
+                        ),
+                    )
+                }
+            }.onFailure {
+                Timber.d("fail: confirmDelivery")
+            }
     }
 }

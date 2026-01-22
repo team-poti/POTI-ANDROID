@@ -7,18 +7,18 @@ import com.poti.android.data.remote.service.PaymentService
 import javax.inject.Inject
 
 class PaymentRemoteDataSource @Inject constructor(
-    private val paymentService: PaymentService
+    private val paymentService: PaymentService,
 ) {
     suspend fun postPayment(
         orderId: Long,
         depositorName: String,
-        depositAt: String
+        depositAt: String,
     ): BaseResponse<PaymentResponseDto> =
         paymentService.postPayment(
             paymentReq = PaymentRequestDto(
                 orderId = orderId,
                 depositorName = depositorName,
-                depositedAt = depositAt
-            )
+                depositedAt = depositAt,
+            ),
         )
 }

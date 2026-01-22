@@ -18,19 +18,21 @@ fun ParticipantDetailResponseDto.toDomain(): ParticipantDetail = ParticipantDeta
         artist = this.artistName,
         title = this.title,
         partyStatus = toPartyStatus(this.status),
-        statusMessage = this.statusMessage
+        statusMessage = this.statusMessage,
     ),
-    memberPayments = this.memberPayments.map { MemberPayment(
-        memberName = it.memberName,
-        price = it.price
-    ) },
+    memberPayments = this.memberPayments.map {
+        MemberPayment(
+            memberName = it.memberName,
+            price = it.price,
+        )
+    },
     paymentInfo = PaymentInfo(
         shippingFee = this.paymentInfo.shippingFee,
         totalAmount = this.paymentInfo.totalAmount,
         depositStatus = toDepositStatus(this.paymentInfo.depositStatus),
         bank = this.paymentInfo.bank,
         accountNumber = this.paymentInfo.accountNumber,
-        depositDeadline = this.paymentInfo.depositDeadline
+        depositDeadline = this.paymentInfo.depositDeadline,
     ),
     shippingInfo = ParticipantShippingInfo(
         shippingMethod = this.shippingInfo.shippingMethod,
@@ -40,12 +42,12 @@ fun ParticipantDetailResponseDto.toDomain(): ParticipantDetail = ParticipantDeta
         phone = this.shippingInfo.phone,
         carrier = this.shippingInfo.carrier,
         trackingNumber = this.shippingInfo.trackingNumber,
-        shippingStatus = toShippingStatus(this.shippingInfo.shippingStatus)
-    )
+        shippingStatus = toShippingStatus(this.shippingInfo.shippingStatus),
+    ),
 )
 
 private fun toPartyStatus(partyStatus: String): PartyStatusType =
-    when(partyStatus) {
+    when (partyStatus) {
         "RECRUITING" -> PartyStatusType.RECRUITING
         "CLOSED" -> PartyStatusType.CLOSED
         "PAYMENT_DONE" -> PartyStatusType.PAYMENT_DONE
@@ -56,7 +58,7 @@ private fun toPartyStatus(partyStatus: String): PartyStatusType =
     }
 
 private fun toDepositStatus(depositStatus: String): ParticipantStatusType =
-    when(depositStatus) {
+    when (depositStatus) {
         "WAIT_PAY" -> ParticipantStatusType.WAIT_PAY
         "WAIT_PAY_CHECK" -> ParticipantStatusType.WAIT_PAY_CHECK
         "PAID" -> ParticipantStatusType.PAID
@@ -68,7 +70,7 @@ private fun toDepositStatus(depositStatus: String): ParticipantStatusType =
     }
 
 private fun toShippingStatus(shippingStatus: String): ParticipantStatusType =
-    when(shippingStatus) {
+    when (shippingStatus) {
         "WAIT_PAY" -> ParticipantStatusType.WAIT_PAY
         "WAIT_PAY_CHECK" -> ParticipantStatusType.WAIT_PAY_CHECK
         "PAID" -> ParticipantStatusType.PAID

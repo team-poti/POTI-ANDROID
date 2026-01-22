@@ -9,6 +9,6 @@ import retrofit2.http.POST
 interface PaymentService {
     @POST("/api/v1/payments")
     suspend fun postPayment(
-        @Body paymentReq: PaymentRequestDto
+        @Body paymentReq: PaymentRequestDto,
     ): BaseResponse<PaymentResponseDto>
 }

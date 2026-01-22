@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PaymentResponseDto(
     @SerialName("paymentId")
-    val paymentId: Long
+    val paymentId: Long,
 )

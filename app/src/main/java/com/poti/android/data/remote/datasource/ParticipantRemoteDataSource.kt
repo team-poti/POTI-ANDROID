@@ -1,6 +1,7 @@
 package com.poti.android.data.remote.datasource
 
 import com.poti.android.core.network.model.BaseResponse
+import com.poti.android.data.remote.dto.response.history.DeliveryConfirmResponseDto
 import com.poti.android.data.remote.dto.response.history.MyPartyListDto
 import com.poti.android.data.remote.dto.response.history.ParticipantDetailResponseDto
 import com.poti.android.data.remote.service.ParticipationService
@@ -11,6 +12,10 @@ class ParticipantRemoteDataSource @Inject constructor(
 ) {
     suspend fun getMyPartyList(status: String): BaseResponse<MyPartyListDto> =
         participationService.getMyParticipationList(status)
+
     suspend fun getParticipantDetail(participationId: Long): BaseResponse<ParticipantDetailResponseDto> =
         participationService.getParticipantDetail(participationId)
+
+    suspend fun patchDeliveryConfirm(participationId: Long): BaseResponse<DeliveryConfirmResponseDto> =
+        participationService.patchDeliveryConfirm(participationId)
 }
