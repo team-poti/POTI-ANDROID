@@ -7,6 +7,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
+import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect.*
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIntent
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiState
 import com.poti.android.presentation.history.recruiter.model.toUiModel
@@ -24,7 +25,7 @@ class RecruiterViewModel @Inject constructor(
 
     init {
         if (recruitId != -1L) {
-            getRecruiterDetail(recruitId)
+            getRecruiterDetail()
         } else {
             updateState { copy(recruiterDetailState = ApiState.Init) }
         }
@@ -33,12 +34,13 @@ class RecruiterViewModel @Inject constructor(
     override fun processIntent(intent: RecruiterDetailUiIntent) {
         when (intent) {
             is RecruiterDetailUiIntent.BackButtonClicked -> sendEffect(RecruiterDetailUiEffect.NavigateBack)
-            is RecruiterDetailUiIntent.PartyCardClicked -> sendEffect(RecruiterDetailUiEffect.NavigateToPartyDetail(recruitId))
-            is RecruiterDetailUiIntent.ParticipantSectionClicked -> sendEffect(RecruiterDetailUiEffect.NavigateToParticipantList(recruitId))
+            is RecruiterDetailUiIntent.PartyCardClicked -> sendEffect(NavigateToPartyDetail(recruitId))
+            is RecruiterDetailUiIntent.ParticipantSectionClicked -> sendEffect(NavigateToParticipantList(recruitId))
+            RecruiterDetailUiIntent.OnResume -> getRecruiterDetail()
         }
     }
 
-    private fun getRecruiterDetail(recruitId: Long) = launchScope {
+    private fun getRecruiterDetail() = launchScope {
         partyRepository.getRecruitDetail(recruitId)
             .onSuccess {
                 updateState {

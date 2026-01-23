@@ -34,6 +34,8 @@ sealed interface ParticipantManageUiIntent : UiIntent {
         val deliveryMethod: String,
         val trackingNumber: String,
     ) : ParticipantManageUiIntent
+
+    data object OnResume : ParticipantManageUiIntent
 }
 
 sealed interface ParticipantManageUiEffect : UiEffect {

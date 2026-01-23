@@ -9,6 +9,7 @@ import com.poti.android.domain.repository.DeliveryRepository
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.presentation.history.manage.model.ManageModalState
+import com.poti.android.presentation.history.manage.model.ManageModalState.*
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiIntent
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiState
@@ -38,14 +39,15 @@ class ParticipantManageViewModel @Inject constructor(
         when (intent) {
             ParticipantManageUiIntent.OnBackClick -> sendEffect(ParticipantManageUiEffect.NavigateBack)
             is ParticipantManageUiIntent.OnDepositConfirmClick -> updateState {
-                copy(activeModal = ManageModalState.DepositConfirm(intent.participantId))
+                copy(activeModal = DepositConfirm(intent.participantId))
             }
             is ParticipantManageUiIntent.OnDeliveryInputClick -> updateState {
-                copy(activeModal = ManageModalState.DeliveryInput(intent.participantId))
+                copy(activeModal = DeliveryInput(intent.participantId))
             }
             ParticipantManageUiIntent.OnDepositModalDismiss -> updateState { copy(activeModal = ManageModalState.None) }
             is ParticipantManageUiIntent.OnDepositModalConfirm -> confirmDeposit(intent.participantId)
             is ParticipantManageUiIntent.RegisterDelivery -> registerDelivery(intent.participantId, intent.deliveryMethod, intent.trackingNumber)
+            ParticipantManageUiIntent.OnResume -> loadParticipantManageDetail()
         }
     }
 

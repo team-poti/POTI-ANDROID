@@ -19,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
@@ -49,6 +51,10 @@ fun HistoryListRoute(
     viewModel: HistoryListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.processIntent(HistoryListUiIntent.OnResume)
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {

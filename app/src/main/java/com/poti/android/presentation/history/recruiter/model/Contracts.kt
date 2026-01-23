@@ -10,11 +10,13 @@ data class RecruiterDetailUiState(
 ) : UiState
 
 sealed interface RecruiterDetailUiIntent : UiIntent {
-    object BackButtonClicked : RecruiterDetailUiIntent
+    data object BackButtonClicked : RecruiterDetailUiIntent
 
-    object PartyCardClicked : RecruiterDetailUiIntent
+    data object PartyCardClicked : RecruiterDetailUiIntent
 
-    object ParticipantSectionClicked : RecruiterDetailUiIntent
+    data object ParticipantSectionClicked : RecruiterDetailUiIntent
+
+    data object OnResume : RecruiterDetailUiIntent
 }
 
 sealed interface RecruiterDetailUiEffect : UiEffect {

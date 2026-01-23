@@ -52,6 +52,8 @@ sealed interface HistoryListUiIntent : UiIntent {
     data class OnTabSelected(val tab: PotiHeaderTabType) : HistoryListUiIntent
 
     data class OnCardClick(val id: Long) : HistoryListUiIntent
+
+    data object OnResume : HistoryListUiIntent
 }
 
 sealed interface HistoryListUiEffect : UiEffect {

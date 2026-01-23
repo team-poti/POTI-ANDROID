@@ -12,6 +12,7 @@ import com.poti.android.domain.repository.ParticipationRepository
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.type.HistoryListType
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
+import com.poti.android.presentation.history.list.model.HistoryListUiEffect.*
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
 import com.poti.android.presentation.history.list.model.HistoryMode
@@ -41,11 +42,12 @@ class HistoryListViewModel @Inject constructor(
             is HistoryListUiIntent.OnTabSelected -> selectTab(intent.tab)
             is HistoryListUiIntent.OnCardClick -> {
                 if (uiState.value.mode == HistoryMode.RECRUIT) {
-                    sendEffect(HistoryListUiEffect.NavigateToRecruiterDetail(intent.id))
+                    sendEffect(NavigateToRecruiterDetail(intent.id))
                 } else {
-                    sendEffect(HistoryListUiEffect.NavigateToParticipantDetail(intent.id))
+                    sendEffect(NavigateToParticipantDetail(intent.id))
                 }
             }
+            HistoryListUiIntent.OnResume -> loadUserHistoryList()
         }
     }
 
