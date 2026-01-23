@@ -3,7 +3,9 @@ package com.poti.android.presentation.party.product.productcategory
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -111,8 +113,8 @@ private fun ProductCategoryScreen(
                     bottom = 76.dp,
                 ),
             ) {
-                if (isMyArtsit) {
-                    item {
+                item {
+                    if (isMyArtsit) {
                         PotiSmallButton(
                             text = stringResource(selectedSortType.displayRes),
                             onClick = onSortFilterClick,
@@ -121,7 +123,12 @@ private fun ProductCategoryScreen(
                                 .wrapContentWidth(Alignment.End),
                         )
                     }
+
+                    else {
+                        Spacer(Modifier.height(12.dp))
+                    }
                 }
+
 
                 items(productCategory.groupItems) { groupItem ->
                     GoodsLargeCard(
