@@ -61,6 +61,7 @@ fun PartyJoinBottomSheet(
         onClick = onNextClick,
         enabled = uiState.isBottomSheetButtonEnable,
         sheetState = sheetState,
+        sheetGesturesEnabled = false,
         modifier = modifier,
     ) {
         Column(
