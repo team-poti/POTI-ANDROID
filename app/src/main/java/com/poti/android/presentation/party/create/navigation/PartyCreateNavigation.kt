@@ -70,7 +70,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
     composable<PartyCreateRoute.ArtistSelect> { entry ->
         val viewModel: PartyCreateViewModel = entry.sharedViewModel(navController)
         PartyArtistSelectRoute(
-            onPopBackStack = navController::navigateToPartyCreateFromArtistSelect,
+            onPopBackStack = navController::popBackStack,
             viewModel = viewModel,
             modifier = Modifier.padding(paddingValues),
         )
