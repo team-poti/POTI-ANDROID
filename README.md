@@ -42,7 +42,7 @@
 
 | [손예림](https://github.com/sonyerim) | [이지현(👑)](https://github.com/jyvnee) | [전도연](https://github.com/doyeon0307) | [천민재](https://github.com/cmj7271) |
 | --- | --- | --- | --- |
-| <img width="540" height="860" alt="예누" src="https://github.com/user-attachments/assets/b85a5f6d-7328-4ccb-b3e7-7d474c5075f1" />| <img width="540" height="860" alt="지누" src="https://github.com/user-attachments/assets/9895ca59-93e0-461d-b7b7-0de8852511e7" />|<img width="540" height="860" alt="도누" src="https://github.com/user-attachments/assets/05da9d15-d85d-4501-beaa-d9569bd3c9dd" /> | <img width="540" height="860" alt="민누" src="https://github.com/user-attachments/assets/092dc12c-f1a8-497b-bddd-c72d7efbc52c" /> |
+| <img width="540" height="860" alt="예누" src="https://github.com/user-attachments/assets/6cb4fa3f-be17-4452-a24e-8758b3c424da" />| <img width="540" height="860" alt="지누" src="https://github.com/user-attachments/assets/9895ca59-93e0-461d-b7b7-0de8852511e7" />|<img width="540" height="860" alt="도누" src="https://github.com/user-attachments/assets/05da9d15-d85d-4501-beaa-d9569bd3c9dd" /> | <img width="540" height="860" alt="민누" src="https://github.com/user-attachments/assets/092dc12c-f1a8-497b-bddd-c72d7efbc52c" /> |
 
 <br>
 
