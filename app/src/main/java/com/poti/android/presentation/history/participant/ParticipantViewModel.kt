@@ -31,12 +31,12 @@ class ParticipantViewModel @Inject constructor(
     private val participantId: Long = savedStateHandle.toRoute<HistoryRoute.ParticipantDetail>().participantId
 
     init {
-        getParticipantDetail(participantId)
+        getParticipantDetail()
     }
 
     override fun processIntent(intent: ParticipantDetailUiIntent) {
         when (intent) {
-            is ParticipantDetailUiIntent.LoadDetail -> getParticipantDetail(intent.recruitId)
+            is ParticipantDetailUiIntent.LoadDetail -> getParticipantDetail()
             ParticipantDetailUiIntent.OnBackClick -> sendEffect(ParticipantDetailUiEffect.NavigateBack)
             is ParticipantDetailUiIntent.OnPartyDetailClick -> sendEffect(ParticipantDetailUiEffect.NavigateToPartyDetail(intent.partyId))
             ParticipantDetailUiIntent.OnDepositCompleteClick -> updateState { copy(overlayState = ParticipantDetailOverlayState.DepositBottomSheet) }
@@ -49,7 +49,7 @@ class ParticipantViewModel @Inject constructor(
         }
     }
 
-    private fun getParticipantDetail(participantId: Long) = launchScope {
+    private fun getParticipantDetail() = launchScope {
         if (uiState.value.participantDetailState !is ApiState.Success) {
             updateState { copy(participantDetailState = ApiState.Loading) }
         }
@@ -82,7 +82,7 @@ class ParticipantViewModel @Inject constructor(
             Timber.d("fail: ${error.message}")
         }
 
-        getParticipantDetail(participantId)
+        getParticipantDetail()
         updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
     }
 
@@ -90,7 +90,7 @@ class ParticipantViewModel @Inject constructor(
         participantRepository.patchDeliveryConfirm(participantId)
             .onSuccess { leaderUser ->
                 Timber.d("success: confirmDelivery")
-                getParticipantDetail(participantId)
+                getParticipantDetail()
 
                 userRepository.getUserProfile(leaderUser)
                     .onSuccess { leader ->
@@ -123,7 +123,7 @@ class ParticipantViewModel @Inject constructor(
             .onSuccess { result ->
                 Timber.d("success: $result")
                 updateState { copy(overlayState = ParticipantDetailOverlayState.None) }
-                getParticipantDetail(participantId)
+                getParticipantDetail()
             }.onFailure { error ->
                 Timber.e(error, "submit review failed")
             }

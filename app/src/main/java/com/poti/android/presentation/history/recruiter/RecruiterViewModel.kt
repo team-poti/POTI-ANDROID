@@ -24,11 +24,7 @@ class RecruiterViewModel @Inject constructor(
     private val recruitId: Long = savedStateHandle.toRoute<HistoryRoute.RecruiterDetail>().recruitId
 
     init {
-        if (recruitId != -1L) {
-            getRecruiterDetail()
-        } else {
-            updateState { copy(recruiterDetailState = ApiState.Init) }
-        }
+        getRecruiterDetail()
     }
 
     override fun processIntent(intent: RecruiterDetailUiIntent) {
