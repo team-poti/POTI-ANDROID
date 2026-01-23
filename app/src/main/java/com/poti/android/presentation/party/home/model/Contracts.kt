@@ -8,15 +8,14 @@ import com.poti.android.domain.model.home.HomeContent
 
 data class HomeUiState(
     val homeContentLoadState: ApiState<HomeContent> = ApiState.Loading,
-    val homeContent: HomeContent = HomeContent(),
 ) : UiState
 
 sealed interface HomeUiIntent : UiIntent {
-    data class OnBannerClick(val postId: Long) : HomeUiIntent
+    data class OnMyArtistCategoryClick(val artistId: Long?) : HomeUiIntent
 
-    data class OnMoreClick(val artistId: Long) : HomeUiIntent
+    data class OnProductCardClick(val artistId: Long, val title: String) : HomeUiIntent
 
-    data class OnCardClick(val artistId: Long, val title: String) : HomeUiIntent
+    data object OnOtherProductCategoryClick : HomeUiIntent
 
     data object OnFloatingClick : HomeUiIntent
 
@@ -26,9 +25,9 @@ sealed interface HomeUiIntent : UiIntent {
 sealed interface HomeUiEffect : UiEffect {
     data object NavigateToPartyCreate : HomeUiEffect
 
-    data class NavigateToPartyDetail(val postId: Long) : HomeUiEffect
+    data class NavigateToMyArtistCategory(val artistId: Long?) : HomeUiEffect
 
-    data class NavigateToGoodsCategory(val artistId: Long) : HomeUiEffect
+    data object NavigateToOtherProductCategory : HomeUiEffect
 
     data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 }

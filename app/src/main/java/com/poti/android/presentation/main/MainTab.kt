@@ -18,7 +18,7 @@ enum class MainTab(
         label = R.string.bottom_nav_home,
         route = HomeRoute.Home,
     ),
-    MY_PARTY(
+    HISTORY(
         iconResId = R.drawable.ic_history,
         label = R.string.bottom_nav_history,
         route = HistoryRoute.HistoryList(),

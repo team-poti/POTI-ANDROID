@@ -38,7 +38,6 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 
 @Composable
 fun MyPageRoute(
-    onNavigateToArtist: () -> Unit,
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
@@ -47,8 +46,6 @@ fun MyPageRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            MyPageUiEffect.NavigateToArtist -> onNavigateToArtist()
-
             is MyPageUiEffect.NavigateToHistoryList -> {
                 onNavigateToHistoryList(effect.mode, effect.tab)
             }
@@ -58,7 +55,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) }, // TODO: [예림] 선택 최애 없을 때만 이동
+            onArtistClick = { },
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),

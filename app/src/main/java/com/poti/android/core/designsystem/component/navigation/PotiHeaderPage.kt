@@ -61,7 +61,7 @@ fun PotiHeaderPage(
             subTitle?.let {
                 Text(
                     text = subTitle,
-                    style = PotiTheme.typography.caption10m.copy(
+                    style = PotiTheme.typography.caption12m.copy(
                         lineHeight = 1.35.em,
                     ),
                     color = PotiTheme.colors.gray700,

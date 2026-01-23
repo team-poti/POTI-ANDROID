@@ -1,6 +1,6 @@
 package com.poti.android.domain.model.party
 
-data class GoodsCategory(
+data class ProductCategory(
     val nickname: String,
     val mainArtist: String?,
     val mainArtistId: Long?,

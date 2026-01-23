@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter.navigation
+package com.poti.android.presentation.party.product.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -10,61 +10,57 @@ import androidx.navigation.toRoute
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
-import com.poti.android.presentation.party.goodsfilter.GoodsCategoryRoute
-import com.poti.android.presentation.party.goodsfilter.GoodsFilteredPartyListRoute
+import com.poti.android.presentation.party.product.partylist.ProductPartyListRoute
+import com.poti.android.presentation.party.product.productcategory.ProductCategoryRoute
 import kotlinx.serialization.Serializable
 
-sealed interface GoodsRoute : Route {
+sealed interface ProductRoute : Route {
     @Serializable
-    data object GoodsList : GoodsRoute
-
-    @Serializable
-    data class GoodsPartyList(
+    data class ProductPartyList(
         val artistId: Long,
         val title: String,
-    ) : GoodsRoute
+    ) : ProductRoute
 
     @Serializable
-    data class GoodsCategory(
-        val artistId: Long,
-    ) : GoodsRoute
+    data class ProductCategory(
+        val artistId: Long? = null,
+        val isMyArtist: Boolean,
+    ) : ProductRoute
 }
 
-fun NavController.navigateToGoodsList() {
-    navigate(GoodsRoute.GoodsList)
-}
-
-fun NavController.navigateToGoodsPartyList(
+fun NavController.navigateToProductPartyList(
     artistId: Long,
     title: String,
 ) {
-    navigate(GoodsRoute.GoodsPartyList(artistId, title))
+    navigate(ProductRoute.ProductPartyList(artistId, title))
 }
 
-fun NavController.navigateToGoodsCategory(artistId: Long) {
-    navigate(GoodsRoute.GoodsCategory(artistId))
+fun NavController.navigateToProductCategory(
+    artistId: Long?,
+    isMyArtist: Boolean,
+) {
+    navigate(ProductRoute.ProductCategory(artistId, isMyArtist))
 }
 
-fun NavGraphBuilder.goodsFilterNavGraph(
+fun NavGraphBuilder.productNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
     onPopBackStack: () -> Unit,
 ) {
-    composable<GoodsRoute.GoodsCategory> { backStackEntry ->
-        val artistId = backStackEntry.toRoute<GoodsRoute.GoodsCategory>().artistId
-
-        GoodsCategoryRoute(
+    composable<ProductRoute.ProductCategory> { backStackEntry ->
+        val artistId = backStackEntry.toRoute<ProductRoute.ProductCategory>().artistId
+        ProductCategoryRoute(
             artistId = artistId,
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
-            onNavigateToGoodsPartyList = navController::navigateToGoodsPartyList,
+            onNavigateToProductPartyList = navController::navigateToProductPartyList,
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<GoodsRoute.GoodsPartyList> { backStackEntry ->
-        val artistId = backStackEntry.toRoute<GoodsRoute.GoodsPartyList>().artistId
+    composable<ProductRoute.ProductPartyList> { backStackEntry ->
+        val artistId = backStackEntry.toRoute<ProductRoute.ProductPartyList>().artistId
 
-        GoodsFilteredPartyListRoute(
+        ProductPartyListRoute(
             artistId = artistId,
             onPopBackStack = onPopBackStack,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,

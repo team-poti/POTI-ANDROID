@@ -5,7 +5,7 @@ import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.home.toDomain
 import com.poti.android.data.remote.datasource.HomeRemoteDataSource
 import com.poti.android.domain.model.home.HomeContent
-import com.poti.android.domain.model.party.GoodsCategory
+import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.domain.repository.HomeRepository
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class HomeRepositoryImpl @Inject constructor(
         size: Int?,
         sort: String?,
         artistId: Long?,
-    ): Result<GoodsCategory> = httpResponseHandler.safeApiCall {
+    ): Result<ProductCategory> = httpResponseHandler.safeApiCall {
         homeRemoteDataSource.getGoodsCategoryList(
             page = page,
             size = size,

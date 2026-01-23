@@ -11,7 +11,7 @@ import com.poti.android.domain.model.history.HistoryListContent
 
 data class HistoryListUiState(
     val historyListLoadState: ApiState<HistoryListContent> = ApiState.Init,
-    val mode: HistoryMode = HistoryMode.RECRUIT,
+    val mode: HistoryMode = HistoryMode.PARTICIPATION,
     val selectedTab: PotiHeaderTabType = PotiHeaderTabType.ONGOING,
 ) : UiState {
     val titleRes = when (mode) {
@@ -52,6 +52,8 @@ sealed interface HistoryListUiIntent : UiIntent {
     data class OnTabSelected(val tab: PotiHeaderTabType) : HistoryListUiIntent
 
     data class OnCardClick(val id: Long) : HistoryListUiIntent
+
+    data object OnResume : HistoryListUiIntent
 }
 
 sealed interface HistoryListUiEffect : UiEffect {

@@ -4,6 +4,7 @@ import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.presentation.party.home.model.HomeUiEffect
+import com.poti.android.presentation.party.home.model.HomeUiEffect.*
 import com.poti.android.presentation.party.home.model.HomeUiIntent
 import com.poti.android.presentation.party.home.model.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +18,11 @@ class HomeViewModel @Inject constructor(
     ) {
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
-            HomeUiIntent.OnFloatingClick -> sendEffect(HomeUiEffect.NavigateToPartyCreate)
-            is HomeUiIntent.OnBannerClick -> sendEffect(HomeUiEffect.NavigateToPartyDetail(intent.postId))
-            is HomeUiIntent.OnMoreClick -> sendEffect(HomeUiEffect.NavigateToGoodsCategory(intent.artistId))
-            is HomeUiIntent.OnCardClick -> sendEffect(HomeUiEffect.NavigateToGoodsPartyList(intent.artistId, intent.title))
+            HomeUiIntent.OnFloatingClick -> sendEffect(NavigateToPartyCreate)
+            is HomeUiIntent.OnMyArtistCategoryClick -> sendEffect(NavigateToMyArtistCategory(intent.artistId))
+            is HomeUiIntent.OnProductCardClick -> sendEffect(NavigateToGoodsPartyList(intent.artistId, intent.title))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
+            HomeUiIntent.OnOtherProductCategoryClick -> sendEffect(NavigateToOtherProductCategory)
         }
     }
 

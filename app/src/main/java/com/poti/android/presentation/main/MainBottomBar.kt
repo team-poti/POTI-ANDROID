@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
@@ -48,7 +49,8 @@ fun MainBottomBar(
                 .fillMaxWidth()
                 .background(PotiTheme.colors.white)
                 .topRoundedBorder(1.dp, PotiTheme.colors.gray300, 20.dp)
-                .padding(16.dp),
+                .padding(16.dp)
+                .navigationBarsPadding(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             MainTab.entries.forEach { tab ->

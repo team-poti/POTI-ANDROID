@@ -28,7 +28,7 @@ fun ParticipantGuidelines(
             Text(
                 text = text,
                 style = PotiTheme.typography.caption12m,
-                color = PotiTheme.colors.gray800,
+                color = PotiTheme.colors.gray700,
             )
         }
     }

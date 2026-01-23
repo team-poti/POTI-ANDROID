@@ -103,7 +103,7 @@ fun HistoryParticipantDetail(
                     itemOptionText = participant.shippingName,
                     priceText = stringResource(
                         R.string.history_participant_detail_won_unit_format,
-                        participant.shippingPrice,
+                        participant.shippingPrice.toMoneyString(),
                     ),
                     sizeType = PotiListOptionPriceSize.SMALL,
                 )

@@ -16,7 +16,7 @@ private fun PartyDto.toDomain(): PartySummary =
     PartySummary(
         partyId = potId,
         price = price,
-        goodsImageUrl = thumbnailUrl.orEmpty(),
+        productImageUrl = thumbnailUrl.orEmpty(),
         currentCount = currentCount,
         totalCount = totalCount,
         availableMembers = availableMembers,

@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter.component
+package com.poti.android.presentation.party.product.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

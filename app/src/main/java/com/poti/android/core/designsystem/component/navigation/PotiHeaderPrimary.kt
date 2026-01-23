@@ -46,7 +46,7 @@ fun PotiHeaderPrimary(
             )
         } else {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_logo),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_poti_logo),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )

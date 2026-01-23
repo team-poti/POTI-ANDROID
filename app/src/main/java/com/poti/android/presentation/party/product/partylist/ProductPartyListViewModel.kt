@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter
+package com.poti.android.presentation.party.product.partylist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
@@ -6,67 +6,67 @@ import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.PartyRepository
-import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiEffect
-import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiIntent
-import com.poti.android.presentation.party.goodsfilter.model.GoodsFilterUiState
-import com.poti.android.presentation.party.goodsfilter.navigation.GoodsRoute.GoodsPartyList
+import com.poti.android.presentation.party.product.navigation.ProductRoute
+import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiEffect
+import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiIntent
+import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class GoodsFilterViewModel @Inject constructor(
+class ProductPartyListViewModel @Inject constructor(
     private val artistRepository: ArtistRepository,
     private val partyRepository: PartyRepository,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel<GoodsFilterUiState, GoodsFilterUiIntent, GoodsFilterUiEffect>(
-        initialState = GoodsFilterUiState(),
+) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
+        initialState = ProductPartyListUiState(),
     ) {
-    private val artistId: Long = savedStateHandle.toRoute<GoodsPartyList>().artistId
-    private val title: String = savedStateHandle.toRoute<GoodsPartyList>().title
+    private val artistId: Long = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().artistId
+    private val title: String = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().title
 
     init {
         fetchArtistMembers()
         loadPartyList()
     }
 
-    override fun processIntent(intent: GoodsFilterUiIntent) {
+    override fun processIntent(intent: ProductPartyListUiIntent) {
         when (intent) {
-            GoodsFilterUiIntent.LoadGoodsPots -> loadPartyList()
-            GoodsFilterUiIntent.OnBackClick -> sendEffect(GoodsFilterUiEffect.NavigateBack)
-            GoodsFilterUiIntent.OnFloatingClick -> sendEffect(
-                GoodsFilterUiEffect.NavigateToPartyCreate(
+            ProductPartyListUiIntent.LoadProductPartyList -> loadPartyList()
+            ProductPartyListUiIntent.OnBackClick -> sendEffect(ProductPartyListUiEffect.NavigateBack)
+            ProductPartyListUiIntent.OnFloatingClick -> sendEffect(
+                ProductPartyListUiEffect.NavigateToPartyCreate(
                     artistName = uiState.value.cachedSubTitle,
                     productName = title,
                 ),
             )
-            is GoodsFilterUiIntent.OnPartyClick -> sendEffect(GoodsFilterUiEffect.NavigateToPartyDetail(intent.partyId))
-            GoodsFilterUiIntent.OnMemberFilterClick -> {
+            is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
+            ProductPartyListUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()
                 updateState { copy(isMemberFilterBottomSheetVisible = true) }
             }
 
-            is GoodsFilterUiIntent.OnMemberSelect -> {
+            is ProductPartyListUiIntent.OnMemberSelect -> {
                 onBottomSheetMemberChanged(intent.index)
             }
 
-            GoodsFilterUiIntent.OnSortFilterClick -> {
+            ProductPartyListUiIntent.OnSortFilterClick -> {
                 updateState { copy(isSortFilterBottomSheetVisible = true) }
             }
 
-            GoodsFilterUiIntent.CloseSortFilterBottomSheet -> {
+            ProductPartyListUiIntent.CloseSortFilterBottomSheet -> {
                 updateState { copy(isSortFilterBottomSheetVisible = false) }
             }
 
-            is GoodsFilterUiIntent.OnSortSelect -> {
-                updateState { copy(goodsPartySortType = intent.sort, isSortFilterBottomSheetVisible = false) }
+            is ProductPartyListUiIntent.OnSortSelect -> {
+                updateState { copy(partySortType = intent.sort, isSortFilterBottomSheetVisible = false) }
                 loadPartyList()
             }
 
-            GoodsFilterUiIntent.CloseMemberFilterBottomSheet -> updateState { copy(isMemberFilterBottomSheetVisible = false) }
+            ProductPartyListUiIntent.CloseMemberFilterBottomSheet -> updateState { copy(isMemberFilterBottomSheetVisible = false) }
 
-            GoodsFilterUiIntent.OnMemberFilterDone -> saveSelectedMember()
+            ProductPartyListUiIntent.OnMemberFilterDone -> saveSelectedMember()
 
-            GoodsFilterUiIntent.OnMemberFilterRefresh -> {
+            ProductPartyListUiIntent.OnMemberFilterRefresh -> {
                 if (uiState.value.bottomSheetSelectedMembersIdices.isNotEmpty()) {
                     clearSelectedMembers()
                 }
@@ -76,7 +76,7 @@ class GoodsFilterViewModel @Inject constructor(
 
     private fun loadPartyList() = launchScope {
         val currentState = uiState.value
-        val sort = currentState.goodsPartySortType.request
+        val sort = currentState.partySortType.request
         val memberIds = if (currentState.selectedMembers.isNotEmpty()) {
             currentState.selectedMembers.map { it.memberId }
         } else {
@@ -87,7 +87,7 @@ class GoodsFilterViewModel @Inject constructor(
 
         partyRepository.getProductPartyList(
             page = 0,
-            size = 10,
+            size = 100,
             title = title,
             artistId = artistId,
             sort = sort,

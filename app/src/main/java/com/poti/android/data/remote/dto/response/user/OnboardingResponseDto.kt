@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OnboardingResponseDto(
     @SerialName("nickname")
-    val nickname: String,
+    val nickname: String?,
     @SerialName("favoriteArtistId")
-    val favoriteArtistId: Long,
+    val favoriteArtistId: Long?,
 )

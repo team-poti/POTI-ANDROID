@@ -75,7 +75,7 @@ fun GoodsLargeCard(
             if (!tag.isNullOrBlank()) {
                 PotiSecondaryTag(
                     text = tag,
-                    sizeType = PotiTagSize.SMALL,
+                    sizeType = PotiTagSize.LARGE,
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(12.dp),
@@ -103,7 +103,7 @@ fun GoodsLargeCard(
                     color = PotiTheme.colors.gray800,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    style = PotiTheme.typography.caption12m,
+                    style = PotiTheme.typography.body14m,
                 )
 
                 Text(
@@ -113,7 +113,7 @@ fun GoodsLargeCard(
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2,
                     minLines = 2,
-                    style = PotiTheme.typography.body14m,
+                    style = PotiTheme.typography.body16m,
                 )
             }
 

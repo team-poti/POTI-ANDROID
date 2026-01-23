@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.goodsfilter.model
+package com.poti.android.presentation.party.product
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
