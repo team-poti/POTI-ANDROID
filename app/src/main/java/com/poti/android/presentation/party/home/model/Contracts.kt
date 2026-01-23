@@ -8,6 +8,7 @@ import com.poti.android.domain.model.home.HomeContent
 
 data class HomeUiState(
     val homeContentLoadState: ApiState<HomeContent> = ApiState.Loading,
+    val artistIdToNull: Boolean = false,
 ) : UiState
 
 sealed interface HomeUiIntent : UiIntent {

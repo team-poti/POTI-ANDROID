@@ -56,6 +56,7 @@ fun ProductCategoryRoute(
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
             title = if (viewModel.isMyArtist) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
+            isMyArtsit = viewModel.isMyArtist,
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
@@ -73,6 +74,7 @@ fun ProductCategoryRoute(
 @Composable
 private fun ProductCategoryScreen(
     title: String,
+    isMyArtsit: Boolean,
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
@@ -109,14 +111,16 @@ private fun ProductCategoryScreen(
                     bottom = 76.dp,
                 ),
             ) {
-                item {
-                    PotiSmallButton(
-                        text = stringResource(selectedSortType.displayRes),
-                        onClick = onSortFilterClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.End),
-                    )
+                if (isMyArtsit) {
+                    item {
+                        PotiSmallButton(
+                            text = stringResource(selectedSortType.displayRes),
+                            onClick = onSortFilterClick,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.End),
+                        )
+                    }
                 }
 
                 items(productCategory.groupItems) { groupItem ->
@@ -154,6 +158,7 @@ private fun ProductCategoryScreenPreview() {
     PotiTheme {
         ProductCategoryScreen(
             title = "",
+            isMyArtsit = false,
             productCategory = dummyProductCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
