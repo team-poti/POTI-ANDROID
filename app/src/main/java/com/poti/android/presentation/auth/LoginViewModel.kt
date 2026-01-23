@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val kakaoLoginManager: KakaoLoginManager,
     private val authRepository: AuthRepository,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {

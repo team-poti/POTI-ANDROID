@@ -8,5 +8,7 @@ interface AuthRepository {
         token: String,
     ): Result<UserAuth>
 
-    suspend fun saveOnboardingState(isCompleted: Boolean)
+    suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit>
+
+    suspend fun withdrawal(): Result<Unit>
 }

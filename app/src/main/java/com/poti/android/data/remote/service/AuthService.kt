@@ -7,6 +7,7 @@ import com.poti.android.data.remote.dto.response.auth.LoginResponseDto
 import com.poti.android.data.remote.dto.response.auth.ReissueResponseDto
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.POST
 
 interface AuthService {
@@ -19,4 +20,7 @@ interface AuthService {
     fun reissue(
         @Body reissueRequest: ReissueRequestDto,
     ): Call<BaseResponse<ReissueResponseDto>>
+
+    @DELETE("/api/v1/auth/withdrawal")
+    suspend fun withdrawal(): BaseResponse<Unit>
 }
