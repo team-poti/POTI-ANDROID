@@ -55,7 +55,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = { },
+            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnMyArtistSelectClick) },
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -114,7 +114,7 @@ private fun MyPageScreen(
 
                 BadgeButton(
                     bias = biasText,
-                    onClick = { },
+                    onClick = onArtistClick,
                     modifier = Modifier,
                 )
             }

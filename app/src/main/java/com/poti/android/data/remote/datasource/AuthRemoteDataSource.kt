@@ -17,4 +17,7 @@ class AuthRemoteDataSource @Inject constructor(
 
     fun reissue(reissueRequest: ReissueRequestDto): Call<BaseResponse<ReissueResponseDto>> =
         authService.reissue(reissueRequest = reissueRequest)
+
+    suspend fun withdrawal(): BaseResponse<Unit> =
+        authService.withdrawal()
 }

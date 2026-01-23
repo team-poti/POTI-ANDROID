@@ -17,6 +17,8 @@ sealed interface MyPageUiIntent : UiIntent {
         val mode: HistoryMode,
         val tab: HistorySummaryType,
     ) : MyPageUiIntent
+
+    data object OnMyArtistSelectClick : MyPageUiIntent
 }
 
 sealed interface MyPageUiEffect : UiEffect {

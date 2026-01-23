@@ -100,4 +100,13 @@ class PreferenceDataSource @Inject constructor(
             prefs.remove(REFRESH_TOKEN_KEY)
         }
     }
+
+    suspend fun clearAll() {
+        _cachedAccessToken = null
+        _cachedRefreshToken = null
+
+        dataStore.edit { prefs ->
+            prefs.clear()
+        }
+    }
 }
