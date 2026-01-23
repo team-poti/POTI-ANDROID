@@ -65,6 +65,7 @@ fun PotiBottomSheet(
     enabled: Boolean = true,
     subEnabled: Boolean = true,
     shouldDismissOnBackPress: Boolean = true,
+    sheetGesturesEnabled: Boolean = true,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -81,6 +82,7 @@ fun PotiBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
+        sheetGesturesEnabled = sheetGesturesEnabled,
         shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         containerColor = PotiTheme.colors.white,
         scrimColor = PotiTheme.colors.black.copy(alpha = 0.6f),

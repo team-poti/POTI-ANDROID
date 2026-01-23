@@ -119,7 +119,7 @@ fun GoodsLargeCard(
 
             PotiPrimaryTag(
                 text = stringResource(R.string.goods_card_party_count, partyCount),
-                sizeType = PotiPrimaryTagSize.LARGE,
+                sizeType = PotiPrimaryTagSize.SMALL,
                 colorType = PotiPrimaryTagColor.WHITE,
             )
         }
