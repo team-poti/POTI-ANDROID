@@ -122,13 +122,10 @@ private fun ProductCategoryScreen(
                                 .fillMaxWidth()
                                 .wrapContentWidth(Alignment.End),
                         )
-                    }
-
-                    else {
+                    } else {
                         Spacer(Modifier.height(12.dp))
                     }
                 }
-
 
                 items(productCategory.groupItems) { groupItem ->
                     GoodsLargeCard(

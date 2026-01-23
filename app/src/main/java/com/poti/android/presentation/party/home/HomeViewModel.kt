@@ -15,8 +15,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
 ) : BaseViewModel<HomeUiState, HomeUiIntent, HomeUiEffect>(
-    initialState = HomeUiState(),
-) {
+        initialState = HomeUiState(),
+    ) {
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
             HomeUiIntent.OnFloatingClick -> sendEffect(NavigateToPartyCreate)

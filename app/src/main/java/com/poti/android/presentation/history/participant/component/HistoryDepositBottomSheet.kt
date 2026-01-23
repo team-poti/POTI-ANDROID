@@ -1,13 +1,10 @@
 package com.poti.android.presentation.history.participant.component
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,7 +59,7 @@ fun HistoryDepositBottomSheet(
             modifier = Modifier
                 .padding(
                     horizontal = screenWidthDp(16.dp),
-                )
+                ),
         )
     }
 }
