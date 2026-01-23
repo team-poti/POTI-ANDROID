@@ -1,6 +1,7 @@
 package com.poti.android.presentation.party.home
 
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.presentation.party.home.model.HomeUiEffect
@@ -19,7 +20,7 @@ class HomeViewModel @Inject constructor(
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
             HomeUiIntent.OnFloatingClick -> sendEffect(NavigateToPartyCreate)
-            is HomeUiIntent.OnMyArtistCategoryClick -> sendEffect(NavigateToMyArtistCategory(intent.artistId))
+            is HomeUiIntent.OnMyArtistCategoryClick -> sendEffect(NavigateToMyArtistCategory(if (uiState.value.artistIdToNull) null else intent.artistId))
             is HomeUiIntent.OnProductCardClick -> sendEffect(NavigateToGoodsPartyList(intent.artistId, intent.title))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
             HomeUiIntent.OnOtherProductCategoryClick -> sendEffect(NavigateToOtherProductCategory)
@@ -36,6 +37,7 @@ class HomeViewModel @Inject constructor(
                 updateState {
                     copy(homeContentLoadState = ApiState.Success(homeContent))
                 }
+                validateArtistId()
             }
             .onFailure { throwable ->
                 updateState {
@@ -44,5 +46,17 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    private fun validateArtistId() {
+        uiState.value.homeContentLoadState.getSuccessDataOrNull()?.let { content ->
+            val diff = content.myGroupItems.any { item ->
+                item.artistId != content.myGroupItems.first().artistId
+            }
+
+            if (diff) {
+                updateState { copy(artistIdToNull = true) }
+            }
+        }
     }
 }

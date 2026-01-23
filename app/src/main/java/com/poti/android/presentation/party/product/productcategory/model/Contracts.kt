@@ -9,7 +9,7 @@ import com.poti.android.domain.model.party.ProductCategory
 data class ProductCategoryUiState(
     val productCategoryLoadState: ApiState<ProductCategory> = ApiState.Loading,
     val isSortBottomSheetVisible: Boolean = false,
-    val selectedSortType: ProductSortType = ProductSortType.LATEST,
+    val selectedSortType: ProductSortType = ProductSortType.HOT,
 ) : UiState
 
 sealed interface ProductCategoryUiIntent : UiIntent {

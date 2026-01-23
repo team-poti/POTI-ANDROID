@@ -3,7 +3,9 @@ package com.poti.android.presentation.party.product.productcategory
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,6 +58,7 @@ fun ProductCategoryRoute(
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
             title = if (viewModel.isMyArtist) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
+            isMyArtsit = viewModel.isMyArtist,
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
@@ -73,6 +76,7 @@ fun ProductCategoryRoute(
 @Composable
 private fun ProductCategoryScreen(
     title: String,
+    isMyArtsit: Boolean,
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
@@ -110,13 +114,17 @@ private fun ProductCategoryScreen(
                 ),
             ) {
                 item {
-                    PotiSmallButton(
-                        text = stringResource(selectedSortType.displayRes),
-                        onClick = onSortFilterClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(Alignment.End),
-                    )
+                    if (isMyArtsit) {
+                        PotiSmallButton(
+                            text = stringResource(selectedSortType.displayRes),
+                            onClick = onSortFilterClick,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.End),
+                        )
+                    } else {
+                        Spacer(Modifier.height(12.dp))
+                    }
                 }
 
                 items(productCategory.groupItems) { groupItem ->
@@ -154,6 +162,7 @@ private fun ProductCategoryScreenPreview() {
     PotiTheme {
         ProductCategoryScreen(
             title = "",
+            isMyArtsit = false,
             productCategory = dummyProductCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
