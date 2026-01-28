@@ -112,7 +112,7 @@ fun EditOptionPrice(
 
                     val adjusted = when {
                         newValue.isEmpty() -> ""
-                        newValue.all { c -> c == '0' } -> "0"
+                        newValue.all { it == '0' } -> "0"
                         newValue.startsWith("0") -> newValue.dropWhile { it == '0' }
                         else -> newValue
                     }
