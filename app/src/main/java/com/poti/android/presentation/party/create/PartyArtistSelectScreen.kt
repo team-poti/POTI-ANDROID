@@ -25,8 +25,8 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.ViewType
-import com.poti.android.presentation.party.create.model.CreateUiEffect
-import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiEffect.*
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 
 @Composable
@@ -39,17 +39,17 @@ fun PartyArtistSelectRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            CreateUiEffect.NavigateToBack -> onPopBackStack()
+            NavigateToBack -> onPopBackStack()
             else -> Unit
         }
     }
 
     PartyArtistSelectScreen(
         uiState = uiState,
-        onSearchKeywordChange = { viewModel.processIntent(CreateUiIntent.OnArtistSearchKeywordChange(it)) },
-        onArtistSelect = { viewModel.processIntent(CreateUiIntent.OnArtistSelect(it)) },
-        onConfirmClick = { viewModel.processIntent(CreateUiIntent.OnBackToCreate) },
-        onPopBackStack = { viewModel.processIntent(CreateUiIntent.OnBackToCreate) },
+        onSearchKeywordChange = { viewModel.processIntent(OnArtistChange(it)) },
+        onArtistSelect = { viewModel.processIntent(OnArtistSelect(it)) },
+        onConfirmClick = { viewModel.processIntent(OnBackToCreate) },
+        onPopBackStack = { viewModel.processIntent(OnBackToCreate) },
         modifier = modifier,
     )
 }

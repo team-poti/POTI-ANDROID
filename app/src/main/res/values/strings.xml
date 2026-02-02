@@ -87,7 +87,7 @@
     <string name="party_join_order_address_placeholder">예) 서울시 솝트구 다솝로 37</string>
     <string name="party_join_order_address_error">주소를 입력해주세요</string>
     <string name="party_join_order_contact_label">연락처</string>
-    <string name="party_join_order_contact_placeholder">예) 010-1234-5678</string>
+    <string name="party_join_order_contact_placeholder">예) 010–1234–5678</string>
     <string name="party_join_order_contact_error">연락처를 입력해주세요</string>
     <string name="party_join_confirm_modal_title">참여가 완료되었어요</string>
     <string name="party_join_confirm_modal_text">모집이 끝나면 입금이 시작돼요</string>
