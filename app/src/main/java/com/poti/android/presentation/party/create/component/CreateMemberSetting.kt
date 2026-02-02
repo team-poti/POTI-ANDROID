@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -41,16 +42,13 @@ private const val BOTTOM_BTN_HEIGHT_DP = 70
 @Composable
 fun CreateMemberSetting(
     status: MemberSettingStatus,
-    selectedMembersOption: ImmutableList<MemberPriceOption>,
+    selectedMembers: ImmutableList<MemberPriceOption>,
     onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
+    showHint: Boolean,
+    errorMessage: String,
     modifier: Modifier = Modifier,
-    neverShowHint: Boolean = false,
 ) {
-    var showHint by remember(status, neverShowHint) {
-        mutableStateOf(if (neverShowHint) false else status != MemberSettingStatus.DEFAULT)
-    }
-
     var isEditBtnInScreen by remember { mutableStateOf(false) }
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -66,9 +64,11 @@ fun CreateMemberSetting(
         with(density) { BOTTOM_BTN_HEIGHT_DP.dp.roundToPx() }
     }
 
+    var hideHint by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
-            .padding(vertical = 24.dp, horizontal = 16.dp),
+            .padding(vertical = 24.dp, horizontal = screenWidthDp(16.dp)),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Row(
@@ -82,20 +82,18 @@ fun CreateMemberSetting(
                 style = PotiTheme.typography.title18sb,
             )
 
-            when (status) {
-                MemberSettingStatus.ERROR_NO_MEMBER -> PotiErrorMessage(stringResource(R.string.create_msg_need_member))
-                MemberSettingStatus.ERROR_NO_PRICE -> PotiErrorMessage(stringResource(R.string.create_msg_need_price))
-                else -> Unit
+            if (errorMessage.isNotEmpty()) {
+                PotiErrorMessage(errorMessage)
             }
         }
 
-        when {
-            status == MemberSettingStatus.DEFAULT -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_artist))
-            selectedMembersOption.isEmpty() -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_member))
-            else -> {
+        when (status) {
+            MemberSettingStatus.ARTITST_NOT_SELECTED -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_artist))
+            MemberSettingStatus.MEMBER_NOT_SELECTED -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_member))
+            MemberSettingStatus.EDITABLE -> {
                 Column {
-                    selectedMembersOption.forEachIndexed { index, option ->
-                        val isLastOption = index == selectedMembersOption.size - 1
+                    selectedMembers.forEachIndexed { index, option ->
+                        val isLastOption = index == selectedMembers.size - 1
 
                         EditOptionPrice(
                             option = option.name,
@@ -110,23 +108,19 @@ fun CreateMemberSetting(
                             },
                             modifier = Modifier.padding(bottom = if (isLastOption) 0.dp else 20.dp),
                             imeAction = if (isLastOption) ImeAction.Done else ImeAction.Next,
-                            onFocusChanged = { focused ->
-                                if (focused) {
-                                    showHint = false
-                                }
-                            },
+                            onFocusChanged = { _ -> hideHint = true },
                         )
                     }
                 }
             }
         }
 
-        if (status != MemberSettingStatus.DEFAULT) {
+        if (status != MemberSettingStatus.ARTITST_NOT_SELECTED) {
             Box {
                 PotiInlineButton(
                     text = stringResource(R.string.create_btn_member_edit),
                     onClick = {
-                        showHint = false
+                        hideHint = true
                         onEditBtnClick()
                     },
                     modifier = Modifier
@@ -137,7 +131,7 @@ fun CreateMemberSetting(
                         },
                 )
 
-                if (showHint && isEditBtnInScreen && !isKeyboardVisible) {
+                if (!hideHint && showHint && isEditBtnInScreen && !isKeyboardVisible) {
                     HintToolTip()
                 }
             }
@@ -159,46 +153,34 @@ private fun CreateMemberSettingPreview() {
             verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
             CreateMemberSetting(
-                status = MemberSettingStatus.DEFAULT,
-                selectedMembersOption = persistentListOf(),
+                status = MemberSettingStatus.ARTITST_NOT_SELECTED,
+                selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
+                showHint = true,
+                errorMessage = "",
             )
 
             CreateMemberSetting(
-                status = MemberSettingStatus.IN_PROGRESS,
-                selectedMembersOption = persistentListOf(),
+                status = MemberSettingStatus.MEMBER_NOT_SELECTED,
+                selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
+                showHint = true,
+                errorMessage = "",
             )
 
             CreateMemberSetting(
-                status = MemberSettingStatus.IN_PROGRESS,
-                selectedMembersOption = persistentListOf(
+                status = MemberSettingStatus.EDITABLE,
+                selectedMembers = persistentListOf(
                     MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
                     MemberPriceOption(memberId = 1, name = "유진", price = ""),
                     MemberPriceOption(memberId = 1, name = "레이", price = "4000"),
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
-            )
-
-            CreateMemberSetting(
-                status = MemberSettingStatus.ERROR_NO_MEMBER,
-                selectedMembersOption = persistentListOf(),
-                onPriceChange = {},
-                onEditBtnClick = {},
-            )
-
-            CreateMemberSetting(
-                status = MemberSettingStatus.ERROR_NO_PRICE,
-                selectedMembersOption = persistentListOf(
-                    MemberPriceOption(memberId = 1, name = "원영", price = "5000"),
-                    MemberPriceOption(memberId = 1, name = "유진", price = ""),
-                    MemberPriceOption(memberId = 1, name = "레이", price = "4000"),
-                ),
-                onPriceChange = {},
-                onEditBtnClick = {},
+                showHint = true,
+                errorMessage = "모든 멤버에 가격을 설정해주세요",
             )
         }
     }
