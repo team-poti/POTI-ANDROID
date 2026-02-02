@@ -15,7 +15,9 @@ import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
 import com.poti.android.domain.usecase.party.SearchArtistUseCase
 import com.poti.android.domain.usecase.party.SearchProductUseCase
 import com.poti.android.presentation.party.create.model.CreateUiEffect
+import com.poti.android.presentation.party.create.model.CreateUiEffect.*
 import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
@@ -23,17 +25,15 @@ import com.poti.android.presentation.party.create.util.isTodayOrAfter
 import com.poti.android.presentation.party.create.util.toDashedDate
 import com.poti.android.presentation.party.create.util.toDateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-import com.poti.android.presentation.party.create.model.CreateUiIntent.*
-import com.poti.android.presentation.party.create.model.CreateUiEffect.*
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.text.filter
 
 const val IMAGE_TYPE = "POST"
@@ -48,8 +48,8 @@ class PartyCreateViewModel @Inject constructor(
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
             is InitializeScreen -> if (!uiState.value.isInitialized) {
@@ -271,7 +271,7 @@ class PartyCreateViewModel @Inject constructor(
                     rawMembers = members,
                     selectedMembers = members,
                     memberSettingStatus = MemberSettingStatus.EDITABLE,
-                    memberError = null
+                    memberError = null,
                 )
             }
         }
@@ -384,8 +384,11 @@ class PartyCreateViewModel @Inject constructor(
 
     private fun handleMemberPriceChange(newMember: MemberPriceOption) {
         val newMembers = uiState.value.selectedMembers.map { member ->
-            if (member.memberId == newMember.memberId) newMember
-            else member
+            if (member.memberId == newMember.memberId) {
+                newMember
+            } else {
+                member
+            }
         }.toPersistentList()
 
         updateState {

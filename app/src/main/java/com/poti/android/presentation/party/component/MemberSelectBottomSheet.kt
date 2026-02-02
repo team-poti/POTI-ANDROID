@@ -80,7 +80,7 @@ fun <T> MemberSelectBottomSheet(
         ) {
             items(
                 items = allMembers,
-                key = { memberToId(it) }
+                key = { memberToId(it) },
             ) { member ->
                 val isSelected = memberToId(member) in selectedMemberIds
 

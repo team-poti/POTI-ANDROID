@@ -109,7 +109,7 @@ fun PartyCreateRoute(
             memberToId = { it.memberId },
             mainEnabled = uiState.isMemberBottomSheetTouched,
             subEnabled = true,
-            autoCloseSubBtn = false
+            autoCloseSubBtn = false,
         )
     }
 

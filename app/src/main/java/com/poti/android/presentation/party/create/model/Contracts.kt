@@ -34,35 +34,28 @@ enum class FieldError(
     ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
     BANK_ERROR(R.string.create_error_need_bank),
     MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
-    MEMBER_PRICE_ERROR(R.string.create_error_need_price)
+    MEMBER_PRICE_ERROR(R.string.create_error_need_price),
 }
 
 data class CreateUiState(
     val imageUris: List<Uri> = emptyList(),
     val imageError: FieldError? = null,
-
     val selectedArtist: ArtistSearchResult? = null,
     val artistQuery: String = "",
     val artistSearchState: ApiState<List<ArtistSearchResult>> = ApiState.Init,
     val artistError: FieldError? = null,
-
     val selectedProduct: String = "",
     val productName: String = "",
     val productSearchState: ApiState<List<String>> = ApiState.Init,
     val productError: FieldError? = null,
-
     val deadline: String = "",
     val deadlineError: FieldError? = null,
-
     val description: String = "",
     val descriptionError: FieldError? = null,
-
     val accountNumber: String = "",
     val accountNumberError: FieldError? = null,
-
     val bank: String = "",
     val bankError: FieldError? = null,
-
     val membersState: ApiState<List<MemberPriceOption>> = ApiState.Init,
     val rawMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val selectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
@@ -72,13 +65,10 @@ data class CreateUiState(
     val showMemberBottomSheet: Boolean = false,
     val isMemberBottomSheetTouched: Boolean = false,
     val memberError: FieldError? = null,
-
     val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
     val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
-
     val createPartyState: ApiState<Long> = ApiState.Init,
-
     val isInitialized: Boolean = false,
     val isArtistAutoFilled: Boolean = false,
     val isFieldTouched: Boolean = false,
@@ -101,7 +91,7 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object OnBackConfirm : CreateUiIntent
 
-    data object OnBackToCreate: CreateUiIntent
+    data object OnBackToCreate : CreateUiIntent
 
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 
