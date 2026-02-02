@@ -67,7 +67,7 @@ fun PartyCreateRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(uiState.isInitialized) {
         viewModel.processIntent(InitializeScreen(artistId, artistName, productName))
     }
 
@@ -85,7 +85,7 @@ fun PartyCreateRoute(
 
             ConvertUris -> {
                 val result = uiState.imageUris.toImageInfosForPresigned(context)
-                viewModel.processIntent(OnConvertDone(result))
+                viewModel.processIntent(ConvertDone(result))
             }
 
             is NavigateToDetail -> {
@@ -99,7 +99,7 @@ fun PartyCreateRoute(
             title = stringResource(R.string.create_title_bottomsheet),
             mainBtnText = stringResource(R.string.action_button_done),
             subBtnText = stringResource(R.string.action_button_select_all),
-            onDismiss = { viewModel.processIntent(CloseBottomSheet) },
+            onDismiss = { viewModel.processIntent(OnCloseBottomSheet) },
             onMainBtnClick = { viewModel.processIntent(OnMemberSelectDone) },
             onSubBtnClick = { viewModel.processIntent(OnAllMemberSelect) },
             allMembers = uiState.rawMembers,
@@ -115,19 +115,19 @@ fun PartyCreateRoute(
 
     if (uiState.showDialog) {
         PotiSmallModal(
-            onDismissRequest = { viewModel.processIntent(CloseDialog) },
+            onDismissRequest = { viewModel.processIntent(OnCloseDialog) },
             title = stringResource(R.string.create_exit_dialog_title),
             text = stringResource(R.string.create_exit_dialog_content),
             dismissBtnText = stringResource(R.string.create_exit_dialog_dismiss_text),
             confirmBtnText = stringResource(R.string.create_exit_dialog_confirm_text),
             onDismissBtnClick = { viewModel.processIntent(OnBackConfirm) },
-            onConfirmBtnClick = { viewModel.processIntent(CloseDialog) },
+            onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
     }
 
     PartyCreateScreen(
         uiState = uiState,
-        onScrollComplete = { viewModel.processIntent(OnScrollComplete) },
+        onScrollComplete = { viewModel.processIntent(ScrollComplete) },
         onBackClick = { viewModel.processIntent(OnBack) },
         onImageChanged = { viewModel.processIntent(OnImagesChanged(it)) },
         onSearchArtist = { viewModel.processIntent(OnSearchClick) },

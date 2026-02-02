@@ -33,6 +33,8 @@ enum class FieldError(
     DESCRIPTION_ERROR(R.string.create_error_need_description),
     ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
     BANK_ERROR(R.string.create_error_need_bank),
+    MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
+    MEMBER_PRICE_ERROR(R.string.create_error_need_price)
 }
 
 data class CreateUiState(
@@ -62,7 +64,7 @@ data class CreateUiState(
     val bankError: FieldError? = null,
 
     val membersState: ApiState<List<MemberPriceOption>> = ApiState.Init,
-    val rawMembers: List<MemberPriceOption> = emptyList(),
+    val rawMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val selectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val tempSelectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.ARTITST_NOT_SELECTED,
@@ -77,6 +79,7 @@ data class CreateUiState(
 
     val createPartyState: ApiState<Long> = ApiState.Init,
 
+    val isInitialized: Boolean = false,
     val isArtistAutoFilled: Boolean = false,
     val isFieldTouched: Boolean = false,
     val showDialog: Boolean = false,
@@ -88,26 +91,23 @@ data class CreateUiState(
 }
 
 sealed interface CreateUiIntent : UiIntent {
-    data object CloseBottomSheet : CreateUiIntent
-
-    data object CloseDialog : CreateUiIntent
     data class InitializeScreen(val artistId: Long?, val artistName: String?, val productName: String?) : CreateUiIntent
 
-    data object CleanScreen : CreateUiIntent
+    data object OnCloseBottomSheet : CreateUiIntent
 
-    data object OnScrollComplete : CreateUiIntent
+    data object OnCloseDialog : CreateUiIntent
 
     data object OnBack : CreateUiIntent
 
     data object OnBackConfirm : CreateUiIntent
 
-    data object OnBackToCreate : CreateUiIntent
+    data object OnBackToCreate: CreateUiIntent
 
     data class OnImagesChanged(val uris: List<Uri>) : CreateUiIntent
 
     data object OnSearchClick : CreateUiIntent
 
-    data class OnArtistSearchKeywordChange(val value: String) : CreateUiIntent
+    data class OnArtistChange(val value: String) : CreateUiIntent
 
     data class OnArtistSelect(val artist: ArtistSearchResult) : CreateUiIntent
 
@@ -139,7 +139,9 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object OnCreateClick : CreateUiIntent
 
-    data class OnConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
+    data object ScrollComplete : CreateUiIntent
+
+    data class ConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
 }
 
 sealed interface CreateUiEffect : UiEffect {
