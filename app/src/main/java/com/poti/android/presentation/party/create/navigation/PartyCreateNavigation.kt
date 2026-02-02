@@ -39,15 +39,6 @@ fun NavController.navigateToPartyArtistSelect() {
     navigate(PartyCreateRoute.ArtistSelect)
 }
 
-fun NavController.navigateToPartyCreateFromArtistSelect() {
-    navigate(PartyCreateRoute.Create(null, null, null)) {
-        popUpTo(PartyCreateRoute.Create(null, null, null)) {
-            inclusive = false
-        }
-        launchSingleTop = true
-    }
-}
-
 fun NavGraphBuilder.partyCreateNavGraph(
     navController: NavController,
     paddingValues: PaddingValues,
