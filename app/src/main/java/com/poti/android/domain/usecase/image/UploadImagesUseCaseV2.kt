@@ -2,14 +2,15 @@ package com.poti.android.domain.usecase.image
 
 import com.poti.android.core.common.constant.ImageConstants.IMAGE_EXTENSION
 import com.poti.android.domain.model.image.PresignedUploadInfo
-import com.poti.android.domain.repository.FileUplaodRepository
+import com.poti.android.domain.repository.FileUploadRepository
 import com.poti.android.domain.repository.ImageRepository
 import java.io.File
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class UploadImagesUseCaseV2 @Inject constructor(
     private val imageRepository: ImageRepository,
-    private val fileUplaodRepository: FileUplaodRepository,
+    private val fileUploadRepository: FileUploadRepository,
 ) {
     suspend operator fun invoke(
         uploadType: String,
@@ -21,11 +22,13 @@ class UploadImagesUseCaseV2 @Inject constructor(
             val files = createImages(uriStrings)
 
             uploadImages(urls, files)
-            clearDirectory()
 
             return Result.success(fileNames)
         } catch (t: Throwable) {
+            if (t is CancellationException) throw t
             return Result.failure(t)
+        } finally {
+            clearDirectory()
         }
     }
 
@@ -40,16 +43,22 @@ class UploadImagesUseCaseV2 @Inject constructor(
     private fun createImages(
         uriStrings: List<String>,
     ): List<File> = uriStrings.map { uri ->
-        fileUplaodRepository.createImage(uri).getOrThrow()
+        fileUploadRepository.createImage(uri).getOrThrow()
     }
 
     private suspend fun uploadImages(
         urls: List<String>,
         files: List<File>,
-    ) = urls.zip(files) { url, file ->
-        fileUplaodRepository.uploadImage(url, file).getOrThrow()
+    ) {
+        if (urls.size != files.size) {
+            throw IllegalStateException("Upload URL count and file count must match")
+        }
+
+        for (i in urls.indices) {
+            fileUploadRepository.uploadImage(urls[i], files[i]).getOrThrow()
+        }
     }
 
-    private fun clearDirectory() = fileUplaodRepository
+    private fun clearDirectory() = fileUploadRepository
         .clearDirectory().getOrThrow()
 }
