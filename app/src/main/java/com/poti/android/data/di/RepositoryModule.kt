@@ -3,6 +3,7 @@ package com.poti.android.data.di
 import com.poti.android.data.repository.ArtistRepositoryImpl
 import com.poti.android.data.repository.AuthRepositoryImpl
 import com.poti.android.data.repository.DeliveryRepositoryImpl
+import com.poti.android.data.repository.FileUploadRepositoryImpl
 import com.poti.android.data.repository.HomeRepositoryImpl
 import com.poti.android.data.repository.ImageRepositoryImpl
 import com.poti.android.data.repository.ParticipationRepositoryImpl
@@ -14,6 +15,7 @@ import com.poti.android.data.repository.UserRepositoryImpl
 import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.domain.repository.DeliveryRepository
+import com.poti.android.domain.repository.FileUploadRepository
 import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.domain.repository.ImageRepository
 import com.poti.android.domain.repository.ParticipationRepository
@@ -74,4 +76,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindReviewRepository(reviewRepositoryImpl: ReviewRepositoryImpl): ReviewRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFileUploadRepository(fileUploadRepositoryImpl: FileUploadRepositoryImpl): FileUploadRepository
 }
