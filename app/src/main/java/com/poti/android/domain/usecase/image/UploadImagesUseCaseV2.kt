@@ -2,14 +2,14 @@ package com.poti.android.domain.usecase.image
 
 import com.poti.android.core.common.constant.ImageConstants.IMAGE_EXTENSION
 import com.poti.android.domain.model.image.PresignedUploadInfo
-import com.poti.android.domain.repository.FileUploadRepository
+import com.poti.android.domain.repository.FileUplaodRepository
 import com.poti.android.domain.repository.ImageRepository
 import java.io.File
 import javax.inject.Inject
 
 class UploadImagesUseCaseV2 @Inject constructor(
     private val imageRepository: ImageRepository,
-    private val fileUploadRepository: FileUploadRepository,
+    private val fileUplaodRepository: FileUplaodRepository,
 ) {
     suspend operator fun invoke(
         uploadType: String,
@@ -40,16 +40,16 @@ class UploadImagesUseCaseV2 @Inject constructor(
     private fun createImages(
         uriStrings: List<String>,
     ): List<File> = uriStrings.map { uri ->
-        fileUploadRepository.createImage(uri).getOrThrow()
+        fileUplaodRepository.createImage(uri).getOrThrow()
     }
 
     private suspend fun uploadImages(
         urls: List<String>,
         files: List<File>,
     ) = urls.zip(files) { url, file ->
-        fileUploadRepository.uploadImage(url, file).getOrThrow()
+        fileUplaodRepository.uploadImage(url, file).getOrThrow()
     }
 
-    private fun clearDirectory() = fileUploadRepository
+    private fun clearDirectory() = fileUplaodRepository
         .clearDirectory().getOrThrow()
 }

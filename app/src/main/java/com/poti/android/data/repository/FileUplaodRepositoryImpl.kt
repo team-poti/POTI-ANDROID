@@ -3,20 +3,20 @@ package com.poti.android.data.repository
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.FileLocalDataSource
 import com.poti.android.data.remote.datasource.FileUploadRemoteDataSource
-import com.poti.android.domain.repository.FileUploadRepository
+import com.poti.android.domain.repository.FileUplaodRepository
 import java.io.File
 import javax.inject.Inject
 
-class FileUploadRepositoryImpl @Inject constructor(
+class FileUplaodRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    private val fileUplaodRemoteDataSource: FileUploadRemoteDataSource,
+    private val fileUploadRemoteDataSource: FileUploadRemoteDataSource,
     private val fileLocalDataSource: FileLocalDataSource,
-) : FileUploadRepository {
+) : FileUplaodRepository {
     override suspend fun uploadImage(
         uploadUrl: String,
         file: File,
     ): Result<Unit> = httpResponseHandler.safeApiCall {
-        fileUplaodRemoteDataSource.uploadImage(uploadUrl, file)
+        fileUploadRemoteDataSource.uploadImage(uploadUrl, file)
     }
 
     override fun createImage(uriString: String): Result<File> {
