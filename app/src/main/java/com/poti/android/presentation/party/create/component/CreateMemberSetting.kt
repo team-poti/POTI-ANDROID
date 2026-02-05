@@ -88,7 +88,7 @@ fun CreateMemberSetting(
         }
 
         when (status) {
-            MemberSettingStatus.ARTITST_NOT_SELECTED -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_artist))
+            MemberSettingStatus.ARTIST_NOT_SELECTED -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_artist))
             MemberSettingStatus.MEMBER_NOT_SELECTED -> PotiEmptyStateInline(stringResource(R.string.create_placeholder_need_member))
             MemberSettingStatus.EDITABLE -> {
                 Column {
@@ -115,7 +115,7 @@ fun CreateMemberSetting(
             }
         }
 
-        if (status != MemberSettingStatus.ARTITST_NOT_SELECTED) {
+        if (status != MemberSettingStatus.ARTIST_NOT_SELECTED) {
             Box {
                 PotiInlineButton(
                     text = stringResource(R.string.create_btn_member_edit),
@@ -153,7 +153,7 @@ private fun CreateMemberSettingPreview() {
             verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
             CreateMemberSetting(
-                status = MemberSettingStatus.ARTITST_NOT_SELECTED,
+                status = MemberSettingStatus.ARTIST_NOT_SELECTED,
                 selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},

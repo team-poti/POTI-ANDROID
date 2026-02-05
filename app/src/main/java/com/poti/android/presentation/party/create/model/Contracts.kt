@@ -16,7 +16,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 enum class MemberSettingStatus {
-    ARTITST_NOT_SELECTED,
+    ARTIST_NOT_SELECTED,
     MEMBER_NOT_SELECTED,
     EDITABLE,
 }
@@ -60,7 +60,7 @@ data class CreateUiState(
     val rawMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val selectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val tempSelectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
-    val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.ARTITST_NOT_SELECTED,
+    val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.ARTIST_NOT_SELECTED,
     val showMemberHint: Boolean = false,
     val showMemberBottomSheet: Boolean = false,
     val isMemberBottomSheetTouched: Boolean = false,

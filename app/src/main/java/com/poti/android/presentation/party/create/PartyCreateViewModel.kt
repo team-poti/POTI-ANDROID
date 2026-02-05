@@ -196,7 +196,7 @@ class PartyCreateViewModel @Inject constructor(
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest { keyword ->
-                    searchProdut(keyword)
+                    searchProduct(keyword)
                 }
         }
     }
@@ -299,7 +299,7 @@ class PartyCreateViewModel @Inject constructor(
             }
         }
 
-    private suspend fun searchProdut(keyword: String) {
+    private suspend fun searchProduct(keyword: String) {
         uiState.value.selectedArtist?.let { artist ->
             searchProductUseCase(
                 keyword = keyword,
