@@ -11,7 +11,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
-class FileUploadDataSource @Inject constructor(
+class FileUploadRemoteDataSource @Inject constructor(
     @param:FileUploadClient private val okHttpClient: OkHttpClient,
 ) {
     suspend fun uploadImage(
