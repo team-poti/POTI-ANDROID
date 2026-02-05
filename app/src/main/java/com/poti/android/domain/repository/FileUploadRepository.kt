@@ -2,7 +2,7 @@ package com.poti.android.domain.repository
 
 import java.io.File
 
-interface FileUplaodRepository {
+interface FileUploadRepository {
     suspend fun uploadImage(
         uploadUrl: String,
         file: File,
