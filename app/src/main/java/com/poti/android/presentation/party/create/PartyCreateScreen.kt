@@ -67,7 +67,7 @@ fun PartyCreateRoute(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.isInitialized) {
+    LaunchedEffect(artistId, artistName, productName) {
         viewModel.processIntent(InitializeScreen(artistId, artistName, productName))
     }
 
