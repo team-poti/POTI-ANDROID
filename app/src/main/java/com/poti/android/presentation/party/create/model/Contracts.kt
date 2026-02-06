@@ -69,7 +69,6 @@ data class CreateUiState(
     val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
-    val isFieldTouched: Boolean = false,
     val showDialog: Boolean = false,
     val errorIndexToScroll: Int? = null,
 ) : UiState {

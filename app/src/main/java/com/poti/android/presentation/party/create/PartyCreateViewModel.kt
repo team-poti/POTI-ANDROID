@@ -83,7 +83,6 @@ class PartyCreateViewModel @Inject constructor(
 
             is OnImagesChanged -> updateState {
                 copy(
-                    isFieldTouched = true,
                     imageUris = intent.uris.toPersistentList(),
                     imageError = if (intent.uris.isNotEmpty()) null else this.imageError,
                 )
@@ -91,17 +90,16 @@ class PartyCreateViewModel @Inject constructor(
 
             OnSearchClick -> sendEffect(NavigateToSearch)
 
-            is OnArtistChange -> updateState { copy(isFieldTouched = true, artistSearchKeyword = intent.value) }
+            is OnArtistChange -> updateState { copy(artistSearchKeyword = intent.value) }
 
             is OnArtistSelect -> handleArtistSelect(newArtist = intent.artist)
 
             is OnProductFocus -> if (uiState.value.isProductFieldReadOnly && intent.focused) {
-                updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR, isFieldTouched = true) }
+                updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
             }
 
             is OnProductChange -> updateState {
                 copy(
-                    isFieldTouched = true,
                     productName = intent.value,
                     productError = if (intent.value.isNotBlank()) null else this.productError,
                     selectedProduct = "",
@@ -114,7 +112,6 @@ class PartyCreateViewModel @Inject constructor(
 
             is OnDescriptionChange -> updateState {
                 copy(
-                    isFieldTouched = true,
                     description = intent.value,
                     descriptionError = if (intent.value.isNotBlank()) null else this.descriptionError,
                 )
@@ -122,7 +119,6 @@ class PartyCreateViewModel @Inject constructor(
 
             is OnAccountNumberChange -> updateState {
                 copy(
-                    isFieldTouched = true,
                     accountNumber = intent.value.filter { it.isDigit() },
                     accountNumberError = if (intent.value.isNotBlank()) null else this.accountNumberError,
                 )
@@ -130,7 +126,6 @@ class PartyCreateViewModel @Inject constructor(
 
             is OnBankChange -> updateState {
                 copy(
-                    isFieldTouched = true,
                     bank = intent.value,
                     bankError = if (intent.value.isNotBlank()) null else this.bankError,
                 )
@@ -348,7 +343,6 @@ class PartyCreateViewModel @Inject constructor(
 
         updateState {
             copy(
-                isFieldTouched = true,
                 deadline = newValue,
                 deadlineError = if (newValue.isNotBlank()) null else this.deadlineError,
             )
@@ -434,7 +428,6 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 selectedDeliveries = newDeliveries,
-                isFieldTouched = true,
             )
         }
     }
@@ -473,7 +466,6 @@ class PartyCreateViewModel @Inject constructor(
         if (hasError) {
             updateState {
                 copy(
-                    isFieldTouched = true,
                     imageError = imageError,
                     artistError = artistError,
                     productError = productError,
