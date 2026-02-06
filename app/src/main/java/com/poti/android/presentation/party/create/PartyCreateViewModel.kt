@@ -52,8 +52,8 @@ class PartyCreateViewModel @Inject constructor(
     private val createPartyUseCase: CreatePartyUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-    initialState = CreateUiState(),
-) {
+        initialState = CreateUiState(),
+    ) {
     private val params = savedStateHandle.toRoute<PartyCreateGraph>()
     private val paramArtistId = params.artistId
     private val paramArtistName = params.artistName
