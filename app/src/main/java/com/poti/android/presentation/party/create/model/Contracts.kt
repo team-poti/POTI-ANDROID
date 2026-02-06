@@ -68,13 +68,13 @@ data class CreateUiState(
     val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val createPartyState: ApiState<Long> = ApiState.Init,
-    val isArtistAutoFilled: Boolean = false,
+    val isAutoFilled: Boolean = false,
     val isFieldTouched: Boolean = false,
     val showDialog: Boolean = false,
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
-    val isArtistSearchResultsEmpty = !isArtistAutoFilled && artistSearchKeyword.isNotEmpty() && (artistSearchState.getSuccessDataOrNull()?.isEmpty() ?: false)
+    val isArtistSearchResultsEmpty = !isAutoFilled && artistSearchKeyword.isNotEmpty() && (artistSearchState.getSuccessDataOrNull()?.isEmpty() ?: false)
     val isArtistSelectDoneBtnEnabled = selectedArtist != null
 }
 

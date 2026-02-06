@@ -55,6 +55,9 @@ class PartyCreateViewModel @Inject constructor(
     initialState = CreateUiState(),
 ) {
     private val params = savedStateHandle.toRoute<PartyCreateGraph>()
+    private val paramArtistId = params.artistId
+    private val paramArtistName = params.artistName
+    private val paramProductName = params.productName
 
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
@@ -62,7 +65,7 @@ class PartyCreateViewModel @Inject constructor(
 
             OnCloseDialog -> updateState { copy(showDialog = false) }
 
-            OnBack -> if (uiState.value.isFieldTouched) {
+            OnBack -> if (shouldShowDialog()) {
                 updateState { copy(showDialog = true) }
             } else {
                 updateState { copy(showDialog = false) }
@@ -179,7 +182,7 @@ class PartyCreateViewModel @Inject constructor(
 
     init {
         initializeDeliveryOptions()
-        autoFillParams(params.artistId, params.artistName, params.productName)
+        autoFillParams(paramArtistId, paramArtistName, paramProductName)
 
         viewModelScope.launch {
             uiState
@@ -202,6 +205,24 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
+    private fun shouldShowDialog(): Boolean {
+        val state = uiState.value
+
+        val hasUserInput = state.imageUris.isNotEmpty() ||
+            state.selectedArtist?.artistId != paramArtistId ||
+            state.selectedArtist?.name != paramArtistName ||
+            state.productName != (paramProductName ?: "") ||
+            state.selectedProduct.isNotEmpty() ||
+            state.deadline.isNotEmpty() ||
+            state.description.isNotEmpty() ||
+            state.accountNumber.isNotEmpty() ||
+            state.bank.isNotEmpty() ||
+            state.selectedMembers != state.rawMembers ||
+            state.selectedDeliveries != state.rawDeliveries
+
+        return hasUserInput
+    }
+
     private fun autoFillParams(
         artistId: Long?,
         artistName: String?,
@@ -217,7 +238,7 @@ class PartyCreateViewModel @Inject constructor(
         )
 
         handleArtistSelect(initialArtist)
-        updateState { copy(productName = productName, isArtistAutoFilled = true) }
+        updateState { copy(productName = productName, isAutoFilled = true) }
     }
 
     private fun initializeDeliveryOptions() {
@@ -251,7 +272,7 @@ class PartyCreateViewModel @Inject constructor(
                 selectedArtist = newArtist,
                 artistSearchKeyword = newArtist.name,
                 artistError = null,
-                isArtistAutoFilled = false,
+                isAutoFilled = false,
                 productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
             )
         }
