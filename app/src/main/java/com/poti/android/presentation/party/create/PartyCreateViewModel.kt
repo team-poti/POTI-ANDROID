@@ -1,7 +1,9 @@
 package com.poti.android.presentation.party.create
 
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
@@ -21,6 +23,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.create.navigation.PartyCreateGraph
 import com.poti.android.presentation.party.create.util.isTodayOrAfter
 import com.poti.android.presentation.party.create.util.toDashedDate
 import com.poti.android.presentation.party.create.util.toDateOrNull
@@ -47,17 +50,14 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-        initialState = CreateUiState(),
-    ) {
+    initialState = CreateUiState(),
+) {
+    private val params = savedStateHandle.toRoute<PartyCreateGraph>()
+
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
-            is InitializeScreen -> if (!uiState.value.isInitialized) {
-                updateState { CreateUiState() }
-                initializeDeliveryOptions()
-                autoFillParams(intent.artistId, intent.artistName, intent.productName)
-            }
-
             OnCloseBottomSheet -> updateState { copy(showMemberBottomSheet = false) }
 
             OnCloseDialog -> updateState { copy(showDialog = false) }
@@ -67,13 +67,11 @@ class PartyCreateViewModel @Inject constructor(
             } else {
                 updateState { copy(showDialog = false) }
                 sendEffect(NavigateToBack)
-                updateState { copy(isInitialized = false) }
             }
 
             OnBackConfirm -> {
                 updateState { copy(showDialog = false) }
                 sendEffect(NavigateToBack)
-                updateState { copy(isInitialized = false) }
             }
 
             OnBackToCreate -> {
@@ -180,6 +178,9 @@ class PartyCreateViewModel @Inject constructor(
     }
 
     init {
+        initializeDeliveryOptions()
+        autoFillParams(params.artistId, params.artistName, params.productName)
+
         viewModelScope.launch {
             uiState
                 .map { it.artistSearchKeyword }
@@ -230,7 +231,6 @@ class PartyCreateViewModel @Inject constructor(
                             deliveriesState = ApiState.Success(deliveries),
                             rawDeliveries = deliveries,
                             selectedDeliveries = deliveries,
-                            isInitialized = true,
                         )
                     }
                 }.onFailure { e ->
@@ -517,7 +517,6 @@ class PartyCreateViewModel @Inject constructor(
                 copy(createPartyState = ApiState.Success(partyId))
             }
             sendEffect(NavigateToDetail(partyId))
-            updateState { CreateUiState() }
         }
         .onFailure {
             updateState {

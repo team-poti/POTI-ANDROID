@@ -68,7 +68,6 @@ data class CreateUiState(
     val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val createPartyState: ApiState<Long> = ApiState.Init,
-    val isInitialized: Boolean = false,
     val isArtistAutoFilled: Boolean = false,
     val isFieldTouched: Boolean = false,
     val showDialog: Boolean = false,
@@ -80,8 +79,6 @@ data class CreateUiState(
 }
 
 sealed interface CreateUiIntent : UiIntent {
-    data class InitializeScreen(val artistId: Long?, val artistName: String?, val productName: String?) : CreateUiIntent
-
     data object OnCloseBottomSheet : CreateUiIntent
 
     data object OnCloseDialog : CreateUiIntent

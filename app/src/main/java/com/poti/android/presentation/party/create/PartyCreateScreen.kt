@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,16 +64,9 @@ fun PartyCreateRoute(
     onNavigateToDetail: (Long) -> Unit,
     viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
-    artistId: Long? = null,
-    artistName: String? = null,
-    productName: String? = null,
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(artistId, artistName, productName) {
-        viewModel.processIntent(InitializeScreen(artistId, artistName, productName))
-    }
 
     BackHandler {
         viewModel.processIntent(OnBack)
@@ -195,7 +187,7 @@ private fun PartyCreateScreen(
                 text = stringResource(R.string.create_btn_create),
                 onClick = onCreateBtnClick,
             )
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
             state = listState,
