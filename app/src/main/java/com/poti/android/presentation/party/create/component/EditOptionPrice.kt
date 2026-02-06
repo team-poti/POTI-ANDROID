@@ -110,12 +110,7 @@ fun EditOptionPrice(
                     if (!newValue.isDigitsOnly()) return@OptionTextField
                     if (newValue.length > MAX_LENGTH) return@OptionTextField
 
-                    val adjusted = when {
-                        newValue.isEmpty() -> ""
-                        newValue.all { it == '0' } -> "0"
-                        newValue.startsWith("0") -> newValue.dropWhile { it == '0' }
-                        else -> newValue
-                    }
+                    val adjusted = newValue.toIntOrNull()?.toString() ?: ""
 
                     onValueChanged(adjusted)
                 },
