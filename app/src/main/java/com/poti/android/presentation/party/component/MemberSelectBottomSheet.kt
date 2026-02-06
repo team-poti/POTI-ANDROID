@@ -1,6 +1,5 @@
 package com.poti.android.presentation.party.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.button.ChipButtonType
 import com.poti.android.core.designsystem.component.button.PotiChipButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.artist.Member
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +64,7 @@ fun <T> MemberSelectBottomSheet(
         Text(
             text = title,
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 16.dp, start = screenWidthDp(16.dp))
-                .background(PotiTheme.colors.white),
+                .padding(top = 12.dp, bottom = 16.dp, start = screenWidthDp(16.dp)),
             color = PotiTheme.colors.black,
             style = PotiTheme.typography.title18sb,
         )
@@ -72,7 +72,7 @@ fun <T> MemberSelectBottomSheet(
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
-                .height(492.dp)
+                .height(screenHeightDp(492.dp))
                 .fillMaxWidth(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -98,6 +98,10 @@ fun <T> MemberSelectBottomSheet(
 @Preview
 @Composable
 private fun MemberSelectBottomSheetPreview() {
+    val members = (0L..20L).map { id ->
+        Member(id, "원영")
+    }
+
     MemberSelectBottomSheet(
         title = stringResource(R.string.action_button_continue),
         onDismiss = {},
@@ -107,10 +111,10 @@ private fun MemberSelectBottomSheetPreview() {
         subBtnText = stringResource(R.string.action_button_continue),
         onSubBtnClick = {},
         subEnabled = true,
-        allMembers = listOf("원영, 유진"),
-        selectedMembers = listOf("원영"),
+        allMembers = members,
+        selectedMembers = members,
         onMemberClick = {},
-        memberToName = { "" },
-        memberToId = { 0L },
+        memberToName = { it.name },
+        memberToId = { it.memberId },
     )
 }
