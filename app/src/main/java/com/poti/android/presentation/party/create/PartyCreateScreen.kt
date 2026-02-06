@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,9 +15,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -169,6 +174,8 @@ private fun PartyCreateScreen(
     val listState = rememberLazyListState()
     val dateTransformation = remember { DateTransformation() }
 
+    var listBottom by remember { mutableStateOf(0f) }
+
     LaunchedEffect(uiState.errorIndexToScroll) {
         uiState.errorIndexToScroll?.let {
             listState.animateScrollToItem(it)
@@ -188,11 +195,15 @@ private fun PartyCreateScreen(
                 text = stringResource(R.string.create_btn_create),
                 onClick = onCreateBtnClick,
             )
-        },
+        }
     ) { innerPadding ->
         LazyColumn(
             state = listState,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .onGloballyPositioned { coordinates ->
+                    listBottom = coordinates.boundsInWindow().bottom
+                },
         ) {
             item {
                 Text(
@@ -342,6 +353,7 @@ private fun PartyCreateScreen(
                     onPriceChange = onMemberPriceChanged,
                     onEditBtnClick = onMemberEditBtnClick,
                     errorMessage = uiState.memberError?.let { stringResource(it.message) } ?: "",
+                    layoutBottom = listBottom,
                 )
             }
 

@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -37,31 +36,19 @@ import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-private const val BOTTOM_BTN_HEIGHT_DP = 70
-
 @Composable
 fun CreateMemberSetting(
     status: MemberSettingStatus,
     selectedMembers: ImmutableList<MemberPriceOption>,
     onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
+    layoutBottom: Float,
     errorMessage: String,
     modifier: Modifier = Modifier,
 ) {
-    var isEditBtnInScreen by remember { mutableStateOf(false) }
+    var isEditBtnInLayout by remember { mutableStateOf(false) }
     val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
     val isKeyboardVisible = WindowInsets.ime.getBottom(density) > 0
-
-    val screenHeight = remember(configuration.screenHeightDp) {
-        with(density) {
-            configuration.screenHeightDp.dp.roundToPx()
-        }
-    }
-
-    val bottomBtnHeight = remember {
-        with(density) { BOTTOM_BTN_HEIGHT_DP.dp.roundToPx() }
-    }
 
     var hideHint by remember { mutableStateOf(false) }
 
@@ -125,12 +112,15 @@ fun CreateMemberSetting(
                     modifier = Modifier
                         .fillMaxWidth()
                         .onGloballyPositioned { coordinates ->
-                            val buttonTop = coordinates.positionInWindow().y
-                            isEditBtnInScreen = buttonTop < screenHeight - bottomBtnHeight
+                            val top = coordinates.positionInWindow().y
+                            val isVisible = (top < layoutBottom) && (top > 0)
+                            if (isEditBtnInLayout != isVisible) {
+                                isEditBtnInLayout = isVisible
+                            }
                         },
                 )
 
-                if (!hideHint && isEditBtnInScreen && !isKeyboardVisible) {
+                if (!hideHint && isEditBtnInLayout && !isKeyboardVisible) {
                     HintToolTip()
                 }
             }
@@ -156,6 +146,7 @@ private fun CreateMemberSettingPreview() {
                 selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
+                layoutBottom = 0f,
                 errorMessage = "",
             )
 
@@ -164,6 +155,7 @@ private fun CreateMemberSettingPreview() {
                 selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
+                layoutBottom = 0f,
                 errorMessage = "",
             )
 
@@ -176,6 +168,7 @@ private fun CreateMemberSettingPreview() {
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
+                layoutBottom = 0f,
                 errorMessage = "모든 멤버에 가격을 설정해주세요",
             )
         }
