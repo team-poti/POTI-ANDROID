@@ -90,7 +90,7 @@ class PartyCreateViewModel @Inject constructor(
 
             OnSearchClick -> sendEffect(NavigateToSearch)
 
-            is OnArtistChange -> updateState { copy(isFieldTouched = true, artistQuery = intent.value) }
+            is OnArtistChange -> updateState { copy(isFieldTouched = true, artistSearchKeyword = intent.value) }
 
             is OnArtistSelect -> handleArtistSelect(newArtist = intent.artist)
 
@@ -182,7 +182,7 @@ class PartyCreateViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             uiState
-                .map { it.artistQuery }
+                .map { it.artistSearchKeyword }
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest { keyword ->
@@ -249,7 +249,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 selectedArtist = newArtist,
-                artistQuery = newArtist.name,
+                artistSearchKeyword = newArtist.name,
                 artistError = null,
                 isArtistAutoFilled = false,
                 productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,

@@ -92,7 +92,7 @@ private fun PartyArtistSelectScreen(
         ) {
             CreateDropdownField(
                 viewType = ViewType.ARTSIT_SELECT,
-                value = uiState.artistQuery,
+                value = uiState.artistSearchKeyword,
                 onValueChanged = onSearchKeywordChange,
                 searchResults = uiState.artistSearchState.getSuccessDataOrNull() ?: emptyList(),
                 resultToString = { it.name },

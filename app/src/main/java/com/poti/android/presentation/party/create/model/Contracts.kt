@@ -41,7 +41,7 @@ data class CreateUiState(
     val imageUris: List<Uri> = emptyList(),
     val imageError: FieldError? = null,
     val selectedArtist: ArtistSearchResult? = null,
-    val artistQuery: String = "",
+    val artistSearchKeyword: String = "",
     val artistSearchState: ApiState<List<ArtistSearchResult>> = ApiState.Init,
     val artistError: FieldError? = null,
     val selectedProduct: String = "",
@@ -75,7 +75,7 @@ data class CreateUiState(
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
-    val isArtistSearchResultsEmpty = !isArtistAutoFilled && artistQuery.isNotEmpty() && (artistSearchState.getSuccessDataOrNull()?.isEmpty() ?: false)
+    val isArtistSearchResultsEmpty = !isArtistAutoFilled && artistSearchKeyword.isNotEmpty() && (artistSearchState.getSuccessDataOrNull()?.isEmpty() ?: false)
     val isArtistSelectDoneBtnEnabled = selectedArtist != null
 }
 
