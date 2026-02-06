@@ -28,6 +28,7 @@ import com.poti.android.presentation.party.create.util.isTodayOrAfter
 import com.poti.android.presentation.party.create.util.toDashedDate
 import com.poti.android.presentation.party.create.util.toDateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
@@ -409,7 +410,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 selectedMembers = newMembers,
-                memberError = if (!hasInvalidPrice()) null else this.memberError,
+                memberError = if (!hasInvalidPrice(newMembers)) null else this.memberError,
             )
         }
     }
@@ -432,8 +433,8 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
-    private fun hasInvalidPrice(): Boolean =
-        uiState.value.selectedMembers.any { it.price == "0" || it.price.isBlank() }
+    private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
+        members.any { it.price == "0" || it.price.isBlank() }
 
     private fun validateInputs(): Boolean {
         val imageError = if (uiState.value.imageUris.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
@@ -455,7 +456,7 @@ class PartyCreateViewModel @Inject constructor(
         val bankError = if (uiState.value.bank.isBlank()) FieldError.BANK_ERROR else null
         val memberError = when {
             uiState.value.selectedMembers.isEmpty() -> FieldError.MEMBER_EMPTY_ERROR
-            hasInvalidPrice() -> FieldError.MEMBER_PRICE_ERROR
+            hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
             else -> null
         }
 
