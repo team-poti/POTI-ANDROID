@@ -61,7 +61,6 @@ data class CreateUiState(
     val selectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val tempSelectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
     val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.ARTIST_NOT_SELECTED,
-    val showMemberHint: Boolean = false,
     val showMemberBottomSheet: Boolean = false,
     val isMemberBottomSheetTouched: Boolean = false,
     val memberError: FieldError? = null,

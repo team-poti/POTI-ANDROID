@@ -341,7 +341,6 @@ private fun PartyCreateScreen(
                     selectedMembers = uiState.selectedMembers,
                     onPriceChange = onMemberPriceChanged,
                     onEditBtnClick = onMemberEditBtnClick,
-                    showHint = uiState.showMemberHint,
                     errorMessage = uiState.memberError?.let { stringResource(it.message) } ?: "",
                 )
             }

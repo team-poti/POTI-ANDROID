@@ -45,7 +45,6 @@ fun CreateMemberSetting(
     selectedMembers: ImmutableList<MemberPriceOption>,
     onPriceChange: (MemberPriceOption) -> Unit,
     onEditBtnClick: () -> Unit,
-    showHint: Boolean,
     errorMessage: String,
     modifier: Modifier = Modifier,
 ) {
@@ -99,16 +98,16 @@ fun CreateMemberSetting(
                             option = option.name,
                             value = option.price,
                             onValueChanged = { newPrice ->
-                                val newOption = MemberPriceOption(
-                                    memberId = option.memberId,
-                                    name = option.name,
-                                    price = newPrice,
-                                )
+                                val newOption = option.copy(price = newPrice)
                                 onPriceChange(newOption)
                             },
                             modifier = Modifier.padding(bottom = if (isLastOption) 0.dp else 20.dp),
                             imeAction = if (isLastOption) ImeAction.Done else ImeAction.Next,
-                            onFocusChanged = { _ -> hideHint = true },
+                            onFocusChanged = { focused ->
+                                if (focused) {
+                                    hideHint = true
+                                }
+                            },
                         )
                     }
                 }
@@ -131,7 +130,7 @@ fun CreateMemberSetting(
                         },
                 )
 
-                if (!hideHint && showHint && isEditBtnInScreen && !isKeyboardVisible) {
+                if (!hideHint && isEditBtnInScreen && !isKeyboardVisible) {
                     HintToolTip()
                 }
             }
@@ -157,7 +156,6 @@ private fun CreateMemberSettingPreview() {
                 selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                showHint = true,
                 errorMessage = "",
             )
 
@@ -166,7 +164,6 @@ private fun CreateMemberSettingPreview() {
                 selectedMembers = persistentListOf(),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                showHint = true,
                 errorMessage = "",
             )
 
@@ -179,7 +176,6 @@ private fun CreateMemberSettingPreview() {
                 ),
                 onPriceChange = {},
                 onEditBtnClick = {},
-                showHint = true,
                 errorMessage = "모든 멤버에 가격을 설정해주세요",
             )
         }
