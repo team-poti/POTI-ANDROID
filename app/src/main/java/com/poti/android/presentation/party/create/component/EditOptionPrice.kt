@@ -8,23 +8,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -45,6 +43,7 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.display.PotiCheckBox
 import com.poti.android.core.designsystem.theme.PotiTheme
+import kotlin.math.max
 
 private const val MAX_LENGTH = 9
 
@@ -100,37 +99,23 @@ fun EditOptionPrice(
 
         Spacer(Modifier.width(12.dp))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.End,
-        ) {
-            OptionTextField(
-                value = value,
-                onValueChanged = { newValue ->
-                    if (!newValue.isDigitsOnly()) return@OptionTextField
-                    if (newValue.length > MAX_LENGTH) return@OptionTextField
+        OptionTextField(
+            value = value,
+            onValueChanged = { newValue ->
+                if (!newValue.isDigitsOnly()) return@OptionTextField
+                if (newValue.length > MAX_LENGTH) return@OptionTextField
 
-                    val adjusted = newValue.toIntOrNull()?.toString() ?: ""
+                val adjusted = newValue.toIntOrNull()?.toString() ?: ""
 
-                    onValueChanged(adjusted)
-                },
-                imeAction = imeAction,
-                transformation = transformation,
-                textStyle = textStyle,
-                onFocusChanged = onFocusChanged,
-                enabled = enabled,
-                modifier = Modifier.width(textWidth),
-            )
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .widthIn(min = 42.dp)
-                    .width(textWidth)
-                    .clip(CircleShape),
-                thickness = 2.dp,
-                color = PotiTheme.colors.gray300,
-            )
-        }
+                onValueChanged(adjusted)
+            },
+            imeAction = imeAction,
+            transformation = transformation,
+            textStyle = textStyle,
+            onFocusChanged = onFocusChanged,
+            enabled = enabled,
+            modifier = Modifier.width(textWidth),
+        )
 
         Spacer(Modifier.width(4.dp))
 
@@ -155,6 +140,7 @@ private fun OptionTextField(
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val colors = PotiTheme.colors
 
     BasicTextField(
         value = value,
@@ -162,6 +148,24 @@ private fun OptionTextField(
         modifier = modifier
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
+            }
+            .drawWithCache {
+                val minWidth = 42.dp.toPx()
+                val strokeWidth = 2.dp.toPx()
+                val yOffset = strokeWidth / 2 - 4.dp.toPx()
+
+                onDrawBehind {
+                    val underlineWidth = max(size.width, minWidth)
+                    val y = size.height - yOffset
+
+                    drawLine(
+                        color = colors.gray300,
+                        start = Offset(size.width - underlineWidth, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = strokeWidth,
+                        cap = StrokeCap.Round,
+                    )
+                }
             },
         textStyle = textStyle.copy(
             color = PotiTheme.colors.black,
