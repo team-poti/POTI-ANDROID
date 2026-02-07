@@ -44,7 +44,6 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.component.display.PotiCheckBox
 import com.poti.android.core.designsystem.theme.PotiTheme
-import kotlin.math.max
 
 private const val MAX_LENGTH = 9
 
