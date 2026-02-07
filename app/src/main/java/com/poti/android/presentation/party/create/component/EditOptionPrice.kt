@@ -2,12 +2,14 @@ package com.poti.android.presentation.party.create.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,7 +25,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -34,11 +35,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.poti.android.R
@@ -61,21 +60,8 @@ fun EditOptionPrice(
     imeAction: ImeAction = ImeAction.Done,
     enabled: Boolean = true,
 ) {
-    val density = LocalDensity.current
-    val measurer = rememberTextMeasurer()
-
     val textStyle = PotiTheme.typography.body16sb
     val transformation = remember { PriceVisualTransformation() }
-
-    val transformedText = remember(value) {
-        transformation.filter(AnnotatedString(value)).text.text
-    }
-
-    val textWidth = remember(transformedText, textStyle) {
-        density.run {
-            measurer.measure(transformedText, textStyle).size.width.toDp()
-        }
-    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -116,7 +102,6 @@ fun EditOptionPrice(
             textStyle = textStyle,
             onFocusChanged = onFocusChanged,
             enabled = enabled,
-            textWidth = textWidth,
         )
 
         Spacer(Modifier.width(4.dp))
@@ -138,7 +123,6 @@ private fun OptionTextField(
     textStyle: TextStyle,
     onFocusChanged: (Boolean) -> Unit,
     enabled: Boolean,
-    textWidth: Dp,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -149,23 +133,23 @@ private fun OptionTextField(
         value = value,
         onValueChange = onValueChanged,
         modifier = modifier
+            .width(IntrinsicSize.Min)
+            .widthIn(2.dp)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
             }
             .drawWithCache {
                 val minPx = 42.dp.toPx()
-                val textPx = textWidth.toPx()
-                val underlinePx = max(minPx, textPx)
-
                 val strokePx = 2.dp.toPx()
                 val yOffset = strokePx / 2 - 4.dp.toPx()
 
                 onDrawBehind {
+                    val underlineWidth = max(size.width, minPx)
                     val y = size.height - yOffset
 
                     drawLine(
                         color = colors.gray300,
-                        start = Offset(size.width - underlinePx, y),
+                        start = Offset(size.width - underlineWidth, y),
                         end = Offset(size.width, y),
                         strokeWidth = strokePx,
                         cap = StrokeCap.Round,
