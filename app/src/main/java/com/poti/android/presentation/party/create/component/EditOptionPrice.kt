@@ -134,7 +134,7 @@ private fun OptionTextField(
         onValueChange = onValueChanged,
         modifier = modifier
             .width(IntrinsicSize.Min)
-            .widthIn(2.dp)
+            .widthIn(42.dp)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
             }
@@ -175,7 +175,7 @@ private fun OptionTextField(
                 )
             },
         ),
-        singleLine = true,
+        maxLines = 1,
         visualTransformation = transformation,
         decorationBox = { innerTextField ->
             innerTextField()
