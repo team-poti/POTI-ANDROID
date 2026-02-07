@@ -139,17 +139,15 @@ private fun OptionTextField(
                 onFocusChanged(focusState.isFocused)
             }
             .drawWithCache {
-                val minPx = 42.dp.toPx()
                 val strokePx = 2.dp.toPx()
                 val yOffset = strokePx / 2 - 4.dp.toPx()
 
                 onDrawBehind {
-                    val underlineWidth = max(size.width, minPx)
                     val y = size.height - yOffset
 
                     drawLine(
                         color = colors.gray300,
-                        start = Offset(size.width - underlineWidth, y),
+                        start = Offset(0f, y),
                         end = Offset(size.width, y),
                         strokeWidth = strokePx,
                         cap = StrokeCap.Round,
