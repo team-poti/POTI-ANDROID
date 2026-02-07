@@ -194,15 +194,15 @@ private class PriceVisualTransformation : VisualTransformation {
             override fun originalToTransformed(offset: Int): Int {
                 if (offset >= originalText.length) return transformedText.length
 
-                val numbersAtferCursor = originalText.length - offset
+                val numbersAfterCursor = originalText.length - offset
 
-                val commasAfterCursor = if (numbersAtferCursor % 3 == 0) {
-                    numbersAtferCursor / 3 - 1
+                val commasAfterCursor = if (numbersAfterCursor % 3 == 0) {
+                    numbersAfterCursor / 3 - 1
                 } else {
-                    numbersAtferCursor / 3
+                    numbersAfterCursor / 3
                 }
 
-                return transformedText.length - numbersAtferCursor - commasAfterCursor
+                return transformedText.length - numbersAfterCursor - commasAfterCursor
             }
 
             override fun transformedToOriginal(offset: Int): Int {
