@@ -35,8 +35,10 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.poti.android.R
@@ -71,7 +73,7 @@ fun EditOptionPrice(
 
     val textWidth = remember(transformedText, textStyle) {
         density.run {
-            measurer.measure(transformedText, textStyle).size.width.toDp() + 2.dp
+            measurer.measure(transformedText, textStyle).size.width.toDp()
         }
     }
 
@@ -114,7 +116,7 @@ fun EditOptionPrice(
             textStyle = textStyle,
             onFocusChanged = onFocusChanged,
             enabled = enabled,
-            modifier = Modifier.width(textWidth),
+            textWidth = textWidth,
         )
 
         Spacer(Modifier.width(4.dp))
@@ -136,6 +138,7 @@ private fun OptionTextField(
     textStyle: TextStyle,
     onFocusChanged: (Boolean) -> Unit,
     enabled: Boolean,
+    textWidth: Dp,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -150,25 +153,28 @@ private fun OptionTextField(
                 onFocusChanged(focusState.isFocused)
             }
             .drawWithCache {
-                val minWidth = 42.dp.toPx()
-                val strokeWidth = 2.dp.toPx()
-                val yOffset = strokeWidth / 2 - 4.dp.toPx()
+                val minPx = 42.dp.toPx()
+                val textPx = textWidth.toPx()
+                val underlinePx = max(minPx, textPx)
+
+                val strokePx = 2.dp.toPx()
+                val yOffset = strokePx / 2 - 4.dp.toPx()
 
                 onDrawBehind {
-                    val underlineWidth = max(size.width, minWidth)
                     val y = size.height - yOffset
 
                     drawLine(
                         color = colors.gray300,
-                        start = Offset(size.width - underlineWidth, y),
+                        start = Offset(size.width - underlinePx, y),
                         end = Offset(size.width, y),
-                        strokeWidth = strokeWidth,
+                        strokeWidth = strokePx,
                         cap = StrokeCap.Round,
                     )
                 }
             },
         textStyle = textStyle.copy(
             color = PotiTheme.colors.black,
+            textAlign = TextAlign.End,
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
@@ -242,7 +248,7 @@ private class PriceVisualTransformation : VisualTransformation {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun OptionTextFieldPreview() {
     var text1 by remember { mutableStateOf("") }
