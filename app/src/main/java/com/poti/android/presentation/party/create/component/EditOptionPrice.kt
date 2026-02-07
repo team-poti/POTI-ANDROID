@@ -202,20 +202,15 @@ private fun OptionTextField(
 
 private class PriceVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val text = text.text
+        val originalText = text.text
 
-        val textWithComma = when (text.length) {
-            0 -> text
-            else -> text.toInt().toMoneyString()
-        }
+        val transformedText = originalText.toIntOrNull()?.toMoneyString() ?: originalText
 
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                if (offset == text.length) {
-                    return textWithComma.length
-                }
+                if (offset >= originalText.length) return transformedText.length
 
-                val numbersAtferCursor = text.length - offset
+                val numbersAtferCursor = originalText.length - offset
 
                 val commasAfterCursor = if (numbersAtferCursor % 3 == 0) {
                     numbersAtferCursor / 3 - 1
@@ -223,26 +218,24 @@ private class PriceVisualTransformation : VisualTransformation {
                     numbersAtferCursor / 3
                 }
 
-                return textWithComma.length - numbersAtferCursor - commasAfterCursor
+                return transformedText.length - numbersAtferCursor - commasAfterCursor
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                var commasBeforeCursor = 0
+                if (offset >= transformedText.length) return originalText.length
 
-                textWithComma.forEachIndexed { index, char ->
-                    if (index >= offset) return@forEachIndexed
+                // 목표 = 커서 좌측 원본 길이
+                //     = 원본 전체 길이 - 원본 우측 길이
+                //     = 원본 전체 길이 - (변경 우측 길이 - 변형 우측 콤마 개수)
+                val rightOffset = transformedText.length - offset
+                val rightCommas = rightOffset / 4
 
-                    if (char == ',') {
-                        commasBeforeCursor += 1
-                    }
-                }
-
-                return offset - commasBeforeCursor
+                return originalText.length - (rightOffset - rightCommas)
             }
         }
 
         return TransformedText(
-            text = AnnotatedString(textWithComma),
+            text = AnnotatedString(transformedText),
             offsetMapping = offsetMapping,
         )
     }
