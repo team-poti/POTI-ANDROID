@@ -4,7 +4,6 @@ import com.poti.android.core.common.constant.ImageConstants.IMAGE_EXTENSION
 import com.poti.android.domain.model.image.PresignedUploadInfo
 import com.poti.android.domain.repository.FileUploadRepository
 import com.poti.android.domain.repository.ImageRepository
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -29,7 +28,7 @@ class UploadImagesUseCaseV2 @Inject constructor(
             if (t is CancellationException) throw t
             return Result.failure(t)
         } finally {
-            clearDirectory()
+            fileUploadRepository.clearDirectory()
         }
     }
 
@@ -58,12 +57,5 @@ class UploadImagesUseCaseV2 @Inject constructor(
         for (i in urls.indices) {
             fileUploadRepository.uploadImage(urls[i], files[i]).getOrThrow()
         }
-    }
-
-    private fun clearDirectory() = runCatching {
-        fileUploadRepository.clearDirectory()
-            .onFailure {
-                Timber.e(it, "fail on clearDirectory")
-            }
     }
 }
