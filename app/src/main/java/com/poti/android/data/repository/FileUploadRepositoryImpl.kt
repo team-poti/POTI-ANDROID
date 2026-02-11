@@ -19,21 +19,11 @@ class FileUploadRepositoryImpl @Inject constructor(
         fileUploadRemoteDataSource.uploadImage(uploadUrl, file)
     }
 
-    override fun createImage(uriString: String): Result<File> {
-        try {
-            val file = fileLocalDataSource.createImageFile(uriString)
-            return Result.success(file)
-        } catch (exception: Throwable) {
-            return Result.failure(exception)
-        }
+    override fun createImage(uriString: String): Result<File> = runCatching {
+        fileLocalDataSource.createImageFile(uriString)
     }
 
-    override fun clearDirectory(): Result<Unit> {
-        try {
-            fileLocalDataSource.clearDirectory()
-            return Result.success(Unit)
-        } catch (exception: Throwable) {
-            return Result.failure(exception)
-        }
+    override fun clearDirectory(): Result<Unit> = runCatching {
+        fileLocalDataSource.clearDirectory()
     }
 }
