@@ -14,13 +14,11 @@ import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.image.ImageInfoForPresigned
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 
 enum class MemberSettingStatus {
-    DEFAULT,
-    IN_PROGRESS,
-    ERROR_NO_MEMBER,
-    ERROR_NO_PRICE,
+    ARTIST_NOT_SELECTED,
+    MEMBER_NOT_SELECTED,
+    EDITABLE,
 }
 
 enum class FieldError(
@@ -35,57 +33,56 @@ enum class FieldError(
     DESCRIPTION_ERROR(R.string.create_error_need_description),
     ACCOUNT_NUMBER_ERROR(R.string.create_error_need_account_number),
     BANK_ERROR(R.string.create_error_need_bank),
+    MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
+    MEMBER_PRICE_ERROR(R.string.create_error_need_price),
 }
 
 data class CreateUiState(
-    val isDirty: Boolean = false,
-    val neverShowHint: Boolean = false,
-    val selectedImages: ImmutableList<Uri> = persistentListOf(),
-    val selectedArtist: ArtistSearchResult? = null,
-    val productName: String = "",
-    val productSearchResultsState: ApiState<ImmutableList<String>> = ApiState.Init,
-    val deadline: String = "",
-    val description: String = "",
-    val accountNumber: String = "",
-    val bank: String = "",
-    val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.DEFAULT,
-    val memberOptionsState: ApiState<ImmutableList<MemberPriceOption>> = ApiState.Init,
-    val editableMemberOptions: ImmutableList<MemberPriceOption> = persistentListOf(),
-    val selectedMemberIds: Set<Long> = setOf(),
-    val deliveryOptionsState: ApiState<ImmutableList<DeliveryOption>> = ApiState.Init,
-    val sheetDisplayMemberIndices: Set<Int> = setOf(),
-    val editableDeliveryOptions: ImmutableList<DeliveryOption> = persistentListOf(),
-    val selectedDeliveryIds: Set<Long> = setOf(),
+    val imageUris: List<Uri> = emptyList(),
     val imageError: FieldError? = null,
-    val artistError: FieldError? = null,
-    val productError: FieldError? = null,
-    val deadlineError: FieldError? = null,
-    val descriptionError: FieldError? = null,
-    val accountNumberError: FieldError? = null,
-    val bankError: FieldError? = null,
+    val selectedArtist: ArtistSearchResult? = null,
     val artistSearchKeyword: String = "",
-    val isSheetTouched: Boolean = false,
+    val artistSearchState: ApiState<List<ArtistSearchResult>> = ApiState.Init,
+    val artistError: FieldError? = null,
+    val selectedProduct: String = "",
+    val productName: String = "",
+    val productSearchState: ApiState<List<String>> = ApiState.Init,
+    val productError: FieldError? = null,
+    val deadline: String = "",
+    val deadlineError: FieldError? = null,
+    val description: String = "",
+    val descriptionError: FieldError? = null,
+    val accountNumber: String = "",
+    val accountNumberError: FieldError? = null,
+    val bank: String = "",
+    val bankError: FieldError? = null,
+    val membersState: ApiState<List<MemberPriceOption>> = ApiState.Init,
+    val rawMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
+    val selectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
+    val tempSelectedMembers: ImmutableList<MemberPriceOption> = persistentListOf(),
+    val memberSettingStatus: MemberSettingStatus = MemberSettingStatus.ARTIST_NOT_SELECTED,
+    val showMemberBottomSheet: Boolean = false,
+    val isMemberBottomSheetTouched: Boolean = false,
+    val memberError: FieldError? = null,
+    val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
+    val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
+    val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
     val createPartyState: ApiState<Long> = ApiState.Init,
-    val artistSearchResultsState: ApiState<ImmutableList<ArtistSearchResult>> = ApiState.Init,
-    val neverShowSearchEmptyScreen: Boolean = false,
-    val selectedProductName: String = "",
+    val isAutoFilled: Boolean = false,
+    val showDialog: Boolean = false,
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
-    val sheetDisplayMemberNames = editableMemberOptions.map { option -> option.name }
-    val editOptionDisplayMembers = editableMemberOptions.filter { option -> option.memberId in selectedMemberIds }.toPersistentList()
-    val isArtistSearchResultsEmpty = !neverShowSearchEmptyScreen && artistSearchKeyword.isNotEmpty() && (artistSearchResultsState.getSuccessDataOrNull()?.isEmpty() ?: true)
+    val isArtistSearchResultsEmpty = !isAutoFilled && artistSearchKeyword.isNotEmpty() && (artistSearchState.getSuccessDataOrNull()?.isEmpty() ?: false)
     val isArtistSelectDoneBtnEnabled = selectedArtist != null
 }
 
 sealed interface CreateUiIntent : UiIntent {
-    data class InitializeScreen(val artistId: Long?, val artistName: String?, val productName: String?) : CreateUiIntent
+    data object OnCloseBottomSheet : CreateUiIntent
 
-    data object CleanScreen : CreateUiIntent
+    data object OnCloseDialog : CreateUiIntent
 
-    data object OnScrollComplete : CreateUiIntent
-
-    data object OnBackClick : CreateUiIntent
+    data object OnBack : CreateUiIntent
 
     data object OnBackConfirm : CreateUiIntent
 
@@ -95,7 +92,7 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object OnSearchClick : CreateUiIntent
 
-    data class OnArtistSearchKeywordChange(val value: String) : CreateUiIntent
+    data class OnArtistChange(val value: String) : CreateUiIntent
 
     data class OnArtistSelect(val artist: ArtistSearchResult) : CreateUiIntent
 
@@ -115,29 +112,27 @@ sealed interface CreateUiIntent : UiIntent {
 
     data object OnMemberEditClick : CreateUiIntent
 
-    data class OnMemberSelect(val index: Int) : CreateUiIntent
+    data class OnMemberSelect(val member: MemberPriceOption) : CreateUiIntent
 
     data object OnAllMemberSelect : CreateUiIntent
 
     data object OnMemberSelectDone : CreateUiIntent
 
-    data class OnMemberPriceChange(val option: MemberPriceOption) : CreateUiIntent
+    data class OnMemberPriceChange(val member: MemberPriceOption) : CreateUiIntent
 
-    data class OnDeliverySelect(val deliveryId: Long) : CreateUiIntent
+    data class OnDeliverySelect(val delivery: DeliveryOption) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
 
-    data class OnConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
+    data object ScrollComplete : CreateUiIntent
+
+    data class ConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
 }
 
 sealed interface CreateUiEffect : UiEffect {
     data object NavigateToBack : CreateUiEffect
 
     data object NavigateToSearch : CreateUiEffect
-
-    data object ShowBottomSheet : CreateUiEffect
-
-    data object ShowDialog : CreateUiEffect
 
     data object ConvertUris : CreateUiEffect
 
