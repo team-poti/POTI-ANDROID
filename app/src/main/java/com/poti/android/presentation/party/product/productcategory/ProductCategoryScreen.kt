@@ -28,10 +28,10 @@ import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.product.component.GoodsSortBottomSheet
-import com.poti.android.presentation.party.product.dummyProductCategory
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiIntent
 import com.poti.android.presentation.party.product.productcategory.model.ProductSortType
@@ -163,7 +163,7 @@ private fun ProductCategoryScreenPreview() {
         ProductCategoryScreen(
             title = "",
             isMyArtsit = false,
-            productCategory = dummyProductCategory,
+            productCategory = UiMockData.productCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
             onBackClick = {},

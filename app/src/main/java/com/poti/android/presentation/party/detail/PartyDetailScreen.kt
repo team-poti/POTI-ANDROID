@@ -29,6 +29,7 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
@@ -175,7 +176,7 @@ private fun PartyDetailScreen(
 private fun PartyDetailScreenPreview() {
     PotiTheme {
         PartyDetailScreen(
-            partyDetail = dummyPartyDetail,
+            partyDetail = UiMockData.partyDetail,
             isJoinEnable = true,
             onBackClick = {},
             onJoinClick = {},

@@ -4,6 +4,8 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.data.mapper.auth.toDomain
+import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.LoginRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
@@ -24,27 +26,40 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(
         socialType: String,
         token: String,
-    ): Result<UserAuth> = httpResponseHandler.safeApiCall {
-        val requestDto = LoginRequestDto(
-            socialType = socialType,
-            token = token,
-        )
-        authRemoteDataSource.login(loginRequest = requestDto)
-            .handleApiResponse()
-            .getOrThrow()
-            .apply {
-                preferenceDataSource.saveTokens(accessToken, refreshToken)
-                preferenceDataSource.saveOnboardingState(!isNewUser)
+    ): Result<UserAuth> =
+        httpResponseHandler.safeApiCall {
+            val requestDto = LoginRequestDto(
+                socialType = socialType,
+                token = token,
+            )
+            authRemoteDataSource.login(loginRequest = requestDto)
+                .handleApiResponse()
+                .getOrThrow()
+                .apply {
+                    preferenceDataSource.saveTokens(accessToken, refreshToken)
+                    preferenceDataSource.saveOnboardingState(!isNewUser)
+                }
+                .toDomain()
+        }.useUiMockWhenEnabled {
+            UiMockData.userAuth.also {
+                preferenceDataSource.saveTokens(it.accessToken, it.refreshToken)
+                preferenceDataSource.saveOnboardingState(!it.isNewUser)
             }
-            .toDomain()
-    }
+        }
 
     override suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit> = httpResponseHandler.safeApiCall {
         preferenceDataSource.saveOnboardingState(isCompleted)
+        Unit
+    }.useUiMockWhenEnabled {
+        preferenceDataSource.saveOnboardingState(isCompleted)
+        Unit
     }
 
     override suspend fun withdrawal(): Result<Unit> = httpResponseHandler.safeApiCall {
         authRemoteDataSource.withdrawal()
+        preferenceDataSource.clearAll()
+        authSessionManager.triggerLogout()
+    }.useUiMockWhenEnabled {
         preferenceDataSource.clearAll()
         authSessionManager.triggerLogout()
     }

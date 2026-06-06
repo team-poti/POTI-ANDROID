@@ -3,6 +3,8 @@ package com.poti.android.data.repository
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.image.toDomain
+import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.ImageRemoteDataSource
 import com.poti.android.domain.model.image.PresignedUploadInfo
 import com.poti.android.domain.repository.ImageRepository
@@ -20,5 +22,5 @@ class ImageRepositoryImpl @Inject constructor(
             .handleApiResponse()
             .getOrThrow()
             .toDomain()
-    }
+    }.useUiMockWhenEnabled { UiMockData.presignedUploadInfos(extensions) }
 }

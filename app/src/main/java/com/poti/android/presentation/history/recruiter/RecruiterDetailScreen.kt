@@ -26,6 +26,7 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.presentation.history.component.HistoryDetailContentHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
@@ -152,7 +153,7 @@ private fun RecruiterDetailScreen(
 private fun RecruiterDetailScreenRecruitPreview() {
     PotiTheme {
         RecruiterDetailScreen(
-            recruiterDetail = dummyRecruiterData.toUiModel(),
+            recruiterDetail = UiMockData.recruiterDetail.toUiModel(),
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},
@@ -165,7 +166,7 @@ private fun RecruiterDetailScreenRecruitPreview() {
 private fun RecruiterDetailScreenDepositPreview() {
     PotiTheme {
         RecruiterDetailScreen(
-            recruiterDetail = dummyRecruiterData.toUiModel(),
+            recruiterDetail = UiMockData.recruiterDetail.toUiModel(),
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},
@@ -178,7 +179,7 @@ private fun RecruiterDetailScreenDepositPreview() {
 private fun RecruiterDetailScreenDeliveryDonePreview() {
     PotiTheme {
         RecruiterDetailScreen(
-            recruiterDetail = dummyRecruiterData.toUiModel(),
+            recruiterDetail = UiMockData.recruiterDetail.toUiModel(),
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},

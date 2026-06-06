@@ -20,8 +20,8 @@ import com.poti.android.R
 import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiTextButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.home.GroupItem
-import com.poti.android.presentation.party.home.fakeMyGroupItems
 
 @Composable
 fun HomeGoodsSection(
@@ -87,7 +87,7 @@ private fun HomeGoodsSectionPreview() {
             artistId = 0L,
             title = R.string.home_recommend_goods,
             nickname = "포티",
-            groupItems = fakeMyGroupItems,
+            groupItems = UiMockData.homeGroupItems,
             onMoreClick = {},
             onCardClick = { id, title -> },
         )

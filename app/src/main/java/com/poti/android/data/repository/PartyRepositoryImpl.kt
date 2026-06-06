@@ -9,6 +9,8 @@ import com.poti.android.data.mapper.delivery.toDto
 import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.mapper.party.toDomain
 import com.poti.android.data.mapper.party.toRequestDto
+import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.PartyRemoteDataSource
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
 import com.poti.android.domain.model.artist.ArtistSearchResult
@@ -31,19 +33,27 @@ class PartyRepositoryImpl @Inject constructor(
     override suspend fun searchProductTitle(
         artistId: Long,
         keyword: String,
-    ): Result<List<String>> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.searchProductTitle(artistId, keyword)
-            .handleApiResponse()
-            .getOrThrow()
-            .titles
-    }
+    ): Result<List<String>> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.searchProductTitle(artistId, keyword)
+                .handleApiResponse()
+                .getOrThrow()
+                .titles
+        }.useUiMockWhenEnabled {
+            UiMockData.productCategory.groupItems
+                .map { it.postTitle }
+                .filter { it.contains(keyword, ignoreCase = true) }
+        }
 
-    override suspend fun searchArtist(keyword: String): Result<List<ArtistSearchResult>> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.searchArtist(keyword)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    override suspend fun searchArtist(keyword: String): Result<List<ArtistSearchResult>> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.searchArtist(keyword)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled {
+            UiMockData.artistSearchResults.filter { it.name.contains(keyword, ignoreCase = true) }
+        }
 
     override suspend fun createPost(
         artistId: Long,
@@ -55,60 +65,66 @@ class PartyRepositoryImpl @Inject constructor(
         imageUrls: List<String>,
         options: List<MemberPriceOption>,
         shippings: List<DeliveryOption>,
-    ): Result<Long> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.createParty(
-            body = CreatePartyRequestDto(
-                artistId = artistId,
-                title = product,
-                content = description,
-                deadline = deadline,
-                bankName = bank,
-                accountNumber = accountNumber,
-                imageUrls = imageUrls,
-                options = options.map { it.toDto() },
-                shippings = shippings.map { it.toDto() },
-            ),
-        )
-            .handleApiResponse()
-            .getOrThrow()
-            .postId
-    }
+    ): Result<Long> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.createParty(
+                body = CreatePartyRequestDto(
+                    artistId = artistId,
+                    title = product,
+                    content = description,
+                    deadline = deadline,
+                    bankName = bank,
+                    accountNumber = accountNumber,
+                    imageUrls = imageUrls,
+                    options = options.map { it.toDto() },
+                    shippings = shippings.map { it.toDto() },
+                ),
+            )
+                .handleApiResponse()
+                .getOrThrow()
+                .postId
+        }.useUiMockWhenEnabled { UiMockData.partyDetail.postId }
 
-    override suspend fun getShippingOptions(): Result<List<DeliveryOption>> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource
-            .getShippingOptions()
-            .handleApiResponse()
-            .getOrThrow()
-            .map { it.toDomain() }
-    }
+    override suspend fun getShippingOptions(): Result<List<DeliveryOption>> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource
+                .getShippingOptions()
+                .handleApiResponse()
+                .getOrThrow()
+                .map { it.toDomain() }
+        }.useUiMockWhenEnabled { UiMockData.deliveryOptions }
 
-    override suspend fun getPartyDetail(partyId: Long): Result<PartyDetail> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.getPartyDetail(partyId = partyId)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    override suspend fun getPartyDetail(partyId: Long): Result<PartyDetail> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getPartyDetail(partyId = partyId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled { UiMockData.partyDetail.copy(postId = partyId) }
 
-    override suspend fun getPartyJoinOptions(partyId: Long): Result<PartyJoinOption> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.getPartyJoinOptions(partyId = partyId)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    override suspend fun getPartyJoinOptions(partyId: Long): Result<PartyJoinOption> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getPartyJoinOptions(partyId = partyId)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled { UiMockData.partyJoinOption }
 
-    override suspend fun postPartyJoin(joinInfo: PartyJoinInfo): Result<Long> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.postPartyJoin(joinInfo.toRequestDto())
-            .handleApiResponse()
-            .getOrThrow()
-            .participationId
-    }
+    override suspend fun postPartyJoin(joinInfo: PartyJoinInfo): Result<Long> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.postPartyJoin(joinInfo.toRequestDto())
+                .handleApiResponse()
+                .getOrThrow()
+                .participationId
+        }.useUiMockWhenEnabled { UiMockData.participantDetail.participationId }
 
-    override suspend fun getMyRecruitList(status: String): Result<MyPartyList> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.getMyRecruitList(status)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    override suspend fun getMyRecruitList(status: String): Result<MyPartyList> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getMyRecruitList(status)
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled { UiMockData.myPartyList(status, participation = false) }
 
     override suspend fun getRecruitDetail(postId: Long): Result<RecruiterDetail> =
         httpResponseHandler.safeApiCall {
@@ -116,7 +132,7 @@ class PartyRepositoryImpl @Inject constructor(
                 .handleApiResponse()
                 .getOrThrow()
                 .toDomain()
-        }
+        }.useUiMockWhenEnabled { UiMockData.recruiterDetail.copy(recruitId = postId) }
 
     override suspend fun getRecruitPostParticipant(postId: Long): Result<ParticipantManageDetail> =
         httpResponseHandler.safeApiCall {
@@ -124,7 +140,7 @@ class PartyRepositoryImpl @Inject constructor(
                 .handleApiResponse()
                 .getOrThrow()
                 .toDomain()
-        }
+        }.useUiMockWhenEnabled { UiMockData.participantManageDetail }
 
     override suspend fun getProductPartyList(
         page: Int?,
@@ -133,17 +149,20 @@ class PartyRepositoryImpl @Inject constructor(
         artistId: Long,
         sort: String,
         memberIds: List<Long>?,
-    ): Result<ProductPartyList> = httpResponseHandler.safeApiCall {
-        partyRemoteDataSource.getProductPartyList(
-            page = page,
-            size = size,
-            title = title,
-            artistId = artistId,
-            sort = sort,
-            memberIds = memberIds,
-        )
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    ): Result<ProductPartyList> =
+        httpResponseHandler.safeApiCall {
+            partyRemoteDataSource.getProductPartyList(
+                page = page,
+                size = size,
+                title = title,
+                artistId = artistId,
+                sort = sort,
+                memberIds = memberIds,
+            )
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled {
+            UiMockData.productPartyList.copy(partyTitle = title)
+        }
 }

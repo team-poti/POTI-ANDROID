@@ -25,7 +25,7 @@ import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.home.Banner
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
@@ -140,18 +140,7 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     PotiTheme {
         HomeScreen(
-            homeContent = HomeContent(
-                nickname = "포티",
-                banners = listOf(
-                    Banner(1, ""),
-                    Banner(2, ""),
-                    Banner(3, ""),
-                ),
-                myGroupItems = fakeMyGroupItems,
-                otherGroupItems = fakeMyGroupItems,
-                mainArtist = null,
-                mainArtistId = null,
-            ),
+            homeContent = UiMockData.homeContent,
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
             onOtherProductCategoryClick = {},
