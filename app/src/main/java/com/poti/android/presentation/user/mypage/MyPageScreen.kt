@@ -55,7 +55,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnMyArtistSelectClick) },
+            onArtistClick = {},
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
