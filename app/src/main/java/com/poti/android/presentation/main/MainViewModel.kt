@@ -2,7 +2,7 @@ package com.poti.android.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poti.android.data.local.datasource.PreferenceDataSource
+import com.poti.android.domain.usecase.auth.ObserveAuthStateUseCase
 import com.poti.android.presentation.auth.navigation.AuthRoute
 import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,9 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    preferenceDataSource: PreferenceDataSource,
+    observeAuthStateUseCase: ObserveAuthStateUseCase,
 ) : ViewModel() {
-    val startDestination = preferenceDataSource.authState
+    val startDestination = observeAuthStateUseCase()
         .map { authState ->
             when {
                 !authState.accessToken.isNullOrBlank() && authState.isOnboardingFinished -> PartyGraph

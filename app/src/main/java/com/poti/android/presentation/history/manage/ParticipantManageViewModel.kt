@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.DeliveryRepository
-import com.poti.android.domain.repository.PartyRepository
-import com.poti.android.domain.repository.PaymentRepository
+import com.poti.android.domain.usecase.history.ConfirmPaymentUseCase
+import com.poti.android.domain.usecase.history.GetRecruitParticipantsUseCase
+import com.poti.android.domain.usecase.history.RegisterDeliveryUseCase
 import com.poti.android.presentation.history.manage.model.ManageModalState
 import com.poti.android.presentation.history.manage.model.ManageModalState.*
 import com.poti.android.presentation.history.manage.model.ParticipantManageUiEffect
@@ -23,9 +23,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ParticipantManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val partyRepository: PartyRepository,
-    private val paymentRepository: PaymentRepository,
-    private val deliveryRepository: DeliveryRepository,
+    private val getRecruitParticipantsUseCase: GetRecruitParticipantsUseCase,
+    private val confirmPaymentUseCase: ConfirmPaymentUseCase,
+    private val registerDeliveryUseCase: RegisterDeliveryUseCase,
 ) : BaseViewModel<ParticipantManageUiState, ParticipantManageUiIntent, ParticipantManageUiEffect>(
         initialState = ParticipantManageUiState(),
     ) {
@@ -57,7 +57,7 @@ class ParticipantManageViewModel @Inject constructor(
                 updateState { copy(participantManageDetailLoadState = ApiState.Loading) }
             }
 
-            partyRepository.getRecruitPostParticipant(recruitId)
+            getRecruitParticipantsUseCase(recruitId)
                 .onSuccess {
                     Timber.d("success: loadParticipantManageDetail")
                     updateState { copy(participantManageDetailLoadState = ApiState.Success(it.toUiModel())) }
@@ -77,7 +77,7 @@ class ParticipantManageViewModel @Inject constructor(
 
     private fun confirmDeposit(id: Long) {
         viewModelScope.launch {
-            paymentRepository.patchPaymentConfirm(id)
+            confirmPaymentUseCase(id)
                 .onSuccess {
                     Timber.d("success: confirmDeposit($id)\n\t${it.orderId}, ${it.orderStatus}, ${it.confirmedAt}")
                     updateState { copy(activeModal = ManageModalState.None) }
@@ -97,7 +97,7 @@ class ParticipantManageViewModel @Inject constructor(
         number: String,
     ) {
         viewModelScope.launch {
-            deliveryRepository.patchDelivery(
+            registerDeliveryUseCase(
                 orderId = id,
                 deliveryMethod = method,
                 trackingNumber = number,

@@ -4,10 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.ParticipationRepository
-import com.poti.android.domain.repository.PaymentRepository
-import com.poti.android.domain.repository.ReviewRepository
-import com.poti.android.domain.repository.UserRepository
+import com.poti.android.domain.usecase.history.ConfirmDeliveryUseCase
+import com.poti.android.domain.usecase.history.GetParticipantDetailUseCase
+import com.poti.android.domain.usecase.history.SubmitPaymentUseCase
+import com.poti.android.domain.usecase.history.SubmitReviewUseCase
+import com.poti.android.domain.usecase.user.GetUserProfileUseCase
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.participant.model.ParticipantDetailOverlayState
 import com.poti.android.presentation.history.participant.model.ParticipantDetailUiEffect
@@ -21,10 +22,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ParticipantViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val participantRepository: ParticipationRepository,
-    private val paymentRepository: PaymentRepository,
-    private val userRepository: UserRepository,
-    private val reviewRepository: ReviewRepository,
+    private val getParticipantDetailUseCase: GetParticipantDetailUseCase,
+    private val submitPaymentUseCase: SubmitPaymentUseCase,
+    private val confirmDeliveryUseCase: ConfirmDeliveryUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val submitReviewUseCase: SubmitReviewUseCase,
 ) : BaseViewModel<ParticipantDetailUiState, ParticipantDetailUiIntent, ParticipantDetailUiEffect>(
         initialState = ParticipantDetailUiState(),
     ) {
@@ -54,7 +56,7 @@ class ParticipantViewModel @Inject constructor(
             updateState { copy(participantDetailState = ApiState.Loading) }
         }
 
-        participantRepository.getParticipantDetail(participantId)
+        getParticipantDetailUseCase(participantId)
             .onSuccess {
                 Timber.d("success: getParticipantDetail")
 
@@ -72,7 +74,7 @@ class ParticipantViewModel @Inject constructor(
     ) = launchScope {
         updateState { copy(participantDetailState = ApiState.Loading) }
 
-        paymentRepository.postPayment(
+        submitPaymentUseCase(
             orderId = participantId,
             depositorName = depositor,
             depositAt = depositTime,
@@ -87,12 +89,12 @@ class ParticipantViewModel @Inject constructor(
     }
 
     private fun confirmDelivery() = launchScope {
-        participantRepository.patchDeliveryConfirm(participantId)
+        confirmDeliveryUseCase(participantId)
             .onSuccess { leaderUser ->
                 Timber.d("success: confirmDelivery")
                 getParticipantDetail()
 
-                userRepository.getUserProfile(leaderUser)
+                getUserProfileUseCase(leaderUser)
                     .onSuccess { leader ->
                         Timber.d("confirmDelivery Success")
                         updateState {
@@ -119,7 +121,7 @@ class ParticipantViewModel @Inject constructor(
         transactionId: Long,
         star: Int,
     ) = launchScope {
-        reviewRepository.postReview(transactionId, star)
+        submitReviewUseCase(transactionId, star)
             .onSuccess { result ->
                 Timber.d("success: $result")
                 updateState { copy(overlayState = ParticipantDetailOverlayState.None) }

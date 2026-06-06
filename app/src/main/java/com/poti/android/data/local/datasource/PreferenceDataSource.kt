@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.poti.android.di.ApplicationScope
 import com.poti.android.di.IoDispatcher
+import com.poti.android.domain.model.auth.AuthState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -81,11 +82,6 @@ class PreferenceDataSource @Inject constructor(
     suspend fun saveOnboardingState(isFinished: Boolean) = dataStore.edit { prefs ->
         prefs[IS_ONBOARDING_FINISHED_KEY] = isFinished
     }
-
-    data class AuthState(
-        val accessToken: String?,
-        val isOnboardingFinished: Boolean,
-    )
 
     val authState: Flow<AuthState> = dataStore.data.map { prefs ->
         AuthState(
