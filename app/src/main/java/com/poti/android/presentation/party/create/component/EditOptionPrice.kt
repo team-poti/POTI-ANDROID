@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.create.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,23 +10,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -36,7 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,21 +59,8 @@ fun EditOptionPrice(
     imeAction: ImeAction = ImeAction.Done,
     enabled: Boolean = true,
 ) {
-    val density = LocalDensity.current
-    val measurer = rememberTextMeasurer()
-
     val textStyle = PotiTheme.typography.body16sb
     val transformation = remember { PriceVisualTransformation() }
-
-    val transformedText = remember(value) {
-        transformation.filter(AnnotatedString(value)).text.text
-    }
-
-    val textWidth = remember(transformedText, textStyle) {
-        density.run {
-            measurer.measure(transformedText, textStyle).size.width.toDp() + 2.dp
-        }
-    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -100,35 +86,22 @@ fun EditOptionPrice(
 
         Spacer(Modifier.width(12.dp))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.End,
-        ) {
-            OptionTextField(
-                value = value,
-                onValueChanged = { newValue ->
-                    if (!newValue.isDigitsOnly()) return@OptionTextField
-                    if (newValue.length > MAX_LENGTH) return@OptionTextField
+        OptionTextField(
+            value = value,
+            onValueChanged = { newValue ->
+                if (!newValue.isDigitsOnly()) return@OptionTextField
+                if (newValue.length > MAX_LENGTH) return@OptionTextField
 
-                    onValueChanged(newValue)
-                },
-                imeAction = imeAction,
-                transformation = transformation,
-                textStyle = textStyle,
-                onFocusChanged = onFocusChanged,
-                enabled = enabled,
-                modifier = Modifier.width(textWidth),
-            )
+                val adjusted = newValue.toIntOrNull()?.toString() ?: ""
 
-            HorizontalDivider(
-                modifier = Modifier
-                    .widthIn(min = 42.dp)
-                    .width(textWidth)
-                    .clip(CircleShape),
-                thickness = 2.dp,
-                color = PotiTheme.colors.gray300,
-            )
-        }
+                onValueChanged(adjusted)
+            },
+            imeAction = imeAction,
+            transformation = transformation,
+            textStyle = textStyle,
+            onFocusChanged = onFocusChanged,
+            enabled = enabled,
+        )
 
         Spacer(Modifier.width(4.dp))
 
@@ -153,16 +126,36 @@ private fun OptionTextField(
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val colors = PotiTheme.colors
 
     BasicTextField(
         value = value,
         onValueChange = onValueChanged,
         modifier = modifier
+            .width(IntrinsicSize.Min)
+            .widthIn(42.dp)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused)
+            }
+            .drawWithCache {
+                val strokePx = 2.dp.toPx()
+                val yOffset = strokePx / 2 - 4.dp.toPx()
+
+                onDrawBehind {
+                    val y = size.height - yOffset
+
+                    drawLine(
+                        color = colors.gray300,
+                        start = Offset(0f, y),
+                        end = Offset(size.width, y),
+                        strokeWidth = strokePx,
+                        cap = StrokeCap.Round,
+                    )
+                }
             },
         textStyle = textStyle.copy(
             color = PotiTheme.colors.black,
+            textAlign = TextAlign.End,
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
@@ -179,7 +172,7 @@ private fun OptionTextField(
                 )
             },
         ),
-        singleLine = true,
+        maxLines = 1,
         visualTransformation = transformation,
         decorationBox = { innerTextField ->
             innerTextField()
@@ -190,53 +183,46 @@ private fun OptionTextField(
 
 private class PriceVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-        val text = text.text
+        val originalText = text.text
 
-        val textWithComma = when (text.length) {
-            0 -> text
-            else -> text.toInt().toMoneyString()
-        }
+        val transformedText = originalText.toIntOrNull()?.toMoneyString() ?: originalText
 
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                if (offset == text.length) {
-                    return textWithComma.length
-                }
+                if (offset >= originalText.length) return transformedText.length
 
-                val numbersAtferCursor = text.length - offset
+                val numbersAfterCursor = originalText.length - offset
 
-                val commasAfterCursor = if (numbersAtferCursor % 3 == 0) {
-                    numbersAtferCursor / 3 - 1
+                val commasAfterCursor = if (numbersAfterCursor % 3 == 0) {
+                    numbersAfterCursor / 3 - 1
                 } else {
-                    numbersAtferCursor / 3
+                    numbersAfterCursor / 3
                 }
 
-                return textWithComma.length - numbersAtferCursor - commasAfterCursor
+                return transformedText.length - numbersAfterCursor - commasAfterCursor
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                var commasBeforeCursor = 0
+                if (offset >= transformedText.length) return originalText.length
 
-                textWithComma.forEachIndexed { index, char ->
-                    if (index >= offset) return@forEachIndexed
+                // 목표 = 커서 좌측 원본 길이
+                //     = 원본 전체 길이 - 원본 우측 길이
+                //     = 원본 전체 길이 - (변경 우측 길이 - 변형 우측 콤마 개수)
+                val rightOffset = transformedText.length - offset
+                val rightCommas = rightOffset / 4
 
-                    if (char == ',') {
-                        commasBeforeCursor += 1
-                    }
-                }
-
-                return offset - commasBeforeCursor
+                return originalText.length - (rightOffset - rightCommas)
             }
         }
 
         return TransformedText(
-            text = AnnotatedString(textWithComma),
+            text = AnnotatedString(transformedText),
             offsetMapping = offsetMapping,
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun OptionTextFieldPreview() {
     var text1 by remember { mutableStateOf("") }

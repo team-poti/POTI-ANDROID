@@ -18,9 +18,9 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CreateDeliverySetting(
-    deliveryOptions: ImmutableList<DeliveryOption>,
-    selectedOptionIds: Set<Long>,
-    onDeliveryOptionClick: (Long) -> Unit,
+    allDeliveries: ImmutableList<DeliveryOption>,
+    selectedDeliveries: ImmutableList<DeliveryOption>,
+    onDeliveryClick: (DeliveryOption) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -41,13 +41,13 @@ fun CreateDeliverySetting(
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            deliveryOptions.forEach { option ->
+            allDeliveries.forEach { option ->
                 EditOptionPrice(
                     option = option.name,
                     value = option.price.toString(),
                     onValueChanged = {},
-                    isChecked = option.deliveryId in selectedOptionIds,
-                    onCheckboxClick = { onDeliveryOptionClick(option.deliveryId) },
+                    isChecked = selectedDeliveries.any { it.deliveryId == option.deliveryId },
+                    onCheckboxClick = { onDeliveryClick(option) },
                     enabled = false,
                 )
             }
@@ -63,13 +63,11 @@ private fun CreateDeliverySettingPreview() {
         DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
     )
 
-    val selectedOptionIds = setOf(1.toLong())
-
     PotiTheme {
         CreateDeliverySetting(
-            deliveryOptions = deliveryOptions,
-            selectedOptionIds = selectedOptionIds,
-            onDeliveryOptionClick = {},
+            allDeliveries = deliveryOptions,
+            selectedDeliveries = deliveryOptions,
+            onDeliveryClick = {},
         )
     }
 }
