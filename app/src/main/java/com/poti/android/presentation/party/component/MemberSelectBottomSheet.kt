@@ -18,8 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.button.ChipButtonType
 import com.poti.android.core.designsystem.component.button.PotiChipButton
@@ -64,7 +62,7 @@ fun <T> MemberSelectBottomSheet(
         Text(
             text = title,
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 16.dp, start = screenWidthDp(16.dp)),
+                .padding(top = 12.dp, bottom = 16.dp, start = 16.dp),
             color = PotiTheme.colors.black,
             style = PotiTheme.typography.title18sb,
         )
@@ -72,7 +70,7 @@ fun <T> MemberSelectBottomSheet(
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
-                .height(screenHeightDp(492.dp))
+                .height(492.dp)
                 .fillMaxWidth(),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),

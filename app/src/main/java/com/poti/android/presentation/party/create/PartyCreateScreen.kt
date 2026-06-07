@@ -32,7 +32,6 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -44,6 +43,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.presentation.party.component.MemberSelectBottomSheet
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting

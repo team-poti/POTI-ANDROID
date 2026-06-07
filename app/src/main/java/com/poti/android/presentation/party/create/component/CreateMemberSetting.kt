@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -54,7 +53,7 @@ fun CreateMemberSetting(
 
     Column(
         modifier = modifier
-            .padding(vertical = 24.dp, horizontal = screenWidthDp(16.dp)),
+            .padding(vertical = 24.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Row(
