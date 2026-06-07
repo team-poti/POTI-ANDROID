@@ -8,6 +8,8 @@ import com.poti.android.domain.repository.ReviewRepository
 import timber.log.Timber
 import javax.inject.Inject
 
+private const val MOCK_REVIEW_ID = 1L
+
 class ReviewRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val reviewRemoteDataSource: ReviewRemoteDataSource,
@@ -16,7 +18,7 @@ class ReviewRepositoryImpl @Inject constructor(
         transactionId: Long,
         star: Int,
     ): Result<Long> = executeWithUiMock(
-        mock = { transactionId },
+        mock = { MOCK_REVIEW_ID },
         real = {
             httpResponseHandler.safeApiCall {
                 try {
