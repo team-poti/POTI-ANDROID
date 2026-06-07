@@ -21,8 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
@@ -124,8 +122,8 @@ private fun ProductPartyListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(
-                    start = screenWidthDp(16.dp),
-                    end = screenWidthDp(16.dp),
+                    start = 16.dp,
+                    end = 16.dp,
                     bottom = 76.dp,
                 ),
             ) {
@@ -171,8 +169,8 @@ private fun ProductPartyListScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
-                    end = screenWidthDp(20.dp),
-                    bottom = screenHeightDp(12.dp),
+                    end = 20.dp,
+                    bottom = 12.dp,
                 ),
         )
     }

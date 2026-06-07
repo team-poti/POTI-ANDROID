@@ -19,7 +19,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,7 +33,7 @@ fun UserInfo(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.gray100)
-            .padding(all = screenWidthDp(12.dp)),
+            .padding(all = 12.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

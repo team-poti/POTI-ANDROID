@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.bottomsheet.PotiBottomSheet
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -58,7 +57,7 @@ fun HistoryDepositBottomSheet(
             bottomPadding = bottomPadding,
             modifier = Modifier
                 .padding(
-                    horizontal = screenWidthDp(16.dp),
+                    horizontal = 16.dp,
                 ),
         )
     }

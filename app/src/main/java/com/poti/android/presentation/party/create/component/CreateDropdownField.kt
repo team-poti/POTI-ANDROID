@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.field.PotiMenuItem
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -80,7 +79,7 @@ fun <T> CreateDropdownField(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = screenWidthDp(16.dp)),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         PotiShortTextField(

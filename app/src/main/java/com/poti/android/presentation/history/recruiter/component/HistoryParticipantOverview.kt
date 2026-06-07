@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -42,7 +41,7 @@ fun HistoryParticipantOverview(
             .background(colors.white)
             .padding(
                 horizontal = (16.dp),
-                vertical = screenHeightDp(16.dp),
+                vertical = 16.dp,
             ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start,

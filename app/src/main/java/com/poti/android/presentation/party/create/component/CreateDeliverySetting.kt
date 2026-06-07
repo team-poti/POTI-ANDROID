@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.delivery.DeliveryOption
 import kotlinx.collections.immutable.ImmutableList
@@ -28,7 +27,7 @@ fun CreateDeliverySetting(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = screenWidthDp(16.dp),
+                horizontal = 16.dp,
                 vertical = 24.dp,
             ),
         verticalArrangement = Arrangement.spacedBy(24.dp),

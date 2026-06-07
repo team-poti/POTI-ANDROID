@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiItemOption
 import com.poti.android.core.designsystem.component.display.PotiItemOptionSize
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -31,7 +30,7 @@ fun DeliveryStatusContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = screenWidthDp(16.dp))
+            .padding(horizontal = 16.dp)
             .padding(bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {

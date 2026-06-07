@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ChipButtonType
 import com.poti.android.core.designsystem.component.button.PotiChipButton
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
@@ -83,7 +82,7 @@ fun MemberSelectBottomSheet(
         Text(
             text = stringResource(title),
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 16.dp, start = screenWidthDp(16.dp))
+                .padding(top = 12.dp, bottom = 16.dp, start = 16.dp)
                 .background(PotiTheme.colors.white),
             color = PotiTheme.colors.black,
             style = PotiTheme.typography.title18sb,

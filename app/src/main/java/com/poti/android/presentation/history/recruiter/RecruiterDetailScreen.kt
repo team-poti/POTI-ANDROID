@@ -20,7 +20,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
@@ -94,7 +93,7 @@ private fun RecruiterDetailScreen(
                     orderNumber = recruiterDetail.orderNumber,
                     partySummary = recruiterDetail.partySummary,
                     onDetailClick = onDetailClick,
-                    modifier = Modifier.padding(horizontal = screenWidthDp(8.dp)),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                 )
             }
 
@@ -102,7 +101,7 @@ private fun RecruiterDetailScreen(
                 ProgressStatusSection(
                     progressStatus = recruiterDetail.partySummary.partyStatus,
                     statusMessage = recruiterDetail.partySummary.statusMessage,
-                    modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
 
@@ -138,7 +137,7 @@ private fun RecruiterDetailScreen(
                         if (index < recruiterDetail.participants.lastIndex) {
                             PotiDivider(
                                 styleType = PotiDividerStyle.SMALL,
-                                modifier = Modifier.padding(screenWidthDp(8.dp)),
+                                modifier = Modifier.padding(8.dp),
                             )
                         }
                     }

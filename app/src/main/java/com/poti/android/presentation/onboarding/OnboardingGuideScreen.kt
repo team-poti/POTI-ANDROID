@@ -13,8 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
@@ -58,7 +56,7 @@ private fun OnboardingGuideScreen(
                 text = stringResource(R.string.onboarding_guide_label),
                 style = PotiTheme.typography.title18sb,
                 color = PotiTheme.colors.black,
-                modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
             )
 
             Image(
@@ -66,7 +64,7 @@ private fun OnboardingGuideScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = screenHeightDp(44.dp)),
+                    .padding(top = 44.dp),
             )
         },
     )
