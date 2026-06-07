@@ -2,7 +2,7 @@ package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
-import com.poti.android.data.mock.useUiMockWhenEnabled
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.ReviewRemoteDataSource
 import com.poti.android.domain.repository.ReviewRepository
 import timber.log.Timber
@@ -15,16 +15,20 @@ class ReviewRepositoryImpl @Inject constructor(
     override suspend fun postReview(
         transactionId: Long,
         star: Int,
-    ): Result<Long> =
-        httpResponseHandler.safeApiCall {
-            try {
-                reviewRemoteDataSource.postReview(transactionId = transactionId, star = star)
-                    .handleApiResponse()
-                    .getOrThrow()
-                    .reviewId
-            } catch (e: Exception) {
-                Timber.e(e, "postReview error")
-                throw e
+    ): Result<Long> = executeWithUiMock(
+        mock = { transactionId },
+        real = {
+            httpResponseHandler.safeApiCall {
+                try {
+                    reviewRemoteDataSource.postReview(transactionId = transactionId, star = star)
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .reviewId
+                } catch (e: Exception) {
+                    Timber.e(e, "postReview error")
+                    throw e
+                }
             }
-        }.useUiMockWhenEnabled { transactionId }
+        },
+    )
 }

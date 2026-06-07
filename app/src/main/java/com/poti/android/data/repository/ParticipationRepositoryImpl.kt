@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.ParticipantRemoteDataSource
 import com.poti.android.domain.model.history.MyPartyList
@@ -34,10 +35,15 @@ class ParticipationRepositoryImpl @Inject constructor(
         }
 
     override suspend fun patchDeliveryConfirm(participationId: Long): Result<Long> =
-        httpResponseHandler.safeApiCall {
-            participationRemoteDataSource.patchDeliveryConfirm(participationId)
-                .handleApiResponse()
-                .getOrThrow()
-                .leaderUserId
-        }.useUiMockWhenEnabled { UiMockData.userProfile.userId }
+        executeWithUiMock(
+            mock = { UiMockData.userProfile.userId },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    participationRemoteDataSource.patchDeliveryConfirm(participationId)
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .leaderUserId
+                }
+            },
+        )
 }

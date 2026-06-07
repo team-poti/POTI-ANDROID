@@ -4,7 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.mock.UiMockData
-import com.poti.android.data.mock.useUiMockWhenEnabled
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.DeliveryRemoteDataSource
 import com.poti.android.data.remote.dto.request.history.DeliveryRequestDto
 import com.poti.android.domain.model.history.DeliveryDetail
@@ -19,17 +19,21 @@ class DeliveryRepositoryImpl @Inject constructor(
         orderId: Long,
         deliveryMethod: String,
         trackingNumber: String,
-    ): Result<DeliveryDetail> =
-        httpResponseHandler.safeApiCall {
-            deliveryRemoteDataSource.patchDelivery(
-                orderId,
-                DeliveryRequestDto(
-                    carrier = deliveryMethod,
-                    trackingNumber = trackingNumber,
-                ),
-            )
-                .handleApiResponse()
-                .getOrThrow()
-                .toDomain()
-        }.useUiMockWhenEnabled { UiMockData.deliveryDetail(orderId, trackingNumber) }
+    ): Result<DeliveryDetail> = executeWithUiMock(
+        mock = { UiMockData.deliveryDetail(orderId, trackingNumber) },
+        real = {
+            httpResponseHandler.safeApiCall {
+                deliveryRemoteDataSource.patchDelivery(
+                    orderId,
+                    DeliveryRequestDto(
+                        carrier = deliveryMethod,
+                        trackingNumber = trackingNumber,
+                    ),
+                )
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 }

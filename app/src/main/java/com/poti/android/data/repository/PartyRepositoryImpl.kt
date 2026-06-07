@@ -10,6 +10,7 @@ import com.poti.android.data.mapper.history.toDomain
 import com.poti.android.data.mapper.party.toDomain
 import com.poti.android.data.mapper.party.toRequestDto
 import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.PartyRemoteDataSource
 import com.poti.android.data.remote.dto.request.party.CreatePartyRequestDto
@@ -65,25 +66,29 @@ class PartyRepositoryImpl @Inject constructor(
         imageUrls: List<String>,
         options: List<MemberPriceOption>,
         shippings: List<DeliveryOption>,
-    ): Result<Long> =
-        httpResponseHandler.safeApiCall {
-            partyRemoteDataSource.createParty(
-                body = CreatePartyRequestDto(
-                    artistId = artistId,
-                    title = product,
-                    content = description,
-                    deadline = deadline,
-                    bankName = bank,
-                    accountNumber = accountNumber,
-                    imageUrls = imageUrls,
-                    options = options.map { it.toDto() },
-                    shippings = shippings.map { it.toDto() },
-                ),
-            )
-                .handleApiResponse()
-                .getOrThrow()
-                .postId
-        }.useUiMockWhenEnabled { UiMockData.partyDetail.postId }
+    ): Result<Long> = executeWithUiMock(
+        mock = { UiMockData.partyDetail.postId },
+        real = {
+            httpResponseHandler.safeApiCall {
+                partyRemoteDataSource.createParty(
+                    body = CreatePartyRequestDto(
+                        artistId = artistId,
+                        title = product,
+                        content = description,
+                        deadline = deadline,
+                        bankName = bank,
+                        accountNumber = accountNumber,
+                        imageUrls = imageUrls,
+                        options = options.map { it.toDto() },
+                        shippings = shippings.map { it.toDto() },
+                    ),
+                )
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .postId
+            }
+        },
+    )
 
     override suspend fun getShippingOptions(): Result<List<DeliveryOption>> =
         httpResponseHandler.safeApiCall {
@@ -111,12 +116,17 @@ class PartyRepositoryImpl @Inject constructor(
         }.useUiMockWhenEnabled { UiMockData.partyJoinOption }
 
     override suspend fun postPartyJoin(joinInfo: PartyJoinInfo): Result<Long> =
-        httpResponseHandler.safeApiCall {
-            partyRemoteDataSource.postPartyJoin(joinInfo.toRequestDto())
-                .handleApiResponse()
-                .getOrThrow()
-                .participationId
-        }.useUiMockWhenEnabled { UiMockData.participantDetail.participationId }
+        executeWithUiMock(
+            mock = { UiMockData.participantDetail.participationId },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    partyRemoteDataSource.postPartyJoin(joinInfo.toRequestDto())
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .participationId
+                }
+            },
+        )
 
     override suspend fun getMyRecruitList(status: String): Result<MyPartyList> =
         httpResponseHandler.safeApiCall {

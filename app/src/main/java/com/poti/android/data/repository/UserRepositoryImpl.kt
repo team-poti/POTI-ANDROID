@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
@@ -20,17 +21,21 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun patchOnboarding(
         nickname: String,
         favoriteArtistId: Long?,
-    ): Result<Unit> =
-        httpResponseHandler.safeApiCall {
-            val requestDto = OnboardingRequestDto(
-                nickname = nickname,
-                favoriteArtistId = favoriteArtistId,
-            )
-            userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
-                .handleApiResponse()
-                .getOrThrow()
-            Unit
-        }.useUiMockWhenEnabled { Unit }
+    ): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = OnboardingRequestDto(
+                    nickname = nickname,
+                    favoriteArtistId = favoriteArtistId,
+                )
+                userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
+                    .handleApiResponse()
+                    .getOrThrow()
+                Unit
+            }
+        },
+    )
 
     override suspend fun postNicknameDuplicate(nickname: String): Result<Boolean> =
         httpResponseHandler.safeApiCall {

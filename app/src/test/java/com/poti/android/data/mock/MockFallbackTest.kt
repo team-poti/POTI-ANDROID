@@ -86,6 +86,17 @@ class MockFallbackTest {
         assertEquals(0, mockCallCount)
     }
 
+    @Test(expected = CancellationException::class)
+    fun `mock write mode rethrows cancellation exception`() {
+        runBlocking {
+            executeWithUiMock(
+                useMock = true,
+                mock = { throw CancellationException("cancelled") },
+                real = { Result.success(10) },
+            )
+        }
+    }
+
     @Test
     fun `UI mock data initializes nested history models`() {
         assertEquals(2, UiMockData.recruiterDetail.participantCount)
