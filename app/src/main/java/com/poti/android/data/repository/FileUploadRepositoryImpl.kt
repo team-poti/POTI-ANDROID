@@ -1,5 +1,6 @@
 package com.poti.android.data.repository
 
+import com.poti.android.core.common.util.suspendRunCatching
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.FileLocalDataSource
 import com.poti.android.data.remote.datasource.FileUploadRemoteDataSource
@@ -19,11 +20,11 @@ class FileUploadRepositoryImpl @Inject constructor(
         fileUploadRemoteDataSource.uploadImage(uploadUrl, file)
     }
 
-    override suspend fun createImage(uriString: String): Result<File> = runCatching {
+    override suspend fun createImage(uriString: String): Result<File> = suspendRunCatching {
         fileLocalDataSource.createImageFile(uriString)
     }
 
-    override suspend fun clearDirectory(): Result<Unit> = runCatching {
+    override suspend fun clearDirectory(): Result<Unit> = suspendRunCatching {
         fileLocalDataSource.clearDirectory()
     }
 }
