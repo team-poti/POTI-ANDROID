@@ -17,11 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiTextButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.home.GroupItem
-import com.poti.android.presentation.party.home.fakeMyGroupItems
 
 @Composable
 fun HomeGoodsSection(
@@ -41,8 +40,8 @@ fun HomeGoodsSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = screenWidthDp(16.dp),
-                    end = screenWidthDp(4.dp),
+                    start = 16.dp,
+                    end = 4.dp,
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -61,7 +60,7 @@ fun HomeGoodsSection(
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = screenWidthDp(16.dp)),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(groupItems) { item ->
@@ -87,7 +86,7 @@ private fun HomeGoodsSectionPreview() {
             artistId = 0L,
             title = R.string.home_recommend_goods,
             nickname = "포티",
-            groupItems = fakeMyGroupItems,
+            groupItems = UiMockData.homeGroupItems,
             onMoreClick = {},
             onCardClick = { id, title -> },
         )

@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
-import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyDetailContent(
@@ -108,7 +108,7 @@ fun PartyDetailContent(
 private fun PartyDetailContentPreview() {
     PotiTheme {
         PartyDetailContent(
-            partyDetail = dummyPartyDetail,
+            partyDetail = UiMockData.partyDetail,
         )
     }
 }

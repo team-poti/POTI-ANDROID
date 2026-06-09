@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.toMoneyString
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -36,7 +35,7 @@ fun DepositStatusContent(
 ) {
     Column(
         modifier = modifier
-            .padding(horizontal = screenWidthDp(16.dp))
+            .padding(horizontal = 16.dp)
             .padding(bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

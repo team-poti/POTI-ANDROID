@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.field.PotiCountField
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
@@ -63,7 +62,7 @@ private fun OnboardingNicknameScreen(
             text = stringResource(R.string.onboarding_nickname_label),
             style = PotiTheme.typography.title18sb,
             color = PotiTheme.colors.black,
-            modifier = Modifier.padding(horizontal = screenWidthDp(20.dp), vertical = 24.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
         )
 
         PotiCountField(
@@ -71,7 +70,7 @@ private fun OnboardingNicknameScreen(
             onValueChanged = onNicknameChange,
             placeholder = stringResource(R.string.onboarding_nickname_field_placeholder),
             maxLength = 10,
-            modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
+            modifier = Modifier.padding(horizontal = 16.dp),
             error = uiState.nicknameError?.asString() ?: "",
         )
     }

@@ -19,7 +19,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiArtistButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.component.OnboardingScaffold
@@ -75,13 +74,13 @@ private fun OnboardingArtistScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(
-                    start = screenWidthDp(16.dp),
-                    end = screenWidthDp(16.dp),
+                    start = 16.dp,
+                    end = 16.dp,
                     bottom = 40.dp,
                 ),
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(screenWidthDp(25.dp)),
+                horizontalArrangement = Arrangement.spacedBy(25.dp),
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Text(

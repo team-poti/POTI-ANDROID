@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,8 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.extension.heightForScreenPercentage
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.button.PotiModalButton
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -60,14 +59,14 @@ fun PotiLargeModal(
 
     PotiModal(
         onDismissRequest = onDismissRequest,
-        modifier = modifier.padding(horizontal = screenWidthDp(36.dp)),
+        modifier = modifier.padding(horizontal = 36.dp),
         dismissOnBackPress = dismissOnBackPress,
         dismissOnClickOutside = dismissOnClickOutside,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = screenWidthDp(16.dp))
+                .padding(horizontal = 16.dp)
                 .padding(top = 36.dp, bottom = if (hasSubBtn) 12.dp else 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -93,7 +92,7 @@ fun PotiLargeModal(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(vertical = 24.dp)
-                        .heightForScreenPercentage(180.dp)
+                        .height(180.dp)
                         .aspectRatio(1f),
                     contentScale = ContentScale.Crop,
                 )

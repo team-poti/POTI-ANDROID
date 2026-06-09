@@ -11,7 +11,9 @@ import com.poti.android.domain.model.party.DeliveryInfo
 import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.PartyJoinInfo
-import com.poti.android.domain.repository.PartyRepository
+import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
+import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
+import com.poti.android.domain.usecase.party.JoinPartyUseCase
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -24,7 +26,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PartyDetailViewModel @Inject constructor(
-    private val partyRepository: PartyRepository,
+    private val getPartyDetailUseCase: GetPartyDetailUseCase,
+    private val getPartyJoinOptionsUseCase: GetPartyJoinOptionsUseCase,
+    private val joinPartyUseCase: JoinPartyUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
@@ -63,7 +67,7 @@ class PartyDetailViewModel @Inject constructor(
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }
 
-        partyRepository.getPartyDetail(partyId = partyId)
+        getPartyDetailUseCase(partyId = partyId)
             .onSuccess { partyDetail ->
                 Timber.d("getPartyDetail 실행: $partyDetail")
                 updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
@@ -82,7 +86,7 @@ class PartyDetailViewModel @Inject constructor(
     private fun fetchPartyJoinOption() = launchScope {
         updateState { copy(partyJoinOption = ApiState.Loading) }
 
-        partyRepository.getPartyJoinOptions(partyId = partyId)
+        getPartyJoinOptionsUseCase(partyId = partyId)
             .onSuccess { joinOptions ->
                 updateState {
                     copy(
@@ -164,7 +168,7 @@ class PartyDetailViewModel @Inject constructor(
                 joinItems = joinItems,
             )
 
-            partyRepository.postPartyJoin(joinInfo = joinInfo)
+            joinPartyUseCase(joinInfo = joinInfo)
                 .onSuccess {
                     updateState { copy(isJoinSuccessDialogVisible = true) }
                 }

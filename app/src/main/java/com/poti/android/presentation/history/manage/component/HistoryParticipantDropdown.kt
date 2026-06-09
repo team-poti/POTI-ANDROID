@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.presentation.history.manage.model.ParticipantUiModel
@@ -44,7 +43,7 @@ fun HistoryParticipantDropdown(
             .background(PotiTheme.colors.white)
             .padding(
                 vertical = 20.dp,
-                horizontal = screenWidthDp(16.dp),
+                horizontal = 16.dp,
             ),
     ) {
         ParticipantDropdownHeader(

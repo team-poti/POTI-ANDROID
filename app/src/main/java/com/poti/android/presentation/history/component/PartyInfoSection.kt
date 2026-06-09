@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.history.PartySummary
 import com.poti.android.domain.type.PartyStatusType
@@ -27,7 +26,7 @@ fun PartyInfoSection(
             text = orderNumber,
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
-            modifier = Modifier.padding(start = screenWidthDp(8.dp), top = 12.dp, bottom = 4.dp),
+            modifier = Modifier.padding(start = 8.dp, top = 12.dp, bottom = 4.dp),
         )
 
         HistoryCardItem(

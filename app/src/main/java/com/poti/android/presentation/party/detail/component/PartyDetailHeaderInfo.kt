@@ -18,8 +18,8 @@ import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.extension.toPartyUploadDate
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
-import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyDetailHeaderInfo(
@@ -84,7 +84,7 @@ fun PartyDetailHeaderInfo(
 private fun PartyDetailHeaderInfoPreview() {
     PotiTheme {
         PartyDetailHeaderInfo(
-            partyDetail = dummyPartyDetail,
+            partyDetail = UiMockData.partyDetail,
             onLikeClick = {},
         )
     }

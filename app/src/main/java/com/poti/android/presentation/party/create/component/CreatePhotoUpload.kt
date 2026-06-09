@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.DeleteButtonType
 import com.poti.android.core.designsystem.component.button.PotiDeleteButton
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -116,7 +115,7 @@ private fun UploadButton(
                 onClick = onClick,
                 enabled = enabled,
             )
-            .size(screenWidthDp(90.dp)),
+            .size(90.dp),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -135,7 +134,7 @@ private fun PhotoItem(
 ) {
     Box(
         modifier = modifier
-            .size(screenWidthDp(90.dp))
+            .size(90.dp)
             .clip(RoundedCornerShape(8.dp)),
     ) {
         AsyncImage(

@@ -32,7 +32,6 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -201,7 +200,7 @@ private fun PartyCreateScreen(
                 Text(
                     text = stringResource(R.string.create_label_product_info),
                     modifier = Modifier
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(top = 24.dp, bottom = 20.dp),
                     color = PotiTheme.colors.black,
                     style = PotiTheme.typography.title18sb,
@@ -216,7 +215,7 @@ private fun PartyCreateScreen(
                     PotiErrorMessage(
                         message = stringResource(error.message),
                         modifier = Modifier
-                            .padding(horizontal = screenWidthDp(16.dp))
+                            .padding(horizontal = 16.dp)
                             .padding(top = 2.dp, bottom = 8.dp),
                     )
                 }
@@ -229,7 +228,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_artist),
                     modifier = Modifier
                         .noRippleClickable(onClick = onSearchArtist)
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(top = 20.dp, bottom = 28.dp),
                     enabled = false,
                     label = stringResource(R.string.create_label_artist),
@@ -273,7 +272,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_deadline),
                     error = uiState.deadlineError?.let { stringResource(it.message) } ?: "",
@@ -293,7 +292,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_description),
                     error = uiState.descriptionError?.let { stringResource(it.message) } ?: "",
@@ -309,7 +308,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_account_number),
                     error = uiState.accountNumberError?.let { stringResource(it.message) } ?: "",
@@ -327,7 +326,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 24.dp),
                     label = stringResource(R.string.create_label_bank),
                     error = uiState.bankError?.let { stringResource(it.message) } ?: "",

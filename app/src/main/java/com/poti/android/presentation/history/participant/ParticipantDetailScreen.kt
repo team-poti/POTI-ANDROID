@@ -16,7 +16,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
@@ -112,13 +111,13 @@ private fun ParticipantDetailScreen(
                 orderNumber = participantDetail.orderNumber,
                 partySummary = participantDetail.partySummary,
                 onDetailClick = onDetailClick,
-                modifier = Modifier.padding(horizontal = screenWidthDp(8.dp)),
+                modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             ProgressStatusSection(
                 progressStatus = participantDetail.partySummary.partyStatus,
                 statusMessage = participantDetail.partySummary.statusMessage,
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
             PotiDivider(
@@ -153,7 +152,7 @@ private fun ParticipantDetailScreen(
                     type = ActionButtonType.SECONDARY_MAIN,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                 )
             }
             ParticipantButtonState.DELIVERY_RECEIVED -> {
@@ -163,7 +162,7 @@ private fun ParticipantDetailScreen(
                     type = ActionButtonType.SECONDARY_MAIN,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = screenWidthDp(16.dp), vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                 )
             }
             ParticipantButtonState.NONE -> {}

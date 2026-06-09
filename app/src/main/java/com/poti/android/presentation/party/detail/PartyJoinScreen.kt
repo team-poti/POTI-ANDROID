@@ -25,7 +25,6 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -133,7 +132,7 @@ private fun PartyJoinScreen(
             Column(
                 modifier = Modifier
                     .padding(top = 18.dp, bottom = 24.dp)
-                    .padding(horizontal = screenWidthDp(16.dp)),
+                    .padding(horizontal = 16.dp),
             ) {
                 Column(
                     modifier = Modifier,
@@ -169,7 +168,7 @@ private fun PartyJoinScreen(
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
             Column(
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 24.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
             ) {
                 Text(
                     text = stringResource(R.string.party_join_order_info),

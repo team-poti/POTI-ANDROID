@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.ArtistRepository
-import com.poti.android.domain.repository.PartyRepository
+import com.poti.android.domain.usecase.artist.GetMembersUseCase
+import com.poti.android.domain.usecase.party.GetProductPartyListUseCase
 import com.poti.android.presentation.party.product.navigation.ProductRoute
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiEffect
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiIntent
@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductPartyListViewModel @Inject constructor(
-    private val artistRepository: ArtistRepository,
-    private val partyRepository: PartyRepository,
+    private val getMembersUseCase: GetMembersUseCase,
+    private val getProductPartyListUseCase: GetProductPartyListUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
         initialState = ProductPartyListUiState(),
@@ -85,7 +85,7 @@ class ProductPartyListViewModel @Inject constructor(
 
         updateState { copy(productPartyListInfo = ApiState.Loading) }
 
-        partyRepository.getProductPartyList(
+        getProductPartyListUseCase(
             page = 0,
             size = 100,
             title = title,
@@ -114,7 +114,7 @@ class ProductPartyListViewModel @Inject constructor(
     private fun fetchArtistMembers() = launchScope {
         updateState { copy(membersLoadState = ApiState.Loading) }
 
-        artistRepository.getMemberList(artistId)
+        getMembersUseCase(artistId)
             .onSuccess {
                 updateState {
                     copy(

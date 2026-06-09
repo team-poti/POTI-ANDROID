@@ -4,8 +4,9 @@ import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.network.model.NetworkError
-import com.poti.android.domain.repository.ArtistRepository
-import com.poti.android.domain.repository.UserRepository
+import com.poti.android.domain.usecase.artist.GetArtistsUseCase
+import com.poti.android.domain.usecase.user.CheckNicknameDuplicationUseCase
+import com.poti.android.domain.usecase.user.SaveOnboardingUseCase
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.onboarding.model.OnboardingUiEffect
 import com.poti.android.presentation.onboarding.model.OnboardingUiIntent
@@ -19,8 +20,9 @@ private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val artistRepository: ArtistRepository,
+    private val getArtistsUseCase: GetArtistsUseCase,
+    private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
+    private val saveOnboardingUseCase: SaveOnboardingUseCase,
 ) : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
         initialState = OnboardingUiState(),
     ) {
@@ -37,7 +39,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun fetchArtists() = launchScope {
-        artistRepository.getArtists()
+        getArtistsUseCase()
             .onSuccess { artists ->
                 updateState { copy(artists = ApiState.Success(artists.toImmutableList())) }
             }
@@ -67,7 +69,7 @@ class OnboardingViewModel @Inject constructor(
     private fun checkNicknameDuplication(nickname: String) = launchScope {
         Timber.d("닉네임 중복 및 비속어 확인 요청: $nickname")
 
-        userRepository.postNicknameDuplicate(nickname)
+        checkNicknameDuplicationUseCase(nickname)
             .onSuccess { isDuplicated ->
                 if (isDuplicated) {
                     updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
@@ -120,7 +122,7 @@ class OnboardingViewModel @Inject constructor(
         val artistId = uiState.value.selectedArtistId
 
         artistId?.let {
-            userRepository.patchOnboarding(uiState.value.nickname, artistId)
+            saveOnboardingUseCase(uiState.value.nickname, artistId)
                 .onSuccess {
                     updateState { copy(isButtonVisible = false) }
                     sendEffect(OnboardingUiEffect.NavigateToHome)
@@ -132,7 +134,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     private fun handleSkipClick() = launchScope {
-        userRepository.patchOnboarding(uiState.value.nickname, null)
+        saveOnboardingUseCase(uiState.value.nickname, null)
             .onSuccess { }
         updateState {
             copy(

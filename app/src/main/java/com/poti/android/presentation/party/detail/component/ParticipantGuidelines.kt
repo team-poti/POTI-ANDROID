@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -20,7 +19,7 @@ fun ParticipantGuidelines(
 
     Column(
         modifier = modifier
-            .padding(horizontal = screenWidthDp(16.dp), vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp)
             .padding(bottom = 40.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

@@ -22,16 +22,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.product.component.GoodsSortBottomSheet
-import com.poti.android.presentation.party.product.dummyProductCategory
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiIntent
 import com.poti.android.presentation.party.product.productcategory.model.ProductSortType
@@ -108,8 +106,8 @@ private fun ProductCategoryScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(
-                    start = screenWidthDp(16.dp),
-                    end = screenWidthDp(16.dp),
+                    start = 16.dp,
+                    end = 16.dp,
                     bottom = 76.dp,
                 ),
             ) {
@@ -149,8 +147,8 @@ private fun ProductCategoryScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
-                    end = screenWidthDp(20.dp),
-                    bottom = screenHeightDp(12.dp),
+                    end = 20.dp,
+                    bottom = 12.dp,
                 ),
         )
     }
@@ -163,7 +161,7 @@ private fun ProductCategoryScreenPreview() {
         ProductCategoryScreen(
             title = "",
             isMyArtsit = false,
-            productCategory = dummyProductCategory,
+            productCategory = UiMockData.productCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
             onBackClick = {},
