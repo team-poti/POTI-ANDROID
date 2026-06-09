@@ -28,7 +28,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTag
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagColor
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagSize
@@ -49,7 +48,7 @@ fun GoodsSmallCard(
 ) {
     Column(
         modifier = modifier
-            .width(screenWidthDp(192.dp))
+            .width(192.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(PotiTheme.colors.gray100)
             .border(

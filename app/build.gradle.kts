@@ -35,8 +35,19 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("boolean", "USE_UI_MOCK", "false")
+        }
+        create("mock") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".mock"
+            versionNameSuffix = "-mock"
+            buildConfigField("boolean", "USE_UI_MOCK", "true")
+            matchingFallbacks += listOf("debug")
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField("boolean", "USE_UI_MOCK", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -111,6 +122,8 @@ dependencies {
     // --- Debugging ---
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    "mockImplementation"(libs.androidx.ui.tooling)
+    "mockImplementation"(libs.androidx.ui.test.manifest)
 
     // Kakao
     implementation(libs.kakao.user)

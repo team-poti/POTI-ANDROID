@@ -18,7 +18,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -34,7 +33,7 @@ fun PotiHeaderPrimary(
     Row(
         modifier = modifier
             .background(PotiTheme.colors.white)
-            .padding(start = screenWidthDp(20.dp), end = screenWidthDp(4.dp))
+            .padding(start = 20.dp, end = 4.dp)
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

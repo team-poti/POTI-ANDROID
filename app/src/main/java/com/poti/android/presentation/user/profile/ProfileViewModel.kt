@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.UserRepository
+import com.poti.android.domain.usecase.user.GetUserProfileUseCase
 import com.poti.android.presentation.user.profile.model.ProfileUiEffect
 import com.poti.android.presentation.user.profile.model.ProfileUiIntent
 import com.poti.android.presentation.user.profile.model.ProfileUiState
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProfileUiState, ProfileUiIntent, ProfileUiEffect>(
         initialState = ProfileUiState(),
@@ -32,7 +32,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadUserProfile() = launchScope {
-        userRepository.getUserProfile(userId = userId)
+        getUserProfileUseCase(userId = userId)
             .onSuccess { userProfile ->
                 updateState {
                     copy(userProfileLoadState = ApiState.Success(userProfile))

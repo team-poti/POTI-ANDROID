@@ -20,8 +20,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
@@ -55,7 +53,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnMyArtistSelectClick) },
+            onArtistClick = {},
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -91,8 +89,8 @@ private fun MyPageScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(
-                    horizontal = screenWidthDp(16.dp),
-                    vertical = screenHeightDp(20.dp),
+                    horizontal = 16.dp,
+                    vertical = 20.dp,
                 ),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

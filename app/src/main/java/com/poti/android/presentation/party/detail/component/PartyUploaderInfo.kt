@@ -16,8 +16,8 @@ import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.component.display.PotiProfileSummary
 import com.poti.android.core.designsystem.component.display.PotiProfileSummarySize
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.user.UserSummary
-import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyUploaderInfo(
@@ -61,7 +61,7 @@ fun PartyUploaderInfo(
 private fun PartyUploaderInfoPreview() {
     PotiTheme {
         PartyUploaderInfo(
-            userSummary = dummyPartyDetail.uploader,
+            userSummary = UiMockData.partyDetail.uploader,
             onClick = {},
         )
     }

@@ -2,7 +2,7 @@ package com.poti.android.presentation.auth
 
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
 import com.poti.android.presentation.auth.model.LoginState
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val loginUseCase: LoginUseCase,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(
         updateState { copy(loginState = ApiState.Loading) }
 
         launchScope {
-            authRepository.login(socialType = "KAKAO", token = kakaoToken)
+            loginUseCase(socialType = "KAKAO", token = kakaoToken)
                 .onSuccess { response ->
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")

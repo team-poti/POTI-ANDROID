@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.HomeRepository
+import com.poti.android.domain.usecase.home.GetGoodsCategoryListUseCase
 import com.poti.android.presentation.party.product.navigation.ProductRoute.ProductCategory
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiIntent
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductCategoryViewModel @Inject constructor(
-    private val homeRepository: HomeRepository,
+    private val getGoodsCategoryListUseCase: GetGoodsCategoryListUseCase,
     savedStateHandle: SavedStateHandle,
 ) :
     BaseViewModel<ProductCategoryUiState, ProductCategoryUiIntent, ProductCategoryUiEffect>(
@@ -53,7 +53,7 @@ class ProductCategoryViewModel @Inject constructor(
             launchScope {
                 updateState { copy(productCategoryLoadState = ApiState.Loading) }
 
-                homeRepository.getGoodsCategoryList(
+                getGoodsCategoryListUseCase(
                     page = 0,
                     size = 100,
                     sort = sortType.name,

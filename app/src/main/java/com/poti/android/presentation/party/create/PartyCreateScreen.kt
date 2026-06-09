@@ -19,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -26,13 +28,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
-import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
@@ -43,14 +42,16 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
+import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.presentation.party.component.MemberSelectBottomSheet
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
-import com.poti.android.presentation.party.create.model.CreateUiEffect
-import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiEffect.*
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.util.DateTransformation
 import com.poti.android.presentation.party.create.util.toImageInfosForPresigned
@@ -62,105 +63,81 @@ fun PartyCreateRoute(
     onNavigateToDetail: (Long) -> Unit,
     viewModel: PartyCreateViewModel,
     modifier: Modifier = Modifier,
-    artistId: Long? = null,
-    artistName: String? = null,
-    productName: String? = null,
 ) {
     val context = LocalContext.current
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
 
-    if (uiState.isDirty) {
-        BackHandler {
-            showDialog = true
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.processIntent(CreateUiIntent.InitializeScreen(artistId, artistName, productName))
+    BackHandler {
+        viewModel.processIntent(OnBack)
     }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            CreateUiEffect.NavigateToBack -> {
-                showDialog = false
+            NavigateToBack -> {
                 onPopBackStack()
             }
 
-            CreateUiEffect.NavigateToSearch -> onNavigateToSearch()
+            NavigateToSearch -> onNavigateToSearch()
 
-            CreateUiEffect.ShowBottomSheet -> {
-                showBottomSheet = true
+            ConvertUris -> {
+                val result = uiState.imageUris.toImageInfosForPresigned(context)
+                viewModel.processIntent(ConvertDone(result))
             }
 
-            CreateUiEffect.ShowDialog -> {
-                showDialog = true
-            }
-
-            CreateUiEffect.ConvertUris -> {
-                val result = uiState.selectedImages.toImageInfosForPresigned(context)
-                viewModel.processIntent(CreateUiIntent.OnConvertDone(result))
-            }
-
-            is CreateUiEffect.NavigateToDetail -> {
+            is NavigateToDetail -> {
                 onNavigateToDetail(effect.partyId)
             }
         }
     }
 
-    if (showBottomSheet) {
+    if (uiState.showMemberBottomSheet) {
         MemberSelectBottomSheet(
-            title = R.string.create_title_bottomsheet,
-            onDismiss = { showBottomSheet = false },
-            mainBtnText = R.string.action_button_done,
-            onMainBtnClick = {
-                viewModel.processIntent(CreateUiIntent.OnMemberSelectDone)
-                showBottomSheet = false
-            },
-            mainEnabled = uiState.isSheetTouched,
-            subBtnText = R.string.action_button_select_all,
-            onSubBtnClick = {
-                viewModel.processIntent(CreateUiIntent.OnAllMemberSelect)
-            },
+            title = stringResource(R.string.create_title_bottomsheet),
+            mainBtnText = stringResource(R.string.action_button_done),
+            subBtnText = stringResource(R.string.action_button_select_all),
+            onDismiss = { viewModel.processIntent(OnCloseBottomSheet) },
+            onMainBtnClick = { viewModel.processIntent(OnMemberSelectDone) },
+            onSubBtnClick = { viewModel.processIntent(OnAllMemberSelect) },
+            allMembers = uiState.rawMembers,
+            selectedMembers = uiState.tempSelectedMembers,
+            onMemberClick = { viewModel.processIntent(OnMemberSelect(it)) },
+            memberToName = { it.name },
+            memberToId = { it.memberId },
+            mainEnabled = uiState.isMemberBottomSheetTouched,
             subEnabled = true,
-            members = uiState.sheetDisplayMemberNames,
-            onMemberClick = { viewModel.processIntent(CreateUiIntent.OnMemberSelect(it)) },
-            selectedIndices = uiState.sheetDisplayMemberIndices,
             autoCloseSubBtn = false,
         )
     }
 
-    if (showDialog) {
+    if (uiState.showDialog) {
         PotiSmallModal(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { viewModel.processIntent(OnCloseDialog) },
             title = stringResource(R.string.create_exit_dialog_title),
             text = stringResource(R.string.create_exit_dialog_content),
             dismissBtnText = stringResource(R.string.create_exit_dialog_dismiss_text),
             confirmBtnText = stringResource(R.string.create_exit_dialog_confirm_text),
-            onDismissBtnClick = { viewModel.processIntent(CreateUiIntent.OnBackConfirm) },
-            onConfirmBtnClick = { showDialog = false },
+            onDismissBtnClick = { viewModel.processIntent(OnBackConfirm) },
+            onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
     }
 
     PartyCreateScreen(
         uiState = uiState,
-        onScrollComplete = { viewModel.processIntent(CreateUiIntent.OnScrollComplete) },
-        onBackClick = { viewModel.processIntent(CreateUiIntent.OnBackClick) },
-        onImageChanged = { viewModel.processIntent(CreateUiIntent.OnImagesChanged(it)) },
-        onSearchArtist = { viewModel.processIntent(CreateUiIntent.OnSearchClick) },
-        onProductFocusChanged = { viewModel.processIntent(CreateUiIntent.OnProductFocus(it)) },
-        onProductChanged = { viewModel.processIntent(CreateUiIntent.OnProductChange(it)) },
-        onProductSearchItemClick = { viewModel.processIntent(CreateUiIntent.OnProductSelect(it)) },
-        onDeadlineChanged = { viewModel.processIntent(CreateUiIntent.OnDeadlineChange(it)) },
-        onDescriptionChanged = { viewModel.processIntent(CreateUiIntent.OnDescriptionChange(it)) },
-        onAccountNumberChanged = { viewModel.processIntent(CreateUiIntent.OnAccountNumberChange(it)) },
-        onBankChanged = { viewModel.processIntent(CreateUiIntent.OnBankChange(it)) },
-        onMemberPriceChanged = { viewModel.processIntent(CreateUiIntent.OnMemberPriceChange(it)) },
-        onMemberEditBtnClick = { viewModel.processIntent(CreateUiIntent.OnMemberEditClick) },
-        onDeliveryRadioBtnClick = { viewModel.processIntent(CreateUiIntent.OnDeliverySelect(it)) },
-        onCreateBtnClick = { viewModel.processIntent(CreateUiIntent.OnCreateClick) },
+        onScrollComplete = { viewModel.processIntent(ScrollComplete) },
+        onBackClick = { viewModel.processIntent(OnBack) },
+        onImageChanged = { viewModel.processIntent(OnImagesChanged(it)) },
+        onSearchArtist = { viewModel.processIntent(OnSearchClick) },
+        onProductFocusChanged = { viewModel.processIntent(OnProductFocus(it)) },
+        onProductChanged = { viewModel.processIntent(OnProductChange(it)) },
+        onProductSearchItemClick = { viewModel.processIntent(OnProductSelect(it)) },
+        onDeadlineChanged = { viewModel.processIntent(OnDeadlineChange(it)) },
+        onDescriptionChanged = { viewModel.processIntent(OnDescriptionChange(it)) },
+        onAccountNumberChanged = { viewModel.processIntent(OnAccountNumberChange(it)) },
+        onBankChanged = { viewModel.processIntent(OnBankChange(it)) },
+        onMemberPriceChanged = { viewModel.processIntent(OnMemberPriceChange(it)) },
+        onMemberEditBtnClick = { viewModel.processIntent(OnMemberEditClick) },
+        onDeliveryRadioBtnClick = { viewModel.processIntent(OnDeliverySelect(it)) },
+        onCreateBtnClick = { viewModel.processIntent(OnCreateClick) },
         modifier = modifier,
     )
 }
@@ -181,17 +158,18 @@ private fun PartyCreateScreen(
     onBankChanged: (String) -> Unit,
     onMemberPriceChanged: (MemberPriceOption) -> Unit,
     onMemberEditBtnClick: () -> Unit,
-    onDeliveryRadioBtnClick: (Long) -> Unit,
+    onDeliveryRadioBtnClick: (DeliveryOption) -> Unit,
     onCreateBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     val dateTransformation = remember { DateTransformation() }
 
+    var listBottom by remember { mutableStateOf(0f) }
+
     LaunchedEffect(uiState.errorIndexToScroll) {
-        val index = uiState.errorIndexToScroll
-        index?.let {
-            listState.animateScrollToItem(index)
+        uiState.errorIndexToScroll?.let {
+            listState.animateScrollToItem(it)
         }
         onScrollComplete()
     }
@@ -212,20 +190,24 @@ private fun PartyCreateScreen(
     ) { innerPadding ->
         LazyColumn(
             state = listState,
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .onGloballyPositioned { coordinates ->
+                    listBottom = coordinates.boundsInWindow().bottom
+                },
         ) {
             item {
                 Text(
                     text = stringResource(R.string.create_label_product_info),
                     modifier = Modifier
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(top = 24.dp, bottom = 20.dp),
                     color = PotiTheme.colors.black,
                     style = PotiTheme.typography.title18sb,
                 )
 
                 CreatePhotoUpload(
-                    imageUris = uiState.selectedImages,
+                    imageUris = uiState.imageUris,
                     onImageChanged = onImageChanged,
                 )
 
@@ -233,7 +215,7 @@ private fun PartyCreateScreen(
                     PotiErrorMessage(
                         message = stringResource(error.message),
                         modifier = Modifier
-                            .padding(horizontal = screenWidthDp(16.dp))
+                            .padding(horizontal = 16.dp)
                             .padding(top = 2.dp, bottom = 8.dp),
                     )
                 }
@@ -246,7 +228,7 @@ private fun PartyCreateScreen(
                     placeholder = stringResource(R.string.create_placeholder_artist),
                     modifier = Modifier
                         .noRippleClickable(onClick = onSearchArtist)
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(top = 20.dp, bottom = 28.dp),
                     enabled = false,
                     label = stringResource(R.string.create_label_artist),
@@ -267,7 +249,7 @@ private fun PartyCreateScreen(
                     viewType = ViewType.CREATE_PARTY,
                     value = uiState.productName,
                     onValueChanged = onProductChanged,
-                    searchResults = uiState.productSearchResultsState.getSuccessDataOrNull() ?: emptyList(),
+                    searchResults = uiState.productSearchState.getSuccessDataOrNull() ?: emptyList(),
                     onItemClick = onProductSearchItemClick,
                     placeholder = stringResource(R.string.create_placeholder_product),
                     label = stringResource(R.string.create_label_product),
@@ -275,7 +257,7 @@ private fun PartyCreateScreen(
                     modifier = Modifier
                         .padding(bottom = 28.dp),
                     fieldErrorMsg = uiState.productError?.let { stringResource(it.message) } ?: "",
-                    selectedString = uiState.selectedProductName,
+                    selectedString = uiState.selectedProduct,
                     readOnly = uiState.isProductFieldReadOnly,
                     onFocusChanged = onProductFocusChanged,
                 )
@@ -290,7 +272,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_deadline),
                     error = uiState.deadlineError?.let { stringResource(it.message) } ?: "",
@@ -310,7 +292,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_description),
                     error = uiState.descriptionError?.let { stringResource(it.message) } ?: "",
@@ -326,7 +308,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 28.dp),
                     label = stringResource(R.string.create_label_account_number),
                     error = uiState.accountNumberError?.let { stringResource(it.message) } ?: "",
@@ -344,7 +326,7 @@ private fun PartyCreateScreen(
                         .animateItem(
                             placementSpec = tween(durationMillis = 120, easing = LinearOutSlowInEasing),
                         )
-                        .padding(horizontal = screenWidthDp(16.dp))
+                        .padding(horizontal = 16.dp)
                         .padding(bottom = 24.dp),
                     label = stringResource(R.string.create_label_bank),
                     error = uiState.bankError?.let { stringResource(it.message) } ?: "",
@@ -357,11 +339,12 @@ private fun PartyCreateScreen(
                 )
 
                 CreateMemberSetting(
-                    neverShowHint = uiState.neverShowHint,
                     status = uiState.memberSettingStatus,
-                    selectedMembersOption = uiState.editOptionDisplayMembers,
+                    selectedMembers = uiState.selectedMembers,
                     onPriceChange = onMemberPriceChanged,
                     onEditBtnClick = onMemberEditBtnClick,
+                    errorMessage = uiState.memberError?.let { stringResource(it.message) } ?: "",
+                    layoutBottom = listBottom,
                 )
             }
 
@@ -371,9 +354,9 @@ private fun PartyCreateScreen(
                 )
 
                 CreateDeliverySetting(
-                    deliveryOptions = uiState.editableDeliveryOptions,
-                    selectedOptionIds = uiState.selectedDeliveryIds,
-                    onDeliveryOptionClick = onDeliveryRadioBtnClick,
+                    allDeliveries = uiState.rawDeliveries,
+                    selectedDeliveries = uiState.selectedDeliveries,
+                    onDeliveryClick = onDeliveryRadioBtnClick,
                 )
             }
 

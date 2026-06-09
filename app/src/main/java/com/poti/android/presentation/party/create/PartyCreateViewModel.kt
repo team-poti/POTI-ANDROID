@@ -1,11 +1,14 @@
 package com.poti.android.presentation.party.create
 
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
+import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.image.ImageInfoForPresigned
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
@@ -14,24 +17,28 @@ import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
 import com.poti.android.domain.usecase.party.SearchArtistUseCase
 import com.poti.android.domain.usecase.party.SearchProductUseCase
 import com.poti.android.presentation.party.create.model.CreateUiEffect
+import com.poti.android.presentation.party.create.model.CreateUiEffect.*
 import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
+import com.poti.android.presentation.party.create.navigation.PartyCreateGraph
 import com.poti.android.presentation.party.create.util.isTodayOrAfter
 import com.poti.android.presentation.party.create.util.toDashedDate
 import com.poti.android.presentation.party.create.util.toDateOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.filter
 
 const val IMAGE_TYPE = "POST"
 
@@ -44,128 +51,115 @@ class PartyCreateViewModel @Inject constructor(
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
     private val createPartyUseCase: CreatePartyUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
         initialState = CreateUiState(),
     ) {
-    private val artistSearchKeywordForDebounce = MutableStateFlow("")
-    private val productSearchKeywordForDebounce = MutableStateFlow("")
+    private val params = savedStateHandle.toRoute<PartyCreateGraph>()
+    private val paramArtistId = params.artistId
+    private val paramArtistName = params.artistName
+    private val paramProductName = params.productName
 
     override fun processIntent(intent: CreateUiIntent) {
         when (intent) {
-            is CreateUiIntent.InitializeScreen -> {
-                initializeDeliveryOptions()
-                autoFillParams(intent.artistId, intent.artistName, intent.productName)
+            OnCloseBottomSheet -> updateState { copy(showMemberBottomSheet = false) }
+
+            OnCloseDialog -> updateState { copy(showDialog = false) }
+
+            OnBack -> if (shouldShowDialog()) {
+                updateState { copy(showDialog = true) }
+            } else {
+                updateState { copy(showDialog = false) }
+                sendEffect(NavigateToBack)
             }
 
-            CreateUiIntent.CleanScreen -> updateState { CreateUiState() }
-
-            CreateUiIntent.OnBackClick -> {
-                if (uiState.value.isDirty) {
-                    sendEffect(CreateUiEffect.ShowDialog)
-                } else {
-                    updateState { CreateUiState() }
-                    sendEffect(CreateUiEffect.NavigateToBack)
-                }
+            OnBackConfirm -> {
+                updateState { copy(showDialog = false) }
+                sendEffect(NavigateToBack)
             }
 
-            is CreateUiIntent.OnBackConfirm -> {
-                updateState { CreateUiState() }
-                sendEffect(CreateUiEffect.NavigateToBack)
+            OnBackToCreate -> {
+                sendEffect(NavigateToBack)
             }
 
-            is CreateUiIntent.OnBackToCreate -> sendEffect(CreateUiEffect.NavigateToBack)
-
-            CreateUiIntent.OnScrollComplete -> updateState { copy(errorIndexToScroll = null) }
-
-            is CreateUiIntent.OnImagesChanged -> {
-                updateState {
-                    copy(
-                        isDirty = true,
-                        selectedImages = intent.uris.toPersistentList(),
-                        imageError = if (intent.uris.isNotEmpty()) null else this.imageError,
-                    )
-                }
+            is OnImagesChanged -> updateState {
+                copy(
+                    imageUris = intent.uris.toPersistentList(),
+                    imageError = if (intent.uris.isNotEmpty()) null else this.imageError,
+                )
             }
 
-            is CreateUiIntent.OnArtistSelect -> {
-                handleArtistSelect(newArtist = intent.artist)
+            OnSearchClick -> sendEffect(NavigateToSearch)
+
+            is OnArtistChange -> updateState { copy(artistSearchKeyword = intent.value) }
+
+            is OnArtistSelect -> handleArtistSelect(newArtist = intent.artist)
+
+            is OnProductFocus -> if (uiState.value.isProductFieldReadOnly && intent.focused) {
+                updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR) }
             }
 
-            is CreateUiIntent.OnAccountNumberChange -> {
-                handleAccountNumberChange(newValue = intent.value)
+            is OnProductChange -> updateState {
+                copy(
+                    productName = intent.value,
+                    productError = if (intent.value.isNotBlank()) null else this.productError,
+                    selectedProduct = "",
+                )
             }
 
-            is CreateUiIntent.OnBankChange -> {
-                handleBankChange(newValue = intent.value)
+            is OnProductSelect -> updateState { copy(productName = intent.product, selectedProduct = intent.product) }
+
+            is OnDeadlineChange -> handleDeadlineChange(newValue = intent.value)
+
+            is OnDescriptionChange -> updateState {
+                copy(
+                    description = intent.value,
+                    descriptionError = if (intent.value.isNotBlank()) null else this.descriptionError,
+                )
             }
 
-            is CreateUiIntent.OnDeadlineChange -> {
-                handleDeadlineChange(newValue = intent.value)
+            is OnAccountNumberChange -> updateState {
+                copy(
+                    accountNumber = intent.value.filter { it.isDigit() },
+                    accountNumberError = if (intent.value.isNotBlank()) null else this.accountNumberError,
+                )
             }
 
-            is CreateUiIntent.OnDeliverySelect -> {
-                handleDeliverySelect(newId = intent.deliveryId)
+            is OnBankChange -> updateState {
+                copy(
+                    bank = intent.value,
+                    bankError = if (intent.value.isNotBlank()) null else this.bankError,
+                )
             }
 
-            is CreateUiIntent.OnDescriptionChange -> {
-                handleDescriptionChange(newValue = intent.value)
+            OnMemberEditClick -> updateState {
+                copy(
+                    showMemberBottomSheet = true,
+                    isMemberBottomSheetTouched = false,
+                    tempSelectedMembers = this.selectedMembers,
+                )
             }
 
-            is CreateUiIntent.OnMemberPriceChange -> {
-                handleMemberPriceChange(newOption = intent.option)
-            }
+            is OnMemberSelect -> handleMemberSelect(newMember = intent.member)
 
-            is CreateUiIntent.OnProductFocus -> {
-                if (uiState.value.isProductFieldReadOnly && intent.focused) {
-                    updateState { copy(productError = FieldError.ARTIST_EMPTY_ERROR, isDirty = true) }
-                }
-            }
+            OnAllMemberSelect -> handleAllMemberSelect()
 
-            is CreateUiIntent.OnProductChange -> {
-                handleProductChange(newValue = intent.value)
-            }
+            OnMemberSelectDone -> handleMemberSelectDone()
 
-            is CreateUiIntent.OnProductSelect -> {
-                updateState { copy(productName = intent.product, selectedProductName = intent.product) }
-            }
+            is OnMemberPriceChange -> handleMemberPriceChange(newMember = intent.member)
 
-            CreateUiIntent.OnSearchClick -> {
-                sendEffect(CreateUiEffect.NavigateToSearch)
-            }
+            is OnDeliverySelect -> handleDeliverySelect(newDelivery = intent.delivery)
 
-            CreateUiIntent.OnAllMemberSelect -> {
-                handleAllMemberSelect()
-            }
-
-            is CreateUiIntent.OnMemberSelect -> {
-                handleMemberSelect(newIndex = intent.index)
-            }
-
-            CreateUiIntent.OnMemberSelectDone -> {
-                handleMemberSelectDone()
-            }
-
-            CreateUiIntent.OnMemberEditClick -> {
-                resetDisplayMembers()
-                sendEffect(CreateUiEffect.ShowBottomSheet)
-            }
-
-            is CreateUiIntent.OnArtistSearchKeywordChange -> {
-                handleArtistSearchKeywordChange(intent.value)
-            }
-
-            CreateUiIntent.OnCreateClick -> {
+            OnCreateClick -> {
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
 
-                updateState {
-                    copy(createPartyState = ApiState.Loading)
-                }
+                updateState { copy(createPartyState = ApiState.Loading) }
 
-                sendEffect(CreateUiEffect.ConvertUris)
+                sendEffect(ConvertUris)
             }
 
-            is CreateUiIntent.OnConvertDone -> {
+            is ConvertDone -> {
                 if (intent.result.isEmpty()) {
                     updateState {
                         copy(createPartyState = ApiState.Failure("convert fail"))
@@ -177,29 +171,52 @@ class PartyCreateViewModel @Inject constructor(
                     uploadImagesAndCreateParty(intent.result)
                 }
             }
+
+            ScrollComplete -> updateState { copy(errorIndexToScroll = null) }
         }
     }
 
     init {
+        initializeDeliveryOptions()
+        autoFillParams(paramArtistId, paramArtistName, paramProductName)
+
         viewModelScope.launch {
-            artistSearchKeywordForDebounce
+            uiState
+                .map { it.artistSearchKeyword }
                 .debounce(500)
                 .distinctUntilChanged()
-                .filter { it.isNotBlank() }
                 .collectLatest { keyword ->
                     searchArtist(keyword)
                 }
         }
 
         viewModelScope.launch {
-            productSearchKeywordForDebounce
+            uiState
+                .map { it.productName }
                 .debounce(500)
                 .distinctUntilChanged()
-                .filter { it.isNotBlank() }
                 .collectLatest { keyword ->
-                    searchProdut(keyword)
+                    searchProduct(keyword)
                 }
         }
+    }
+
+    private fun shouldShowDialog(): Boolean {
+        val state = uiState.value
+
+        val hasUserInput = state.imageUris.isNotEmpty() ||
+            state.selectedArtist?.artistId != paramArtistId ||
+            state.selectedArtist?.name != paramArtistName ||
+            state.productName != (paramProductName ?: "") ||
+            state.selectedProduct.isNotEmpty() ||
+            state.deadline.isNotEmpty() ||
+            state.description.isNotEmpty() ||
+            state.accountNumber.isNotEmpty() ||
+            state.bank.isNotEmpty() ||
+            state.selectedMembers != state.rawMembers ||
+            state.selectedDeliveries != state.rawDeliveries
+
+        return hasUserInput
     }
 
     private fun autoFillParams(
@@ -217,125 +234,89 @@ class PartyCreateViewModel @Inject constructor(
         )
 
         handleArtistSelect(initialArtist)
-        updateState { copy(productName = productName, neverShowSearchEmptyScreen = true) }
+        updateState { copy(productName = productName, isAutoFilled = true) }
     }
 
     private fun initializeDeliveryOptions() {
         viewModelScope.launch {
             getDeliveryOptionsUseCase()
                 .onSuccess { result ->
+                    val deliveries = result.toPersistentList()
+
                     updateState {
                         copy(
-                            deliveryOptionsState = ApiState.Success(result.toPersistentList()),
-                            editableDeliveryOptions = result.toPersistentList(),
-                            selectedDeliveryIds = this.selectedDeliveryIds + result.first().deliveryId,
+                            deliveriesState = ApiState.Success(deliveries),
+                            rawDeliveries = deliveries,
+                            selectedDeliveries = deliveries,
                         )
                     }
                 }.onFailure { e ->
                     updateState {
                         copy(
-                            deliveryOptionsState = ApiState.Failure(e.message ?: "get delivery fail"),
+                            deliveriesState = ApiState.Failure(e.message ?: "get delivery fail"),
                         )
                     }
                 }
-        }
-    }
-
-    private fun handleAccountNumberChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                accountNumber = newValue.filter { it.isDigit() },
-                accountNumberError = if (newValue.isNotBlank()) null else this.accountNumberError,
-            )
         }
     }
 
     private fun handleArtistSelect(newArtist: ArtistSearchResult) {
-        if (newArtist == uiState.value.selectedArtist) {
-            updateState { copy(artistSearchKeyword = newArtist.name) }
-            return
-        }
+        val needToLoadMembers = newArtist != uiState.value.selectedArtist
 
-        viewModelScope.launch {
-            getMembersWithPriceUseCase(newArtist.artistId)
-                .onSuccess { members ->
-                    val selectedMemberIds = getAllMemberIdSet(members)
-
-                    updateState {
-                        val errorBefore = this.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || this.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER
-                        copy(
-                            isDirty = true,
-                            selectedArtist = newArtist,
-                            artistSearchKeyword = newArtist.name,
-                            artistError = null,
-                            memberOptionsState = ApiState.Success(members.toPersistentList()),
-                            editableMemberOptions = members.toPersistentList(),
-                            selectedMemberIds = selectedMemberIds,
-                            memberSettingStatus = MemberSettingStatus.IN_PROGRESS,
-                            neverShowHint = errorBefore,
-                            productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
-                        )
-                    }
-                }
-                .onFailure { e ->
-                    updateState {
-                        copy(
-                            memberOptionsState = ApiState.Failure(e.message ?: "get members fail"),
-                        )
-                    }
-                }
-        }
-    }
-
-    private fun getAllMemberIdSet(
-        members: List<MemberPriceOption>,
-    ): Set<Long> = members.map { option -> option.memberId }.toSet()
-
-    private fun handleArtistSearchKeywordChange(newValue: String) {
         updateState {
             copy(
-                isDirty = true,
-                artistSearchKeyword = newValue,
-                neverShowSearchEmptyScreen = false,
+                selectedArtist = newArtist,
+                artistSearchKeyword = newArtist.name,
+                artistError = null,
+                isAutoFilled = false,
+                productError = if (this.productError == FieldError.ARTIST_EMPTY_ERROR) null else this.productError,
             )
         }
 
-        artistSearchKeywordForDebounce.value = newValue
+        if (needToLoadMembers) {
+            viewModelScope.launch { getMembersByArtistId(newArtist.artistId) }
+        }
     }
 
-    private suspend fun searchArtist(keyword: String) {
-        searchArtistUseCase(keyword = keyword)
-            .onSuccess { result ->
-                updateState {
-                    copy(
-                        artistSearchResultsState = ApiState.Success(result.toPersistentList()),
-                    )
-                }
-            }
-            .onFailure {
-                updateState {
-                    copy(
-                        artistSearchResultsState = ApiState.Failure(it.message ?: "FAIL"),
-                    )
-                }
-            }
-    }
+    private suspend fun getMembersByArtistId(artistId: Long) = getMembersWithPriceUseCase(artistId)
+        .onSuccess { data ->
+            val members = data.toPersistentList()
 
-    private fun handleProductChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                productName = newValue,
-                productError = if (newValue.isNotBlank()) null else this.productError,
-                selectedProductName = "",
-            )
+            updateState {
+                copy(
+                    membersState = ApiState.Success(members),
+                    rawMembers = members,
+                    selectedMembers = members,
+                    memberSettingStatus = MemberSettingStatus.EDITABLE,
+                    memberError = null,
+                )
+            }
+        }
+        .onFailure { e ->
+            updateState {
+                copy(
+                    membersState = ApiState.Failure(e.message ?: "get members fail"),
+                )
+            }
         }
 
-        productSearchKeywordForDebounce.value = newValue
-    }
+    private suspend fun searchArtist(keyword: String) = searchArtistUseCase(keyword = keyword)
+        .onSuccess { result ->
+            updateState {
+                copy(
+                    artistSearchState = ApiState.Success(result.toPersistentList()),
+                )
+            }
+        }
+        .onFailure {
+            updateState {
+                copy(
+                    artistSearchState = ApiState.Failure(it.message ?: "artist search fail"),
+                )
+            }
+        }
 
-    private suspend fun searchProdut(keyword: String) {
+    private suspend fun searchProduct(keyword: String) {
         uiState.value.selectedArtist?.let { artist ->
             searchProductUseCase(
                 keyword = keyword,
@@ -344,27 +325,17 @@ class PartyCreateViewModel @Inject constructor(
                 .onSuccess { result ->
                     updateState {
                         copy(
-                            productSearchResultsState = ApiState.Success(result.toPersistentList()),
+                            productSearchState = ApiState.Success(result.toPersistentList()),
                         )
                     }
                 }
                 .onFailure {
                     updateState {
                         copy(
-                            productSearchResultsState = ApiState.Failure(it.message ?: "FAIL"),
+                            productSearchState = ApiState.Failure(it.message ?: "product search fail"),
                         )
                     }
                 }
-        }
-    }
-
-    private fun handleBankChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                bank = newValue,
-                bankError = if (newValue.isNotBlank()) null else this.bankError,
-            )
         }
     }
 
@@ -373,177 +344,129 @@ class PartyCreateViewModel @Inject constructor(
 
         updateState {
             copy(
-                isDirty = true,
                 deadline = newValue,
                 deadlineError = if (newValue.isNotBlank()) null else this.deadlineError,
             )
         }
     }
 
-    private fun handleDescriptionChange(newValue: String) {
-        updateState {
-            copy(
-                isDirty = true,
-                description = newValue,
-                descriptionError = if (newValue.isNotBlank()) null else this.descriptionError,
-            )
-        }
-    }
-
-    private fun handleDeliverySelect(newId: Long) {
-        val currentIds = uiState.value.selectedDeliveryIds
-        if (currentIds.size < 2 && newId in currentIds) return
-
-        val newIds = if (newId in currentIds) {
-            currentIds - newId
+    private fun handleAllMemberSelect() {
+        val newMembers = if (uiState.value.rawMembers.size == uiState.value.tempSelectedMembers.size) {
+            persistentListOf()
         } else {
-            currentIds + newId
+            uiState.value.rawMembers
         }
 
         updateState {
             copy(
-                isDirty = true,
-                selectedDeliveryIds = newIds,
+                tempSelectedMembers = newMembers,
+                isMemberBottomSheetTouched = true,
             )
         }
     }
 
-    private fun handleMemberPriceChange(newOption: MemberPriceOption) {
-        var currentPrice: String? = null
+    private fun handleMemberSelect(newMember: MemberPriceOption) {
+        val currentMembers = uiState.value.tempSelectedMembers
 
-        val newOptions = uiState.value.editableMemberOptions.map { option ->
-            if (option.memberId == newOption.memberId) {
-                currentPrice = option.price
-                newOption
-            } else {
-                option
-            }
+        val newMembers = if (currentMembers.any { it.memberId == newMember.memberId }) {
+            currentMembers.filter { it.memberId != newMember.memberId }
+        } else {
+            currentMembers + newMember
         }.toPersistentList()
 
-        val clearError = currentPrice.isNullOrBlank() && newOption.price.isNotBlank()
-
         updateState {
             copy(
-                editableMemberOptions = newOptions,
-                memberSettingStatus = if (clearError) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus,
-            )
-        }
-    }
-
-    private fun handleMemberSelect(newIndex: Int) {
-        val currentIndices = uiState.value.sheetDisplayMemberIndices
-
-        val newIndices = if (newIndex in currentIndices) {
-            currentIndices - newIndex
-        } else {
-            currentIndices + newIndex
-        }
-
-        updateState {
-            copy(
-                sheetDisplayMemberIndices = newIndices,
-                isSheetTouched = true,
-            )
-        }
-    }
-
-    private fun resetDisplayMembers() {
-        val selectedIndices = uiState.value.editableMemberOptions.mapIndexedNotNull { index, option ->
-            if (option.memberId in uiState.value.selectedMemberIds) {
-                index
-            } else {
-                null
-            }
-        }.toSet()
-
-        updateState {
-            copy(
-                sheetDisplayMemberIndices = selectedIndices,
-                isSheetTouched = false,
-            )
-        }
-    }
-
-    private fun handleAllMemberSelect() {
-        val newIndices = if (uiState.value.sheetDisplayMemberIndices.size == uiState.value.editableMemberOptions.size) {
-            setOf()
-        } else {
-            uiState.value.editableMemberOptions.indices.toSet()
-        }
-
-        updateState {
-            copy(
-                sheetDisplayMemberIndices = newIndices,
-                isSheetTouched = true,
+                tempSelectedMembers = newMembers,
+                isMemberBottomSheetTouched = true,
             )
         }
     }
 
     private fun handleMemberSelectDone() {
-        val newIds = uiState.value.editableMemberOptions.mapIndexedNotNull { index, option ->
-            if (index in uiState.value.sheetDisplayMemberIndices) {
-                option.memberId
-            } else {
-                null
+        val selectedMembers = uiState.value.tempSelectedMembers.sortedBy { temp ->
+            uiState.value.rawMembers.indexOfFirst { raw ->
+                raw.memberId == temp.memberId
             }
-        }.toSet()
-
-        val newMemberOptions = clearUnselectedOptionPrices(newIds)
+        }.toPersistentList()
 
         updateState {
             copy(
-                selectedMemberIds = newIds,
-                editableMemberOptions = newMemberOptions,
-                memberSettingStatus = if (newIds.isNotEmpty()) MemberSettingStatus.IN_PROGRESS else this.memberSettingStatus,
+                selectedMembers = selectedMembers,
+                memberSettingStatus = if (selectedMembers.isEmpty()) MemberSettingStatus.MEMBER_NOT_SELECTED else MemberSettingStatus.EDITABLE,
+                showMemberBottomSheet = false,
             )
         }
     }
 
-    private fun clearUnselectedOptionPrices(newIds: Set<Long>): ImmutableList<MemberPriceOption> {
-        return uiState.value.editableMemberOptions.map { option ->
-            if (option.memberId in newIds) {
-                option
+    private fun handleMemberPriceChange(newMember: MemberPriceOption) {
+        val newMembers = uiState.value.selectedMembers.map { member ->
+            if (member.memberId == newMember.memberId) {
+                newMember
             } else {
-                option.copy(price = "")
+                member
             }
         }.toPersistentList()
+
+        updateState {
+            copy(
+                selectedMembers = newMembers,
+                memberError = if (!hasInvalidPrice(newMembers)) null else this.memberError,
+            )
+        }
     }
 
+    private fun handleDeliverySelect(newDelivery: DeliveryOption) {
+        val currentDeliveries = uiState.value.selectedDeliveries
+
+        if (currentDeliveries.size < 2 && newDelivery in currentDeliveries) return
+
+        val newDeliveries = if (currentDeliveries.any { it.deliveryId == newDelivery.deliveryId }) {
+            currentDeliveries.filter { it.deliveryId != newDelivery.deliveryId }
+        } else {
+            currentDeliveries + newDelivery
+        }.toPersistentList()
+
+        updateState {
+            copy(
+                selectedDeliveries = newDeliveries,
+            )
+        }
+    }
+
+    private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
+        members.any { it.price == "0" || it.price.isBlank() }
+
     private fun validateInputs(): Boolean {
-        val imageError = if (uiState.value.selectedImages.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
+        val imageError = if (uiState.value.imageUris.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
         val artistError = if (uiState.value.selectedArtist == null) FieldError.ARTIST_EMPTY_ERROR else null
         val productError = if (uiState.value.productName.isBlank()) FieldError.PRODUCT_EMPTY_ERROR else null
-        val deadlineError = when (val date = uiState.value.deadline.toDateOrNull()) {
-            null -> if (uiState.value.deadline.isBlank()) {
-                FieldError.DEADLINE_EMPTY_ERROR
-            } else {
-                FieldError.DEADLINE_INVALID_ERROR
+        val deadlineError = when (uiState.value.deadline.isBlank()) {
+            true -> FieldError.DEADLINE_EMPTY_ERROR
+            false -> {
+                val date = uiState.value.deadline.toDateOrNull()
+                when {
+                    date == null -> FieldError.DEADLINE_INVALID_ERROR
+                    !date.isTodayOrAfter() -> FieldError.DEADLINE_PAST_ERROR
+                    else -> null
+                }
             }
-
-            else -> if (!date.isTodayOrAfter()) FieldError.DEADLINE_PAST_ERROR else null
         }
         val descriptionError = if (uiState.value.description.isBlank()) FieldError.DESCRIPTION_ERROR else null
         val accountNumberError = if (uiState.value.accountNumber.isBlank()) FieldError.ACCOUNT_NUMBER_ERROR else null
         val bankError = if (uiState.value.bank.isBlank()) FieldError.BANK_ERROR else null
-
-        val selectedMemberIds = uiState.value.selectedMemberIds
-        val currentSettingStatus = when {
-            selectedMemberIds.isEmpty() -> MemberSettingStatus.ERROR_NO_MEMBER
-            uiState.value.editableMemberOptions.isEmpty() -> MemberSettingStatus.DEFAULT
-            uiState.value.editableMemberOptions.any { option -> option.memberId in selectedMemberIds && option.price.isBlank() } -> MemberSettingStatus.ERROR_NO_PRICE
-            else -> uiState.value.memberSettingStatus
+        val memberError = when {
+            uiState.value.selectedMembers.isEmpty() -> FieldError.MEMBER_EMPTY_ERROR
+            hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
+            else -> null
         }
-
-        val hasMemberOptionError = currentSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER || currentSettingStatus == MemberSettingStatus.ERROR_NO_PRICE
 
         val hasError = imageError != null || artistError != null || productError != null ||
             deadlineError != null || descriptionError != null ||
-            accountNumberError != null || bankError != null || hasMemberOptionError
+            accountNumberError != null || bankError != null || memberError != null
 
         if (hasError) {
             updateState {
                 copy(
-                    isDirty = true,
                     imageError = imageError,
                     artistError = artistError,
                     productError = productError,
@@ -551,8 +474,7 @@ class PartyCreateViewModel @Inject constructor(
                     descriptionError = descriptionError,
                     accountNumberError = accountNumberError,
                     bankError = bankError,
-                    memberSettingStatus = currentSettingStatus,
-                    neverShowHint = if (hasMemberOptionError) true else this.neverShowHint,
+                    memberError = memberError,
                 )
             }
             getScrollIndex()?.let {
@@ -572,61 +494,49 @@ class PartyCreateViewModel @Inject constructor(
             uiState.value.descriptionError != null -> 4
             uiState.value.accountNumberError != null -> 5
             uiState.value.bankError != null -> 6
-            uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_PRICE || uiState.value.memberSettingStatus == MemberSettingStatus.ERROR_NO_MEMBER -> 7
+            uiState.value.memberError != null -> 7
             else -> null
         }
 
         return firstErrorFieldIndex
     }
 
-    private suspend fun uploadPartyInfo(
-        urls: List<String>,
-    ): Result<Long> =
-        createPartyUseCase(
-            artistId = uiState.value.selectedArtist?.artistId ?: 0L,
-            product = uiState.value.productName,
-            description = uiState.value.description,
-            deadline = uiState.value.deadline.toDashedDate(),
-            bank = uiState.value.bank,
-            accountNumber = uiState.value.accountNumber,
-            imageUrls = urls,
-            options = uiState.value.editableMemberOptions.filter { option -> option.memberId in uiState.value.selectedMemberIds },
-            shippings = uiState.value.editableDeliveryOptions.filter { option -> option.deliveryId in uiState.value.selectedDeliveryIds },
-        )
+    private suspend fun uploadPartyInfo(urls: List<String>): Result<Long> = createPartyUseCase(
+        artistId = uiState.value.selectedArtist?.artistId ?: 0L,
+        product = uiState.value.productName,
+        description = uiState.value.description,
+        deadline = uiState.value.deadline.toDashedDate(),
+        bank = uiState.value.bank,
+        accountNumber = uiState.value.accountNumber,
+        imageUrls = urls,
+        options = uiState.value.selectedMembers,
+        shippings = uiState.value.selectedDeliveries,
+    )
 
-    private suspend fun uploadImagesAndCreateParty(
-        imageInfos: List<ImageInfoForPresigned>,
-    ) {
-        uploadImagesUseCase(IMAGE_TYPE, imageInfos)
-            .onSuccess { urls ->
-                createParty(urls)
+    private suspend fun uploadImagesAndCreateParty(imageInfos: List<ImageInfoForPresigned>) = uploadImagesUseCase(IMAGE_TYPE, imageInfos)
+        .onSuccess { urls ->
+            createParty(urls)
+        }
+        .onFailure {
+            updateState {
+                copy(
+                    createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
+                )
             }
-            .onFailure {
-                updateState {
-                    copy(
-                        createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
-                    )
-                }
-            }
-    }
+        }
 
-    private suspend fun createParty(
-        urls: List<String>,
-    ) {
-        uploadPartyInfo(urls)
-            .onSuccess { partyId ->
-                updateState {
-                    copy(createPartyState = ApiState.Success(partyId))
-                }
-                sendEffect(CreateUiEffect.NavigateToDetail(partyId))
-                updateState { CreateUiState() }
+    private suspend fun createParty(urls: List<String>) = uploadPartyInfo(urls)
+        .onSuccess { partyId ->
+            updateState {
+                copy(createPartyState = ApiState.Success(partyId))
             }
-            .onFailure {
-                updateState {
-                    copy(
-                        createPartyState = ApiState.Failure(it.message ?: "create party fail"),
-                    )
-                }
+            sendEffect(NavigateToDetail(partyId))
+        }
+        .onFailure {
+            updateState {
+                copy(
+                    createPartyState = ApiState.Failure(it.message ?: "create party fail"),
+                )
             }
-    }
+        }
 }

@@ -16,7 +16,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
@@ -25,8 +24,8 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.ViewType
-import com.poti.android.presentation.party.create.model.CreateUiEffect
-import com.poti.android.presentation.party.create.model.CreateUiIntent
+import com.poti.android.presentation.party.create.model.CreateUiEffect.*
+import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
 
 @Composable
@@ -39,17 +38,17 @@ fun PartyArtistSelectRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            CreateUiEffect.NavigateToBack -> onPopBackStack()
+            NavigateToBack -> onPopBackStack()
             else -> Unit
         }
     }
 
     PartyArtistSelectScreen(
         uiState = uiState,
-        onSearchKeywordChange = { viewModel.processIntent(CreateUiIntent.OnArtistSearchKeywordChange(it)) },
-        onArtistSelect = { viewModel.processIntent(CreateUiIntent.OnArtistSelect(it)) },
-        onConfirmClick = { viewModel.processIntent(CreateUiIntent.OnBackToCreate) },
-        onPopBackStack = { viewModel.processIntent(CreateUiIntent.OnBackToCreate) },
+        onSearchKeywordChange = { viewModel.processIntent(OnArtistChange(it)) },
+        onArtistSelect = { viewModel.processIntent(OnArtistSelect(it)) },
+        onConfirmClick = { viewModel.processIntent(OnBackToCreate) },
+        onPopBackStack = { viewModel.processIntent(OnBackToCreate) },
         modifier = modifier,
     )
 }
@@ -78,7 +77,7 @@ private fun PartyArtistSelectScreen(
                 onClick = onConfirmClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = screenWidthDp(16.dp))
+                    .padding(horizontal = 16.dp)
                     .padding(top = 4.dp, bottom = 16.dp),
                 type = if (uiState.isArtistSelectDoneBtnEnabled) ActionButtonType.SECONDARY_MAIN else ActionButtonType.DEACTIVE_MAIN,
                 enabled = uiState.isArtistSelectDoneBtnEnabled,
@@ -94,7 +93,7 @@ private fun PartyArtistSelectScreen(
                 viewType = ViewType.ARTSIT_SELECT,
                 value = uiState.artistSearchKeyword,
                 onValueChanged = onSearchKeywordChange,
-                searchResults = uiState.artistSearchResultsState.getSuccessDataOrNull() ?: emptyList(),
+                searchResults = uiState.artistSearchState.getSuccessDataOrNull() ?: emptyList(),
                 resultToString = { it.name },
                 onItemClick = { onArtistSelect(it) },
                 placeholder = stringResource(R.string.create_placeholder_artist_search),
@@ -106,7 +105,7 @@ private fun PartyArtistSelectScreen(
             if (uiState.isArtistSearchResultsEmpty) {
                 PotiEmptyStateInline(
                     text = stringResource(R.string.create_message_artist_search_empty_result),
-                    modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
         }

@@ -8,9 +8,9 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.domain.model.history.HistoryItem
 import com.poti.android.domain.model.history.HistoryListContent
-import com.poti.android.domain.repository.ParticipationRepository
-import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.type.HistoryListType
+import com.poti.android.domain.usecase.history.GetMyParticipationListUseCase
+import com.poti.android.domain.usecase.history.GetMyRecruitListUseCase
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect.*
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
@@ -25,8 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryListViewModel @Inject constructor(
-    private val participationRepository: ParticipationRepository,
-    private val partyRepository: PartyRepository,
+    private val getMyParticipationListUseCase: GetMyParticipationListUseCase,
+    private val getMyRecruitListUseCase: GetMyRecruitListUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
         initialState = HistoryListUiState(),
@@ -100,9 +100,9 @@ class HistoryListViewModel @Inject constructor(
             }
 
             val result = if (uiState.value.mode == HistoryMode.RECRUIT) {
-                partyRepository.getMyRecruitList(requestStatus.name)
+                getMyRecruitListUseCase(requestStatus.name)
             } else {
-                participationRepository.getMyParticipationList(requestStatus.name)
+                getMyParticipationListUseCase(requestStatus.name)
             }
 
             result.onSuccess { myPartyList ->

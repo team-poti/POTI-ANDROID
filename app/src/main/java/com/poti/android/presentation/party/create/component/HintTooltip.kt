@@ -32,7 +32,6 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.poti.android.R
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.component.button.PotiInlineButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -87,7 +86,7 @@ fun HintToolTip(
             Text(
                 text = stringResource(text),
                 modifier = Modifier
-                    .padding(top = screenHeightDp(11.dp)),
+                    .padding(top = 11.dp),
                 color = PotiTheme.colors.poti600,
                 style = PotiTheme.typography.body14sb,
             )

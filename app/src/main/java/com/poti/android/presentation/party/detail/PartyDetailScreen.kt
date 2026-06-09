@@ -23,12 +23,12 @@ import coil.compose.AsyncImage
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
@@ -130,17 +130,17 @@ private fun PartyDetailScreen(
             PartyDetailHeaderInfo(
                 partyDetail = partyDetail,
                 onLikeClick = {},
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             )
 
             PotiDivider(
                 styleType = PotiDividerStyle.SMALL,
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp)),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
             PartyDetailContent(
                 partyDetail = partyDetail,
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 20.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             )
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
@@ -148,19 +148,19 @@ private fun PartyDetailScreen(
             PartyUploaderInfo(
                 userSummary = partyDetail.uploader,
                 onClick = onUploaderClick,
-                modifier = Modifier.padding(start = screenWidthDp(16.dp), top = 20.dp, end = screenWidthDp(4.dp)),
+                modifier = Modifier.padding(start = 16.dp, top = 20.dp, end = 4.dp),
             )
 
             PotiDivider(
                 styleType = PotiDividerStyle.SMALL,
-                modifier = Modifier.padding(horizontal = screenWidthDp(16.dp), vertical = 24.dp),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
             )
 
             PartyParticipantsInfo(
                 partyDetail = partyDetail,
                 modifier = Modifier
                     .padding(bottom = 20.dp)
-                    .padding(horizontal = screenWidthDp(16.dp)),
+                    .padding(horizontal = 16.dp),
             )
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
@@ -175,7 +175,7 @@ private fun PartyDetailScreen(
 private fun PartyDetailScreenPreview() {
     PotiTheme {
         PartyDetailScreen(
-            partyDetail = dummyPartyDetail,
+            partyDetail = UiMockData.partyDetail,
             isJoinEnable = true,
             onBackClick = {},
             onJoinClick = {},

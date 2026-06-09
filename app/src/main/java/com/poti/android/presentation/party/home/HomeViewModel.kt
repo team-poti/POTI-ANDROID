@@ -3,7 +3,7 @@ package com.poti.android.presentation.party.home
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.repository.HomeRepository
+import com.poti.android.domain.usecase.home.GetHomeContentUseCase
 import com.poti.android.presentation.party.home.model.HomeUiEffect
 import com.poti.android.presentation.party.home.model.HomeUiEffect.*
 import com.poti.android.presentation.party.home.model.HomeUiIntent
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository,
+    private val getHomeContentUseCase: GetHomeContentUseCase,
 ) : BaseViewModel<HomeUiState, HomeUiIntent, HomeUiEffect>(
         initialState = HomeUiState(),
     ) {
@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadHomeContent() = launchScope {
-        homeRepository.getHomeContent()
+        getHomeContentUseCase()
             .onSuccess { homeContent ->
                 updateState {
                     copy(homeContentLoadState = ApiState.Success(homeContent))

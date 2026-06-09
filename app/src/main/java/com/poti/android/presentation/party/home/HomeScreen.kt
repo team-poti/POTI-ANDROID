@@ -20,12 +20,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.common.util.screenHeightDp
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.home.Banner
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.presentation.party.home.component.HomeBannerSection
 import com.poti.android.presentation.party.home.component.HomeGoodsSection
@@ -95,11 +93,11 @@ private fun HomeScreen(
                     banners = homeContent.banners,
                     onBannerClick = {},
                     modifier = Modifier
-                        .padding(top = screenHeightDp(16.dp))
-                        .padding(horizontal = screenWidthDp(16.dp)),
+                        .padding(top = 16.dp)
+                        .padding(horizontal = 16.dp),
                 )
 
-                Spacer(modifier = Modifier.height(screenHeightDp(36.dp)))
+                Spacer(modifier = Modifier.height(36.dp))
 
                 HomeGoodsSection(
                     artistId = homeContent.mainArtistId,
@@ -128,8 +126,8 @@ private fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
-                    end = screenWidthDp(20.dp),
-                    bottom = screenHeightDp(12.dp),
+                    end = 20.dp,
+                    bottom = 12.dp,
                 ),
         )
     }
@@ -140,18 +138,7 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     PotiTheme {
         HomeScreen(
-            homeContent = HomeContent(
-                nickname = "포티",
-                banners = listOf(
-                    Banner(1, ""),
-                    Banner(2, ""),
-                    Banner(3, ""),
-                ),
-                myGroupItems = fakeMyGroupItems,
-                otherGroupItems = fakeMyGroupItems,
-                mainArtist = null,
-                mainArtistId = null,
-            ),
+            homeContent = UiMockData.homeContent,
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
             onOtherProductCategoryClick = {},

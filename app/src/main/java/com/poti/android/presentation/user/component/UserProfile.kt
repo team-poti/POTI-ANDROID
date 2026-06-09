@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poti.android.R
-import com.poti.android.core.common.util.screenWidthDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
@@ -45,7 +44,7 @@ fun UserProfile(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(screenWidthDp(98.dp))
+                .size(98.dp)
                 .clip(CircleShape)
                 .background(PotiTheme.colors.gray100),
         )

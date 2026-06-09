@@ -17,8 +17,8 @@ import com.poti.android.core.designsystem.component.display.PotiPrimaryTagSize
 import com.poti.android.core.designsystem.component.display.PotiProfileSummary
 import com.poti.android.core.designsystem.component.display.PotiProfileSummarySize
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
-import com.poti.android.presentation.party.detail.dummyPartyDetail
 
 @Composable
 fun PartyParticipantsInfo(
@@ -74,7 +74,7 @@ fun PartyParticipantsInfo(
 private fun PartyParticipantsInfoPreview() {
     PotiTheme {
         PartyParticipantsInfo(
-            partyDetail = dummyPartyDetail,
+            partyDetail = UiMockData.partyDetail,
         )
     }
 }

@@ -3,6 +3,8 @@ package com.poti.android.data.repository
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.home.toDomain
+import com.poti.android.data.mock.UiMockData
+import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.HomeRemoteDataSource
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.domain.model.party.ProductCategory
@@ -18,22 +20,23 @@ class HomeRepositoryImpl @Inject constructor(
             .handleApiResponse()
             .getOrThrow()
             .toDomain()
-    }
+    }.useUiMockWhenEnabled { UiMockData.homeContent }
 
     override suspend fun getGoodsCategoryList(
         page: Int?,
         size: Int?,
         sort: String?,
         artistId: Long?,
-    ): Result<ProductCategory> = httpResponseHandler.safeApiCall {
-        homeRemoteDataSource.getGoodsCategoryList(
-            page = page,
-            size = size,
-            sort = sort,
-            artistId = artistId,
-        )
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }
+    ): Result<ProductCategory> =
+        httpResponseHandler.safeApiCall {
+            homeRemoteDataSource.getGoodsCategoryList(
+                page = page,
+                size = size,
+                sort = sort,
+                artistId = artistId,
+            )
+                .handleApiResponse()
+                .getOrThrow()
+                .toDomain()
+        }.useUiMockWhenEnabled { UiMockData.productCategory }
 }

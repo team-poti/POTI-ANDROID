@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.poti.android.R
-import com.poti.android.core.common.util.screenHeightDp
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -86,7 +85,7 @@ private fun LoginScreen(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(screenHeightDp(267.dp)))
+        Spacer(modifier = Modifier.height(267.dp))
 
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.ic_poti_logo),
@@ -121,7 +120,7 @@ private fun LoginScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(screenHeightDp(162.dp)))
+        Spacer(modifier = Modifier.height(162.dp))
     }
 }
 
