@@ -25,9 +25,10 @@ class UploadImagesUseCase @Inject constructor(
             uploadImages(urls, files)
 
             return Result.success(fileNames)
-        } catch (t: Throwable) {
-            if (t is CancellationException) throw t
-            return Result.failure(t)
+        } catch (c: CancellationException) {
+            throw c
+        } catch (e: Exception) {
+            return Result.failure(e)
         } finally {
             fileUploadRepository.clearDirectory()
         }
@@ -41,7 +42,7 @@ class UploadImagesUseCase @Inject constructor(
         extensions = List(size) { IMAGE_EXTENSION },
     ).getOrThrow()
 
-    private fun createImages(
+    private suspend fun createImages(
         uriStrings: List<String>,
     ): List<File> = uriStrings.map { uri ->
         fileUploadRepository.createImage(uri).getOrThrow()
