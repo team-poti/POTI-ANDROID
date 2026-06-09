@@ -9,6 +9,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.domain.type.ImageUploadType
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.party.CreatePartyUseCase
@@ -38,8 +39,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.text.filter
-
-const val IMAGE_TYPE = "POST"
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -500,7 +499,7 @@ class PartyCreateViewModel @Inject constructor(
     private fun createParty() = viewModelScope.launch {
         updateState { copy(createPartyState = ApiState.Loading) }
 
-        uploadImagesUseCase(IMAGE_TYPE, uiState.value.imageUris.map { it.toString() })
+        uploadImagesUseCase(ImageUploadType.POST, uiState.value.imageUris.map { it.toString() })
             .onSuccess { fileNames ->
                 uploadPartyInfo(fileNames)
                     .onSuccess { partyId ->
