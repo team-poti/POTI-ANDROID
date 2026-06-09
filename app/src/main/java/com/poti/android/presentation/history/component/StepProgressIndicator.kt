@@ -30,7 +30,7 @@ private val stepLabels = listOf(
     "모집 완료",
     "입금 완료",
     "배송 시작",
-    "배송 완료"
+    "배송 완료",
 )
 
 /**
@@ -66,7 +66,7 @@ fun StepProgressIndicator(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             stepLabels.forEachIndexed { index, label ->
                 Text(
@@ -76,11 +76,11 @@ fun StepProgressIndicator(
                         labelIndex = index,
                         currentStep = currentStep,
                         activeColor = colors.poti600,
-                        inactiveColor = colors.gray800
+                        inactiveColor = colors.gray800,
                     ),
                     modifier = Modifier.onGloballyPositioned { coordinates ->
                         labelPositions[index] = coordinates.calculateCenterX()
-                    }
+                    },
                 )
             }
         }
@@ -90,14 +90,14 @@ fun StepProgressIndicator(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(ProgressBarDimensions.BAR_HEIGHT_ACTIVE)
+                .height(ProgressBarDimensions.BAR_HEIGHT_ACTIVE),
         ) {
             val circleRadius = ProgressBarDimensions.CIRCLE_RADIUS.toPx()
             val circleX = calculateCircleXPosition(
                 currentStep = currentStep,
                 labelPositions = labelPositions,
                 totalWidth = size.width,
-                circleRadius = circleRadius
+                circleRadius = circleRadius,
             )
 
             drawBackgroundBar(size.width, colors.gray300)
@@ -147,7 +147,7 @@ private fun calculateCircleXPosition(
     currentStep: Int,
     labelPositions: List<Float>,
     totalWidth: Float,
-    circleRadius: Float
+    circleRadius: Float,
 ): Float = when (currentStep) {
     0 -> 0f
     1 -> circleRadius
@@ -162,13 +162,13 @@ private fun calculateCircleXPosition(
  */
 private fun DrawScope.drawBackgroundBar(
     totalWidth: Float,
-    color: Color
+    color: Color,
 ) {
     drawRoundRect(
         color = color,
         topLeft = Offset(x = 0f, y = ProgressBarDimensions.BACKGROUND_TOP_OFFSET.toPx()),
         size = Size(width = totalWidth, height = ProgressBarDimensions.BAR_HEIGHT_BACKGROUND.toPx()),
-        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx())
+        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx()),
     )
 }
 
@@ -178,16 +178,16 @@ private fun DrawScope.drawBackgroundBar(
 private fun DrawScope.drawActiveProgressBar(
     circleX: Float,
     circleRadius: Float,
-    color: Color
+    color: Color,
 ) {
     drawRoundRect(
         color = color,
         topLeft = Offset(x = 0f, y = 0f),
         size = Size(
             width = circleX + circleRadius / 2,
-            height = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx()
+            height = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx(),
         ),
-        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx())
+        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx()),
     )
 }
 
@@ -197,12 +197,12 @@ private fun DrawScope.drawActiveProgressBar(
 private fun DrawScope.drawIndicatorCircle(
     circleX: Float,
     circleRadius: Float,
-    color: Color
+    color: Color,
 ) {
     drawCircle(
         color = color,
         radius = circleRadius,
-        center = Offset(x = circleX, y = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx() / 2)
+        center = Offset(x = circleX, y = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx() / 2),
     )
 }
 
@@ -214,7 +214,7 @@ private fun StepProgressIndicatorStep0Preview() {
     PotiTheme {
         StepProgressIndicator(
             currentStatus = PartyStatusType.RECRUITING,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -225,7 +225,7 @@ private fun StepProgressIndicatorStep1Preview() {
     PotiTheme {
         StepProgressIndicator(
             currentStatus = PartyStatusType.CLOSED,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -236,7 +236,7 @@ private fun StepProgressIndicatorStep2Preview() {
     PotiTheme {
         StepProgressIndicator(
             currentStatus = PartyStatusType.PAYMENT_DONE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -247,7 +247,7 @@ private fun StepProgressIndicatorStep3Preview() {
     PotiTheme {
         StepProgressIndicator(
             currentStatus = PartyStatusType.SHIPPING,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -258,7 +258,7 @@ private fun StepProgressIndicatorStep4Preview() {
     PotiTheme {
         StepProgressIndicator(
             currentStatus = PartyStatusType.COMPLETED,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
