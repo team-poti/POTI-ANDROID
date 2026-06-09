@@ -9,9 +9,8 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.model.image.ImageInfoForPresigned
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
-import com.poti.android.domain.usecase.image.UploadImagesUseCase
+import com.poti.android.domain.usecase.image.UploadImagesUseCaseV2
 import com.poti.android.domain.usecase.party.CreatePartyUseCase
 import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
 import com.poti.android.domain.usecase.party.SearchArtistUseCase
@@ -46,7 +45,7 @@ const val IMAGE_TYPE = "POST"
 @HiltViewModel
 class PartyCreateViewModel @Inject constructor(
     private val getMembersWithPriceUseCase: GetMembersWithPriceUseCase,
-    private val uploadImagesUseCase: UploadImagesUseCase,
+    private val uploadImagesUseCase: UploadImagesUseCaseV2,
     private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,
@@ -154,22 +153,7 @@ class PartyCreateViewModel @Inject constructor(
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
 
-                updateState { copy(createPartyState = ApiState.Loading) }
-
-                sendEffect(ConvertUris)
-            }
-
-            is ConvertDone -> {
-                if (intent.result.isEmpty()) {
-                    updateState {
-                        copy(createPartyState = ApiState.Failure("convert fail"))
-                    }
-                    return
-                }
-
-                viewModelScope.launch {
-                    uploadImagesAndCreateParty(intent.result)
-                }
+                createParty()
             }
 
             ScrollComplete -> updateState { copy(errorIndexToScroll = null) }
@@ -513,30 +497,32 @@ class PartyCreateViewModel @Inject constructor(
         shippings = uiState.value.selectedDeliveries,
     )
 
-    private suspend fun uploadImagesAndCreateParty(imageInfos: List<ImageInfoForPresigned>) = uploadImagesUseCase(IMAGE_TYPE, imageInfos)
-        .onSuccess { urls ->
-            createParty(urls)
-        }
-        .onFailure {
-            updateState {
-                copy(
-                    createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
-                )
-            }
-        }
+    private fun createParty() = viewModelScope.launch {
+        updateState { copy(createPartyState = ApiState.Loading) }
 
-    private suspend fun createParty(urls: List<String>) = uploadPartyInfo(urls)
-        .onSuccess { partyId ->
-            updateState {
-                copy(createPartyState = ApiState.Success(partyId))
+        uploadImagesUseCase(IMAGE_TYPE, uiState.value.imageUris.map { it.toString() })
+            .onSuccess { fileNames ->
+                uploadPartyInfo(fileNames)
+                    .onSuccess { partyId ->
+                        updateState {
+                            copy(createPartyState = ApiState.Success(partyId))
+                        }
+                        sendEffect(NavigateToDetail(partyId))
+                    }
+                    .onFailure {
+                        updateState {
+                            copy(
+                                createPartyState = ApiState.Failure(it.message ?: "create party fail"),
+                            )
+                        }
+                    }
             }
-            sendEffect(NavigateToDetail(partyId))
-        }
-        .onFailure {
-            updateState {
-                copy(
-                    createPartyState = ApiState.Failure(it.message ?: "create party fail"),
-                )
+            .onFailure {
+                updateState {
+                    copy(
+                        createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
+                    )
+                }
             }
-        }
+    }
 }

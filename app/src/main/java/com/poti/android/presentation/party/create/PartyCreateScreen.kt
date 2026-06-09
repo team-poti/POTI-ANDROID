@@ -50,11 +50,32 @@ import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
-import com.poti.android.presentation.party.create.model.CreateUiEffect.*
-import com.poti.android.presentation.party.create.model.CreateUiIntent.*
+import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToBack
+import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToDetail
+import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToSearch
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnAccountNumberChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnAllMemberSelect
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBack
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBackConfirm
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBankChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseBottomSheet
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseDialog
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateClick
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeadlineChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliverySelect
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDescriptionChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnImagesChanged
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnMemberEditClick
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnMemberPriceChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnMemberSelect
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnMemberSelectDone
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnProductChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnProductFocus
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnProductSelect
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnSearchClick
+import com.poti.android.presentation.party.create.model.CreateUiIntent.ScrollComplete
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.util.DateTransformation
-import com.poti.android.presentation.party.create.util.toImageInfosForPresigned
 
 @Composable
 fun PartyCreateRoute(
@@ -78,11 +99,6 @@ fun PartyCreateRoute(
             }
 
             NavigateToSearch -> onNavigateToSearch()
-
-            ConvertUris -> {
-                val result = uiState.imageUris.toImageInfosForPresigned(context)
-                viewModel.processIntent(ConvertDone(result))
-            }
 
             is NavigateToDetail -> {
                 onNavigateToDetail(effect.partyId)
