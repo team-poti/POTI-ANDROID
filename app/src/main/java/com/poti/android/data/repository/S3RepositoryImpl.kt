@@ -1,7 +1,7 @@
 package com.poti.android.data.repository
 
 import com.poti.android.core.network.util.HttpResponseHandler
-import com.poti.android.data.di.S3UploadClient
+import com.poti.android.data.di.FileUploadClient
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.domain.model.image.PresignedUploadInfo
 import com.poti.android.domain.repository.S3Repository
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class S3RepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
-    @param:S3UploadClient private val okHttpClient: OkHttpClient,
+    @param:FileUploadClient private val okHttpClient: OkHttpClient,
 ) : S3Repository {
     override suspend fun uploadImages(
         uploadInfos: List<PresignedUploadInfo>,
