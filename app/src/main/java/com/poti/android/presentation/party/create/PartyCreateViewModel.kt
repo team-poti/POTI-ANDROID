@@ -10,7 +10,7 @@ import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
-import com.poti.android.domain.usecase.image.UploadImagesUseCaseV2
+import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.party.CreatePartyUseCase
 import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
 import com.poti.android.domain.usecase.party.SearchArtistUseCase
@@ -45,7 +45,7 @@ const val IMAGE_TYPE = "POST"
 @HiltViewModel
 class PartyCreateViewModel @Inject constructor(
     private val getMembersWithPriceUseCase: GetMembersWithPriceUseCase,
-    private val uploadImagesUseCase: UploadImagesUseCaseV2,
+    private val uploadImagesUseCase: UploadImagesUseCase,
     private val getDeliveryOptionsUseCase: GetDeliveryOptionsUseCase,
     private val searchArtistUseCase: SearchArtistUseCase,
     private val searchProductUseCase: SearchProductUseCase,

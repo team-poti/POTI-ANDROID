@@ -8,7 +8,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class UploadImagesUseCaseV2 @Inject constructor(
+class UploadImagesUseCase @Inject constructor(
     private val imageRepository: ImageRepository,
     private val fileUploadRepository: FileUploadRepository,
 ) {
