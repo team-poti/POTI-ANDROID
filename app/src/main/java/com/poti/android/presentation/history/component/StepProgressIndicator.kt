@@ -51,7 +51,7 @@ fun StepProgressIndicator(
 
     val textMeasurer = rememberTextMeasurer()
     val textWidth = textMeasurer.measure(
-        text = "배송 완료",
+        text = stringResource(R.string.history_step_progress_delivered),
         style = PotiTheme.typography.body14m,
     ).size.width.toFloat()
 
