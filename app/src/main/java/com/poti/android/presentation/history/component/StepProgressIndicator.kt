@@ -9,41 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.type.PartyStatusType
 
 private val stepLabels = listOf(
-    "모집 완료",
-    "입금 완료",
-    "배송 시작",
-    "배송 완료",
+    R.string.history_step_progress_recruit_end,
+    R.string.history_step_progress_payment_done,
+    R.string.history_step_progress_shipping,
+    R.string.history_step_progress_delivered,
 )
-
-/**
- * 프로그레스 바 치수 상수 (Figma 디자인 기반)
- */
-private object ProgressBarDimensions {
-    val CIRCLE_RADIUS: Dp = 10.dp
-    val BAR_HEIGHT_ACTIVE: Dp = 20.dp
-    val BAR_HEIGHT_BACKGROUND: Dp = 12.dp
-    val BACKGROUND_TOP_OFFSET: Dp = 4.dp
-    val LABEL_BAR_SPACING: Dp = 12.dp
-    val CORNER_RADIUS: Dp = 99.dp
-}
 
 /**
  * 단계별 프로그레스 인디케이터
@@ -60,8 +47,13 @@ fun StepProgressIndicator(
     modifier: Modifier = Modifier,
 ) {
     val currentStep = currentStatus.toStepIndex()
-    val labelPositions = remember { mutableStateListOf(0f, 0f, 0f, 0f) }
     val colors = PotiTheme.colors
+
+    val textMeasurer = rememberTextMeasurer()
+    val textWidth = textMeasurer.measure(
+        text = "배송 완료",
+        style = PotiTheme.typography.body14m,
+    ).size.width.toFloat()
 
     Column(modifier = modifier) {
         Row(
@@ -70,7 +62,7 @@ fun StepProgressIndicator(
         ) {
             stepLabels.forEachIndexed { index, label ->
                 Text(
-                    text = label,
+                    text = stringResource(label),
                     style = PotiTheme.typography.body14m,
                     color = getLabelColor(
                         labelIndex = index,
@@ -78,31 +70,28 @@ fun StepProgressIndicator(
                         activeColor = colors.poti600,
                         inactiveColor = colors.gray800,
                     ),
-                    modifier = Modifier.onGloballyPositioned { coordinates ->
-                        labelPositions[index] = coordinates.calculateCenterX()
-                    },
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(ProgressBarDimensions.LABEL_BAR_SPACING))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(ProgressBarDimensions.BAR_HEIGHT_ACTIVE),
+                .height(20.dp),
         ) {
-            val circleRadius = ProgressBarDimensions.CIRCLE_RADIUS.toPx()
+            val circleRadius = 10.dp.toPx()
             val circleX = calculateCircleXPosition(
                 currentStep = currentStep,
-                labelPositions = labelPositions,
                 totalWidth = size.width,
                 circleRadius = circleRadius,
+                textWidth = textWidth,
             )
 
             drawBackgroundBar(size.width, colors.gray300)
 
-            if (currentStep > 1 && circleX > 0f) {
+            if (currentStep > 1) {
                 drawActiveProgressBar(circleX, circleRadius, colors.poti400)
             }
 
@@ -125,12 +114,6 @@ private fun PartyStatusType.toStepIndex(): Int = when (this) {
 }
 
 /**
- * 레이아웃의 중심 X 좌표 계산
- */
-private fun LayoutCoordinates.calculateCenterX(): Float =
-    positionInParent().x + size.width / 2f
-
-/**
  * 진행 단계에 따른 라벨 색상 결정
  */
 private fun getLabelColor(
@@ -138,21 +121,20 @@ private fun getLabelColor(
     currentStep: Int,
     activeColor: Color,
     inactiveColor: Color,
-): Color = if (labelIndex < currentStep) activeColor else inactiveColor
+): Color = if (labelIndex == currentStep - 1) activeColor else inactiveColor
 
 /**
  * 현재 단계에 따른 인디케이터 원의 X 위치 계산
  */
 private fun calculateCircleXPosition(
     currentStep: Int,
-    labelPositions: List<Float>,
+    textWidth: Float,
     totalWidth: Float,
     circleRadius: Float,
 ): Float = when (currentStep) {
-    0 -> 0f
     1 -> circleRadius
-    2 -> labelPositions.getOrElse(1) { 0f }
-    3 -> labelPositions.getOrElse(2) { 0f }
+    2 -> (2 * totalWidth + textWidth) / 6
+    3 -> (4 * totalWidth - textWidth) / 6
     4 -> totalWidth - circleRadius
     else -> 0f
 }
@@ -166,9 +148,9 @@ private fun DrawScope.drawBackgroundBar(
 ) {
     drawRoundRect(
         color = color,
-        topLeft = Offset(x = 0f, y = ProgressBarDimensions.BACKGROUND_TOP_OFFSET.toPx()),
-        size = Size(width = totalWidth, height = ProgressBarDimensions.BAR_HEIGHT_BACKGROUND.toPx()),
-        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx()),
+        topLeft = Offset(x = 0f, y = 4.dp.toPx()),
+        size = Size(width = totalWidth, height = 12.dp.toPx()),
+        cornerRadius = CornerRadius(99.dp.toPx()),
     )
 }
 
@@ -185,9 +167,9 @@ private fun DrawScope.drawActiveProgressBar(
         topLeft = Offset(x = 0f, y = 0f),
         size = Size(
             width = circleX + circleRadius / 2,
-            height = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx(),
+            height = 20.dp.toPx(),
         ),
-        cornerRadius = CornerRadius(ProgressBarDimensions.CORNER_RADIUS.toPx()),
+        cornerRadius = CornerRadius(99.dp.toPx()),
     )
 }
 
@@ -202,62 +184,23 @@ private fun DrawScope.drawIndicatorCircle(
     drawCircle(
         color = color,
         radius = circleRadius,
-        center = Offset(x = circleX, y = ProgressBarDimensions.BAR_HEIGHT_ACTIVE.toPx() / 2),
+        center = Offset(x = circleX, y = 20.dp.toPx() / 2),
     )
 }
 
-// ==================== Previews ====================
-
-@Preview(showBackground = true, name = "Step 0 - Recruiting")
-@Composable
-private fun StepProgressIndicatorStep0Preview() {
-    PotiTheme {
-        StepProgressIndicator(
-            currentStatus = PartyStatusType.RECRUITING,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
+private class StepProgressIndicatorPreviewProvider : PreviewParameterProvider<PartyStatusType> {
+    override val values: Sequence<PartyStatusType>
+        get() = PartyStatusType.entries.asSequence()
 }
 
-@Preview(showBackground = true, name = "Step 1 - Closed")
+@Preview(showBackground = true)
 @Composable
-private fun StepProgressIndicatorStep1Preview() {
+private fun StepProgressIndicatorPreview(
+    @PreviewParameter(StepProgressIndicatorPreviewProvider::class) currentStatus: PartyStatusType,
+) {
     PotiTheme {
         StepProgressIndicator(
-            currentStatus = PartyStatusType.CLOSED,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Step 2 - Payment Done")
-@Composable
-private fun StepProgressIndicatorStep2Preview() {
-    PotiTheme {
-        StepProgressIndicator(
-            currentStatus = PartyStatusType.PAYMENT_DONE,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Step 3 - Shipping")
-@Composable
-private fun StepProgressIndicatorStep3Preview() {
-    PotiTheme {
-        StepProgressIndicator(
-            currentStatus = PartyStatusType.SHIPPING,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Step 4 - COMPLETED")
-@Composable
-private fun StepProgressIndicatorStep4Preview() {
-    PotiTheme {
-        StepProgressIndicator(
-            currentStatus = PartyStatusType.COMPLETED,
+            currentStatus = currentStatus,
             modifier = Modifier.fillMaxWidth(),
         )
     }
