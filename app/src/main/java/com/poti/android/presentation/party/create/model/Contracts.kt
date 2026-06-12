@@ -11,7 +11,6 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.model.image.ImageInfoForPresigned
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -125,16 +124,12 @@ sealed interface CreateUiIntent : UiIntent {
     data object OnCreateClick : CreateUiIntent
 
     data object ScrollComplete : CreateUiIntent
-
-    data class ConvertDone(val result: List<ImageInfoForPresigned>) : CreateUiIntent
 }
 
 sealed interface CreateUiEffect : UiEffect {
     data object NavigateToBack : CreateUiEffect
 
     data object NavigateToSearch : CreateUiEffect
-
-    data object ConvertUris : CreateUiEffect
 
     data class NavigateToDetail(val partyId: Long) : CreateUiEffect
 }

@@ -7,7 +7,10 @@ import android.net.Uri
 import android.util.Size
 import androidx.core.net.toUri
 import com.poti.android.core.common.constant.ImageConstants.IMAGE_EXTENSION
+import com.poti.android.di.IoDispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.UUID
@@ -16,17 +19,15 @@ import kotlin.math.max
 
 class FileLocalDataSource @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
-    fun createImageFile(uriString: String): File {
+    suspend fun createImageFile(uriString: String): File = withContext(ioDispatcher) {
         val uri = uriString.toUri()
-
         val directory = getDirectory()
-        val compressedImage = compressImage(uri, directory)
-
-        return compressedImage
+        compressImage(uri, directory)
     }
 
-    fun clearDirectory() {
+    suspend fun clearDirectory() = withContext(ioDispatcher) {
         val directory = getDirectory()
         directory.listFiles()?.forEach { it.delete() }
     }

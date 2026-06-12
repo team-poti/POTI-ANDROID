@@ -9,7 +9,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.model.image.ImageInfoForPresigned
+import com.poti.android.domain.type.ImageUploadType
 import com.poti.android.domain.usecase.artist.GetMembersWithPriceUseCase
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.party.CreatePartyUseCase
@@ -39,8 +39,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.text.filter
-
-const val IMAGE_TYPE = "POST"
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -154,22 +152,7 @@ class PartyCreateViewModel @Inject constructor(
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
 
-                updateState { copy(createPartyState = ApiState.Loading) }
-
-                sendEffect(ConvertUris)
-            }
-
-            is ConvertDone -> {
-                if (intent.result.isEmpty()) {
-                    updateState {
-                        copy(createPartyState = ApiState.Failure("convert fail"))
-                    }
-                    return
-                }
-
-                viewModelScope.launch {
-                    uploadImagesAndCreateParty(intent.result)
-                }
+                createParty()
             }
 
             ScrollComplete -> updateState { copy(errorIndexToScroll = null) }
@@ -513,30 +496,32 @@ class PartyCreateViewModel @Inject constructor(
         shippings = uiState.value.selectedDeliveries,
     )
 
-    private suspend fun uploadImagesAndCreateParty(imageInfos: List<ImageInfoForPresigned>) = uploadImagesUseCase(IMAGE_TYPE, imageInfos)
-        .onSuccess { urls ->
-            createParty(urls)
-        }
-        .onFailure {
-            updateState {
-                copy(
-                    createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
-                )
-            }
-        }
+    private fun createParty() = viewModelScope.launch {
+        updateState { copy(createPartyState = ApiState.Loading) }
 
-    private suspend fun createParty(urls: List<String>) = uploadPartyInfo(urls)
-        .onSuccess { partyId ->
-            updateState {
-                copy(createPartyState = ApiState.Success(partyId))
+        uploadImagesUseCase(ImageUploadType.POST, uiState.value.imageUris.map { it.toString() })
+            .onSuccess { fileNames ->
+                uploadPartyInfo(fileNames)
+                    .onSuccess { partyId ->
+                        updateState {
+                            copy(createPartyState = ApiState.Success(partyId))
+                        }
+                        sendEffect(NavigateToDetail(partyId))
+                    }
+                    .onFailure {
+                        updateState {
+                            copy(
+                                createPartyState = ApiState.Failure(it.message ?: "create party fail"),
+                            )
+                        }
+                    }
             }
-            sendEffect(NavigateToDetail(partyId))
-        }
-        .onFailure {
-            updateState {
-                copy(
-                    createPartyState = ApiState.Failure(it.message ?: "create party fail"),
-                )
+            .onFailure {
+                updateState {
+                    copy(
+                        createPartyState = ApiState.Failure(it.message ?: "image upload fail"),
+                    )
+                }
             }
-        }
+    }
 }

@@ -8,7 +8,7 @@ interface FileUploadRepository {
         file: File,
     ): Result<Unit>
 
-    fun createImage(uriString: String): Result<File>
+    suspend fun createImage(uriString: String): Result<File>
 
-    fun clearDirectory(): Result<Unit>
+    suspend fun clearDirectory(): Result<Unit>
 }

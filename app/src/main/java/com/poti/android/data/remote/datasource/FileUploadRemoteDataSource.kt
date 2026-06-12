@@ -2,7 +2,8 @@ package com.poti.android.data.remote.datasource
 
 import com.poti.android.core.common.constant.ImageConstants.IMAGE_CONTENT_TYPE
 import com.poti.android.data.di.FileUploadClient
-import kotlinx.coroutines.Dispatchers
+import com.poti.android.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -13,11 +14,12 @@ import javax.inject.Inject
 
 class FileUploadRemoteDataSource @Inject constructor(
     @param:FileUploadClient private val okHttpClient: OkHttpClient,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend fun uploadImage(
         uploadUrl: String,
         file: File,
-    ) = withContext(Dispatchers.IO) {
+    ) = withContext(ioDispatcher) {
         val requestBody = file.asRequestBody(IMAGE_CONTENT_TYPE.toMediaType())
 
         val request = Request.Builder()
