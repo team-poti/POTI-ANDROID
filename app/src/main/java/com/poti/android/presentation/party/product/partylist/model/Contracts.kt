@@ -20,12 +20,9 @@ data class ProductPartyListUiState(
     val partySortType: PartySortType = PartySortType.DEADLINE,
     val isMemberFilterBottomSheetVisible: Boolean = false,
     val isSortFilterBottomSheetVisible: Boolean = false,
-    val bottomSheetSelectedMembersIdices: Set<Int> = setOf(),
+    val bottomSheetSelectedMembers: List<Member> = emptyList(),
     val isMemberBottomSheetToucehd: Boolean = false,
 ) : UiState {
-    val allMemberNames: List<String>
-        get() = displayMembers.map { it.name }
-
     val memberFilterText: String
         @Composable get() = when {
             selectedMembers.isEmpty() ->
@@ -62,7 +59,7 @@ sealed interface ProductPartyListUiIntent : UiIntent {
 
     data object OnMemberFilterClick : ProductPartyListUiIntent
 
-    data class OnMemberSelect(val index: Int) : ProductPartyListUiIntent
+    data class OnMemberSelect(val member: Member) : ProductPartyListUiIntent
 
     data object OnSortFilterClick : ProductPartyListUiIntent
 
