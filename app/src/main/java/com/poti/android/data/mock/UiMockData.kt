@@ -41,6 +41,8 @@ import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.HistoryListType
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
+import com.poti.android.domain.model.party.GroupItem as PartyGroupItem
+import com.poti.android.domain.model.party.PartySummary as PartyListSummary
 
 object UiMockData {
     private val historyPartySummary = PartySummary(
@@ -121,7 +123,7 @@ object UiMockData {
             )
             val tags = listOf("인기", "NEW", null, "마감임박")
 
-            com.poti.android.domain.model.party.GroupItem(
+            PartyGroupItem(
                 artist = if (index % 2 == 0) "IVE" else "aespa",
                 artistId = if (index % 2 == 0) 1 else 2,
                 postImage = "",
@@ -145,7 +147,7 @@ object UiMockData {
                 else -> listOf("안유진", "장원영", "리즈")
             }
 
-            com.poti.android.domain.model.party.PartySummary(
+            PartyListSummary(
                 partyId = partyId,
                 price = 18_000 + (index % 5) * 1_000,
                 productImageUrl = "",
