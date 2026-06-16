@@ -122,11 +122,27 @@ object UiMockData {
     val productPartyList = ProductPartyList(
         partyTitle = "러브다이브 위드뮤",
         artistName = "IVE",
-        partySummaries = listOf(
-            com.poti.android.domain.model.party.PartySummary(1, 21_300, "", 3, 5, listOf("원영", "유진"), "", "포티공주", 4.8),
-            com.poti.android.domain.model.party.PartySummary(2, 21_300, "", 6, 6, listOf("레이", "이서"), "", "굿즈요정", 4.5),
-            com.poti.android.domain.model.party.PartySummary(3, 18_000, "", 1, 4, listOf("가을", "리즈"), "", "공구마스터", 5.0),
-        ),
+        partySummaries = List(24) { index ->
+            val partyId = index + 1L
+            val availableMembers = when (index % 4) {
+                0 -> listOf("원영", "유진")
+                1 -> listOf("레이", "이서")
+                2 -> listOf("가을", "리즈")
+                else -> listOf("안유진", "장원영", "리즈")
+            }
+
+            com.poti.android.domain.model.party.PartySummary(
+                partyId = partyId,
+                price = 18_000 + (index % 5) * 1_000,
+                productImageUrl = "",
+                currentCount = (index % 5) + 1,
+                totalCount = 6,
+                availableMembers = availableMembers,
+                profileImageUrl = "",
+                nickname = "분철러${index + 1}",
+                rating = 4.0 + (index % 10) / 10.0,
+            )
+        },
     )
 
     val partyDetail = PartyDetail(
