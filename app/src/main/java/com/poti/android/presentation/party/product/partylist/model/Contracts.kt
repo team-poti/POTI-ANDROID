@@ -14,6 +14,9 @@ data class ProductPartyListUiState(
     val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
     val cachedTitle: String = "",
     val cachedSubTitle: String = "",
+    val isPartyPageLoading: Boolean = false,
+    val hasNextPartyPage: Boolean = true,
+    val nextPartyPage: Int = 0,
     val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
     val displayMembers: List<Member> = emptyList(),
     val selectedMembers: List<Member> = emptyList(),
@@ -53,6 +56,8 @@ data class ProductPartyListUiState(
 
 sealed interface ProductPartyListUiIntent : UiIntent {
     data object LoadProductPartyList : ProductPartyListUiIntent
+
+    data object LoadNextProductPartyList : ProductPartyListUiIntent
 
     data object OnBackClick : ProductPartyListUiIntent
 
