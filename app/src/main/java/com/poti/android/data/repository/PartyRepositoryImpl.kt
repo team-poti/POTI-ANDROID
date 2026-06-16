@@ -159,20 +159,35 @@ class PartyRepositoryImpl @Inject constructor(
         artistId: Long,
         sort: String,
         memberIds: List<Long>?,
-    ): Result<ProductPartyList> =
-        httpResponseHandler.safeApiCall {
-            partyRemoteDataSource.getProductPartyList(
-                page = page,
-                size = size,
-                title = title,
-                artistId = artistId,
-                sort = sort,
-                memberIds = memberIds,
+    ): Result<ProductPartyList> = executeWithUiMock(
+        mock = {
+            val requestedPage = page ?: 0
+            val requestedSize = size ?: UiMockData.productPartyList.partySummaries.size
+            val partySummaries = UiMockData.productPartyList.partySummaries
+                .drop(requestedPage * requestedSize)
+                .take(requestedSize)
+
+            UiMockData.productPartyList.copy(
+                partyTitle = title,
+                partySummaries = partySummaries,
+                currentPage = requestedPage,
+                hasNext = (requestedPage + 1) * requestedSize < UiMockData.productPartyList.partySummaries.size,
             )
-                .handleApiResponse()
-                .getOrThrow()
-                .toDomain()
-        }.useUiMockWhenEnabled {
-            UiMockData.productPartyList.copy(partyTitle = title)
-        }
+        },
+        real = {
+            httpResponseHandler.safeApiCall {
+                partyRemoteDataSource.getProductPartyList(
+                    page = page,
+                    size = size,
+                    title = title,
+                    artistId = artistId,
+                    sort = sort,
+                    memberIds = memberIds,
+                )
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 }
