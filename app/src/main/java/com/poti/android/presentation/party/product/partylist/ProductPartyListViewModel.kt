@@ -13,6 +13,8 @@ import com.poti.android.presentation.party.product.partylist.model.ProductPartyL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+private const val PARTY_PAGE_SIZE = 10
+
 @HiltViewModel
 class ProductPartyListViewModel @Inject constructor(
     private val getMembersUseCase: GetMembersUseCase,
@@ -32,6 +34,7 @@ class ProductPartyListViewModel @Inject constructor(
     override fun processIntent(intent: ProductPartyListUiIntent) {
         when (intent) {
             ProductPartyListUiIntent.LoadProductPartyList -> loadPartyList()
+            ProductPartyListUiIntent.LoadNextProductPartyList -> loadPartyList(reset = false)
             ProductPartyListUiIntent.OnBackClick -> sendEffect(ProductPartyListUiEffect.NavigateBack)
             ProductPartyListUiIntent.OnFloatingClick -> sendEffect(
                 ProductPartyListUiEffect.NavigateToPartyCreate(
@@ -74,8 +77,11 @@ class ProductPartyListViewModel @Inject constructor(
         }
     }
 
-    private fun loadPartyList() = launchScope {
+    private fun loadPartyList(reset: Boolean = true) = launchScope {
         val currentState = uiState.value
+        if (!reset && (currentState.isPartyPageLoading || !currentState.hasNextPartyPage)) return@launchScope
+
+        val page = if (reset) 0 else currentState.nextPartyPage
         val sort = currentState.partySortType.request
         val memberIds = if (currentState.selectedMembers.isNotEmpty()) {
             currentState.selectedMembers.map { it.memberId }
@@ -83,29 +89,51 @@ class ProductPartyListViewModel @Inject constructor(
             null
         }
 
-        updateState { copy(productPartyListInfo = ApiState.Loading) }
+        updateState {
+            copy(
+                productPartyListInfo = if (reset) ApiState.Loading else productPartyListInfo,
+                isPartyPageLoading = true,
+            )
+        }
 
         getProductPartyListUseCase(
-            page = 0,
-            size = 100,
+            page = page,
+            size = PARTY_PAGE_SIZE,
             title = title,
             artistId = artistId,
             sort = sort,
             memberIds = memberIds,
         ).onSuccess { partyList ->
+            val currentList = (uiState.value.productPartyListInfo as? ApiState.Success)?.data?.partySummaries.orEmpty()
+            val updatedPartySummaries = if (reset) {
+                partyList.partySummaries
+            } else {
+                currentList + partyList.partySummaries
+            }
+
             updateState {
                 copy(
-                    productPartyListInfo = ApiState.Success(partyList),
+                    productPartyListInfo = ApiState.Success(
+                        partyList.copy(
+                            partySummaries = updatedPartySummaries.distinctBy { it.partyId },
+                        ),
+                    ),
                     cachedTitle = partyList.partyTitle,
                     cachedSubTitle = partyList.artistName,
+                    isPartyPageLoading = false,
+                    hasNextPartyPage = partyList.hasNext,
+                    nextPartyPage = partyList.currentPage + 1,
                 )
             }
         }.onFailure { throwable ->
             updateState {
                 copy(
-                    productPartyListInfo = ApiState.Failure(
-                        throwable.message ?: "Failed",
-                    ),
+                    productPartyListInfo = if (reset) {
+                        ApiState.Failure(throwable.message ?: "Failed")
+                    } else {
+                        productPartyListInfo
+                    },
+                    isPartyPageLoading = false,
                 )
             }
         }
