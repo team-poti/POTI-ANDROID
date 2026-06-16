@@ -13,6 +13,8 @@ import com.poti.android.presentation.party.product.productcategory.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+private const val PRODUCT_CATEGORY_PAGE_SIZE = 10
+
 @HiltViewModel
 class ProductCategoryViewModel @Inject constructor(
     private val getGoodsCategoryListUseCase: GetGoodsCategoryListUseCase,
@@ -40,6 +42,7 @@ class ProductCategoryViewModel @Inject constructor(
                     loadGoodsCategoryList(intent.sortType)
                 }
 
+                ProductCategoryUiIntent.OnLoadNextPage -> loadGoodsCategoryList(reset = false)
                 ProductCategoryUiIntent.OnSortDismiss -> updateState { copy(isSortBottomSheetVisible = false) }
                 is ProductCategoryUiIntent.OnCardClick -> sendEffect(ProductCategoryUiEffect.NavigateToProductPartyList(intent.artistId, intent.title))
             }
@@ -49,27 +52,64 @@ class ProductCategoryViewModel @Inject constructor(
             loadGoodsCategoryList()
         }
 
-        private fun loadGoodsCategoryList(sortType: ProductSortType = uiState.value.selectedSortType) =
+        private fun loadGoodsCategoryList(
+            sortType: ProductSortType = uiState.value.selectedSortType,
+            reset: Boolean = true,
+        ) =
             launchScope {
-                updateState { copy(productCategoryLoadState = ApiState.Loading) }
+                val state = uiState.value
+                if (!reset && (state.isProductCategoryPageLoading || !state.hasNextProductCategoryPage)) return@launchScope
+
+                val page = if (reset) 0 else state.nextProductCategoryPage
+
+                updateState {
+                    copy(
+                        productCategoryLoadState = if (reset) ApiState.Loading else productCategoryLoadState,
+                        isProductCategoryPageLoading = true,
+                    )
+                }
 
                 getGoodsCategoryListUseCase(
-                    page = 0,
-                    size = 100,
+                    page = page,
+                    size = PRODUCT_CATEGORY_PAGE_SIZE,
                     sort = sortType.name,
                     artistId = artistId,
                 )
                     .onSuccess { goodsCategory ->
+                        val currentGroupItems = (uiState.value.productCategoryLoadState as? ApiState.Success)
+                            ?.data
+                            ?.groupItems
+                            .orEmpty()
+                        val updatedGroupItems = if (reset) {
+                            goodsCategory.groupItems
+                        } else {
+                            currentGroupItems + goodsCategory.groupItems
+                        }
+
                         updateState {
-                            copy(productCategoryLoadState = ApiState.Success(goodsCategory))
+                            copy(
+                                productCategoryLoadState = ApiState.Success(
+                                    goodsCategory.copy(
+                                        groupItems = updatedGroupItems.distinctBy { item ->
+                                            item.artistId to item.postTitle
+                                        },
+                                    ),
+                                ),
+                                isProductCategoryPageLoading = false,
+                                hasNextProductCategoryPage = goodsCategory.groupItems.size == PRODUCT_CATEGORY_PAGE_SIZE,
+                                nextProductCategoryPage = page + 1,
+                            )
                         }
                     }
                     .onFailure { throwable ->
                         updateState {
                             copy(
-                                productCategoryLoadState = ApiState.Failure(
-                                    throwable.message ?: "Failed to load goods category",
-                                ),
+                                productCategoryLoadState = if (reset) {
+                                    ApiState.Failure(throwable.message ?: "Failed to load goods category")
+                                } else {
+                                    productCategoryLoadState
+                                },
+                                isProductCategoryPageLoading = false,
                             )
                         }
                     }

@@ -110,12 +110,26 @@ object UiMockData {
         nickname = "포티",
         mainArtist = "IVE",
         mainArtistId = 1,
-        groupItems = listOf(
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "공식 응원봉", 3, "인기"),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "콘서트 MD 세트", 5, "NEW"),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "포토카드 랜덤팩", 2, null),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "시즌그리팅", 7, "마감임박"),
-        ),
+        groupItems = List(24) { index ->
+            val titles = listOf(
+                "공식 응원봉",
+                "콘서트 MD 세트",
+                "포토카드 랜덤팩",
+                "시즌그리팅",
+                "월드투어 후드",
+                "앨범 럭키드로우",
+            )
+            val tags = listOf("인기", "NEW", null, "마감임박")
+
+            com.poti.android.domain.model.party.GroupItem(
+                artist = if (index % 2 == 0) "IVE" else "aespa",
+                artistId = if (index % 2 == 0) 1 else 2,
+                postImage = "",
+                postTitle = "${titles[index % titles.size]} ${index + 1}",
+                postCount = (index % 9) + 1,
+                tag = tags[index % tags.size],
+            )
+        },
         myGroupItems = emptyList(),
     )
 

@@ -33,7 +33,17 @@ class HomeRepositoryImpl @Inject constructor(
         sort: String?,
         artistId: Long?,
     ): Result<ProductCategory> = executeWithUiMock(
-        mock = { UiMockData.productCategory },
+        mock = {
+            val requestedPage = page ?: 0
+            val requestedSize = size ?: UiMockData.productCategory.groupItems.size
+            val groupItems = UiMockData.productCategory.groupItems
+                .drop(requestedPage * requestedSize)
+                .take(requestedSize)
+
+            UiMockData.productCategory.copy(
+                groupItems = groupItems,
+            )
+        },
         real = {
             httpResponseHandler.safeApiCall {
                 homeRemoteDataSource.getGoodsCategoryList(
