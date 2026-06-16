@@ -21,6 +21,6 @@ suspend inline fun <T> executeWithUiMock(
 ): Result<T> {
     if (!useMock) return real()
 
-    Timber.d("UI mock build enabled. Skipping real write and returning mock data.")
+    Timber.d("UI mock build enabled. Skipping real call and returning mock data.")
     return suspendRunCatching { mock() }
 }

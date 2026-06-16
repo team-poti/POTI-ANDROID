@@ -5,7 +5,7 @@ import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.artist.toDomain
 import com.poti.android.data.mapper.artist.toPriceDomain
 import com.poti.android.data.mock.UiMockData
-import com.poti.android.data.mock.useUiMockWhenEnabled
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.ArtistRemoteDataSource
 import com.poti.android.domain.model.artist.Artist
 import com.poti.android.domain.model.artist.Member
@@ -17,25 +17,40 @@ class ArtistRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val artistRemoteDataSource: ArtistRemoteDataSource,
 ) : ArtistRepository {
-    override suspend fun getArtists(): Result<List<Artist>> = httpResponseHandler.safeApiCall {
-        artistRemoteDataSource.getArtists()
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }.useUiMockWhenEnabled { UiMockData.artists }
+    override suspend fun getArtists(): Result<List<Artist>> = executeWithUiMock(
+        mock = { UiMockData.artists },
+        real = {
+            httpResponseHandler.safeApiCall {
+                artistRemoteDataSource.getArtists()
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 
-    override suspend fun getMemberList(artistId: Long): Result<List<Member>> = httpResponseHandler.safeApiCall {
-        artistRemoteDataSource.getMemberList(artistId)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }.useUiMockWhenEnabled { UiMockData.members }
+    override suspend fun getMemberList(artistId: Long): Result<List<Member>> = executeWithUiMock(
+        mock = { UiMockData.members },
+        real = {
+            httpResponseHandler.safeApiCall {
+                artistRemoteDataSource.getMemberList(artistId)
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 
     override suspend fun getMemberListWithPrice(artistId: Long): Result<List<MemberPriceOption>> =
-        httpResponseHandler.safeApiCall {
-            artistRemoteDataSource.getMemberList(artistId)
-                .handleApiResponse()
-                .getOrThrow()
-                .toPriceDomain()
-        }.useUiMockWhenEnabled { UiMockData.memberPriceOptions }
+        executeWithUiMock(
+            mock = { UiMockData.memberPriceOptions },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    artistRemoteDataSource.getMemberList(artistId)
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .toPriceDomain()
+                }
+            },
+        )
 }
