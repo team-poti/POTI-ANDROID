@@ -10,6 +10,8 @@ fun ProductPartyListResponseDto.toDomain(): ProductPartyList =
         partyTitle = postTitle,
         artistName = artist,
         partySummaries = pots.map { it.toDomain() },
+        currentPage = currentPage,
+        hasNext = hasNext,
     )
 
 private fun PartyDto.toDomain(): PartySummary =

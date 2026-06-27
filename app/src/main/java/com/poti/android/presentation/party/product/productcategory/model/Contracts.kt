@@ -8,6 +8,9 @@ import com.poti.android.domain.model.party.ProductCategory
 
 data class ProductCategoryUiState(
     val productCategoryLoadState: ApiState<ProductCategory> = ApiState.Loading,
+    val isProductCategoryPageLoading: Boolean = false,
+    val hasNextProductCategoryPage: Boolean = true,
+    val nextProductCategoryPage: Int = 0,
     val isSortBottomSheetVisible: Boolean = false,
     val selectedSortType: ProductSortType = ProductSortType.HOT,
 ) : UiState
@@ -20,6 +23,8 @@ sealed interface ProductCategoryUiIntent : UiIntent {
     data object OnSortFilterClick : ProductCategoryUiIntent
 
     data class OnSortSelected(val sortType: ProductSortType) : ProductCategoryUiIntent
+
+    data object OnLoadNextPage : ProductCategoryUiIntent
 
     data object OnSortDismiss : ProductCategoryUiIntent
 

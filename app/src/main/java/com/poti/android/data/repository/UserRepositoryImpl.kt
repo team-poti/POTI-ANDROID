@@ -5,7 +5,6 @@ import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
-import com.poti.android.data.mock.useUiMockWhenEnabled
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
@@ -38,28 +37,43 @@ class UserRepositoryImpl @Inject constructor(
     )
 
     override suspend fun postNicknameDuplicate(nickname: String): Result<Boolean> =
-        httpResponseHandler.safeApiCall {
-            val requestDto = NicknameDuplicateRequestDto(
-                nickname = nickname,
-            )
-            userRemoteDataSource
-                .postNicknameDuplicate(nicknameDuplicateRequest = requestDto)
-                .handleApiResponse()
-                .getOrThrow()
-                .isDuplicated
-        }.useUiMockWhenEnabled { false }
+        executeWithUiMock(
+            mock = { false },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    val requestDto = NicknameDuplicateRequestDto(
+                        nickname = nickname,
+                    )
+                    userRemoteDataSource
+                        .postNicknameDuplicate(nicknameDuplicateRequest = requestDto)
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .isDuplicated
+                }
+            },
+        )
 
-    override suspend fun getUserMyPage(): Result<UserMyPage> = httpResponseHandler.safeApiCall {
-        userRemoteDataSource.getUserMyPage()
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }.useUiMockWhenEnabled { UiMockData.userMyPage }
+    override suspend fun getUserMyPage(): Result<UserMyPage> = executeWithUiMock(
+        mock = { UiMockData.userMyPage },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getUserMyPage()
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 
-    override suspend fun getUserProfile(userId: Long): Result<UserProfile> = httpResponseHandler.safeApiCall {
-        userRemoteDataSource.getUserProfile(userId)
-            .handleApiResponse()
-            .getOrThrow()
-            .toDomain()
-    }.useUiMockWhenEnabled { UiMockData.userProfile.copy(userId = userId) }
+    override suspend fun getUserProfile(userId: Long): Result<UserProfile> = executeWithUiMock(
+        mock = { UiMockData.userProfile.copy(userId = userId) },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getUserProfile(userId)
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
 }
