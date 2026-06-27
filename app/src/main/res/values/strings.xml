@@ -210,6 +210,12 @@
     <string name="history_delivery_bottomsheet_tracking_label">송장번호</string>
     <string name="history_delivery_method">배송방법</string>
 
+    <!-- History Step Progressor Component -->
+    <string name="history_step_progress_recruit_end">모집 완료</string>
+    <string name="history_step_progress_payment_done">입금 완료</string>
+    <string name="history_step_progress_shipping">배송 시작</string>
+    <string name="history_step_progress_delivered">배송 완료</string>
+
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
