@@ -20,6 +20,8 @@ fun requiredLocalProperty(key: String): String =
         "$key is required in local.properties"
     }
 
+fun buildConfigString(value: String): String = "\"$value\""
+
 android {
     namespace = "com.poti.android"
     compileSdk = 36
@@ -62,11 +64,11 @@ android {
             dimension = "server"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.dev.base.url"))
+            buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
         }
         create("prod") {
             dimension = "server"
-            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.prod.base.url"))
+            buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
         }
     }
     compileOptions {
