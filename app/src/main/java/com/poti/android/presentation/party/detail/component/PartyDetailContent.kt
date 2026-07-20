@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.detail.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PartyDetailContent(
     partyDetail: PartyDetail,

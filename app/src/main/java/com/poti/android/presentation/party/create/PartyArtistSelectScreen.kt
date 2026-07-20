@@ -64,7 +64,7 @@ private fun PartyArtistSelectScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        contentWindowInsets = WindowInsets(),
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onPopBackStack,
