@@ -1,6 +1,7 @@
 package com.poti.android.presentation.party.product.partylist.model
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.res.stringResource
 import com.poti.android.R
 import com.poti.android.core.base.UiEffect
@@ -9,7 +10,10 @@ import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.ProductPartyList
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
+@Immutable
 data class ProductPartyListUiState(
     val productPartyListInfo: ApiState<ProductPartyList> = ApiState.Loading,
     val cachedTitle: String = "",
@@ -17,13 +21,13 @@ data class ProductPartyListUiState(
     val isPartyPageLoading: Boolean = false,
     val hasNextPartyPage: Boolean = true,
     val nextPartyPage: Int = 0,
-    val membersLoadState: ApiState<List<Member>> = ApiState.Loading,
-    val displayMembers: List<Member> = emptyList(),
-    val selectedMembers: List<Member> = emptyList(),
+    val membersLoadState: ApiState<ImmutableList<Member>> = ApiState.Loading,
+    val displayMembers: ImmutableList<Member> = persistentListOf(),
+    val selectedMembers: ImmutableList<Member> = persistentListOf(),
     val partySortType: PartySortType = PartySortType.DEADLINE,
     val isMemberFilterBottomSheetVisible: Boolean = false,
     val isSortFilterBottomSheetVisible: Boolean = false,
-    val bottomSheetSelectedMembers: List<Member> = emptyList(),
+    val bottomSheetSelectedMembers: ImmutableList<Member> = persistentListOf(),
     val isMemberBottomSheetToucehd: Boolean = false,
 ) : UiState {
     val memberFilterText: String

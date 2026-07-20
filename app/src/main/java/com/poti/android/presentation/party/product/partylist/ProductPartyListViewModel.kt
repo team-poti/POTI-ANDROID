@@ -12,6 +12,8 @@ import com.poti.android.presentation.party.product.partylist.model.ProductPartyL
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiIntent
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import javax.inject.Inject
 
 private const val PARTY_PAGE_SIZE = 10
@@ -22,8 +24,8 @@ class ProductPartyListViewModel @Inject constructor(
     private val getProductPartyListUseCase: GetProductPartyListUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
-        initialState = ProductPartyListUiState(),
-    ) {
+    initialState = ProductPartyListUiState(),
+) {
     private val artistId: Long = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().artistId
     private val title: String = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().title
 
@@ -43,6 +45,7 @@ class ProductPartyListViewModel @Inject constructor(
                     productName = title,
                 ),
             )
+
             is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
             ProductPartyListUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()
@@ -147,8 +150,8 @@ class ProductPartyListViewModel @Inject constructor(
             .onSuccess {
                 updateState {
                     copy(
-                        membersLoadState = ApiState.Success(it),
-                        displayMembers = it,
+                        membersLoadState = ApiState.Success(it.toPersistentList()),
+                        displayMembers = it.toPersistentList(),
                     )
                 }
             }
@@ -167,11 +170,11 @@ class ProductPartyListViewModel @Inject constructor(
     }
 
     private fun clearSelectedMembers() {
-        updateState { copy(bottomSheetSelectedMembers = emptyList(), isMemberBottomSheetToucehd = true) }
+        updateState { copy(bottomSheetSelectedMembers = persistentListOf(), isMemberBottomSheetToucehd = true) }
     }
 
     private fun saveSelectedMember() {
-        val newSelectedMembers = uiState.value.displayMembers.filter { it in uiState.value.bottomSheetSelectedMembers }
+        val newSelectedMembers = uiState.value.displayMembers.filter { it in uiState.value.bottomSheetSelectedMembers }.toPersistentList()
 
         updateState { copy(selectedMembers = newSelectedMembers) }
 
@@ -180,7 +183,7 @@ class ProductPartyListViewModel @Inject constructor(
 
     private fun onBottomSheetMemberChanged(member: Member) {
         val selectedMembers = uiState.value.bottomSheetSelectedMembers
-        val newSelectedMembers = if (member in selectedMembers) selectedMembers - member else selectedMembers + member
+        val newSelectedMembers = (if (member in selectedMembers) selectedMembers - member else selectedMembers + member).toPersistentList()
         updateState { copy(bottomSheetSelectedMembers = newSelectedMembers, isMemberBottomSheetToucehd = true) }
     }
 }
