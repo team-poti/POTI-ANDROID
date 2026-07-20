@@ -3,6 +3,7 @@ package com.poti.android.data.repository
 import com.poti.android.core.common.util.suspendRunCatching
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.FileLocalDataSource
+import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.FileUploadRemoteDataSource
 import com.poti.android.domain.repository.FileUploadRepository
 import java.io.File
@@ -16,9 +17,14 @@ class FileUploadRepositoryImpl @Inject constructor(
     override suspend fun uploadImage(
         uploadUrl: String,
         file: File,
-    ): Result<Unit> = httpResponseHandler.safeApiCall {
-        fileUploadRemoteDataSource.uploadImage(uploadUrl, file)
-    }
+    ): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                fileUploadRemoteDataSource.uploadImage(uploadUrl, file)
+            }
+        },
+    )
 
     override suspend fun createImage(uriString: String): Result<File> = suspendRunCatching {
         fileLocalDataSource.createImageFile(uriString)

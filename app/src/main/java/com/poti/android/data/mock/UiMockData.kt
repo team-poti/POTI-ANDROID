@@ -41,6 +41,8 @@ import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.HistoryListType
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
+import com.poti.android.domain.model.party.GroupItem as PartyGroupItem
+import com.poti.android.domain.model.party.PartySummary as PartyListSummary
 
 object UiMockData {
     private val historyPartySummary = PartySummary(
@@ -110,23 +112,53 @@ object UiMockData {
         nickname = "포티",
         mainArtist = "IVE",
         mainArtistId = 1,
-        groupItems = listOf(
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "공식 응원봉", 3, "인기"),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "콘서트 MD 세트", 5, "NEW"),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "포토카드 랜덤팩", 2, null),
-            com.poti.android.domain.model.party.GroupItem("IVE", 1, "", "시즌그리팅", 7, "마감임박"),
-        ),
+        groupItems = List(24) { index ->
+            val titles = listOf(
+                "공식 응원봉",
+                "콘서트 MD 세트",
+                "포토카드 랜덤팩",
+                "시즌그리팅",
+                "월드투어 후드",
+                "앨범 럭키드로우",
+            )
+            val tags = listOf("인기", "NEW", null, "마감임박")
+
+            PartyGroupItem(
+                artist = if (index % 2 == 0) "IVE" else "aespa",
+                artistId = if (index % 2 == 0) 1 else 2,
+                postImage = "",
+                postTitle = "${titles[index % titles.size]} ${index + 1}",
+                postCount = (index % 9) + 1,
+                tag = tags[index % tags.size],
+            )
+        },
         myGroupItems = emptyList(),
     )
 
     val productPartyList = ProductPartyList(
         partyTitle = "러브다이브 위드뮤",
         artistName = "IVE",
-        partySummaries = listOf(
-            com.poti.android.domain.model.party.PartySummary(1, 21_300, "", 3, 5, listOf("원영", "유진"), "", "포티공주", 4.8),
-            com.poti.android.domain.model.party.PartySummary(2, 21_300, "", 6, 6, listOf("레이", "이서"), "", "굿즈요정", 4.5),
-            com.poti.android.domain.model.party.PartySummary(3, 18_000, "", 1, 4, listOf("가을", "리즈"), "", "공구마스터", 5.0),
-        ),
+        partySummaries = List(24) { index ->
+            val partyId = index + 1L
+            val availableMembers = when (index % 4) {
+                0 -> listOf("원영", "유진")
+                1 -> listOf("레이", "이서")
+                2 -> listOf("가을", "리즈")
+                else -> listOf("안유진", "장원영", "리즈")
+            }
+
+            PartyListSummary(
+                partyId = partyId,
+                price = 18_000 + (index % 5) * 1_000,
+                productImageUrl = "",
+                currentCount = (index % 5) + 1,
+                totalCount = 6,
+                availableMembers = availableMembers,
+                profileImageUrl = "",
+                nickname = "분철러${index + 1}",
+                rating = 4.0 + (index % 10) / 10.0,
+            )
+        },
     )
 
     val partyDetail = PartyDetail(

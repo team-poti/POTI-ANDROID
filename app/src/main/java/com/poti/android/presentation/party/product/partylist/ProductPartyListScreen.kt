@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -90,11 +94,14 @@ fun ProductPartyListRoute(
         ),
         partySortType = uiState.partySortType,
         memberFilterText = uiState.memberFilterText,
+        isPageLoading = uiState.isPartyPageLoading,
+        hasNextPage = uiState.hasNextPartyPage,
         onBackClick = { viewModel.processIntent(ProductPartyListUiIntent.OnBackClick) },
         onFloatingClick = { viewModel.processIntent(ProductPartyListUiIntent.OnFloatingClick) },
         onMemberFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterClick) },
         onSortFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnSortFilterClick) },
         onCardClick = { potId -> viewModel.processIntent(ProductPartyListUiIntent.OnPartyClick(potId)) },
+        onLoadNextPage = { viewModel.processIntent(ProductPartyListUiIntent.LoadNextProductPartyList) },
         modifier = modifier,
     )
 }
@@ -104,13 +111,35 @@ private fun ProductPartyListScreen(
     productPartyListInfo: ProductPartyList,
     partySortType: PartySortType,
     memberFilterText: String,
+    isPageLoading: Boolean,
+    hasNextPage: Boolean,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
     onMemberFilterClick: () -> Unit,
     onSortFilterClick: () -> Unit,
     onCardClick: (Long) -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadNextPage by remember(listState, hasNextPage, isPageLoading) {
+        derivedStateOf {
+            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+
+            hasNextPage &&
+                !isPageLoading &&
+                totalItemsCount > 0 &&
+                lastVisibleItemIndex >= totalItemsCount - 3
+        }
+    }
+
+    LaunchedEffect(shouldLoadNextPage) {
+        if (shouldLoadNextPage) {
+            onLoadNextPage()
+        }
+    }
+
     Box(
         modifier = modifier,
     ) {
@@ -122,6 +151,7 @@ private fun ProductPartyListScreen(
             )
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
@@ -212,10 +242,13 @@ private fun ProductPartyListScreenPreveiw() {
         ),
         partySortType = PartySortType.DEADLINE,
         memberFilterText = "",
+        isPageLoading = false,
+        hasNextPage = false,
         onBackClick = {},
         onFloatingClick = {},
         onMemberFilterClick = {},
         onSortFilterClick = {},
         onCardClick = {},
+        onLoadNextPage = {},
     )
 }

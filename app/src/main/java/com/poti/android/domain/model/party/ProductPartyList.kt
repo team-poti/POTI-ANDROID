@@ -4,6 +4,8 @@ data class ProductPartyList(
     val partyTitle: String,
     val artistName: String,
     val partySummaries: List<PartySummary>,
+    val currentPage: Int = 0,
+    val hasNext: Boolean = false,
 )
 
 data class PartySummary(

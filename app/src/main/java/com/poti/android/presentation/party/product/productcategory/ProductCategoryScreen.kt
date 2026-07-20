@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -60,12 +64,15 @@ fun ProductCategoryRoute(
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
+            isPageLoading = uiState.isProductCategoryPageLoading,
+            hasNextPage = uiState.hasNextProductCategoryPage,
             onBackClick = { viewModel.processIntent(ProductCategoryUiIntent.OnBackClick) },
             onFloatingClick = { viewModel.processIntent(ProductCategoryUiIntent.OnFloatingClick) },
             onSortFilterClick = { viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick) },
             onSortSelect = { viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it)) },
             onSortDismiss = { viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss) },
             onCardClick = { artistId, title -> viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title)) },
+            onLoadNextPage = { viewModel.processIntent(ProductCategoryUiIntent.OnLoadNextPage) },
             modifier = modifier,
         )
     }
@@ -78,14 +85,36 @@ private fun ProductCategoryScreen(
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
+    isPageLoading: Boolean,
+    hasNextPage: Boolean,
     onBackClick: () -> Unit,
     onFloatingClick: () -> Unit,
     onSortFilterClick: () -> Unit,
     onSortSelect: (ProductSortType) -> Unit,
     onSortDismiss: () -> Unit,
     onCardClick: (Long, String) -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadNextPage by remember(listState, hasNextPage, isPageLoading) {
+        derivedStateOf {
+            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+
+            hasNextPage &&
+                !isPageLoading &&
+                totalItemsCount > 0 &&
+                lastVisibleItemIndex >= totalItemsCount - 3
+        }
+    }
+
+    LaunchedEffect(shouldLoadNextPage) {
+        if (shouldLoadNextPage) {
+            onLoadNextPage()
+        }
+    }
+
     if (isSortBottomSheetVisible) {
         GoodsSortBottomSheet(
             selectedSortType = selectedSortType,
@@ -104,6 +133,7 @@ private fun ProductCategoryScreen(
             )
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
@@ -164,12 +194,15 @@ private fun ProductCategoryScreenPreview() {
             productCategory = UiMockData.productCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,
+            isPageLoading = false,
+            hasNextPage = false,
             onBackClick = {},
             onFloatingClick = {},
             onSortFilterClick = {},
             onSortSelect = {},
             onSortDismiss = {},
             onCardClick = { _, _ -> },
+            onLoadNextPage = {},
         )
     }
 }
