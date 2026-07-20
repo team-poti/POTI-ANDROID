@@ -25,12 +25,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
-import com.poti.android.core.designsystem.component.bottomsheet.MemberSelectBottomSheet
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
+import com.poti.android.presentation.party.component.MemberSelectBottomSheet
 import com.poti.android.presentation.party.product.component.FilteredSortBottomSheet
 import com.poti.android.presentation.party.product.component.PartyCard
 import com.poti.android.presentation.party.product.membersText
@@ -61,17 +61,19 @@ fun ProductPartyListRoute(
 
     if (uiState.isMemberFilterBottomSheetVisible) {
         MemberSelectBottomSheet(
-            title = R.string.goods_filter_member_select_label,
+            title = stringResource(R.string.goods_filter_member_select_label),
             onDismiss = { viewModel.processIntent(ProductPartyListUiIntent.CloseMemberFilterBottomSheet) },
-            mainBtnText = R.string.action_button_done,
+            mainBtnText = stringResource(R.string.action_button_done),
             onMainBtnClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterDone) },
             mainEnabled = uiState.isMemberBottomSheetToucehd,
-            subBtnText = R.string.action_button_refresh,
+            subBtnText = stringResource(R.string.action_button_refresh),
             onSubBtnClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterRefresh) },
             subEnabled = true,
-            members = uiState.allMemberNames,
-            selectedIndices = uiState.bottomSheetSelectedMembersIdices,
+            allMembers = uiState.displayMembers,
+            selectedMembers = uiState.bottomSheetSelectedMembers,
             onMemberClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberSelect(it)) },
+            memberToName = { it.name },
+            memberToId = { it.memberId },
             autoCloseSubBtn = false,
         )
     }

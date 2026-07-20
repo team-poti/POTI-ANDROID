@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.party.GetProductPartyListUseCase
 import com.poti.android.presentation.party.product.navigation.ProductRoute
@@ -11,6 +12,8 @@ import com.poti.android.presentation.party.product.partylist.model.ProductPartyL
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiIntent
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import javax.inject.Inject
 
 private const val PARTY_PAGE_SIZE = 10
@@ -42,6 +45,7 @@ class ProductPartyListViewModel @Inject constructor(
                     productName = title,
                 ),
             )
+
             is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
             ProductPartyListUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()
@@ -49,7 +53,7 @@ class ProductPartyListViewModel @Inject constructor(
             }
 
             is ProductPartyListUiIntent.OnMemberSelect -> {
-                onBottomSheetMemberChanged(intent.index)
+                onBottomSheetMemberChanged(intent.member)
             }
 
             ProductPartyListUiIntent.OnSortFilterClick -> {
@@ -70,7 +74,7 @@ class ProductPartyListViewModel @Inject constructor(
             ProductPartyListUiIntent.OnMemberFilterDone -> saveSelectedMember()
 
             ProductPartyListUiIntent.OnMemberFilterRefresh -> {
-                if (uiState.value.bottomSheetSelectedMembersIdices.isNotEmpty()) {
+                if (uiState.value.bottomSheetSelectedMembers.isNotEmpty()) {
                     clearSelectedMembers()
                 }
             }
@@ -146,8 +150,8 @@ class ProductPartyListViewModel @Inject constructor(
             .onSuccess {
                 updateState {
                     copy(
-                        membersLoadState = ApiState.Success(it),
-                        displayMembers = it,
+                        membersLoadState = ApiState.Success(it.toPersistentList()),
+                        displayMembers = it.toPersistentList(),
                     )
                 }
             }
@@ -157,37 +161,29 @@ class ProductPartyListViewModel @Inject constructor(
     }
 
     private fun refreshMemberSelectBottomSheet() {
-        val newSelectedIndices = uiState.value.displayMembers.mapIndexed { index, member ->
-            if (member in uiState.value.selectedMembers) index else null
-        }
-            .filterNotNull()
-            .toSet()
-
         updateState {
             copy(
-                bottomSheetSelectedMembersIdices = newSelectedIndices,
+                bottomSheetSelectedMembers = selectedMembers,
                 isMemberBottomSheetToucehd = false,
             )
         }
     }
 
     private fun clearSelectedMembers() {
-        updateState { copy(bottomSheetSelectedMembersIdices = setOf(), isMemberBottomSheetToucehd = true) }
+        updateState { copy(bottomSheetSelectedMembers = persistentListOf(), isMemberBottomSheetToucehd = true) }
     }
 
     private fun saveSelectedMember() {
-        val newSelectedMembers = uiState.value.displayMembers.mapIndexedNotNull { index, member ->
-            if (index in uiState.value.bottomSheetSelectedMembersIdices) member else null
-        }
+        val newSelectedMembers = uiState.value.displayMembers.filter { it in uiState.value.bottomSheetSelectedMembers }.toPersistentList()
 
         updateState { copy(selectedMembers = newSelectedMembers) }
 
         loadPartyList()
     }
 
-    private fun onBottomSheetMemberChanged(index: Int) {
-        val selectedIndices = uiState.value.bottomSheetSelectedMembersIdices
-        val newSelectedIndices = if (index in selectedIndices) selectedIndices - index else selectedIndices + index
-        updateState { copy(bottomSheetSelectedMembersIdices = newSelectedIndices, isMemberBottomSheetToucehd = true) }
+    private fun onBottomSheetMemberChanged(member: Member) {
+        val selectedMembers = uiState.value.bottomSheetSelectedMembers
+        val newSelectedMembers = (if (member in selectedMembers) selectedMembers - member else selectedMembers + member).toPersistentList()
+        updateState { copy(bottomSheetSelectedMembers = newSelectedMembers, isMemberBottomSheetToucehd = true) }
     }
 }
