@@ -67,7 +67,7 @@ jobs:
                   else
                     {
                       echo "poti.dev.base.url=\"https://temp.example.com/\""
-                      echo "poti.base.url=\"https://temp.example.com/\""
+                      echo "poti.prod.base.url=\"https://temp.example.com/\""
                     } > local.properties
                   fi
 
