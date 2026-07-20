@@ -44,6 +44,7 @@ android {
         }
         create("mock") {
             initWith(getByName("debug"))
+            applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
             buildConfigField("boolean", "USE_UI_MOCK", "true")
             matchingFallbacks += listOf("debug")
@@ -59,11 +60,13 @@ android {
     productFlavors {
         create("dev") {
             dimension = "server"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
             buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.dev.base.url"))
         }
         create("prod") {
             dimension = "server"
-            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.base.url"))
+            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.prod.base.url"))
         }
     }
     compileOptions {
