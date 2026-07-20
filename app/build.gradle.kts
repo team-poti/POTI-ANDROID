@@ -15,6 +15,11 @@ val properties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
+fun requiredLocalProperty(key: String): String =
+    requireNotNull(properties[key] as? String) {
+        "$key is required in local.properties"
+    }
+
 android {
     namespace = "com.poti.android"
     compileSdk = 36
@@ -54,11 +59,11 @@ android {
     productFlavors {
         create("dev") {
             dimension = "server"
-            buildConfigField("String", "BASE_URL", properties["poti.dev.base.url"].toString())
+            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.dev.base.url"))
         }
         create("prod") {
             dimension = "server"
-            buildConfigField("String", "BASE_URL", properties["poti.base.url"].toString())
+            buildConfigField("String", "BASE_URL", requiredLocalProperty("poti.base.url"))
         }
     }
     compileOptions {
