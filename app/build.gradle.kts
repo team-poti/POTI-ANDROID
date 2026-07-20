@@ -27,7 +27,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BASE_URL", properties["poti.base.url"].toString())
 
         val kakaoNativeAppKey = properties["kakao.native.app.key"].toString()
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
@@ -40,7 +39,6 @@ android {
         }
         create("mock") {
             initWith(getByName("debug"))
-            applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
             buildConfigField("boolean", "USE_UI_MOCK", "true")
             matchingFallbacks += listOf("debug")
@@ -49,6 +47,18 @@ android {
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    flavorDimensions += "server"
+    productFlavors {
+        create("dev") {
+            dimension = "server"
+            buildConfigField("String", "BASE_URL", properties["poti.dev.base.url"].toString())
+        }
+        create("prod") {
+            dimension = "server"
+            buildConfigField("String", "BASE_URL", properties["poti.base.url"].toString())
         }
     }
     compileOptions {
