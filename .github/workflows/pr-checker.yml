@@ -65,7 +65,10 @@ jobs:
                   if [ -n "$LOCAL_PROPERTIES" ]; then
                     echo "${LOCAL_PROPERTIES}" > local.properties
                   else
-                    echo "poti.base.url=\"https://temp.example.com/\"" > local.properties
+                    {
+                      echo "poti.dev.base.url=https://temp.example.com/"
+                      echo "poti.prod.base.url=https://temp.example.com/"
+                    } > local.properties
                   fi
 
             - name: Run ktlintCheck

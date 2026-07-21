@@ -15,6 +15,13 @@ val properties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
+fun requiredLocalProperty(key: String): String =
+    requireNotNull(properties[key] as? String) {
+        "$key is required in local.properties"
+    }
+
+fun buildConfigString(value: String): String = "\"$value\""
+
 android {
     namespace = "com.poti.android"
     compileSdk = 36
@@ -27,7 +34,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BASE_URL", properties["poti.base.url"].toString())
 
         val kakaoNativeAppKey = properties["kakao.native.app.key"].toString()
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
@@ -49,6 +55,20 @@ android {
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    flavorDimensions += "server"
+    productFlavors {
+        create("dev") {
+            dimension = "server"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
+        }
+        create("prod") {
+            dimension = "server"
+            buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
         }
     }
     compileOptions {

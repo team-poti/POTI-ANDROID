@@ -89,7 +89,7 @@ private fun HistoryListScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        contentWindowInsets = WindowInsets(),
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             PotiHeaderPage(
                 onNavigationClick = onBackClick,
