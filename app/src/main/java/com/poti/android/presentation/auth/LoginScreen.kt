@@ -32,6 +32,7 @@ import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
+import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun LoginRoute(
@@ -51,13 +52,18 @@ fun LoginRoute(
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 LoginEffect.LaunchKakaoLogin -> {
                     val socialType = SocialType.KAKAO
-                    val result = socialLoginLauncher.login(context, socialType)
-                    viewModel.processIntent(
-                        LoginIntent.OnSocialLoginResult(
-                            socialType = socialType,
-                            result = result,
-                        ),
-                    )
+                    try {
+                        val result = socialLoginLauncher.login(context, socialType)
+                        viewModel.processIntent(
+                            LoginIntent.OnSocialLoginResult(
+                                socialType = socialType,
+                                result = result,
+                            ),
+                        )
+                    } catch (cancellation: CancellationException) {
+                        viewModel.processIntent(LoginIntent.OnSocialLoginAborted)
+                        throw cancellation
+                    }
                 }
             }
         }

@@ -29,6 +29,7 @@ class LoginViewModel @Inject constructor(
                 if (tryStartLogin()) sendEffect(LoginEffect.NavigateToHome)
             }
             is LoginIntent.OnSocialLoginResult -> handleSocialLoginResult(intent)
+            LoginIntent.OnSocialLoginAborted -> finishLogin()
         }
     }
 

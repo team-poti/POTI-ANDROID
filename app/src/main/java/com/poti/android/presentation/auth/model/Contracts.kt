@@ -19,6 +19,8 @@ sealed interface LoginIntent : UiIntent {
         val result: SocialLoginResult,
     ) : LoginIntent
 
+    data object OnSocialLoginAborted : LoginIntent
+
     data object OnGoogleLoginClick : LoginIntent
 }
 
