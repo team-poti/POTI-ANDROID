@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.manager.AuthSessionManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +23,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var authSessionManager: AuthSessionManager
+
+    @Inject
+    lateinit var socialLoginLauncher: SocialLoginLauncher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -48,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         targetDestination = destination,
                         navigator = mainNavigator,
+                        socialLoginLauncher = socialLoginLauncher,
                     )
                 }
             }

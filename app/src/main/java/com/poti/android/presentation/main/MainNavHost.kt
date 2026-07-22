@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
@@ -20,6 +21,7 @@ fun MainNavHost(
     navigator: MainNavigator,
     targetDestination: Route,
     paddingValues: PaddingValues,
+    socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -34,6 +36,7 @@ fun MainNavHost(
         authNavGraph(
             navController = navigator.navController,
             onNavigateToHome = navigator::navigateToHome,
+            socialLoginLauncher = socialLoginLauncher,
         )
         onboardingNavGraph(
             navController = navigator.navController,

@@ -4,17 +4,13 @@ import android.content.Context
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.poti.android.core.auth.SocialLoginProvider
 import com.poti.android.core.auth.SocialLoginResult
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class KakaoLoginProvider @Inject constructor() : SocialLoginProvider {
-    override suspend fun login(context: Context): SocialLoginResult =
+class KakaoLoginProvider @Inject constructor() {
+    suspend fun login(context: Context): SocialLoginResult =
         suspendCancellableCoroutine { continuation ->
             val onResult: (SocialLoginResult) -> Unit = { result ->
                 if (continuation.isActive) {
@@ -71,10 +67,4 @@ class KakaoLoginProvider @Inject constructor() : SocialLoginProvider {
 
     private fun Throwable?.isCancelled(): Boolean =
         this is ClientError && reason == ClientErrorCause.Cancelled
-}
-
-@EntryPoint
-@InstallIn(ActivityComponent::class)
-interface KakaoLoginEntryPoint {
-    fun kakaoLoginProvider(): KakaoLoginProvider
 }
