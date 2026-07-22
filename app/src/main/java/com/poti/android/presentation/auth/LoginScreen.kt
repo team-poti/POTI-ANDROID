@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.poti.android.R
+import com.poti.android.core.auth.SocialLoginResult
+import com.poti.android.core.auth.kakao.KakaoLoginEntryPoint
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -41,12 +43,12 @@ fun LoginRoute(
 ) {
     val context = LocalContext.current
 
-    val kakaoLoginManager = remember(context) {
+    val kakaoLoginProvider = remember(context) {
         val activity = context as? Activity ?: throw IllegalStateException("Context is not an Activity")
         EntryPointAccessors.fromActivity(
             activity,
             KakaoLoginEntryPoint::class.java,
-        ).kakaoLoginManager()
+        ).kakaoLoginProvider()
     }
 
     LaunchedEffect(viewModel.sideEffect) {
@@ -55,15 +57,15 @@ fun LoginRoute(
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 LoginEffect.LaunchKakaoLogin -> {
-                    kakaoLoginManager.login(context) { result ->
+                    kakaoLoginProvider.login(context) { result ->
                         when (result) {
-                            is KakaoLoginResult.Success -> {
-                                viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.accessToken))
+                            is SocialLoginResult.Success -> {
+                                viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.token))
                             }
-                            KakaoLoginResult.Cancelled -> {
+                            SocialLoginResult.Cancelled -> {
                                 viewModel.processIntent(LoginIntent.OnKakaoLoginCancelled)
                             }
-                            is KakaoLoginResult.Failure -> {
+                            is SocialLoginResult.Failure -> {
                                 viewModel.processIntent(
                                     LoginIntent.OnKakaoLoginFailure(
                                         result.cause.message ?: "Unknown Error",

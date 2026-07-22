@@ -1,35 +1,29 @@
-package com.poti.android.presentation.auth
+package com.poti.android.core.auth.kakao
 
 import android.content.Context
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.poti.android.core.auth.SocialLoginProvider
+import com.poti.android.core.auth.SocialLoginResult
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
 
-sealed interface KakaoLoginResult {
-    data class Success(val accessToken: String) : KakaoLoginResult
-
-    data object Cancelled : KakaoLoginResult
-
-    data class Failure(val cause: Throwable) : KakaoLoginResult
-}
-
-class KakaoLoginManager @Inject constructor() {
-    fun login(
+class KakaoLoginProvider @Inject constructor() : SocialLoginProvider {
+    override fun login(
         context: Context,
-        onResult: (KakaoLoginResult) -> Unit,
+        onResult: (SocialLoginResult) -> Unit,
     ) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 when {
-                    token != null -> onResult(KakaoLoginResult.Success(token.accessToken))
-                    error.isCancelled() -> onResult(KakaoLoginResult.Cancelled)
+                    token != null -> onResult(SocialLoginResult.Success(token.accessToken))
+                    error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
                     error != null -> loginWithKakaoAccount(context, onResult)
                     else -> onResult(
-                        KakaoLoginResult.Failure(
+                        SocialLoginResult.Failure(
                             IllegalStateException("Kakao login returned neither token nor error"),
                         ),
                     )
@@ -42,15 +36,15 @@ class KakaoLoginManager @Inject constructor() {
 
     private fun loginWithKakaoAccount(
         context: Context,
-        onResult: (KakaoLoginResult) -> Unit,
+        onResult: (SocialLoginResult) -> Unit,
     ) {
         UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
             when {
-                token != null -> onResult(KakaoLoginResult.Success(token.accessToken))
-                error.isCancelled() -> onResult(KakaoLoginResult.Cancelled)
-                error != null -> onResult(KakaoLoginResult.Failure(error))
+                token != null -> onResult(SocialLoginResult.Success(token.accessToken))
+                error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
+                error != null -> onResult(SocialLoginResult.Failure(error))
                 else -> onResult(
-                    KakaoLoginResult.Failure(
+                    SocialLoginResult.Failure(
                         IllegalStateException("Kakao account login returned neither token nor error"),
                     ),
                 )
@@ -65,5 +59,5 @@ class KakaoLoginManager @Inject constructor() {
 @EntryPoint
 @InstallIn(ActivityComponent::class)
 interface KakaoLoginEntryPoint {
-    fun kakaoLoginManager(): KakaoLoginManager
+    fun kakaoLoginProvider(): KakaoLoginProvider
 }
