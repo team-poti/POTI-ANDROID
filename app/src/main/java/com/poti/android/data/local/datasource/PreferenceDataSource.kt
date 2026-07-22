@@ -56,7 +56,6 @@ class PreferenceDataSource @Inject constructor(
     }
 
     suspend fun saveAccessToken(accessToken: String) = dataStore.edit { prefs ->
-        Timber.d("saveAccessToken 호출됨: $accessToken")
         prefs[ACCESS_TOKEN_KEY] = accessToken
     }
 
