@@ -34,7 +34,10 @@ class KakaoLoginProvider @Inject constructor() {
                 when {
                     token != null -> onResult(SocialLoginResult.Success(token.accessToken))
                     error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
-                    error != null -> loginWithKakaoAccount(context, onResult)
+                    error != null && error.shouldFallbackToKakaoAccount() -> {
+                        loginWithKakaoAccount(context, onResult)
+                    }
+                    error != null -> onResult(SocialLoginResult.Failure(error))
                     else -> onResult(
                         SocialLoginResult.Failure(
                             IllegalStateException("Kakao login returned neither token nor error"),
@@ -67,4 +70,7 @@ class KakaoLoginProvider @Inject constructor() {
 
     private fun Throwable?.isCancelled(): Boolean =
         this is ClientError && reason == ClientErrorCause.Cancelled
+
+    private fun Throwable.shouldFallbackToKakaoAccount(): Boolean =
+        !isCancelled()
 }
