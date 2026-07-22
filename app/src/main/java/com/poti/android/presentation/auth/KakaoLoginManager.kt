@@ -23,23 +23,24 @@ class KakaoLoginManager @Inject constructor() {
                 }
                 when {
                     token != null -> onResult(Result.success(token))
-                    error != null -> UserApiClient.instance.loginWithKakaoAccount(context) { token2, error2 ->
-                        if (token2 != null) {
-                            onResult(Result.success(token2))
-                        } else {
-                            onResult(Result.failure(error2 ?: Exception("Unknown error")))
-                        }
-                    }
+                    error != null -> loginWithKakaoAccount(context, onResult)
                     else -> onResult(Result.failure(Exception("Unknown error: token and error are both null")))
                 }
             }
         } else {
-            UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
-                if (token != null) {
-                    onResult(Result.success(token))
-                } else {
-                    onResult(Result.failure(error ?: Exception("Unknown error")))
-                }
+            loginWithKakaoAccount(context, onResult)
+        }
+    }
+
+    private fun loginWithKakaoAccount(
+        context: Context,
+        onResult: (Result<OAuthToken>) -> Unit,
+    ) {
+        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+            if (token != null) {
+                onResult(Result.success(token))
+            } else {
+                onResult(Result.failure(error ?: Exception("Unknown error")))
             }
         }
     }
