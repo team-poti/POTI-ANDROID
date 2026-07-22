@@ -22,11 +22,10 @@ class LoginViewModel @Inject constructor(
 
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
-            is LoginIntent.OnKakaoLoginClick -> {
-                if (tryStartLogin()) sendEffect(LoginEffect.LaunchKakaoLogin)
-            }
-            LoginIntent.OnGoogleLoginClick -> {
-                if (tryStartLogin()) sendEffect(LoginEffect.NavigateToHome)
+            is LoginIntent.OnSocialLoginClick -> {
+                if (tryStartLogin()) {
+                    sendEffect(LoginEffect.LaunchSocialLogin(intent.socialType))
+                }
             }
             is LoginIntent.OnSocialLoginResult -> handleSocialLoginResult(intent)
             LoginIntent.OnSocialLoginAborted -> finishLogin()

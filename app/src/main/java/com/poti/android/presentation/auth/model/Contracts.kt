@@ -12,7 +12,7 @@ data class LoginState(
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {
-    data object OnKakaoLoginClick : LoginIntent
+    data class OnSocialLoginClick(val socialType: SocialType) : LoginIntent
 
     data class OnSocialLoginResult(
         val socialType: SocialType,
@@ -20,8 +20,6 @@ sealed interface LoginIntent : UiIntent {
     ) : LoginIntent
 
     data object OnSocialLoginAborted : LoginIntent
-
-    data object OnGoogleLoginClick : LoginIntent
 }
 
 sealed interface LoginEffect : UiEffect {
@@ -29,5 +27,5 @@ sealed interface LoginEffect : UiEffect {
 
     data object NavigateToHome : LoginEffect
 
-    data object LaunchKakaoLogin : LoginEffect
+    data class LaunchSocialLogin(val socialType: SocialType) : LoginEffect
 }

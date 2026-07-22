@@ -50,13 +50,12 @@ fun LoginRoute(
             when (effect) {
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
-                LoginEffect.LaunchKakaoLogin -> {
-                    val socialType = SocialType.KAKAO
+                is LoginEffect.LaunchSocialLogin -> {
                     try {
-                        val result = socialLoginLauncher.login(context, socialType)
+                        val result = socialLoginLauncher.login(context, effect.socialType)
                         viewModel.processIntent(
                             LoginIntent.OnSocialLoginResult(
-                                socialType = socialType,
+                                socialType = effect.socialType,
                                 result = result,
                             ),
                         )
@@ -72,8 +71,12 @@ fun LoginRoute(
     LoginScreen(
         modifier = modifier,
         isLoginInProgress = uiState.loginState is ApiState.Loading,
-        onKakaoClick = { viewModel.processIntent(LoginIntent.OnKakaoLoginClick) },
-        onGoogleClick = { viewModel.processIntent(LoginIntent.OnGoogleLoginClick) },
+        onKakaoClick = {
+            viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.KAKAO))
+        },
+        onGoogleClick = {
+            viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
+        },
     )
 }
 
