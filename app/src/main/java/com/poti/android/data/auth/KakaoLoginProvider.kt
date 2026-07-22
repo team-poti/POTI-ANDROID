@@ -29,8 +29,8 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(context)) {
-            UserApiClient.Companion.instance.loginWithKakaoTalk(context) { token, error ->
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 when {
                     token != null -> onResult(SocialLoginResult.Success(token.accessToken))
                     error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
@@ -54,7 +54,7 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        UserApiClient.Companion.instance.loginWithKakaoAccount(context) { token, error ->
+        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
             when {
                 token != null -> onResult(SocialLoginResult.Success(token.accessToken))
                 error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
