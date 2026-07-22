@@ -4,11 +4,10 @@ import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
-import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.auth.SocialType
 
 data class LoginState(
-    val loginState: ApiState<Unit> = ApiState.Init,
+    val phase: LoginPhase = LoginPhase.IDLE,
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {

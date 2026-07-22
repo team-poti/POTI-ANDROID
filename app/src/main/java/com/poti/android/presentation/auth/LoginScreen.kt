@@ -26,7 +26,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.auth.SocialLoginLauncher
-import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.presentation.auth.component.LoginButton
@@ -70,7 +69,7 @@ fun LoginRoute(
 
     LoginScreen(
         modifier = modifier,
-        isLoginInProgress = uiState.loginState is ApiState.Loading,
+        isLoginInProgress = uiState.phase.isInProgress,
         onKakaoClick = {
             viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.KAKAO))
         },
