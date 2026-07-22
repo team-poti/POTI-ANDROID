@@ -19,6 +19,7 @@ class LoginViewModel @Inject constructor(
             is LoginIntent.OnKakaoLoginClick -> sendEffect(LoginEffect.LaunchKakaoLogin)
             LoginIntent.OnGoogleLoginClick -> sendEffect(LoginEffect.NavigateToHome)
             is LoginIntent.OnKakaoLoginSuccess -> requestServerLogin(intent.token)
+            LoginIntent.OnKakaoLoginCancelled -> Timber.d("카카오 로그인이 취소되었습니다.")
             is LoginIntent.OnKakaoLoginFailure -> {
                 Timber.e("카카오 로그인 실패: ${intent.message}")
                 updateState { copy(loginState = ApiState.Failure(intent.message)) }

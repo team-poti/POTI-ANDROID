@@ -14,6 +14,8 @@ sealed interface LoginIntent : UiIntent {
 
     data class OnKakaoLoginSuccess(val token: String) : LoginIntent
 
+    data object OnKakaoLoginCancelled : LoginIntent
+
     data class OnKakaoLoginFailure(val message: String) : LoginIntent
 
     data object OnGoogleLoginClick : LoginIntent

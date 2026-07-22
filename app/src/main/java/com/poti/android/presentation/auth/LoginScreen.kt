@@ -56,11 +56,20 @@ fun LoginRoute(
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 LoginEffect.LaunchKakaoLogin -> {
                     kakaoLoginManager.login(context) { result ->
-                        result.onSuccess { token ->
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(token.accessToken))
-                        }
-                        result.onFailure { error ->
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginFailure(error.message ?: "Unknown Error"))
+                        when (result) {
+                            is KakaoLoginResult.Success -> {
+                                viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.accessToken))
+                            }
+                            KakaoLoginResult.Cancelled -> {
+                                viewModel.processIntent(LoginIntent.OnKakaoLoginCancelled)
+                            }
+                            is KakaoLoginResult.Failure -> {
+                                viewModel.processIntent(
+                                    LoginIntent.OnKakaoLoginFailure(
+                                        result.cause.message ?: "Unknown Error",
+                                    ),
+                                )
+                            }
                         }
                     }
                 }
