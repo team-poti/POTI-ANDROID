@@ -1,5 +1,6 @@
 package com.poti.android.presentation.auth
 
+import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.auth.SocialType
@@ -27,16 +28,24 @@ class LoginViewModel @Inject constructor(
             LoginIntent.OnGoogleLoginClick -> {
                 if (tryStartLogin()) sendEffect(LoginEffect.NavigateToHome)
             }
-            is LoginIntent.OnKakaoLoginSuccess -> requestServerLogin(intent.token)
-            LoginIntent.OnKakaoLoginCancelled -> {
+            is LoginIntent.OnSocialLoginResult -> handleSocialLoginResult(intent)
+        }
+    }
+
+    private fun handleSocialLoginResult(intent: LoginIntent.OnSocialLoginResult) {
+        when (val result = intent.result) {
+            is SocialLoginResult.Success -> requestServerLogin(
+                socialType = intent.socialType,
+                token = result.token,
+            )
+            SocialLoginResult.Cancelled -> {
                 finishLogin()
-                Timber.d("카카오 로그인이 취소되었습니다.")
+                Timber.d("소셜 로그인이 취소되었습니다: ${intent.socialType}")
             }
-            is LoginIntent.OnKakaoLoginFailure -> {
-                isLoginInProgress.set(false)
-                Timber.e("카카오 로그인 실패: ${intent.message}")
-                updateState { copy(loginState = ApiState.Failure(intent.message)) }
-            }
+            is SocialLoginResult.Failure -> handleSocialLoginFailure(
+                socialType = intent.socialType,
+                cause = result.cause,
+            )
         }
     }
 
@@ -54,11 +63,14 @@ class LoginViewModel @Inject constructor(
         updateState { copy(loginState = ApiState.Init) }
     }
 
-    private fun requestServerLogin(kakaoToken: String) {
+    private fun requestServerLogin(
+        socialType: SocialType,
+        token: String,
+    ) {
         if (!isServerLoginRequested.compareAndSet(false, true)) return
 
         launchScope(onError = ::handleServerLoginFailure) {
-            loginUseCase(socialType = SocialType.KAKAO, token = kakaoToken)
+            loginUseCase(socialType = socialType, token = token)
                 .onSuccess { response ->
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
@@ -74,6 +86,16 @@ class LoginViewModel @Inject constructor(
                     handleServerLoginFailure(error)
                 }
         }
+    }
+
+    private fun handleSocialLoginFailure(
+        socialType: SocialType,
+        cause: Throwable,
+    ) {
+        isLoginInProgress.set(false)
+        isServerLoginRequested.set(false)
+        Timber.e(cause, "소셜 로그인 실패: $socialType")
+        updateState { copy(loginState = ApiState.Failure(cause.message ?: "Social login failed")) }
     }
 
     private fun handleServerLoginFailure(error: Throwable) {

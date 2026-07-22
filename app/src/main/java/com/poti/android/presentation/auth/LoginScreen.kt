@@ -26,7 +26,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.auth.SocialLoginLauncher
-import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.auth.SocialType
@@ -51,21 +50,14 @@ fun LoginRoute(
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 LoginEffect.LaunchKakaoLogin -> {
-                    when (val result = socialLoginLauncher.login(context, SocialType.KAKAO)) {
-                        is SocialLoginResult.Success -> {
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.token))
-                        }
-                        SocialLoginResult.Cancelled -> {
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginCancelled)
-                        }
-                        is SocialLoginResult.Failure -> {
-                            viewModel.processIntent(
-                                LoginIntent.OnKakaoLoginFailure(
-                                    result.cause.message ?: "Unknown Error",
-                                ),
-                            )
-                        }
-                    }
+                    val socialType = SocialType.KAKAO
+                    val result = socialLoginLauncher.login(context, socialType)
+                    viewModel.processIntent(
+                        LoginIntent.OnSocialLoginResult(
+                            socialType = socialType,
+                            result = result,
+                        ),
+                    )
                 }
             }
         }
