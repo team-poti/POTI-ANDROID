@@ -1,4 +1,4 @@
-package com.poti.android.core.auth.kakao
+package com.poti.android.data.auth
 
 import android.content.Context
 import com.kakao.sdk.common.model.ClientError
@@ -29,8 +29,8 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+        if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(context)) {
+            UserApiClient.Companion.instance.loginWithKakaoTalk(context) { token, error ->
                 when {
                     token != null -> onResult(SocialLoginResult.Success(token.accessToken))
                     error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
@@ -51,7 +51,7 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+        UserApiClient.Companion.instance.loginWithKakaoAccount(context) { token, error ->
             when {
                 token != null -> onResult(SocialLoginResult.Success(token.accessToken))
                 error.isCancelled() -> onResult(SocialLoginResult.Cancelled)

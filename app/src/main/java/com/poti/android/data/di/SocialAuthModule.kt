@@ -1,7 +1,7 @@
-package com.poti.android.core.auth.di
+package com.poti.android.data.di
 
-import com.poti.android.core.auth.DefaultSocialLoginLauncher
 import com.poti.android.core.auth.SocialLoginLauncher
+import com.poti.android.data.auth.DefaultSocialLoginLauncher
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

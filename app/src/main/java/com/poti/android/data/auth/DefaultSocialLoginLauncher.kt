@@ -1,7 +1,8 @@
-package com.poti.android.core.auth
+package com.poti.android.data.auth
 
 import android.content.Context
-import com.poti.android.core.auth.kakao.KakaoLoginProvider
+import com.poti.android.core.auth.SocialLoginLauncher
+import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.domain.model.auth.SocialType
 import javax.inject.Inject
 
