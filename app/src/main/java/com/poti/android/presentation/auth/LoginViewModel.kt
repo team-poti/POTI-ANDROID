@@ -2,6 +2,7 @@ package com.poti.android.presentation.auth
 
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -31,7 +32,7 @@ class LoginViewModel @Inject constructor(
         updateState { copy(loginState = ApiState.Loading) }
 
         launchScope {
-            loginUseCase(socialType = "KAKAO", token = kakaoToken)
+            loginUseCase(socialType = SocialType.KAKAO, token = kakaoToken)
                 .onSuccess { response ->
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
