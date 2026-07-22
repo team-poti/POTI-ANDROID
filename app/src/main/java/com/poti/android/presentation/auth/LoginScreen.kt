@@ -57,21 +57,19 @@ fun LoginRoute(
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 LoginEffect.LaunchKakaoLogin -> {
-                    kakaoLoginProvider.login(context) { result ->
-                        when (result) {
-                            is SocialLoginResult.Success -> {
-                                viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.token))
-                            }
-                            SocialLoginResult.Cancelled -> {
-                                viewModel.processIntent(LoginIntent.OnKakaoLoginCancelled)
-                            }
-                            is SocialLoginResult.Failure -> {
-                                viewModel.processIntent(
-                                    LoginIntent.OnKakaoLoginFailure(
-                                        result.cause.message ?: "Unknown Error",
-                                    ),
-                                )
-                            }
+                    when (val result = kakaoLoginProvider.login(context)) {
+                        is SocialLoginResult.Success -> {
+                            viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(result.token))
+                        }
+                        SocialLoginResult.Cancelled -> {
+                            viewModel.processIntent(LoginIntent.OnKakaoLoginCancelled)
+                        }
+                        is SocialLoginResult.Failure -> {
+                            viewModel.processIntent(
+                                LoginIntent.OnKakaoLoginFailure(
+                                    result.cause.message ?: "Unknown Error",
+                                ),
+                            )
                         }
                     }
                 }

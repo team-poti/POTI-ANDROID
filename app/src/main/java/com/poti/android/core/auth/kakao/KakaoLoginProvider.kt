@@ -9,10 +9,27 @@ import com.poti.android.core.auth.SocialLoginResult
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class KakaoLoginProvider @Inject constructor() : SocialLoginProvider {
-    override fun login(
+    override suspend fun login(context: Context): SocialLoginResult =
+        suspendCancellableCoroutine { continuation ->
+            val onResult: (SocialLoginResult) -> Unit = { result ->
+                if (continuation.isActive) {
+                    continuation.resume(result)
+                }
+            }
+
+            try {
+                startLogin(context, onResult)
+            } catch (error: Throwable) {
+                onResult(SocialLoginResult.Failure(error))
+            }
+        }
+
+    private fun startLogin(
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
