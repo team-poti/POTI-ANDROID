@@ -2,7 +2,10 @@ package com.poti.android.data.auth
 
 import android.content.Context
 import com.poti.android.core.auth.SocialLoginResult
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -71,6 +74,24 @@ class KakaoLoginProviderTest {
         assertEquals(1, client.kakaoAccountLoginCallCount)
     }
 
+    @Test
+    fun `does not start fallback after login coroutine is cancelled`() = runBlocking {
+        val client = DeferredKakaoAuthClient()
+        val provider = KakaoLoginProvider(client)
+        val loginJob = launch {
+            provider.login(context)
+        }
+        yield()
+
+        loginJob.cancelAndJoin()
+        client.completeKakaoTalkLogin(
+            KakaoAuthResult.Failure(RuntimeException("talk login failed")),
+        )
+
+        assertEquals(1, client.kakaoTalkLoginCallCount)
+        assertEquals(0, client.kakaoAccountLoginCallCount)
+    }
+
     private class FakeKakaoAuthClient(
         private val isKakaoTalkAvailable: Boolean = true,
         private val kakaoTalkResult: KakaoAuthResult = KakaoAuthResult.InvalidResponse(
@@ -102,6 +123,37 @@ class KakaoLoginProviderTest {
         ) {
             kakaoAccountLoginCallCount += 1
             onResult(kakaoAccountResult)
+        }
+    }
+
+    private class DeferredKakaoAuthClient : KakaoAuthClient {
+        private var kakaoTalkCallback: ((KakaoAuthResult) -> Unit)? = null
+
+        var kakaoTalkLoginCallCount: Int = 0
+            private set
+
+        var kakaoAccountLoginCallCount: Int = 0
+            private set
+
+        override fun isKakaoTalkLoginAvailable(context: Context): Boolean = true
+
+        override fun loginWithKakaoTalk(
+            context: Context,
+            onResult: (KakaoAuthResult) -> Unit,
+        ) {
+            kakaoTalkLoginCallCount += 1
+            kakaoTalkCallback = onResult
+        }
+
+        override fun loginWithKakaoAccount(
+            context: Context,
+            onResult: (KakaoAuthResult) -> Unit,
+        ) {
+            kakaoAccountLoginCallCount += 1
+        }
+
+        fun completeKakaoTalkLogin(result: KakaoAuthResult) {
+            requireNotNull(kakaoTalkCallback).invoke(result)
         }
     }
 

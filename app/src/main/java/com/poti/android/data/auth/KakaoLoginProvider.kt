@@ -27,15 +27,24 @@ class KakaoLoginProvider @Inject constructor(
                 }
             }
 
-            startLogin(context, onResult)
+            startLogin(
+                context = context,
+                isActive = { continuation.isActive },
+                onResult = onResult,
+            )
         }
 
     private fun startLogin(
         context: Context,
+        isActive: () -> Boolean,
         onResult: (SocialLoginResult) -> Unit,
     ) {
+        if (!isActive()) return
+
         if (kakaoAuthClient.isKakaoTalkLoginAvailable(context)) {
             kakaoAuthClient.loginWithKakaoTalk(context) { result ->
+                if (!isActive()) return@loginWithKakaoTalk
+
                 when (result) {
                     is KakaoAuthResult.Success -> {
                         onResult(SocialLoginResult.Success(result.accessToken))
@@ -43,7 +52,7 @@ class KakaoLoginProvider @Inject constructor(
                     KakaoAuthResult.Cancelled -> onResult(SocialLoginResult.Cancelled)
                     is KakaoAuthResult.Failure -> {
                         if (result.shouldFallbackToKakaoAccount()) {
-                            loginWithKakaoAccount(context, onResult)
+                            loginWithKakaoAccount(context, isActive, onResult)
                         } else {
                             onResult(SocialLoginResult.Failure(result.cause))
                         }
@@ -54,15 +63,20 @@ class KakaoLoginProvider @Inject constructor(
                 }
             }
         } else {
-            loginWithKakaoAccount(context, onResult)
+            loginWithKakaoAccount(context, isActive, onResult)
         }
     }
 
     private fun loginWithKakaoAccount(
         context: Context,
+        isActive: () -> Boolean,
         onResult: (SocialLoginResult) -> Unit,
     ) {
+        if (!isActive()) return
+
         kakaoAuthClient.loginWithKakaoAccount(context) { result ->
+            if (!isActive()) return@loginWithKakaoAccount
+
             when (result) {
                 is KakaoAuthResult.Success -> {
                     onResult(SocialLoginResult.Success(result.accessToken))
