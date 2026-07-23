@@ -46,11 +46,11 @@ class KakaoSdkAuthClient @Inject constructor() : KakaoAuthClient {
         invalidResponseMessage: String,
     ): KakaoAuthResult =
         when {
-            accessToken != null -> KakaoAuthResult.Success(accessToken)
             error is ClientError && error.reason == ClientErrorCause.Cancelled -> {
                 KakaoAuthResult.Cancelled
             }
             error != null -> KakaoAuthResult.Failure(error)
+            !accessToken.isNullOrBlank() -> KakaoAuthResult.Success(accessToken)
             else -> KakaoAuthResult.InvalidResponse(
                 IllegalStateException(invalidResponseMessage),
             )
