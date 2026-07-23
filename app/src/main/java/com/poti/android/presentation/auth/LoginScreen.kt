@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.auth.SocialLoginLauncher
+import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.presentation.auth.component.LoginButton
@@ -50,18 +51,21 @@ fun LoginRoute(
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
                 is LoginEffect.LaunchSocialLogin -> {
-                    try {
-                        val result = socialLoginLauncher.login(context, effect.socialType)
-                        viewModel.processIntent(
-                            LoginIntent.OnSocialLoginResult(
-                                socialType = effect.socialType,
-                                result = result,
-                            ),
-                        )
+                    val result = try {
+                        socialLoginLauncher.login(context, effect.socialType)
                     } catch (cancellation: CancellationException) {
                         viewModel.processIntent(LoginIntent.OnSocialLoginAborted)
                         throw cancellation
+                    } catch (error: Exception) {
+                        SocialLoginResult.Failure(error)
                     }
+
+                    viewModel.processIntent(
+                        LoginIntent.OnSocialLoginResult(
+                            socialType = effect.socialType,
+                            result = result,
+                        ),
+                    )
                 }
             }
         }
