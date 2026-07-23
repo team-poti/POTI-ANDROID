@@ -121,6 +121,8 @@ sealed interface CreateUiIntent : UiIntent {
 
     data class OnDeliverySelect(val delivery: DeliveryOption) : CreateUiIntent
 
+    data class OnDeliveryPriceChange(val delivery: DeliveryOption) : CreateUiIntent
+
     data object OnCreateClick : CreateUiIntent
 
     data object ScrollComplete : CreateUiIntent

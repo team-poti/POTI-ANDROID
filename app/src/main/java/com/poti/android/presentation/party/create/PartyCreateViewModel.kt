@@ -148,6 +148,8 @@ class PartyCreateViewModel @Inject constructor(
 
             is OnDeliverySelect -> handleDeliverySelect(newDelivery = intent.delivery)
 
+            is OnDeliveryPriceChange -> handleDeliveryPriceChange(newDelivery = intent.delivery)
+
             OnCreateClick -> {
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
@@ -412,6 +414,23 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 selectedDeliveries = newDeliveries,
+            )
+        }
+    }
+
+    private fun handleDeliveryPriceChange(newDelivery: DeliveryOption) {
+        val newRawDeliveries = uiState.value.rawDeliveries.map { delivery ->
+            if (delivery.deliveryId == newDelivery.deliveryId) newDelivery else delivery
+        }.toPersistentList()
+
+        val newSelectedDeliveries = uiState.value.selectedDeliveries.map { delivery ->
+            if (delivery.deliveryId == newDelivery.deliveryId) newDelivery else delivery
+        }.toPersistentList()
+
+        updateState {
+            copy(
+                rawDeliveries = newRawDeliveries,
+                selectedDeliveries = newSelectedDeliveries,
             )
         }
     }

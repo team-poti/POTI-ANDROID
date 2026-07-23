@@ -61,6 +61,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseBo
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseDialog
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateClick
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeadlineChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliveryPriceChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliverySelect
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDescriptionChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnImagesChanged
@@ -151,6 +152,7 @@ fun PartyCreateRoute(
         onMemberPriceChanged = { viewModel.processIntent(OnMemberPriceChange(it)) },
         onMemberEditBtnClick = { viewModel.processIntent(OnMemberEditClick) },
         onDeliveryRadioBtnClick = { viewModel.processIntent(OnDeliverySelect(it)) },
+        onDeliveryPriceChanged = { viewModel.processIntent(OnDeliveryPriceChange(it)) },
         onCreateBtnClick = { viewModel.processIntent(OnCreateClick) },
         modifier = modifier,
     )
@@ -173,6 +175,7 @@ private fun PartyCreateScreen(
     onMemberPriceChanged: (MemberPriceOption) -> Unit,
     onMemberEditBtnClick: () -> Unit,
     onDeliveryRadioBtnClick: (DeliveryOption) -> Unit,
+    onDeliveryPriceChanged: (DeliveryOption) -> Unit,
     onCreateBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -371,6 +374,7 @@ private fun PartyCreateScreen(
                     allDeliveries = uiState.rawDeliveries,
                     selectedDeliveries = uiState.selectedDeliveries,
                     onDeliveryClick = onDeliveryRadioBtnClick,
+                    onPriceChange = onDeliveryPriceChanged,
                 )
             }
 

@@ -21,6 +21,7 @@ fun CreateDeliverySetting(
     allDeliveries: ImmutableList<DeliveryOption>,
     selectedDeliveries: ImmutableList<DeliveryOption>,
     onDeliveryClick: (DeliveryOption) -> Unit,
+    onPriceChange: (DeliveryOption) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -45,10 +46,11 @@ fun CreateDeliverySetting(
                 EditOptionPrice(
                     option = option.name,
                     value = option.price.toString(),
-                    onValueChanged = {},
+                    onValueChanged = { newPrice ->
+                        onPriceChange(option.copy(price = newPrice.toIntOrNull() ?: 0))
+                    },
                     isChecked = selectedDeliveries.any { it.deliveryId == option.deliveryId },
                     onCheckboxClick = { onDeliveryClick(option) },
-                    enabled = false,
                 )
             }
         }
@@ -68,6 +70,7 @@ private fun CreateDeliverySettingPreview() {
             allDeliveries = deliveryOptions,
             selectedDeliveries = deliveryOptions,
             onDeliveryClick = {},
+            onPriceChange = {},
         )
     }
 }
