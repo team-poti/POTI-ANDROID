@@ -1,15 +1,14 @@
 package com.poti.android.data.auth
 
 import android.content.Context
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import com.poti.android.core.auth.SocialLoginResult
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class KakaoLoginProvider @Inject constructor() {
+class KakaoLoginProvider @Inject constructor(
+    private val kakaoAuthClient: KakaoAuthClient,
+) {
     suspend fun login(context: Context): SocialLoginResult =
         suspendCancellableCoroutine { continuation ->
             val onResult: (SocialLoginResult) -> Unit = { result ->
@@ -29,10 +28,10 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+        if (kakaoAuthClient.isKakaoTalkLoginAvailable(context)) {
+            kakaoAuthClient.loginWithKakaoTalk(context) { accessToken, error ->
                 when {
-                    token != null -> onResult(SocialLoginResult.Success(token.accessToken))
+                    accessToken != null -> onResult(SocialLoginResult.Success(accessToken))
                     error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
                     error != null && error.shouldFallbackToKakaoAccount() -> {
                         loginWithKakaoAccount(context, onResult)
@@ -54,9 +53,9 @@ class KakaoLoginProvider @Inject constructor() {
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+        kakaoAuthClient.loginWithKakaoAccount(context) { accessToken, error ->
             when {
-                token != null -> onResult(SocialLoginResult.Success(token.accessToken))
+                accessToken != null -> onResult(SocialLoginResult.Success(accessToken))
                 error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
                 error != null -> onResult(SocialLoginResult.Failure(error))
                 else -> onResult(
@@ -69,7 +68,7 @@ class KakaoLoginProvider @Inject constructor() {
     }
 
     private fun Throwable?.isCancelled(): Boolean =
-        this is ClientError && reason == ClientErrorCause.Cancelled
+        kakaoAuthClient.isCancelled(this)
 
     private fun Throwable.shouldFallbackToKakaoAccount(): Boolean =
         !isCancelled()
