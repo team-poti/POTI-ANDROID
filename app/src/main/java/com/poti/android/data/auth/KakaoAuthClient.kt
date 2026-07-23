@@ -7,13 +7,11 @@ interface KakaoAuthClient {
 
     fun loginWithKakaoTalk(
         context: Context,
-        onResult: (accessToken: String?, error: Throwable?) -> Unit,
+        onResult: (KakaoAuthResult) -> Unit,
     )
 
     fun loginWithKakaoAccount(
         context: Context,
-        onResult: (accessToken: String?, error: Throwable?) -> Unit,
+        onResult: (KakaoAuthResult) -> Unit,
     )
-
-    fun isCancelled(error: Throwable?): Boolean
 }

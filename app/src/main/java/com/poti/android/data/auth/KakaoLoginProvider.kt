@@ -35,19 +35,22 @@ class KakaoLoginProvider @Inject constructor(
         onResult: (SocialLoginResult) -> Unit,
     ) {
         if (kakaoAuthClient.isKakaoTalkLoginAvailable(context)) {
-            kakaoAuthClient.loginWithKakaoTalk(context) { accessToken, error ->
-                when {
-                    accessToken != null -> onResult(SocialLoginResult.Success(accessToken))
-                    error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
-                    error != null && error.shouldFallbackToKakaoAccount() -> {
-                        loginWithKakaoAccount(context, onResult)
+            kakaoAuthClient.loginWithKakaoTalk(context) { result ->
+                when (result) {
+                    is KakaoAuthResult.Success -> {
+                        onResult(SocialLoginResult.Success(result.accessToken))
                     }
-                    error != null -> onResult(SocialLoginResult.Failure(error))
-                    else -> onResult(
-                        SocialLoginResult.Failure(
-                            IllegalStateException("Kakao login returned neither token nor error"),
-                        ),
-                    )
+                    KakaoAuthResult.Cancelled -> onResult(SocialLoginResult.Cancelled)
+                    is KakaoAuthResult.Failure -> {
+                        if (result.shouldFallbackToKakaoAccount()) {
+                            loginWithKakaoAccount(context, onResult)
+                        } else {
+                            onResult(SocialLoginResult.Failure(result.cause))
+                        }
+                    }
+                    is KakaoAuthResult.InvalidResponse -> {
+                        onResult(SocialLoginResult.Failure(result.cause))
+                    }
                 }
             }
         } else {
@@ -59,23 +62,21 @@ class KakaoLoginProvider @Inject constructor(
         context: Context,
         onResult: (SocialLoginResult) -> Unit,
     ) {
-        kakaoAuthClient.loginWithKakaoAccount(context) { accessToken, error ->
-            when {
-                accessToken != null -> onResult(SocialLoginResult.Success(accessToken))
-                error.isCancelled() -> onResult(SocialLoginResult.Cancelled)
-                error != null -> onResult(SocialLoginResult.Failure(error))
-                else -> onResult(
-                    SocialLoginResult.Failure(
-                        IllegalStateException("Kakao account login returned neither token nor error"),
-                    ),
-                )
+        kakaoAuthClient.loginWithKakaoAccount(context) { result ->
+            when (result) {
+                is KakaoAuthResult.Success -> {
+                    onResult(SocialLoginResult.Success(result.accessToken))
+                }
+                KakaoAuthResult.Cancelled -> onResult(SocialLoginResult.Cancelled)
+                is KakaoAuthResult.Failure -> {
+                    onResult(SocialLoginResult.Failure(result.cause))
+                }
+                is KakaoAuthResult.InvalidResponse -> {
+                    onResult(SocialLoginResult.Failure(result.cause))
+                }
             }
         }
     }
 
-    private fun Throwable?.isCancelled(): Boolean =
-        kakaoAuthClient.isCancelled(this)
-
-    private fun Throwable.shouldFallbackToKakaoAccount(): Boolean =
-        !isCancelled()
+    private fun KakaoAuthResult.Failure.shouldFallbackToKakaoAccount(): Boolean = true
 }

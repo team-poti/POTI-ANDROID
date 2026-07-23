@@ -57,21 +57,19 @@ class DefaultSocialLoginLauncherTest {
 
         override fun loginWithKakaoTalk(
             context: Context,
-            onResult: (accessToken: String?, error: Throwable?) -> Unit,
+            onResult: (KakaoAuthResult) -> Unit,
         ) {
             kakaoTalkLoginCallCount += 1
-            onResult(accessToken, null)
+            onResult(KakaoAuthResult.Success(accessToken))
         }
 
         override fun loginWithKakaoAccount(
             context: Context,
-            onResult: (accessToken: String?, error: Throwable?) -> Unit,
+            onResult: (KakaoAuthResult) -> Unit,
         ) {
             kakaoAccountLoginCallCount += 1
-            onResult(accessToken, null)
+            onResult(KakaoAuthResult.Success(accessToken))
         }
-
-        override fun isCancelled(error: Throwable?): Boolean = false
     }
 
     private companion object {

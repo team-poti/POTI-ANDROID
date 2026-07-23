@@ -14,7 +14,7 @@ class KakaoLoginProviderTest {
     @Test
     fun `returns access token when KakaoTalk login succeeds`() = runBlocking {
         val client = FakeKakaoAuthClient(
-            kakaoTalkResult = KakaoAuthResponse(accessToken = KAKAO_ACCESS_TOKEN),
+            kakaoTalkResult = KakaoAuthResult.Success(KAKAO_ACCESS_TOKEN),
         )
         val provider = KakaoLoginProvider(client)
 
@@ -27,10 +27,8 @@ class KakaoLoginProviderTest {
 
     @Test
     fun `returns cancelled without fallback when KakaoTalk login is cancelled`() = runBlocking {
-        val cancellation = RuntimeException("cancelled")
         val client = FakeKakaoAuthClient(
-            kakaoTalkResult = KakaoAuthResponse(error = cancellation),
-            cancelledError = cancellation,
+            kakaoTalkResult = KakaoAuthResult.Cancelled,
         )
         val provider = KakaoLoginProvider(client)
 
@@ -44,8 +42,8 @@ class KakaoLoginProviderTest {
     @Test
     fun `falls back to Kakao account when KakaoTalk login fails`() = runBlocking {
         val client = FakeKakaoAuthClient(
-            kakaoTalkResult = KakaoAuthResponse(error = RuntimeException("talk login failed")),
-            kakaoAccountResult = KakaoAuthResponse(accessToken = KAKAO_ACCOUNT_ACCESS_TOKEN),
+            kakaoTalkResult = KakaoAuthResult.Failure(RuntimeException("talk login failed")),
+            kakaoAccountResult = KakaoAuthResult.Success(KAKAO_ACCOUNT_ACCESS_TOKEN),
         )
         val provider = KakaoLoginProvider(client)
 
@@ -60,8 +58,8 @@ class KakaoLoginProviderTest {
     fun `returns account error when fallback login fails`() = runBlocking {
         val accountError = RuntimeException("account login failed")
         val client = FakeKakaoAuthClient(
-            kakaoTalkResult = KakaoAuthResponse(error = RuntimeException("talk login failed")),
-            kakaoAccountResult = KakaoAuthResponse(error = accountError),
+            kakaoTalkResult = KakaoAuthResult.Failure(RuntimeException("talk login failed")),
+            kakaoAccountResult = KakaoAuthResult.Failure(accountError),
         )
         val provider = KakaoLoginProvider(client)
 
@@ -73,16 +71,14 @@ class KakaoLoginProviderTest {
         assertEquals(1, client.kakaoAccountLoginCallCount)
     }
 
-    private data class KakaoAuthResponse(
-        val accessToken: String? = null,
-        val error: Throwable? = null,
-    )
-
     private class FakeKakaoAuthClient(
         private val isKakaoTalkAvailable: Boolean = true,
-        private val kakaoTalkResult: KakaoAuthResponse = KakaoAuthResponse(),
-        private val kakaoAccountResult: KakaoAuthResponse = KakaoAuthResponse(),
-        private val cancelledError: Throwable? = null,
+        private val kakaoTalkResult: KakaoAuthResult = KakaoAuthResult.InvalidResponse(
+            IllegalStateException("Missing KakaoTalk result"),
+        ),
+        private val kakaoAccountResult: KakaoAuthResult = KakaoAuthResult.InvalidResponse(
+            IllegalStateException("Missing Kakao account result"),
+        ),
     ) : KakaoAuthClient {
         var kakaoTalkLoginCallCount: Int = 0
             private set
@@ -94,21 +90,19 @@ class KakaoLoginProviderTest {
 
         override fun loginWithKakaoTalk(
             context: Context,
-            onResult: (accessToken: String?, error: Throwable?) -> Unit,
+            onResult: (KakaoAuthResult) -> Unit,
         ) {
             kakaoTalkLoginCallCount += 1
-            onResult(kakaoTalkResult.accessToken, kakaoTalkResult.error)
+            onResult(kakaoTalkResult)
         }
 
         override fun loginWithKakaoAccount(
             context: Context,
-            onResult: (accessToken: String?, error: Throwable?) -> Unit,
+            onResult: (KakaoAuthResult) -> Unit,
         ) {
             kakaoAccountLoginCallCount += 1
-            onResult(kakaoAccountResult.accessToken, kakaoAccountResult.error)
+            onResult(kakaoAccountResult)
         }
-
-        override fun isCancelled(error: Throwable?): Boolean = error === cancelledError
     }
 
     private companion object {
