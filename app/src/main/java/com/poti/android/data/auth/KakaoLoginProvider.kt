@@ -4,12 +4,22 @@ import android.content.Context
 import com.poti.android.core.auth.SocialLoginResult
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
 
 class KakaoLoginProvider @Inject constructor(
     private val kakaoAuthClient: KakaoAuthClient,
 ) {
     suspend fun login(context: Context): SocialLoginResult =
+        try {
+            awaitLogin(context)
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (error: Exception) {
+            SocialLoginResult.Failure(error)
+        }
+
+    private suspend fun awaitLogin(context: Context): SocialLoginResult =
         suspendCancellableCoroutine { continuation ->
             val onResult: (SocialLoginResult) -> Unit = { result ->
                 if (continuation.isActive) {
@@ -17,11 +27,7 @@ class KakaoLoginProvider @Inject constructor(
                 }
             }
 
-            try {
-                startLogin(context, onResult)
-            } catch (error: Throwable) {
-                onResult(SocialLoginResult.Failure(error))
-            }
+            startLogin(context, onResult)
         }
 
     private fun startLogin(
