@@ -3,6 +3,7 @@ package com.poti.android.data.auth
 import android.content.Context
 import com.poti.android.core.auth.SocialLoginResult
 import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
@@ -52,6 +53,12 @@ class KakaoLoginProvider @Inject constructor(
                     KakaoAuthResult.Cancelled -> onResult(SocialLoginResult.Cancelled)
                     is KakaoAuthResult.Failure -> {
                         if (result.shouldFallbackToKakaoAccount()) {
+                            if (!isActive()) return@loginWithKakaoTalk
+
+                            Timber.w(
+                                result.cause,
+                                "KakaoTalk login failed; falling back to Kakao account login",
+                            )
                             loginWithKakaoAccount(context, isActive, onResult)
                         } else {
                             onResult(SocialLoginResult.Failure(result.cause))
