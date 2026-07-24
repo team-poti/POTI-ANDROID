@@ -52,17 +52,13 @@ class KakaoLoginProvider @Inject constructor(
                     }
                     KakaoAuthResult.Cancelled -> onResult(SocialLoginResult.Cancelled)
                     is KakaoAuthResult.Failure -> {
-                        if (result.shouldFallbackToKakaoAccount()) {
-                            if (!isActive()) return@loginWithKakaoTalk
+                        if (!isActive()) return@loginWithKakaoTalk
 
-                            Timber.w(
-                                result.cause,
-                                "KakaoTalk login failed; falling back to Kakao account login",
-                            )
-                            loginWithKakaoAccount(context, isActive, onResult)
-                        } else {
-                            onResult(SocialLoginResult.Failure(result.cause))
-                        }
+                        Timber.w(
+                            result.cause,
+                            "KakaoTalk login failed; falling back to Kakao account login",
+                        )
+                        loginWithKakaoAccount(context, isActive, onResult)
                     }
                     is KakaoAuthResult.InvalidResponse -> {
                         onResult(SocialLoginResult.Failure(result.cause))
@@ -98,6 +94,4 @@ class KakaoLoginProvider @Inject constructor(
             }
         }
     }
-
-    private fun KakaoAuthResult.Failure.shouldFallbackToKakaoAccount(): Boolean = true
 }
