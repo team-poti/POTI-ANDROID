@@ -41,7 +41,6 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
@@ -75,6 +74,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnProduct
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnSearchClick
 import com.poti.android.presentation.party.create.model.CreateUiIntent.ScrollComplete
 import com.poti.android.presentation.party.create.model.CreateUiState
+import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
 import com.poti.android.presentation.party.create.util.DateTransformation
 
 @Composable
@@ -174,8 +174,8 @@ private fun PartyCreateScreen(
     onBankChanged: (String) -> Unit,
     onMemberPriceChanged: (MemberPriceOption) -> Unit,
     onMemberEditBtnClick: () -> Unit,
-    onDeliveryRadioBtnClick: (DeliveryOption) -> Unit,
-    onDeliveryPriceChanged: (DeliveryOption) -> Unit,
+    onDeliveryRadioBtnClick: (DeliveryOptionUiModel) -> Unit,
+    onDeliveryPriceChanged: (DeliveryOptionUiModel) -> Unit,
     onCreateBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -371,8 +371,7 @@ private fun PartyCreateScreen(
                 )
 
                 CreateDeliverySetting(
-                    allDeliveries = uiState.rawDeliveries,
-                    selectedDeliveries = uiState.selectedDeliveries,
+                    deliveryOptions = uiState.deliveryOptions,
                     onDeliveryClick = onDeliveryRadioBtnClick,
                     onPriceChange = onDeliveryPriceChanged,
                 )

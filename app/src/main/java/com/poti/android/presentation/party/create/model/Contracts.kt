@@ -64,8 +64,8 @@ data class CreateUiState(
     val isMemberBottomSheetTouched: Boolean = false,
     val memberError: FieldError? = null,
     val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
-    val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
-    val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
+    val rawDeliveries: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
+    val deliveryOptions: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
     val showDialog: Boolean = false,
@@ -119,9 +119,9 @@ sealed interface CreateUiIntent : UiIntent {
 
     data class OnMemberPriceChange(val member: MemberPriceOption) : CreateUiIntent
 
-    data class OnDeliverySelect(val delivery: DeliveryOption) : CreateUiIntent
+    data class OnDeliverySelect(val delivery: DeliveryOptionUiModel) : CreateUiIntent
 
-    data class OnDeliveryPriceChange(val delivery: DeliveryOption) : CreateUiIntent
+    data class OnDeliveryPriceChange(val delivery: DeliveryOptionUiModel) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
 

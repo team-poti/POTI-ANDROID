@@ -12,16 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.model.delivery.DeliveryOption
+import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun CreateDeliverySetting(
-    allDeliveries: ImmutableList<DeliveryOption>,
-    selectedDeliveries: ImmutableList<DeliveryOption>,
-    onDeliveryClick: (DeliveryOption) -> Unit,
-    onPriceChange: (DeliveryOption) -> Unit,
+    deliveryOptions: ImmutableList<DeliveryOptionUiModel>,
+    onDeliveryClick: (DeliveryOptionUiModel) -> Unit,
+    onPriceChange: (DeliveryOptionUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -42,15 +41,16 @@ fun CreateDeliverySetting(
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            allDeliveries.forEach { option ->
+            deliveryOptions.forEach { option ->
                 EditOptionPrice(
                     option = option.name,
                     value = option.price.toString(),
                     onValueChanged = { newPrice ->
                         onPriceChange(option.copy(price = newPrice.toIntOrNull() ?: 0))
                     },
-                    isChecked = selectedDeliveries.any { it.deliveryId == option.deliveryId },
+                    isChecked = option.isSelected,
                     onCheckboxClick = { onDeliveryClick(option) },
+                    enabled = option.isSelected,
                 )
             }
         }
@@ -61,14 +61,13 @@ fun CreateDeliverySetting(
 @Composable
 private fun CreateDeliverySettingPreview() {
     val deliveryOptions = persistentListOf(
-        DeliveryOption(deliveryId = 1, name = "일반택배", price = 4000),
-        DeliveryOption(deliveryId = 2, name = "준등기", price = 1800),
+        DeliveryOptionUiModel(deliveryId = 1, name = "일반택배", price = 4000, isSelected = true),
+        DeliveryOptionUiModel(deliveryId = 2, name = "준등기", price = 1800, isSelected = false),
     )
 
     PotiTheme {
         CreateDeliverySetting(
-            allDeliveries = deliveryOptions,
-            selectedDeliveries = deliveryOptions,
+            deliveryOptions = deliveryOptions,
             onDeliveryClick = {},
             onPriceChange = {},
         )

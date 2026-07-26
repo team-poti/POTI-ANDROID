@@ -21,6 +21,7 @@ import com.poti.android.presentation.party.create.model.CreateUiEffect.*
 import com.poti.android.presentation.party.create.model.CreateUiIntent
 import com.poti.android.presentation.party.create.model.CreateUiIntent.*
 import com.poti.android.presentation.party.create.model.CreateUiState
+import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
 import com.poti.android.presentation.party.create.model.FieldError
 import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import com.poti.android.presentation.party.create.navigation.PartyCreateGraph
@@ -199,7 +200,7 @@ class PartyCreateViewModel @Inject constructor(
             state.accountNumber.isNotEmpty() ||
             state.bank.isNotEmpty() ||
             state.selectedMembers != state.rawMembers ||
-            state.selectedDeliveries != state.rawDeliveries
+            state.deliveryOptions != state.rawDeliveries
 
         return hasUserInput
     }
@@ -226,13 +227,20 @@ class PartyCreateViewModel @Inject constructor(
         viewModelScope.launch {
             getDeliveryOptionsUseCase()
                 .onSuccess { result ->
-                    val deliveries = result.toPersistentList()
+                    val deliveryOptions = result.map {
+                        DeliveryOptionUiModel(
+                            deliveryId = it.deliveryId,
+                            name = it.name,
+                            price = it.price,
+                            isSelected = true,
+                        )
+                    }.toPersistentList()
 
                     updateState {
                         copy(
-                            deliveriesState = ApiState.Success(deliveries),
-                            rawDeliveries = deliveries,
-                            selectedDeliveries = deliveries,
+                            deliveriesState = ApiState.Success(result),
+                            rawDeliveries = deliveryOptions,
+                            deliveryOptions = deliveryOptions,
                         )
                     }
                 }.onFailure { e ->
@@ -400,43 +408,41 @@ class PartyCreateViewModel @Inject constructor(
         }
     }
 
-    private fun handleDeliverySelect(newDelivery: DeliveryOption) {
-        val currentDeliveries = uiState.value.selectedDeliveries
+    private fun handleDeliverySelect(newDelivery: DeliveryOptionUiModel) {
+        val currentOptions = uiState.value.deliveryOptions
+        val selectedCount = currentOptions.count { it.isSelected }
+        val target = currentOptions.find { it.deliveryId == newDelivery.deliveryId } ?: return
 
-        if (currentDeliveries.size < 2 && newDelivery in currentDeliveries) return
+        if (selectedCount < 2 && target.isSelected) return
 
-        val newDeliveries = if (currentDeliveries.any { it.deliveryId == newDelivery.deliveryId }) {
-            currentDeliveries.filter { it.deliveryId != newDelivery.deliveryId }
-        } else {
-            currentDeliveries + newDelivery
+        val newOptions = currentOptions.map {
+            if (it.deliveryId == newDelivery.deliveryId) it.copy(isSelected = !it.isSelected) else it
         }.toPersistentList()
 
         updateState {
             copy(
-                selectedDeliveries = newDeliveries,
+                deliveryOptions = newOptions,
             )
         }
     }
 
-    private fun handleDeliveryPriceChange(newDelivery: DeliveryOption) {
-        val newRawDeliveries = uiState.value.rawDeliveries.map { delivery ->
-            if (delivery.deliveryId == newDelivery.deliveryId) newDelivery else delivery
-        }.toPersistentList()
-
-        val newSelectedDeliveries = uiState.value.selectedDeliveries.map { delivery ->
-            if (delivery.deliveryId == newDelivery.deliveryId) newDelivery else delivery
+    private fun handleDeliveryPriceChange(newDelivery: DeliveryOptionUiModel) {
+        val newOptions = uiState.value.deliveryOptions.map {
+            if (it.deliveryId == newDelivery.deliveryId) newDelivery else it
         }.toPersistentList()
 
         updateState {
             copy(
-                rawDeliveries = newRawDeliveries,
-                selectedDeliveries = newSelectedDeliveries,
+                deliveryOptions = newOptions,
             )
         }
     }
 
     private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
         members.any { it.price == "0" || it.price.isBlank() }
+
+    private fun DeliveryOptionUiModel.toDeliveryOption(): DeliveryOption =
+        DeliveryOption(deliveryId = deliveryId, name = name, price = price)
 
     private fun validateInputs(): Boolean {
         val imageError = if (uiState.value.imageUris.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
@@ -512,7 +518,7 @@ class PartyCreateViewModel @Inject constructor(
         accountNumber = uiState.value.accountNumber,
         imageUrls = urls,
         options = uiState.value.selectedMembers,
-        shippings = uiState.value.selectedDeliveries,
+        shippings = uiState.value.deliveryOptions.filter { it.isSelected }.map { it.toDeliveryOption() },
     )
 
     private fun createParty() = viewModelScope.launch {
