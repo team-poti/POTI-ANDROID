@@ -231,7 +231,7 @@ class PartyCreateViewModel @Inject constructor(
                         DeliveryOptionUiModel(
                             deliveryId = it.deliveryId,
                             name = it.name,
-                            price = it.price,
+                            priceInput = it.price.toString(),
                             isSelected = true,
                         )
                     }.toPersistentList()
@@ -434,6 +434,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 deliveryOptions = newOptions,
+                deliveryError = if (!hasInvalidDeliveryPrice(newOptions)) null else this.deliveryError,
             )
         }
     }
@@ -441,8 +442,11 @@ class PartyCreateViewModel @Inject constructor(
     private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
         members.any { it.price == "0" || it.price.isBlank() }
 
+    private fun hasInvalidDeliveryPrice(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
+        deliveries.filter { it.isSelected }.any { it.priceInput.toIntOrNull() == null }
+
     private fun DeliveryOptionUiModel.toDeliveryOption(): DeliveryOption =
-        DeliveryOption(deliveryId = deliveryId, name = name, price = price)
+        DeliveryOption(deliveryId = deliveryId, name = name, price = requireNotNull(priceInput.toIntOrNull()))
 
     private fun validateInputs(): Boolean {
         val imageError = if (uiState.value.imageUris.isEmpty()) FieldError.IMAGE_EMPTY_ERROR else null
@@ -467,10 +471,16 @@ class PartyCreateViewModel @Inject constructor(
             hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
             else -> null
         }
+        val deliveryError = if (hasInvalidDeliveryPrice(uiState.value.deliveryOptions)) {
+            FieldError.DELIVERY_PRICE_ERROR
+        } else {
+            null
+        }
 
         val hasError = imageError != null || artistError != null || productError != null ||
             deadlineError != null || descriptionError != null ||
-            accountNumberError != null || bankError != null || memberError != null
+            accountNumberError != null || bankError != null || memberError != null ||
+            deliveryError != null
 
         if (hasError) {
             updateState {
@@ -483,6 +493,7 @@ class PartyCreateViewModel @Inject constructor(
                     accountNumberError = accountNumberError,
                     bankError = bankError,
                     memberError = memberError,
+                    deliveryError = deliveryError,
                 )
             }
             getScrollIndex()?.let {
@@ -503,6 +514,7 @@ class PartyCreateViewModel @Inject constructor(
             uiState.value.accountNumberError != null -> 5
             uiState.value.bankError != null -> 6
             uiState.value.memberError != null -> 7
+            uiState.value.deliveryError != null -> 8
             else -> null
         }
 

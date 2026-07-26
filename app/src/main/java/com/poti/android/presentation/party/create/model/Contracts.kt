@@ -34,6 +34,7 @@ enum class FieldError(
     BANK_ERROR(R.string.create_error_need_bank),
     MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
     MEMBER_PRICE_ERROR(R.string.create_error_need_price),
+    DELIVERY_PRICE_ERROR(R.string.create_error_need_delivery_price),
 }
 
 data class CreateUiState(
@@ -66,6 +67,7 @@ data class CreateUiState(
     val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
     val rawDeliveries: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
     val deliveryOptions: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
+    val deliveryError: FieldError? = null,
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
     val showDialog: Boolean = false,

@@ -374,6 +374,7 @@ private fun PartyCreateScreen(
                     deliveryOptions = uiState.deliveryOptions,
                     onDeliveryClick = onDeliveryRadioBtnClick,
                     onPriceChange = onDeliveryPriceChanged,
+                    errorMessage = uiState.deliveryError?.let { stringResource(it.message) } ?: "",
                 )
             }
 
