@@ -7,8 +7,8 @@
     <string name="bottom_nav_my_page">마이페이지</string>
 
     <!-- Navigation Component -->
-    <string name="header_section_ongoing">진행 중</string>
-    <string name="header_section_ended">종료</string>
+    <string name="header_section_ongoing">진행중 %1$d</string>
+    <string name="header_section_ended">종료 %1$d</string>
 
     <!-- Button Component -->
     <string name="action_button_next">다음</string>
