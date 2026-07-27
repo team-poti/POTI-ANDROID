@@ -72,7 +72,6 @@ fun LoginRoute(
     }
 
     LoginScreen(
-        modifier = modifier,
         isLoginInProgress = uiState.phase.isInProgress,
         onKakaoClick = {
             viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.KAKAO))
@@ -80,15 +79,16 @@ fun LoginRoute(
         onGoogleClick = {
             viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
         },
+        modifier = modifier,
     )
 }
 
 @Composable
 private fun LoginScreen(
-    modifier: Modifier = Modifier,
     isLoginInProgress: Boolean,
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
