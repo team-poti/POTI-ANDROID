@@ -2,11 +2,13 @@ package com.poti.android.presentation.auth.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,15 +22,22 @@ import com.poti.android.core.common.extension.noRippleClickable
 fun LoginButton(
     @DrawableRes iconResId: Int,
     background: Color,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     Box(
         modifier = modifier
             .size(68.dp)
             .clip(CircleShape)
             .background(background)
-            .noRippleClickable(onClick),
+            .noRippleClickable(
+                interactionSource = interactionSource,
+                enabled = enabled,
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

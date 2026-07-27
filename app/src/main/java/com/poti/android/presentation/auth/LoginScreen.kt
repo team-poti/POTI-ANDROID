@@ -1,6 +1,5 @@
 package com.poti.android.presentation.auth
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,61 +23,72 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.auth.SocialLoginLauncher
+import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.presentation.auth.component.LoginButton
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
-import dagger.hilt.android.EntryPointAccessors
+import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun LoginRoute(
     onNavigateToOnboarding: () -> Unit,
     onNavigateToHome: () -> Unit,
+    socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-
-    val kakaoLoginManager = remember(context) {
-        val activity = context as? Activity ?: throw IllegalStateException("Context is not an Activity")
-        EntryPointAccessors.fromActivity(
-            activity,
-            KakaoLoginEntryPoint::class.java,
-        ).kakaoLoginManager()
-    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
                 is LoginEffect.NavigateToOnboarding -> onNavigateToOnboarding()
                 is LoginEffect.NavigateToHome -> onNavigateToHome()
-                LoginEffect.LaunchKakaoLogin -> {
-                    kakaoLoginManager.login(context) { result ->
-                        result.onSuccess { token ->
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginSuccess(token.accessToken))
-                        }
-                        result.onFailure { error ->
-                            viewModel.processIntent(LoginIntent.OnKakaoLoginFailure(error.message ?: "Unknown Error"))
-                        }
+                is LoginEffect.LaunchSocialLogin -> {
+                    val result = try {
+                        socialLoginLauncher.login(context, effect.socialType)
+                    } catch (cancellation: CancellationException) {
+                        viewModel.processIntent(LoginIntent.OnSocialLoginAborted)
+                        throw cancellation
+                    } catch (error: Exception) {
+                        SocialLoginResult.Failure(error)
                     }
+
+                    viewModel.processIntent(
+                        LoginIntent.OnSocialLoginResult(
+                            socialType = effect.socialType,
+                            result = result,
+                        ),
+                    )
                 }
             }
         }
     }
 
     LoginScreen(
+        isLoginInProgress = uiState.phase.isInProgress,
+        onKakaoClick = {
+            viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.KAKAO))
+        },
+        onGoogleClick = {
+            viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
+        },
         modifier = modifier,
-        onKakaoClick = { viewModel.processIntent(LoginIntent.OnKakaoLoginClick) },
-        onGoogleClick = { viewModel.processIntent(LoginIntent.OnGoogleLoginClick) },
     )
 }
 
 @Composable
 private fun LoginScreen(
-    modifier: Modifier = Modifier,
+    isLoginInProgress: Boolean,
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -110,12 +119,14 @@ private fun LoginScreen(
             LoginButton(
                 iconResId = R.drawable.ic_kakao,
                 background = Color(0xFFFEE500),
+                enabled = !isLoginInProgress,
                 onClick = onKakaoClick,
             )
 
             LoginButton(
                 iconResId = R.drawable.ic_google,
                 background = Color.White,
+                enabled = !isLoginInProgress,
                 onClick = onGoogleClick,
             )
         }
@@ -129,6 +140,7 @@ private fun LoginScreen(
 private fun LoginScreenPreview() {
     PotiTheme {
         LoginScreen(
+            isLoginInProgress = false,
             onKakaoClick = {},
             onGoogleClick = {},
         )

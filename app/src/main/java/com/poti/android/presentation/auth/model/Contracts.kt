@@ -1,22 +1,24 @@
 package com.poti.android.presentation.auth.model
 
+import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
-import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.auth.SocialType
 
 data class LoginState(
-    val loginState: ApiState<Unit> = ApiState.Init,
+    val phase: LoginPhase = LoginPhase.IDLE,
 ) : UiState
 
 sealed interface LoginIntent : UiIntent {
-    data object OnKakaoLoginClick : LoginIntent
+    data class OnSocialLoginClick(val socialType: SocialType) : LoginIntent
 
-    data class OnKakaoLoginSuccess(val token: String) : LoginIntent
+    data class OnSocialLoginResult(
+        val socialType: SocialType,
+        val result: SocialLoginResult,
+    ) : LoginIntent
 
-    data class OnKakaoLoginFailure(val message: String) : LoginIntent
-
-    data object OnGoogleLoginClick : LoginIntent
+    data object OnSocialLoginAborted : LoginIntent
 }
 
 sealed interface LoginEffect : UiEffect {
@@ -24,5 +26,5 @@ sealed interface LoginEffect : UiEffect {
 
     data object NavigateToHome : LoginEffect
 
-    data object LaunchKakaoLogin : LoginEffect
+    data class LaunchSocialLogin(val socialType: SocialType) : LoginEffect
 }

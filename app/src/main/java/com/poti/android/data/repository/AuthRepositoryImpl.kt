@@ -10,6 +10,7 @@ import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.LoginRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.domain.model.auth.AuthState
+import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun observeAuthState(): Flow<AuthState> = preferenceDataSource.authState
 
     override suspend fun login(
-        socialType: String,
+        socialType: SocialType,
         token: String,
     ): Result<UserAuth> = executeWithUiMock(
         mock = {
@@ -36,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
         real = {
             httpResponseHandler.safeApiCall {
                 val requestDto = LoginRequestDto(
-                    socialType = socialType,
+                    socialType = socialType.name,
                     token = token,
                 )
                 authRemoteDataSource.login(loginRequest = requestDto)

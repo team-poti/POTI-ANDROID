@@ -3,6 +3,7 @@ package com.poti.android.presentation.auth.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.auth.LoginRoute
 import com.poti.android.presentation.onboarding.navigation.navigateToOnboardingGuide
@@ -16,11 +17,13 @@ sealed interface AuthRoute : Route {
 fun NavGraphBuilder.authNavGraph(
     navController: NavController,
     onNavigateToHome: () -> Unit,
+    socialLoginLauncher: SocialLoginLauncher,
 ) {
     composable<AuthRoute.Login> {
         LoginRoute(
             onNavigateToOnboarding = navController::navigateToOnboardingGuide,
             onNavigateToHome = onNavigateToHome,
+            socialLoginLauncher = socialLoginLauncher,
         )
     }
 }

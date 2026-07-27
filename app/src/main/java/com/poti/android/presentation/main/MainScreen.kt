@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.navigation.Route
 
 @Composable
 fun MainScreen(
     targetDestination: Route,
+    socialLoginLauncher: SocialLoginLauncher,
     navigator: MainNavigator = rememberPotiNavigator(),
 ) {
     Scaffold(
@@ -25,6 +27,7 @@ fun MainScreen(
             navigator = navigator,
             targetDestination = targetDestination,
             paddingValues = innerPadding,
+            socialLoginLauncher = socialLoginLauncher,
         )
     }
 }
