@@ -124,6 +124,7 @@
     <string name="create_error_need_bank">은행 정보를 입력해주세요</string>
     <string name="create_error_need_member">멤버를 1명 이상 추가해주세요</string>
     <string name="create_error_need_price">모든 멤버에 가격을 설정해주세요</string>
+    <string name="create_error_need_delivery_price">선택한 배송 방식에 가격을 설정해주세요</string>
     <string name="create_title_bottomsheet">멤버 편집</string>
     <string name="create_header_artist_search">아티스트 검색</string>
     <string name="create_message_artist_search_empty_result">검색 결과가 없어요\n다른 키워드로 다시 검색해보세요</string>
