@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,9 @@ enum class PotiHeaderPageType(
     CLOSE(R.drawable.ic_x),
 }
 
+/**
+ * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
+ */
 @Composable
 fun PotiHeaderPage(
     onNavigationClick: () -> Unit,
@@ -41,10 +45,11 @@ fun PotiHeaderPage(
     subTitle: String? = null,
     onTrailingIconClick: (() -> Unit)? = null,
     @DrawableRes trailingIconRes: Int = R.drawable.ic_switch,
+    containerColor: Color = PotiTheme.colors.white,
 ) {
     Row(
         modifier = modifier
-            .background(PotiTheme.colors.white)
+            .background(containerColor)
             .padding(horizontal = 4.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -104,6 +109,7 @@ fun PotiHeaderPage(
  * @param placeholder 입력값이 없을 때 검색 필드에 표시됩니다.
  * @param onClear 삭제 아이콘 클릭 시 호출됩니다.
  * @param focusRequester 포커스를 외부에서 제어하고 싶을 때 사용합니다.
+ * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
  *
  * @sample PotiHeaderPageSearchPreview
  */
@@ -118,10 +124,11 @@ fun PotiHeaderPageSearch(
     placeholder: String = stringResource(R.string.search_bar_placeholder),
     onClear: () -> Unit = { onValueChange("") },
     focusRequester: FocusRequester? = null,
+    containerColor: Color = PotiTheme.colors.white,
 ) {
     Row(
         modifier = modifier
-            .background(PotiTheme.colors.white)
+            .background(containerColor)
             .padding(horizontal = 4.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),

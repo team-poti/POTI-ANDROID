@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.mypage
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,38 +86,51 @@ private fun MyPageScreen(
             onFirstIconClick = {},
             secondIconRes = R.drawable.ic_alarm,
             onSecondIconClick = {},
+            containerColor = PotiTheme.colors.gray100,
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(PotiTheme.colors.gray100)
                 .verticalScroll(scrollState)
                 .padding(
                     horizontal = 16.dp,
                     vertical = 20.dp,
                 ),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            UserProfile(
-                imageUrl = userMyPage.profileImageUrl,
-                nickname = userMyPage.nickname,
-                email = userMyPage.email,
-            )
-
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(PotiTheme.colors.white)
+                    .padding(horizontal = 12.dp)
+                    .padding(top = 32.dp, bottom = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                RatingBadge(
-                    rating = userMyPage.ratingAvg,
+                UserProfile(
+                    imageUrl = userMyPage.profileImageUrl,
+                    nickname = userMyPage.nickname,
+                    email = userMyPage.email,
                 )
 
-                BadgeButton(
-                    bias = biasText,
-                    onClick = onArtistClick,
+                Row(
                     modifier = Modifier,
-                )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RatingBadge(
+                        rating = userMyPage.ratingAvg,
+                    )
+
+                    BadgeButton(
+                        bias = biasText,
+                        onClick = onArtistClick,
+                        modifier = Modifier,
+                    )
+                }
             }
 
             UserInfo(

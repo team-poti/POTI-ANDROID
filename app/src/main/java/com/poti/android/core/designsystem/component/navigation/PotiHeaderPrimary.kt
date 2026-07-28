@@ -28,6 +28,9 @@ import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.component.button.PotiIconButton
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+/**
+ * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
+ */
 @Composable
 fun PotiHeaderPrimary(
     @DrawableRes firstIconRes: Int,
@@ -36,10 +39,11 @@ fun PotiHeaderPrimary(
     onSecondIconClick: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    containerColor: Color = PotiTheme.colors.white,
 ) {
     Row(
         modifier = modifier
-            .background(PotiTheme.colors.white)
+            .background(containerColor)
             .padding(start = 20.dp, end = 4.dp)
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -86,6 +90,7 @@ fun PotiHeaderPrimary(
  * @param onFirstClick 첫 번째 탭 클릭 시 호출됩니다.
  * @param onSecondClick 두 번째 탭 클릭 시 호출됩니다.
  * @param modifier
+ * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
  *
  * @sample PotiHeaderPrimaryTogglePreview
  */
@@ -97,11 +102,12 @@ fun PotiHeaderPrimaryToggle(
     onFirstClick: () -> Unit,
     onSecondClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = PotiTheme.colors.white,
 ) {
     Row(
         modifier = modifier
             .heightIn(min = 56.dp)
-            .background(PotiTheme.colors.white)
+            .background(containerColor)
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
