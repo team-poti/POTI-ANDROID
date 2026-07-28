@@ -2,6 +2,7 @@ package com.poti.android.presentation.user.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -78,10 +79,10 @@ private fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // 타인의 프로필에서는 이메일을 노출하지 않는다.
             UserProfile(
                 imageUrl = userProfile.profileImageUrl,
                 nickname = userProfile.nickname,
-                email = userProfile.email,
             )
 
             RatingBadge(
@@ -94,12 +95,26 @@ private fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            HistorySummaryCard(
-                title = stringResource(R.string.user_history_recruit),
-                summary = userProfile.recruitSummary,
-                onItemClick = { type -> },
+            // 타인의 모집/참여 내역은 조회할 수 없으므로 onItemClick을 전달하지 않는다.
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-            )
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                // TODO: [천민재] 변경된 디자인에는 참여 내역 카드가 추가되었으나,
+                //  프로필 API(ProfileResponse)가 아직 participationSummary를 내려주지 않는다.
+                //  서버 반영 후 UserProfile.participationSummary로 교체할 것.
+                HistorySummaryCard(
+                    title = stringResource(R.string.user_history_participate),
+                    summary = HistorySummary(total = 0, inProgress = 0, completed = 0),
+                    modifier = Modifier.weight(1f),
+                )
+
+                HistorySummaryCard(
+                    title = stringResource(R.string.user_history_recruit),
+                    summary = userProfile.recruitSummary,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

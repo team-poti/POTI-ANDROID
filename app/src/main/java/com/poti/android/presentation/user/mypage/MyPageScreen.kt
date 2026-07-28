@@ -123,19 +123,24 @@ private fun MyPageScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            HistorySummaryCard(
-                title = stringResource(R.string.user_history_participate),
-                summary = userMyPage.participationSummary,
-                onItemClick = { type -> onHistoryClick(HistoryMode.PARTICIPATION, type) },
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-            )
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                HistorySummaryCard(
+                    title = stringResource(R.string.user_history_participate),
+                    summary = userMyPage.participationSummary,
+                    onItemClick = { type -> onHistoryClick(HistoryMode.PARTICIPATION, type) },
+                    modifier = Modifier.weight(1f),
+                )
 
-            HistorySummaryCard(
-                title = stringResource(R.string.user_history_recruit),
-                summary = userMyPage.recruitSummary,
-                onItemClick = { type -> onHistoryClick(HistoryMode.RECRUIT, type) },
-                modifier = Modifier.fillMaxWidth(),
-            )
+                HistorySummaryCard(
+                    title = stringResource(R.string.user_history_recruit),
+                    summary = userMyPage.recruitSummary,
+                    onItemClick = { type -> onHistoryClick(HistoryMode.RECRUIT, type) },
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

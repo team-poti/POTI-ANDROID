@@ -37,12 +37,15 @@ enum class HistorySummaryType {
     COMPLETED,
 }
 
+/**
+ * @param onItemClick null이면 항목을 클릭할 수 없습니다.
+ */
 @Composable
 fun HistorySummaryCard(
     title: String,
     summary: HistorySummary,
-    onItemClick: (HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
+    onItemClick: ((HistorySummaryType) -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -66,7 +69,7 @@ fun HistorySummaryCard(
             HistoryItem(
                 title = stringResource(R.string.user_history_ongoing),
                 count = summary.inProgress,
-                onClick = { onItemClick(HistorySummaryType.IN_PROGRESS) },
+                onClick = onItemClick?.let { { it(HistorySummaryType.IN_PROGRESS) } },
                 colored = true,
             )
 
@@ -75,7 +78,7 @@ fun HistorySummaryCard(
             HistoryItem(
                 title = stringResource(R.string.user_history_ended),
                 count = summary.completed,
-                onClick = { onItemClick(HistorySummaryType.COMPLETED) },
+                onClick = onItemClick?.let { { it(HistorySummaryType.COMPLETED) } },
                 colored = false,
             )
         }
@@ -84,12 +87,13 @@ fun HistorySummaryCard(
 
 /**
  * @param colored 카운트를 강조 색으로 표시할지 여부입니다. 진행중은 true, 종료는 false를 사용합니다.
+ * @param onClick null이면 클릭 및 pressed 효과가 적용되지 않습니다.
  */
 @Composable
 private fun HistoryItem(
     title: String,
     count: Int,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     colored: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -103,9 +107,15 @@ private fun HistoryItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .noRippleClickable(
-                interactionSource = interactionSource,
-                onClick = onClick,
+            .then(
+                if (onClick != null) {
+                    Modifier.noRippleClickable(
+                        interactionSource = interactionSource,
+                        onClick = onClick,
+                    )
+                } else {
+                    Modifier
+                },
             )
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -150,7 +160,6 @@ private fun HistorySummaryCardPreview() {
             HistorySummaryCard(
                 title = "모집 내역",
                 summary = summary,
-                onItemClick = {},
                 modifier = Modifier.width(158.dp),
             )
         }
