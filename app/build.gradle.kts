@@ -97,6 +97,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
 
     // --- UI (Jetpack Compose) ---
     implementation(platform(libs.androidx.compose.bom))
@@ -147,6 +149,7 @@ dependencies {
     "mockImplementation"(libs.androidx.ui.tooling)
     "mockImplementation"(libs.androidx.ui.test.manifest)
 
-    // Kakao
+    // Social
     implementation(libs.kakao.user)
+    implementation(libs.googleid)
 }

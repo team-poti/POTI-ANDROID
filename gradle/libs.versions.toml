@@ -10,6 +10,7 @@ coreKtx = "1.17.0"
 coreSplashscreen = "1.2.0"
 lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeCompose = "2.10.0"
+credentials = "1.6.0"
 
 # --- Compose (UI) ---
 activityCompose = "1.12.2"
@@ -49,6 +50,9 @@ espressoCore = "3.7.0"
 kakao = "2.23.1"
 lottieCompose = "6.6.6"
 
+# --- Google Identity ---
+googleId = "1.2.0"
+
 
 [libraries]
 # --- Android Core ---
@@ -56,6 +60,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 
 # --- Compose (UI) ---
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -102,6 +108,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 # -- Kakao ---
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
+
+# --- Google Identity ---
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 
 [plugins]
 # --- Android & Kotlin ---
