@@ -10,7 +10,6 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.delivery.DeliveryOption
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -64,7 +63,6 @@ data class CreateUiState(
     val showMemberBottomSheet: Boolean = false,
     val isMemberBottomSheetTouched: Boolean = false,
     val memberError: FieldError? = null,
-    val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
     val rawDeliveries: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
     val deliveryOptions: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
     val deliveryError: FieldError? = null,

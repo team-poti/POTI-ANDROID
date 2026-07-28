@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.text.filter
 
@@ -238,17 +239,12 @@ class PartyCreateViewModel @Inject constructor(
 
                     updateState {
                         copy(
-                            deliveriesState = ApiState.Success(result),
                             rawDeliveries = deliveryOptions,
                             deliveryOptions = deliveryOptions,
                         )
                     }
                 }.onFailure { e ->
-                    updateState {
-                        copy(
-                            deliveriesState = ApiState.Failure(e.message ?: "get delivery fail"),
-                        )
-                    }
+                    Timber.e(e, "get delivery fail")
                 }
         }
     }
