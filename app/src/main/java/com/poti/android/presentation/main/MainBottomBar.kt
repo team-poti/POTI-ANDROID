@@ -16,17 +16,21 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.innerShadow
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.extension.topRoundedBorder
@@ -44,10 +48,20 @@ fun MainBottomBar(
         enter = fadeIn(animationSpec = tween(300)) + slideIn(animationSpec = tween(300)) { IntOffset(0, it.height) },
         exit = fadeOut(animationSpec = tween(300)) + slideOut(animationSpec = tween(300)) { IntOffset(0, it.height) },
     ) {
+        val topRoundedShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
+
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .background(PotiTheme.colors.white)
+                .background(PotiTheme.colors.white, topRoundedShape)
+                .innerShadow(
+                    shape = topRoundedShape,
+                    shadow = Shadow(
+                        radius = 4.dp,
+                        color = PotiTheme.colors.white.copy(alpha = 0.5f),
+                        offset = DpOffset(x = 0.dp, y = 4.dp),
+                    ),
+                )
                 .topRoundedBorder(1.dp, PotiTheme.colors.gray300, 20.dp)
                 .padding(16.dp)
                 .navigationBarsPadding(),
