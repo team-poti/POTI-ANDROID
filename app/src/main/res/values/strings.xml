@@ -222,7 +222,6 @@
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
-    <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
     <string name="user_my_page_title">마이</string>
