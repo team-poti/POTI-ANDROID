@@ -65,10 +65,20 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                buildConfigString(requiredLocalProperty("google.dev.web.client.id")),
+            )
         }
         create("prod") {
             dimension = "server"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                buildConfigString(requiredLocalProperty("google.prod.web.client.id")),
+            )
         }
     }
     compileOptions {
