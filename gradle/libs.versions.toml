@@ -49,6 +49,10 @@ espressoCore = "3.7.0"
 kakao = "2.23.1"
 lottieCompose = "6.6.6"
 
+# --- Firebase ---
+firebaseBom = "34.15.0"
+google-services = "4.5.0"
+
 
 [libraries]
 # --- Android Core ---
@@ -103,6 +107,10 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 
+# --- Firebase ---
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+
 [plugins]
 # --- Android & Kotlin ---
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -114,3 +122,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
