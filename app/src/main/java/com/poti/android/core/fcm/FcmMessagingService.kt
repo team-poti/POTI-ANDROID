@@ -11,7 +11,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.poti.android.R
 import com.poti.android.core.fcm.repository.FcmRepository
-import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.di.ApplicationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -31,16 +30,11 @@ class FcmMessagingService : FirebaseMessagingService() {
     @Inject
     lateinit var fcmRepository: FcmRepository
 
-    @Inject
-    lateinit var preferenceDataSource: PreferenceDataSource
-
     @Suppress("OVERRIDE_DEPRECATION")
     override fun onNewToken(token: String) {
-        if (preferenceDataSource.cachedAccessToken != null) {
-            scope.launch {
-                fcmRepository.saveFcmToken(token)
-                    .onFailure { Timber.e(it, "Failed to save FCM token") }
-            }
+        scope.launch {
+            fcmRepository.saveFcmToken(token)
+                .onFailure { Timber.e(it, "Failed to save FCM token") }
         }
     }
 
