@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
 
         pendingDeepLink = intent?.data
+        intent?.data = null
 
         setContent {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
@@ -94,6 +95,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         pendingDeepLink = intent.data
+        intent.data = null
     }
 
     private fun requestNotificationPermission() {
