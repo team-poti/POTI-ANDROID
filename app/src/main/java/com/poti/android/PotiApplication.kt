@@ -3,6 +3,7 @@ package com.poti.android
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
+import com.poti.android.core.fcm.FcmMessagingService
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -13,6 +14,7 @@ class PotiApplication : Application() {
         setDarkMode()
         setTimber()
         initKakaoSdk()
+        FcmMessagingService.createChannels(this)
     }
 
     private fun setDarkMode() {
