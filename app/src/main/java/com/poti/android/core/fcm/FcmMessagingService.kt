@@ -103,13 +103,12 @@ class FcmMessagingService : FirebaseMessagingService() {
 
     companion object {
         private const val DEFAULT_CHANNEL_ID = "default_channel_id"
-        private const val DEFAULT_CHANNEL_NAME = "기본 알림"
 
         fun createChannels(context: Context) {
             context.notificationManager.createNotificationChannel(
                 NotificationChannel(
                     DEFAULT_CHANNEL_ID,
-                    DEFAULT_CHANNEL_NAME,
+                    context.getString(R.string.default_notification_channel_name),
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ),
             )
