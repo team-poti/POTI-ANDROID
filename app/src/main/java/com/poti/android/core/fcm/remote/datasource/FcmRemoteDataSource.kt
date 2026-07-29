@@ -1,8 +1,8 @@
 package com.poti.android.core.fcm.remote.datasource
 
-import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.core.fcm.remote.dto.request.FcmTokenRequestDto
 import com.poti.android.core.fcm.remote.service.FcmService
+import com.poti.android.core.network.model.BaseResponse
 import javax.inject.Inject
 
 class FcmRemoteDataSource @Inject constructor(

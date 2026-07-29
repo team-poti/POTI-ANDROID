@@ -1,8 +1,8 @@
 package com.poti.android.core.fcm.repository
 
-import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.core.fcm.remote.datasource.FcmRemoteDataSource
 import com.poti.android.core.fcm.remote.dto.request.FcmTokenRequestDto
+import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mock.executeWithUiMock
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class FcmRepositoryImpl @Inject constructor(
                 remoteDataSource.deleteFcmToken(token)
                 Unit
             }
-        }
+        },
     )
 
     override suspend fun saveFcmToken(token: String): Result<Unit> = executeWithUiMock(
@@ -25,10 +25,10 @@ class FcmRepositoryImpl @Inject constructor(
         real = {
             httpResponseHandler.safeApiCall {
                 remoteDataSource.postFcmToken(
-                    request = FcmTokenRequestDto(token)
+                    request = FcmTokenRequestDto(token),
                 )
                 Unit
             }
-        }
+        },
     )
 }
