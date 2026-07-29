@@ -1,7 +1,7 @@
-package com.poti.android.core.notification.remote.service
+package com.poti.android.core.fcm.remote.service
 
 import com.poti.android.core.network.model.BaseResponse
-import com.poti.android.core.notification.remote.dto.request.FcmTokenRequestDto
+import com.poti.android.core.fcm.remote.dto.request.FcmTokenRequestDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST

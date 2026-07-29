@@ -1,4 +1,4 @@
-package com.poti.android.core.notification.repository
+package com.poti.android.core.fcm.repository
 
 interface FcmRepository {
     suspend fun deleteFcmToken(token: String): Result<Unit>

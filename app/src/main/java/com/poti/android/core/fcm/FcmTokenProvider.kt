@@ -1,4 +1,4 @@
-package com.poti.android.core.notification
+package com.poti.android.core.fcm
 
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -8,7 +8,7 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 
 @Singleton
-class NotificationTokenProvider @Inject constructor() {
+class FcmTokenProvider @Inject constructor() {
     @Suppress("DEPRECATION")
     suspend fun getToken(): String? =
         suspendCancellableCoroutine { continuation ->

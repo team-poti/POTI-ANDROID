@@ -1,6 +1,6 @@
-package com.poti.android.core.notification.di
+package com.poti.android.core.fcm.di
 
-import com.poti.android.core.notification.remote.service.FcmService
+import com.poti.android.core.fcm.remote.service.FcmService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

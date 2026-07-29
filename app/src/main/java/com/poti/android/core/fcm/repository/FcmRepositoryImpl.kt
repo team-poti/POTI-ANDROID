@@ -1,8 +1,8 @@
-package com.poti.android.core.notification.repository
+package com.poti.android.core.fcm.repository
 
 import com.poti.android.core.network.util.HttpResponseHandler
-import com.poti.android.core.notification.remote.datasource.FcmRemoteDataSource
-import com.poti.android.core.notification.remote.dto.request.FcmTokenRequestDto
+import com.poti.android.core.fcm.remote.datasource.FcmRemoteDataSource
+import com.poti.android.core.fcm.remote.dto.request.FcmTokenRequestDto
 import com.poti.android.data.mock.executeWithUiMock
 import javax.inject.Inject
 

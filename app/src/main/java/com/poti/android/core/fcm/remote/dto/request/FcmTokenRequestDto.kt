@@ -1,4 +1,4 @@
-package com.poti.android.core.notification.remote.dto.request
+package com.poti.android.core.fcm.remote.dto.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
-package com.poti.android.core.notification.di
+package com.poti.android.core.fcm.di
 
-import com.poti.android.core.notification.repository.FcmRepository
-import com.poti.android.core.notification.repository.FcmRepositoryImpl
+import com.poti.android.core.fcm.repository.FcmRepository
+import com.poti.android.core.fcm.repository.FcmRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
