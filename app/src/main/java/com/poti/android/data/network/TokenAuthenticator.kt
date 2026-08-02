@@ -10,6 +10,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -28,7 +29,7 @@ class TokenAuthenticator @Inject constructor(
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
         if (requestUrl.contains("/auth/reissue")) {
-            Timber.Forest.tag("TokenAuthenticator").e("Refresh Token expired. Giving up.")
+            Timber.Forest.tag("TokenAuthenticator").e("Reissue request returned 401. Logout.")
             handleLogout()
             return null
         }
@@ -53,29 +54,57 @@ class TokenAuthenticator @Inject constructor(
             Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
             val refreshResponse = try {
                 authRemoteDataSource.get().reissue(ReissueRequestDto(currentRefreshToken)).execute()
+            } catch (e: IOException) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .w(e, "Reissue API call failed due to network error. Keep session.")
+                return null
             } catch (e: Exception) {
-                Timber.Forest.tag("TokenAuthenticator").e(e, "Reissue API call failed (Exception). Logout.")
-                handleLogout()
+                Timber.Forest.tag("TokenAuthenticator")
+                    .e(e, "Reissue API call failed unexpectedly. Keep session.")
                 return null
             }
 
-            if (refreshResponse.isSuccessful) {
-                refreshResponse.body()?.data?.let { reissueData ->
-                    Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
+            when (refreshResponse.code()) {
+                HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+                    Timber.Forest.tag("TokenAuthenticator")
+                        .e("Refresh token is expired or invalid. code=${refreshResponse.code()}. Logout.")
+                    handleLogout()
+                    return null
+                }
 
-                    val newAccessToken = reissueData.accessToken
-                    val newRefreshToken = reissueData.refreshToken
-
-                    runBlocking {
-                        preferenceDataSource.saveTokens(newAccessToken, newRefreshToken)
-                    }
-
-                    return newRequestWithAccessToken(response.request, newAccessToken)
+                in HTTP_SERVER_ERROR_START..HTTP_SERVER_ERROR_END -> {
+                    Timber.Forest.tag("TokenAuthenticator")
+                        .w("Reissue API returned server error. code=${refreshResponse.code()}. Keep session.")
+                    return null
                 }
             }
+
+            if (!refreshResponse.isSuccessful) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .w("Reissue API returned non-success response. code=${refreshResponse.code()}. Keep session.")
+                return null
+            }
+
+            val reissueData = refreshResponse.body()?.data
+            if (reissueData == null) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .e("Reissue API returned success but body/data is null. Keep session.")
+                return null
+            }
+
+            Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
+
+            val newAccessToken = reissueData.accessToken
+            val newRefreshToken = reissueData.refreshToken
+
+            runBlocking {
+                preferenceDataSource.saveTokens(newAccessToken, newRefreshToken)
+            }
+
+            return newRequestWithAccessToken(response.request, newAccessToken)
         }
 
-        handleLogout()
+        Timber.Forest.tag("TokenAuthenticator").w("Token reissue was not completed. Keep session.")
         return null
     }
 
@@ -99,5 +128,12 @@ class TokenAuthenticator @Inject constructor(
             Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
             authSessionManager.triggerLogout()
         }
+    }
+
+    private companion object {
+        const val HTTP_UNAUTHORIZED = 401
+        const val HTTP_FORBIDDEN = 403
+        const val HTTP_SERVER_ERROR_START = 500
+        const val HTTP_SERVER_ERROR_END = 599
     }
 }
