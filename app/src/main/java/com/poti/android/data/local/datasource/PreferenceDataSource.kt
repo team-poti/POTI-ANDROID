@@ -5,27 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.poti.android.di.ApplicationScope
-import com.poti.android.di.IoDispatcher
 import com.poti.android.domain.model.auth.AuthState
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.collections.set
-
-data class TokenPair(
-    val accessToken: String,
-    val refreshToken: String,
-)
 
 class PreferenceDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    @ApplicationScope private val externalScope: CoroutineScope,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
@@ -41,38 +28,17 @@ class PreferenceDataSource @Inject constructor(
         prefs[REFRESH_TOKEN_KEY]
     }
 
-    @Volatile
-    private var _cachedAccessToken: String? = null
-    val cachedAccessToken: String?
-        get() = _cachedAccessToken
+    val tokenPair: Flow<TokenPair?> = dataStore.data.map { prefs ->
+        val accessToken = prefs[ACCESS_TOKEN_KEY]
+        val refreshToken = prefs[REFRESH_TOKEN_KEY]
 
-    @Volatile
-    private var _cachedRefreshToken: String? = null
-    val cachedRefreshToken: String?
-        get() = _cachedRefreshToken
-
-    @Volatile
-    private var _cachedTokenPair: TokenPair? = null
-    val cachedTokenPair: TokenPair?
-        get() = _cachedTokenPair
-
-    init {
-        externalScope.launch(ioDispatcher) {
-            dataStore.data.collect { prefs ->
-                val accessToken = prefs[ACCESS_TOKEN_KEY]
-                val refreshToken = prefs[REFRESH_TOKEN_KEY]
-
-                _cachedAccessToken = accessToken
-                _cachedRefreshToken = refreshToken
-                _cachedTokenPair = if (accessToken != null && refreshToken != null) {
-                    TokenPair(
-                        accessToken = accessToken,
-                        refreshToken = refreshToken,
-                    )
-                } else {
-                    null
-                }
-            }
+        if (accessToken != null && refreshToken != null) {
+            TokenPair(
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+            )
+        } else {
+            null
         }
     }
 
@@ -89,13 +55,6 @@ class PreferenceDataSource @Inject constructor(
         accessToken: String,
         refreshToken: String,
     ) {
-        _cachedAccessToken = accessToken
-        _cachedRefreshToken = refreshToken
-        _cachedTokenPair = TokenPair(
-            accessToken = accessToken,
-            refreshToken = refreshToken,
-        )
-
         dataStore.edit { prefs ->
             Timber.d("saveTokens 호출됨 - Access: ${accessToken.take(5)}... Refresh: ${refreshToken.take(5)}...")
             prefs[ACCESS_TOKEN_KEY] = accessToken
@@ -115,10 +74,6 @@ class PreferenceDataSource @Inject constructor(
     }
 
     suspend fun clearTokens() {
-        _cachedAccessToken = null
-        _cachedRefreshToken = null
-        _cachedTokenPair = null
-
         dataStore.edit { prefs ->
             prefs.remove(ACCESS_TOKEN_KEY)
             prefs.remove(REFRESH_TOKEN_KEY)
@@ -126,10 +81,6 @@ class PreferenceDataSource @Inject constructor(
     }
 
     suspend fun clearAll() {
-        _cachedAccessToken = null
-        _cachedRefreshToken = null
-        _cachedTokenPair = null
-
         dataStore.edit { prefs ->
             prefs.clear()
         }

@@ -1,6 +1,6 @@
 package com.poti.android.data.network
 
-import com.poti.android.data.local.datasource.PreferenceDataSource
+import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class TokenAuthenticator @Inject constructor(
-    private val preferenceDataSource: PreferenceDataSource,
+    private val authTokenStore: AuthTokenStore,
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
     private val authSessionManager: AuthSessionManager,
 ) : Authenticator {
@@ -41,9 +41,10 @@ class TokenAuthenticator @Inject constructor(
         }
 
         val requestAccessToken = response.request.accessTokenFromAuthorizationHeader()
+        authTokenStore.ensureInitializedBlocking()
 
         synchronized(lock) {
-            val latestTokenPair = preferenceDataSource.cachedTokenPair
+            val latestTokenPair = authTokenStore.cachedTokenPair
 
             if (latestTokenPair == null) {
                 Timber.tag("TokenAuthenticator").w("Token is empty or was cleared. Stop retry.")
@@ -102,7 +103,7 @@ class TokenAuthenticator @Inject constructor(
             val newRefreshToken = reissueData.refreshToken
 
             runBlocking {
-                preferenceDataSource.saveTokens(newAccessToken, newRefreshToken)
+                authTokenStore.saveTokens(newAccessToken, newRefreshToken)
             }
 
             return newRequestWithAccessToken(response.request, newAccessToken)
@@ -128,7 +129,7 @@ class TokenAuthenticator @Inject constructor(
     private fun handleLogout() {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
         runBlocking {
-            preferenceDataSource.clearTokens()
+            authTokenStore.clearTokens()
             Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
             authSessionManager.triggerLogout()
         }

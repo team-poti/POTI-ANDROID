@@ -2,6 +2,7 @@ package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
+import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.PreferenceDataSource
 import com.poti.android.data.mapper.auth.toDomain
 import com.poti.android.data.mock.UiMockData
@@ -20,9 +21,10 @@ class AuthRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val preferenceDataSource: PreferenceDataSource,
+    private val authTokenStore: AuthTokenStore,
     private val authSessionManager: AuthSessionManager,
 ) : AuthRepository {
-    override fun observeAuthState(): Flow<AuthState> = preferenceDataSource.authState
+    override fun observeAuthState(): Flow<AuthState> = authTokenStore.authState
 
     override suspend fun login(
         socialType: SocialType,
@@ -30,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<UserAuth> = executeWithUiMock(
         mock = {
             UiMockData.userAuth.also {
-                preferenceDataSource.saveTokens(it.accessToken, it.refreshToken)
+                authTokenStore.saveTokens(it.accessToken, it.refreshToken)
                 preferenceDataSource.saveOnboardingState(!it.isNewUser)
             }
         },
@@ -44,7 +46,7 @@ class AuthRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .apply {
-                        preferenceDataSource.saveTokens(accessToken, refreshToken)
+                        authTokenStore.saveTokens(accessToken, refreshToken)
                         preferenceDataSource.saveOnboardingState(!isNewUser)
                     }
                     .toDomain()
@@ -67,13 +69,13 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun withdrawal(): Result<Unit> = executeWithUiMock(
         mock = {
-            preferenceDataSource.clearAll()
+            authTokenStore.clearAll()
             authSessionManager.triggerLogout()
         },
         real = {
             httpResponseHandler.safeApiCall {
                 authRemoteDataSource.withdrawal()
-                preferenceDataSource.clearAll()
+                authTokenStore.clearAll()
                 authSessionManager.triggerLogout()
             }
         },
