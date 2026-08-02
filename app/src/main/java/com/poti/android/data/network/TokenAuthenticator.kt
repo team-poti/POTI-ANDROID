@@ -40,31 +40,24 @@ class TokenAuthenticator @Inject constructor(
             return null
         }
 
-        val currentTokenPair = preferenceDataSource.cachedTokenPair
+        val requestAccessToken = response.request.accessTokenFromAuthorizationHeader()
 
         synchronized(lock) {
-            val freshTokenPair = preferenceDataSource.cachedTokenPair
+            val latestTokenPair = preferenceDataSource.cachedTokenPair
 
-            if (freshTokenPair != currentTokenPair) {
-                if (freshTokenPair == null) {
-                    Timber.tag("TokenAuthenticator").w("Token was cleared while waiting. Stop retry.")
-                    return null
-                }
-
-                Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
-                return newRequestWithAccessToken(response.request, freshTokenPair.accessToken)
+            if (latestTokenPair == null) {
+                Timber.tag("TokenAuthenticator").w("Token is empty or was cleared. Stop retry.")
+                return null
             }
 
-            val currentRefreshToken = currentTokenPair?.refreshToken
-            if (currentRefreshToken.isNullOrBlank()) {
-                Timber.Forest.tag("TokenAuthenticator").e("RefreshToken is empty. Logout.")
-                handleLogout()
-                return null
+            if (requestAccessToken != latestTokenPair.accessToken) {
+                Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
+                return newRequestWithAccessToken(response.request, latestTokenPair.accessToken)
             }
 
             Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
             val refreshResponse = try {
-                authRemoteDataSource.get().reissue(ReissueRequestDto(currentRefreshToken)).execute()
+                authRemoteDataSource.get().reissue(ReissueRequestDto(latestTokenPair.refreshToken)).execute()
             } catch (e: IOException) {
                 Timber.Forest.tag("TokenAuthenticator")
                     .w(e, "Reissue API call failed due to network error. Keep session.")
@@ -128,7 +121,7 @@ class TokenAuthenticator @Inject constructor(
         Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new Bearer token.")
 
         return request.newBuilder()
-            .header("Authorization", "Bearer $newAccessToken")
+            .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$newAccessToken")
             .build()
     }
 
@@ -143,6 +136,9 @@ class TokenAuthenticator @Inject constructor(
 
     private fun isExcludedAuthUrl(requestUrl: String): Boolean =
         requestUrl.contains(AUTH_LOGIN_PATH) || requestUrl.contains(AUTH_REISSUE_PATH)
+
+    private fun Request.accessTokenFromAuthorizationHeader(): String? =
+        header(AUTHORIZATION_HEADER)?.removePrefix(BEARER_PREFIX)?.takeIf { it.isNotBlank() }
 
     private fun Response.authRetryCount(): Int {
         var count = 1
@@ -159,6 +155,8 @@ class TokenAuthenticator @Inject constructor(
     private companion object {
         const val AUTH_LOGIN_PATH = "/auth/login"
         const val AUTH_REISSUE_PATH = "/auth/reissue"
+        const val AUTHORIZATION_HEADER = "Authorization"
+        const val BEARER_PREFIX = "Bearer "
         const val MAX_AUTH_RETRY_COUNT = 1
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
