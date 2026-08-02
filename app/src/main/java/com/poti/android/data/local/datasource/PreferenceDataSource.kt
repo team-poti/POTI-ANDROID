@@ -17,6 +17,11 @@ import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.set
 
+data class TokenPair(
+    val accessToken: String,
+    val refreshToken: String,
+)
+
 class PreferenceDataSource @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     @ApplicationScope private val externalScope: CoroutineScope,
@@ -46,12 +51,28 @@ class PreferenceDataSource @Inject constructor(
     val cachedRefreshToken: String?
         get() = _cachedRefreshToken
 
+    @Volatile
+    private var _cachedTokenPair: TokenPair? = null
+    val cachedTokenPair: TokenPair?
+        get() = _cachedTokenPair
+
     init {
         externalScope.launch(ioDispatcher) {
-            accessToken.collect { _cachedAccessToken = it }
-        }
-        externalScope.launch(ioDispatcher) {
-            refreshToken.collect { _cachedRefreshToken = it }
+            dataStore.data.collect { prefs ->
+                val accessToken = prefs[ACCESS_TOKEN_KEY]
+                val refreshToken = prefs[REFRESH_TOKEN_KEY]
+
+                _cachedAccessToken = accessToken
+                _cachedRefreshToken = refreshToken
+                _cachedTokenPair = if (accessToken != null && refreshToken != null) {
+                    TokenPair(
+                        accessToken = accessToken,
+                        refreshToken = refreshToken,
+                    )
+                } else {
+                    null
+                }
+            }
         }
     }
 
@@ -70,6 +91,10 @@ class PreferenceDataSource @Inject constructor(
     ) {
         _cachedAccessToken = accessToken
         _cachedRefreshToken = refreshToken
+        _cachedTokenPair = TokenPair(
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+        )
 
         dataStore.edit { prefs ->
             Timber.d("saveTokens 호출됨 - Access: ${accessToken.take(5)}... Refresh: ${refreshToken.take(5)}...")
@@ -92,6 +117,7 @@ class PreferenceDataSource @Inject constructor(
     suspend fun clearTokens() {
         _cachedAccessToken = null
         _cachedRefreshToken = null
+        _cachedTokenPair = null
 
         dataStore.edit { prefs ->
             prefs.remove(ACCESS_TOKEN_KEY)
@@ -102,6 +128,7 @@ class PreferenceDataSource @Inject constructor(
     suspend fun clearAll() {
         _cachedAccessToken = null
         _cachedRefreshToken = null
+        _cachedTokenPair = null
 
         dataStore.edit { prefs ->
             prefs.clear()

@@ -40,17 +40,17 @@ class TokenAuthenticator @Inject constructor(
             return null
         }
 
-        val currentAccessToken = preferenceDataSource.cachedAccessToken
-        val currentRefreshToken = preferenceDataSource.cachedRefreshToken
+        val currentTokenPair = preferenceDataSource.cachedTokenPair
 
         synchronized(lock) {
-            val freshAccessToken = preferenceDataSource.cachedAccessToken
+            val freshTokenPair = preferenceDataSource.cachedTokenPair
 
-            if (freshAccessToken != currentAccessToken) {
+            if (freshTokenPair != currentTokenPair) {
                 Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
-                return newRequestWithAccessToken(response.request, freshAccessToken)
+                return newRequestWithAccessToken(response.request, freshTokenPair?.accessToken)
             }
 
+            val currentRefreshToken = currentTokenPair?.refreshToken
             if (currentRefreshToken.isNullOrBlank()) {
                 Timber.Forest.tag("TokenAuthenticator").e("RefreshToken is empty. Logout.")
                 handleLogout()
