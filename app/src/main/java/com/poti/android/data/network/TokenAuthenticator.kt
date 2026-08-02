@@ -1,6 +1,5 @@
 package com.poti.android.data.network
 
-import android.os.Looper
 import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.TokenPair
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
@@ -28,10 +27,6 @@ class TokenAuthenticator @Inject constructor(
         route: Route?,
         response: Response,
     ): Request? {
-        check(Looper.myLooper() != Looper.getMainLooper()) {
-            "TokenAuthenticator must not run on the main thread. Use an asynchronous API call."
-        }
-
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
