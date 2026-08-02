@@ -79,8 +79,8 @@ class TokenAuthenticator @Inject constructor(
                 HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
                     Timber.Forest.tag("TokenAuthenticator")
                         .e("Refresh token is expired or invalid. code=${refreshResponse.code()}. Logout.")
-                    authTokenStore.clearCachedTokens()
-                    return@synchronized RefreshResult.Logout
+                    val generation = authTokenStore.clearCachedTokens()
+                    return@synchronized RefreshResult.Logout(generation)
                 }
 
                 in HTTP_SERVER_ERROR_START..HTTP_SERVER_ERROR_END -> {
@@ -106,19 +106,19 @@ class TokenAuthenticator @Inject constructor(
             Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
 
             val newTokenPair = TokenPair(reissueData.accessToken, reissueData.refreshToken)
-            authTokenStore.updateCachedTokens(newTokenPair)
-            RefreshResult.PersistAndRetry(newTokenPair)
+            val generation = authTokenStore.updateCachedTokens(newTokenPair)
+            RefreshResult.PersistAndRetry(newTokenPair, generation)
         }
 
         return when (refreshResult) {
             is RefreshResult.Retry -> newRequestWithAccessToken(response.request, refreshResult.accessToken)
             is RefreshResult.PersistAndRetry -> {
-                persistTokensBlocking(refreshResult.tokenPair)
+                persistTokensBlocking(refreshResult.tokenPair, refreshResult.generation)
                 newRequestWithAccessToken(response.request, refreshResult.tokenPair.accessToken)
             }
 
-            RefreshResult.Logout -> {
-                handleLogout()
+            is RefreshResult.Logout -> {
+                handleLogout(refreshResult.generation)
                 null
             }
 
@@ -137,12 +137,12 @@ class TokenAuthenticator @Inject constructor(
             .build()
     }
 
-    private fun handleLogout() {
+    private fun handleLogout(generation: Long) {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
         runCatching {
             runBlocking {
                 withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
-                    authTokenStore.persistTokenClear()
+                    authTokenStore.persistTokenClearIfCurrent(generation)
                 }
             }
         }.onFailure { error ->
@@ -153,11 +153,14 @@ class TokenAuthenticator @Inject constructor(
         authSessionManager.triggerLogout()
     }
 
-    private fun persistTokensBlocking(tokenPair: TokenPair) {
+    private fun persistTokensBlocking(
+        tokenPair: TokenPair,
+        generation: Long,
+    ) {
         runCatching {
             runBlocking {
                 withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
-                    authTokenStore.persistTokens(tokenPair)
+                    authTokenStore.persistTokensIfCurrent(tokenPair, generation)
                 }
             }
         }.onFailure { error ->
@@ -187,9 +190,12 @@ class TokenAuthenticator @Inject constructor(
     private sealed interface RefreshResult {
         data class Retry(val accessToken: String) : RefreshResult
 
-        data class PersistAndRetry(val tokenPair: TokenPair) : RefreshResult
+        data class PersistAndRetry(
+            val tokenPair: TokenPair,
+            val generation: Long,
+        ) : RefreshResult
 
-        data object Logout : RefreshResult
+        data class Logout(val generation: Long) : RefreshResult
 
         data object Stop : RefreshResult
     }
