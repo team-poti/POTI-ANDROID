@@ -44,8 +44,12 @@ class AuthTokenStore @Inject constructor(
     val authState: Flow<AuthState> = combine(
         preferenceDataSource.authState,
         tokenState,
-    ) { authState, tokenState ->
-        authState.copy(isInitialized = tokenState.isInitialized)
+    ) { persistedAuthState, tokenState ->
+        AuthState(
+            accessToken = tokenState.tokenPair?.accessToken,
+            isOnboardingFinished = persistedAuthState.isOnboardingFinished,
+            isInitialized = tokenState.isInitialized,
+        )
     }
 
     val cachedTokenPair: TokenPair?
