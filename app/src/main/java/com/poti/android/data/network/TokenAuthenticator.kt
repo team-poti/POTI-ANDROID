@@ -28,6 +28,12 @@ class TokenAuthenticator @Inject constructor(
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
+        if (response.authRetryCount() > MAX_AUTH_RETRY_COUNT) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .w("Stop token reissue because auth retry limit exceeded. URL: $requestUrl")
+            return null
+        }
+
         if (isExcludedAuthUrl(requestUrl)) {
             Timber.Forest.tag("TokenAuthenticator")
                 .d("Skip token reissue for auth endpoint. URL: $requestUrl")
@@ -133,9 +139,22 @@ class TokenAuthenticator @Inject constructor(
     private fun isExcludedAuthUrl(requestUrl: String): Boolean =
         requestUrl.contains(AUTH_LOGIN_PATH) || requestUrl.contains(AUTH_REISSUE_PATH)
 
+    private fun Response.authRetryCount(): Int {
+        var count = 1
+        var priorResponse = priorResponse
+
+        while (priorResponse != null) {
+            count++
+            priorResponse = priorResponse.priorResponse
+        }
+
+        return count
+    }
+
     private companion object {
         const val AUTH_LOGIN_PATH = "/auth/login"
         const val AUTH_REISSUE_PATH = "/auth/reissue"
+        const val MAX_AUTH_RETRY_COUNT = 1
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
         const val HTTP_SERVER_ERROR_START = 500
