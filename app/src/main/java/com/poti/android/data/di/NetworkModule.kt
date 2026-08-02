@@ -59,10 +59,40 @@ object NetworkModule {
         addInterceptor(loggingInterceptor)
     }.build()
 
+    @ReissueClient
+    @Provides
+    @Singleton
+    fun provideReissueOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+    ): OkHttpClient = OkHttpClient.Builder().apply {
+        connectTimeout(10, TimeUnit.SECONDS)
+        writeTimeout(10, TimeUnit.SECONDS)
+        readTimeout(10, TimeUnit.SECONDS)
+        addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .header("Accept", "*/*")
+                .build()
+            chain.proceed(request)
+        }
+        addInterceptor(loggingInterceptor)
+    }.build()
+
     @Provides
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
+        json: Json,
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+
+    @ReissueClient
+    @Provides
+    @Singleton
+    fun provideReissueRetrofit(
+        @ReissueClient okHttpClient: OkHttpClient,
         json: Json,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
