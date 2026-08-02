@@ -15,7 +15,7 @@ class AuthInterceptor @Inject constructor(
         val url = originalRequest.url.toString()
         Timber.d("요청 URL: $url")
 
-        if (url.contains("/auth/login") || url.contains("/auth/reissue")) {
+        if (isExcludedAuthPath(originalRequest.url.encodedPath)) {
             return chain.proceed(originalRequest)
         }
 
@@ -39,5 +39,13 @@ class AuthInterceptor @Inject constructor(
         }
 
         return chain.proceed(builder.build())
+    }
+
+    private fun isExcludedAuthPath(path: String): Boolean =
+        path == AUTH_LOGIN_PATH || path == AUTH_REISSUE_PATH
+
+    private companion object {
+        const val AUTH_LOGIN_PATH = "/auth/login"
+        const val AUTH_REISSUE_PATH = "/auth/reissue"
     }
 }

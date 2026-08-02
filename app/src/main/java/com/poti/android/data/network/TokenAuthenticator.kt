@@ -28,6 +28,7 @@ class TokenAuthenticator @Inject constructor(
         response: Response,
     ): Request? {
         val requestUrl = response.request.url.toString()
+        val requestPath = response.request.url.encodedPath
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
         if (response.authRetryCount() > MAX_AUTH_RETRY_COUNT) {
@@ -36,7 +37,7 @@ class TokenAuthenticator @Inject constructor(
             return null
         }
 
-        if (isExcludedAuthUrl(requestUrl)) {
+        if (isExcludedAuthPath(requestPath)) {
             Timber.Forest.tag("TokenAuthenticator")
                 .d("Skip token reissue for auth endpoint. URL: $requestUrl")
             return null
@@ -169,8 +170,8 @@ class TokenAuthenticator @Inject constructor(
         }
     }
 
-    private fun isExcludedAuthUrl(requestUrl: String): Boolean =
-        requestUrl.contains(AUTH_LOGIN_PATH) || requestUrl.contains(AUTH_REISSUE_PATH)
+    private fun isExcludedAuthPath(path: String): Boolean =
+        path == AUTH_LOGIN_PATH || path == AUTH_REISSUE_PATH
 
     private fun Request.accessTokenFromAuthorizationHeader(): String? =
         header(AUTHORIZATION_HEADER)?.removePrefix(BEARER_PREFIX)?.takeIf { it.isNotBlank() }
