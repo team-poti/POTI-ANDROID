@@ -19,14 +19,6 @@ class PreferenceDataSource @Inject constructor(
         private val IS_ONBOARDING_FINISHED_KEY = booleanPreferencesKey("IS_ONBOARDING_FINISHED")
     }
 
-    val accessToken: Flow<String?> = dataStore.data.map { prefs ->
-        prefs[ACCESS_TOKEN_KEY]
-    }
-
-    val refreshToken: Flow<String?> = dataStore.data.map { prefs ->
-        prefs[REFRESH_TOKEN_KEY]
-    }
-
     val tokenPair: Flow<TokenPair?> = dataStore.data.map { prefs ->
         val accessToken = prefs[ACCESS_TOKEN_KEY]
         val refreshToken = prefs[REFRESH_TOKEN_KEY]
@@ -39,14 +31,6 @@ class PreferenceDataSource @Inject constructor(
         } else {
             null
         }
-    }
-
-    suspend fun saveAccessToken(accessToken: String) = dataStore.edit { prefs ->
-        prefs[ACCESS_TOKEN_KEY] = accessToken
-    }
-
-    suspend fun saveRefreshToken(refreshToken: String) = dataStore.edit { prefs ->
-        prefs[REFRESH_TOKEN_KEY] = refreshToken
     }
 
     suspend fun saveTokens(
