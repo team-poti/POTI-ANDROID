@@ -2,9 +2,9 @@ package com.poti.android.core.designsystem.component.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -79,13 +78,11 @@ private fun PotiHeaderSectionChip(
             .background(backgroundColor)
             .selectable(
                 selected = selected,
-                role = Role.Tab,
-                onClick = onClick,
+                interactionSource = null,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick,
             )
             .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -107,7 +104,9 @@ private fun PotiHeaderSectionPreview() {
             ongoingCount = 3,
             endedCount = 3,
             onTabSelected = { selectedTab = it },
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .fillMaxWidth(),
         )
     }
 }

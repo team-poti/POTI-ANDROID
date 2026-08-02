@@ -93,10 +93,7 @@ private fun MyPageScreen(
                 .fillMaxSize()
                 .background(PotiTheme.colors.gray100)
                 .verticalScroll(scrollState)
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 20.dp,
-                ),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -106,7 +103,7 @@ private fun MyPageScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(PotiTheme.colors.white)
                     .padding(horizontal = 12.dp)
-                    .padding(top = 32.dp, bottom = 12.dp),
+                    .padding(top = 57.dp, bottom = 37.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

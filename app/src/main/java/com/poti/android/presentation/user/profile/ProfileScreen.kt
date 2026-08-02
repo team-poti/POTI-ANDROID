@@ -77,10 +77,7 @@ private fun ProfileScreen(
                 .fillMaxSize()
                 .background(PotiTheme.colors.gray100)
                 .verticalScroll(scrollState)
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 20.dp,
-                ),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -90,11 +87,10 @@ private fun ProfileScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(PotiTheme.colors.white)
                     .padding(horizontal = 12.dp)
-                    .padding(top = 32.dp, bottom = 12.dp),
+                    .padding(top = 67.dp, bottom = 47.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // 타인의 프로필에서는 이메일을 노출하지 않는다.
                 UserProfile(
                     imageUrl = userProfile.profileImageUrl,
                     nickname = userProfile.nickname,

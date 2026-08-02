@@ -61,7 +61,7 @@ fun PotiSearchBar(
     onClear: () -> Unit = { onValueChange("") },
     focusRequester: FocusRequester? = null,
 ) {
-    val requester = remember { focusRequester ?: FocusRequester() }
+    val requester = remember(focusRequester) { focusRequester ?: FocusRequester() }
 
     BasicTextField(
         value = value,
