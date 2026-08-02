@@ -1,5 +1,6 @@
 package com.poti.android.data.network
 
+import android.os.Looper
 import com.poti.android.BuildConfig
 import com.poti.android.data.local.datasource.AuthTokenStore
 import okhttp3.Interceptor
@@ -11,6 +12,10 @@ class AuthInterceptor @Inject constructor(
     private val authTokenStore: AuthTokenStore,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
+        check(Looper.myLooper() != Looper.getMainLooper()) {
+            "AuthInterceptor must not run on the main thread. Use an asynchronous API call."
+        }
+
         val originalRequest = chain.request()
         val url = originalRequest.url.toString()
         Timber.d("요청 URL: $url")
@@ -25,12 +30,17 @@ class AuthInterceptor @Inject constructor(
 
         val builder = originalRequest.newBuilder()
 
-        authTokenStore.ensureInitializedBlocking()
+        if (!authTokenStore.ensureInitializedBlocking()) {
+            Timber.Forest.tag("AuthInterceptor")
+                .w("Token store initialization timed out. Proceeding without Authorization header.")
+            return chain.proceed(builder.build())
+        }
+
         val accessToken = authTokenStore.cachedAccessToken
 
         if (!accessToken.isNullOrBlank()) {
             Timber.Forest.tag("AuthInterceptor").d("Adding Authorization Header")
-            builder.addHeader("Authorization", "Bearer $accessToken")
+            builder.header("Authorization", "Bearer $accessToken")
         }
 
         return chain.proceed(builder.build())

@@ -1,10 +1,13 @@
 package com.poti.android.data.network
 
+import android.os.Looper
 import com.poti.android.data.local.datasource.AuthTokenStore
+import com.poti.android.data.local.datasource.TokenPair
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -25,6 +28,10 @@ class TokenAuthenticator @Inject constructor(
         route: Route?,
         response: Response,
     ): Request? {
+        check(Looper.myLooper() != Looper.getMainLooper()) {
+            "TokenAuthenticator must not run on the main thread. Use an asynchronous API call."
+        }
+
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
@@ -41,19 +48,23 @@ class TokenAuthenticator @Inject constructor(
         }
 
         val requestAccessToken = response.request.accessTokenFromAuthorizationHeader()
-        authTokenStore.ensureInitializedBlocking()
+        if (!authTokenStore.ensureInitializedBlocking()) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .w("Token store initialization timed out. Stop token reissue.")
+            return null
+        }
 
-        synchronized(lock) {
+        val refreshResult = synchronized(lock) {
             val latestTokenPair = authTokenStore.cachedTokenPair
 
             if (latestTokenPair == null) {
                 Timber.tag("TokenAuthenticator").w("Token is empty or was cleared. Stop retry.")
-                return null
+                return@synchronized RefreshResult.Stop
             }
 
             if (requestAccessToken != latestTokenPair.accessToken) {
                 Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
-                return newRequestWithAccessToken(response.request, latestTokenPair.accessToken)
+                return@synchronized RefreshResult.Retry(latestTokenPair.accessToken)
             }
 
             Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
@@ -62,63 +73,68 @@ class TokenAuthenticator @Inject constructor(
             } catch (e: IOException) {
                 Timber.Forest.tag("TokenAuthenticator")
                     .w(e, "Reissue API call failed due to network error. Keep session.")
-                return null
+                return@synchronized RefreshResult.Stop
             } catch (e: Exception) {
                 Timber.Forest.tag("TokenAuthenticator")
                     .e(e, "Reissue API call failed unexpectedly. Keep session.")
-                return null
+                return@synchronized RefreshResult.Stop
             }
 
             when (refreshResponse.code()) {
                 HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
                     Timber.Forest.tag("TokenAuthenticator")
                         .e("Refresh token is expired or invalid. code=${refreshResponse.code()}. Logout.")
-                    handleLogout()
-                    return null
+                    authTokenStore.clearCachedTokens()
+                    return@synchronized RefreshResult.Logout
                 }
 
                 in HTTP_SERVER_ERROR_START..HTTP_SERVER_ERROR_END -> {
                     Timber.Forest.tag("TokenAuthenticator")
                         .w("Reissue API returned server error. code=${refreshResponse.code()}. Keep session.")
-                    return null
+                    return@synchronized RefreshResult.Stop
                 }
             }
 
             if (!refreshResponse.isSuccessful) {
                 Timber.Forest.tag("TokenAuthenticator")
                     .w("Reissue API returned non-success response. code=${refreshResponse.code()}. Keep session.")
-                return null
+                return@synchronized RefreshResult.Stop
             }
 
             val reissueData = refreshResponse.body()?.data
             if (reissueData == null) {
                 Timber.Forest.tag("TokenAuthenticator")
                     .e("Reissue API returned success but body/data is null. Keep session.")
-                return null
+                return@synchronized RefreshResult.Stop
             }
 
             Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
 
-            val newAccessToken = reissueData.accessToken
-            val newRefreshToken = reissueData.refreshToken
-
-            runBlocking {
-                authTokenStore.saveTokens(newAccessToken, newRefreshToken)
-            }
-
-            return newRequestWithAccessToken(response.request, newAccessToken)
+            val newTokenPair = TokenPair(reissueData.accessToken, reissueData.refreshToken)
+            authTokenStore.updateCachedTokens(newTokenPair)
+            RefreshResult.PersistAndRetry(newTokenPair)
         }
 
-        Timber.Forest.tag("TokenAuthenticator").w("Token reissue was not completed. Keep session.")
-        return null
+        return when (refreshResult) {
+            is RefreshResult.Retry -> newRequestWithAccessToken(response.request, refreshResult.accessToken)
+            is RefreshResult.PersistAndRetry -> {
+                persistTokensBlocking(refreshResult.tokenPair)
+                newRequestWithAccessToken(response.request, refreshResult.tokenPair.accessToken)
+            }
+
+            RefreshResult.Logout -> {
+                handleLogout()
+                null
+            }
+
+            RefreshResult.Stop -> null
+        }
     }
 
     private fun newRequestWithAccessToken(
         request: Request,
-        newAccessToken: String?,
+        newAccessToken: String,
     ): Request {
-        if (newAccessToken == null) return request
-
         Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new Bearer token.")
 
         return request.newBuilder()
@@ -128,10 +144,30 @@ class TokenAuthenticator @Inject constructor(
 
     private fun handleLogout() {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
-        runBlocking {
-            authTokenStore.clearTokens()
-            Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
-            authSessionManager.triggerLogout()
+        runCatching {
+            runBlocking {
+                withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
+                    authTokenStore.persistTokenClear()
+                }
+            }
+        }.onFailure { error ->
+            Timber.Forest.tag("TokenAuthenticator")
+                .e(error, "Failed to persist token clear. Continue logout with cleared in-memory tokens.")
+        }
+        Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
+        authSessionManager.triggerLogout()
+    }
+
+    private fun persistTokensBlocking(tokenPair: TokenPair) {
+        runCatching {
+            runBlocking {
+                withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
+                    authTokenStore.persistTokens(tokenPair)
+                }
+            }
+        }.onFailure { error ->
+            Timber.Forest.tag("TokenAuthenticator")
+                .e(error, "Failed to persist refreshed tokens. Keep the updated in-memory token pair.")
         }
     }
 
@@ -153,6 +189,16 @@ class TokenAuthenticator @Inject constructor(
         return count
     }
 
+    private sealed interface RefreshResult {
+        data class Retry(val accessToken: String) : RefreshResult
+
+        data class PersistAndRetry(val tokenPair: TokenPair) : RefreshResult
+
+        data object Logout : RefreshResult
+
+        data object Stop : RefreshResult
+    }
+
     private companion object {
         const val AUTH_LOGIN_PATH = "/auth/login"
         const val AUTH_REISSUE_PATH = "/auth/reissue"
@@ -163,5 +209,6 @@ class TokenAuthenticator @Inject constructor(
         const val HTTP_FORBIDDEN = 403
         const val HTTP_SERVER_ERROR_START = 500
         const val HTTP_SERVER_ERROR_END = 599
+        const val DATASTORE_PERSIST_TIMEOUT_MILLIS = 1_000L
     }
 }

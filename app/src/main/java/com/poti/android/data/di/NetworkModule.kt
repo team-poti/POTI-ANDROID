@@ -65,9 +65,10 @@ object NetworkModule {
     fun provideReissueOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder().apply {
-        connectTimeout(10, TimeUnit.SECONDS)
-        writeTimeout(10, TimeUnit.SECONDS)
-        readTimeout(10, TimeUnit.SECONDS)
+        callTimeout(8, TimeUnit.SECONDS)
+        connectTimeout(3, TimeUnit.SECONDS)
+        writeTimeout(5, TimeUnit.SECONDS)
+        readTimeout(5, TimeUnit.SECONDS)
         addInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .header("Accept", "*/*")

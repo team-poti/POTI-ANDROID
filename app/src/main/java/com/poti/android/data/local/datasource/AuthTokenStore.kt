@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -59,11 +60,13 @@ class AuthTokenStore @Inject constructor(
         }
     }
 
-    fun ensureInitializedBlocking() {
-        if (tokenState.value.isInitialized) return
+    fun ensureInitializedBlocking(): Boolean {
+        if (tokenState.value.isInitialized) return true
 
-        runBlocking {
-            awaitInitialized()
+        return runBlocking {
+            withTimeoutOrNull(INITIALIZATION_TIMEOUT_MILLIS) {
+                awaitInitialized()
+            } != null
         }
     }
 
@@ -73,23 +76,41 @@ class AuthTokenStore @Inject constructor(
         accessToken: String,
         refreshToken: String,
     ) {
-        _tokenState.value = AuthTokenState(
-            isInitialized = true,
-            tokenPair = TokenPair(
-                accessToken = accessToken,
-                refreshToken = refreshToken,
-            ),
-        )
-        preferenceDataSource.saveTokens(accessToken, refreshToken)
+        val tokenPair = TokenPair(accessToken, refreshToken)
+        updateCachedTokens(tokenPair)
+        persistTokens(tokenPair)
     }
 
     suspend fun clearTokens() {
-        _tokenState.value = AuthTokenState(isInitialized = true)
-        preferenceDataSource.clearTokens()
+        clearCachedTokens()
+        persistTokenClear()
     }
 
     suspend fun clearAll() {
         _tokenState.value = AuthTokenState(isInitialized = true)
         preferenceDataSource.clearAll()
+    }
+
+    fun updateCachedTokens(tokenPair: TokenPair) {
+        _tokenState.value = AuthTokenState(
+            isInitialized = true,
+            tokenPair = tokenPair,
+        )
+    }
+
+    fun clearCachedTokens() {
+        _tokenState.value = AuthTokenState(isInitialized = true)
+    }
+
+    suspend fun persistTokens(tokenPair: TokenPair) {
+        preferenceDataSource.saveTokens(tokenPair.accessToken, tokenPair.refreshToken)
+    }
+
+    suspend fun persistTokenClear() {
+        preferenceDataSource.clearTokens()
+    }
+
+    private companion object {
+        const val INITIALIZATION_TIMEOUT_MILLIS = 1_000L
     }
 }
