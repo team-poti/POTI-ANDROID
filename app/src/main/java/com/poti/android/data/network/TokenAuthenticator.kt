@@ -28,9 +28,9 @@ class TokenAuthenticator @Inject constructor(
         val requestUrl = response.request.url.toString()
         Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
 
-        if (requestUrl.contains("/auth/reissue")) {
-            Timber.Forest.tag("TokenAuthenticator").e("Reissue request returned 401. Logout.")
-            handleLogout()
+        if (isExcludedAuthUrl(requestUrl)) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .d("Skip token reissue for auth endpoint. URL: $requestUrl")
             return null
         }
 
@@ -130,7 +130,12 @@ class TokenAuthenticator @Inject constructor(
         }
     }
 
+    private fun isExcludedAuthUrl(requestUrl: String): Boolean =
+        requestUrl.contains(AUTH_LOGIN_PATH) || requestUrl.contains(AUTH_REISSUE_PATH)
+
     private companion object {
+        const val AUTH_LOGIN_PATH = "/auth/login"
+        const val AUTH_REISSUE_PATH = "/auth/reissue"
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
         const val HTTP_SERVER_ERROR_START = 500
