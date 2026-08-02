@@ -2,6 +2,8 @@ package com.poti.android.data.network
 
 import com.poti.android.BuildConfig
 import com.poti.android.data.local.datasource.AuthTokenStore
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
@@ -19,7 +21,7 @@ class AuthInterceptor @Inject constructor(
             return chain.proceed(originalRequest)
         }
 
-        if (!url.contains(BuildConfig.BASE_URL)) {
+        if (!isApiOrigin(originalRequest.url)) {
             return chain.proceed(originalRequest)
         }
 
@@ -44,7 +46,13 @@ class AuthInterceptor @Inject constructor(
     private fun isExcludedAuthPath(path: String): Boolean =
         path == AUTH_LOGIN_PATH || path == AUTH_REISSUE_PATH
 
+    private fun isApiOrigin(requestUrl: HttpUrl): Boolean =
+        requestUrl.scheme == apiBaseUrl.scheme &&
+            requestUrl.host == apiBaseUrl.host &&
+            requestUrl.port == apiBaseUrl.port
+
     private companion object {
+        val apiBaseUrl: HttpUrl = BuildConfig.BASE_URL.toHttpUrl()
         const val AUTH_LOGIN_PATH = "/auth/login"
         const val AUTH_REISSUE_PATH = "/auth/reissue"
     }
