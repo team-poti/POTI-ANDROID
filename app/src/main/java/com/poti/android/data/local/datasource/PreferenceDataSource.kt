@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.poti.android.domain.model.auth.AuthState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
 class PreferenceDataSource @Inject constructor(
@@ -47,7 +46,6 @@ class PreferenceDataSource @Inject constructor(
     }
 
     suspend fun saveRefreshToken(refreshToken: String) = dataStore.edit { prefs ->
-        Timber.d("saveRefreshToken 호출됨")
         prefs[REFRESH_TOKEN_KEY] = refreshToken
     }
 
@@ -56,7 +54,6 @@ class PreferenceDataSource @Inject constructor(
         refreshToken: String,
     ) {
         dataStore.edit { prefs ->
-            Timber.d("saveTokens 호출됨 - Access: ${accessToken.take(5)}... Refresh: ${refreshToken.take(5)}...")
             prefs[ACCESS_TOKEN_KEY] = accessToken
             prefs[REFRESH_TOKEN_KEY] = refreshToken
         }
