@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,18 +48,12 @@ fun PotiHeaderPage(
     @DrawableRes trailingIconRes: Int = R.drawable.ic_switch,
     containerColor: Color = PotiTheme.colors.white,
 ) {
-    Row(
-        modifier = modifier
-            .background(containerColor)
-            .padding(horizontal = 4.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    PotiHeaderPageBase(
+        onNavigationClick = onNavigationClick,
+        modifier = modifier,
+        potiHeaderPageType = potiHeaderPageType,
+        containerColor = containerColor,
     ) {
-        PotiIconButton(
-            iconRes = potiHeaderPageType.iconResId,
-            onClick = onNavigationClick,
-        )
-
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -126,6 +121,41 @@ fun PotiHeaderPageSearch(
     focusRequester: FocusRequester? = null,
     containerColor: Color = PotiTheme.colors.white,
 ) {
+    PotiHeaderPageBase(
+        onNavigationClick = onNavigationClick,
+        modifier = modifier,
+        potiHeaderPageType = potiHeaderPageType,
+        containerColor = containerColor,
+    ) {
+        PotiSearchBar(
+            value = value,
+            onValueChange = onValueChange,
+            onSearch = onSearch,
+            modifier = Modifier.weight(1f),
+            placeholder = placeholder,
+            onClear = onClear,
+            focusRequester = focusRequester,
+        )
+    }
+}
+
+/**
+ * 페이지 헤더의 공통 골격입니다. 내비게이션 버튼 뒤에 [content]를 배치합니다.
+ *
+ * @param onNavigationClick 내비게이션 버튼 클릭 시 호출됩니다.
+ * @param modifier
+ * @param potiHeaderPageType 내비게이션 버튼 아이콘 타입입니다.
+ * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
+ * @param content 내비게이션 버튼 오른쪽에 배치할 내용입니다.
+ */
+@Composable
+private fun PotiHeaderPageBase(
+    onNavigationClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    potiHeaderPageType: PotiHeaderPageType = PotiHeaderPageType.BACK,
+    containerColor: Color = PotiTheme.colors.white,
+    content: @Composable RowScope.() -> Unit,
+) {
     Row(
         modifier = modifier
             .background(containerColor)
@@ -138,15 +168,7 @@ fun PotiHeaderPageSearch(
             onClick = onNavigationClick,
         )
 
-        PotiSearchBar(
-            value = value,
-            onValueChange = onValueChange,
-            onSearch = onSearch,
-            modifier = Modifier.weight(1f),
-            placeholder = placeholder,
-            onClear = onClear,
-            focusRequester = focusRequester,
-        )
+        content()
     }
 }
 
