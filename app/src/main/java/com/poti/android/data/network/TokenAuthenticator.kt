@@ -46,8 +46,13 @@ class TokenAuthenticator @Inject constructor(
             val freshTokenPair = preferenceDataSource.cachedTokenPair
 
             if (freshTokenPair != currentTokenPair) {
+                if (freshTokenPair == null) {
+                    Timber.tag("TokenAuthenticator").w("Token was cleared while waiting. Stop retry.")
+                    return null
+                }
+
                 Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
-                return newRequestWithAccessToken(response.request, freshTokenPair?.accessToken)
+                return newRequestWithAccessToken(response.request, freshTokenPair.accessToken)
             }
 
             val currentRefreshToken = currentTokenPair?.refreshToken
