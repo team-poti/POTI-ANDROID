@@ -65,10 +65,14 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
+            buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://dev-app.poti.kr"))
+            manifestPlaceholders["deepLinkHost"] = "dev-app.poti.kr"
         }
         create("prod") {
             dimension = "server"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
+            buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://app.poti.kr"))
+            manifestPlaceholders["deepLinkHost"] = "app.poti.kr"
         }
     }
     compileOptions {

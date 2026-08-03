@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
@@ -70,14 +72,26 @@ fun NavGraphBuilder.historyNavGraph(
             modifier = Modifier.padding(paddingValues),
         )
     }
-    slideComposable<HistoryRoute.ParticipantDetail> {
+    slideComposable<HistoryRoute.ParticipantDetail>(
+        deepLinks = listOf(
+            navDeepLink<HistoryRoute.ParticipantDetail>(
+                basePath = "${BuildConfig.DEEP_LINK_HOST}/participant-detail",
+            ),
+        ),
+    ) {
         ParticipantDetailRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
             modifier = Modifier.padding(paddingValues),
         )
     }
-    slideComposable<HistoryRoute.RecruiterDetail> {
+    slideComposable<HistoryRoute.RecruiterDetail>(
+        deepLinks = listOf(
+            navDeepLink<HistoryRoute.RecruiterDetail>(
+                basePath = "${BuildConfig.DEEP_LINK_HOST}/recruiter-detail",
+            ),
+        ),
+    ) {
         RecruiterDetailRoute(
             modifier = Modifier.padding(paddingValues),
             onPopBackStack = navController::popBackStack,
@@ -85,7 +99,13 @@ fun NavGraphBuilder.historyNavGraph(
             onNavigateToParticipantManage = navController::navigateToParticipantManage,
         )
     }
-    slideComposable<HistoryRoute.ParticipantManage> {
+    slideComposable<HistoryRoute.ParticipantManage>(
+        deepLinks = listOf(
+            navDeepLink<HistoryRoute.ParticipantManage>(
+                basePath = "${BuildConfig.DEEP_LINK_HOST}/participant-manage",
+            ),
+        ),
+    ) {
         ParticipantManageRoute(
             modifier = Modifier.padding(paddingValues),
             popBackStack = navController::popBackStack,

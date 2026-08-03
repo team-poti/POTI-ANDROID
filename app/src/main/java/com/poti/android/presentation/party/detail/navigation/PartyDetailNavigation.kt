@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
+import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
@@ -54,7 +56,12 @@ fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
 ) {
-    navigation<PartyDetailGraph>(startDestination = PartyDetailRoute.Detail) {
+    navigation<PartyDetailGraph>(
+        startDestination = PartyDetailRoute.Detail,
+        deepLinks = listOf(
+            navDeepLink<PartyDetailGraph>(basePath = "${BuildConfig.DEEP_LINK_HOST}/pot"),
+        ),
+    ) {
         slideComposable<PartyDetailRoute.Detail> { entry ->
             PartyDetailRoute(
                 onPopBackStack = navController::popBackStack,
