@@ -202,8 +202,8 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private companion object {
-        const val AUTH_LOGIN_PATH = "/auth/login"
-        const val AUTH_REISSUE_PATH = "/auth/reissue"
+        const val AUTH_LOGIN_PATH = "/api/v1/auth/login"
+        const val AUTH_REISSUE_PATH = "/api/v1/auth/reissue"
         const val AUTHORIZATION_HEADER = "Authorization"
         const val BEARER_PREFIX = "Bearer "
         const val MAX_AUTH_RETRY_COUNT = 1

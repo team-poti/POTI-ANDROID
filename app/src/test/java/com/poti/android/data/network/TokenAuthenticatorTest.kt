@@ -139,7 +139,7 @@ class TokenAuthenticatorTest {
     fun `does not reissue login endpoint`() {
         val retriedRequest = tokenAuthenticator.authenticate(
             route = null,
-            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/auth/login?source=test"),
+            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/api/v1/auth/login?source=test"),
         )
 
         assertNull(retriedRequest)
@@ -150,7 +150,7 @@ class TokenAuthenticatorTest {
     fun `does not reissue reissue endpoint`() {
         val retriedRequest = tokenAuthenticator.authenticate(
             route = null,
-            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/auth/reissue"),
+            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/api/v1/auth/reissue"),
         )
 
         assertNull(retriedRequest)

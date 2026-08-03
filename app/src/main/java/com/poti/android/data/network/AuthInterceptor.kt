@@ -53,7 +53,7 @@ class AuthInterceptor @Inject constructor(
 
     private companion object {
         val apiBaseUrl: HttpUrl = BuildConfig.BASE_URL.toHttpUrl()
-        const val AUTH_LOGIN_PATH = "/auth/login"
-        const val AUTH_REISSUE_PATH = "/auth/reissue"
+        const val AUTH_LOGIN_PATH = "/api/v1/auth/login"
+        const val AUTH_REISSUE_PATH = "/api/v1/auth/reissue"
     }
 }
