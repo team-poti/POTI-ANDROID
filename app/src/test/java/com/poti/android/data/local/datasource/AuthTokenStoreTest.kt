@@ -7,6 +7,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -23,6 +25,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthTokenStoreTest {
@@ -104,5 +107,30 @@ class AuthTokenStoreTest {
         assertEquals(storedTokenPair.accessToken, observedAuthStates.last().accessToken)
         assertTrue(observedAuthStates.last().isOnboardingFinished)
         assertTrue(observedAuthStates.last().isInitialized)
+    }
+
+    @Test
+    fun `initializes as logged out when DataStore reads fail`() = runTest(testDispatcher) {
+        val failingPreferenceDataSource: PreferenceDataSource = mock(PreferenceDataSource::class.java)
+        `when`(failingPreferenceDataSource.tokenPair).thenReturn(
+            flow { throw IOException("Unable to read token preferences") },
+        )
+        `when`(failingPreferenceDataSource.authState).thenReturn(
+            flow { throw IOException("Unable to read auth preferences") },
+        )
+        val failingTokenStore = AuthTokenStore(
+            preferenceDataSource = failingPreferenceDataSource,
+            externalScope = CoroutineScope(SupervisorJob() + testDispatcher),
+            ioDispatcher = testDispatcher,
+        )
+
+        advanceUntilIdle()
+        val authState = failingTokenStore.authState.first()
+
+        assertTrue(failingTokenStore.tokenState.value.isInitialized)
+        assertNull(failingTokenStore.cachedTokenPair)
+        assertNull(authState.accessToken)
+        assertFalse(authState.isOnboardingFinished)
+        assertTrue(authState.isInitialized)
     }
 }

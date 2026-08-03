@@ -9,13 +9,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,8 +44,14 @@ class AuthTokenStore @Inject constructor(
     private val _tokenState = MutableStateFlow(AuthTokenState())
     val tokenState: StateFlow<AuthTokenState> = _tokenState.asStateFlow()
 
+    private val safePersistedAuthState = preferenceDataSource.authState.catch { error ->
+        Timber.Forest.tag("AuthTokenStore")
+            .e(error, "Failed to read persisted auth state. Continue as logged out.")
+        emit(AuthState(accessToken = null, isOnboardingFinished = false))
+    }
+
     val authState: Flow<AuthState> = combine(
-        preferenceDataSource.authState,
+        safePersistedAuthState,
         tokenState,
     ) { persistedAuthState, tokenState ->
         AuthState(
@@ -60,9 +69,14 @@ class AuthTokenStore @Inject constructor(
 
     init {
         externalScope.launch(ioDispatcher) {
-            preferenceDataSource.tokenPair.collect { tokenPair ->
-                initializeFromStorage(tokenPair)
-            }
+            val tokenPair = preferenceDataSource.tokenPair
+                .catch { error ->
+                    Timber.Forest.tag("AuthTokenStore")
+                        .e(error, "Failed to read persisted token pair. Continue without tokens.")
+                    emit(null)
+                }
+                .firstOrNull()
+            initializeFromStorage(tokenPair)
         }
     }
 
