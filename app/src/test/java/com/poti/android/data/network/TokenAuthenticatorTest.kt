@@ -20,6 +20,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import retrofit2.Call
 import java.io.IOException
@@ -123,6 +124,39 @@ class TokenAuthenticatorTest {
         verify(authSessionManager, never()).triggerLogout()
     }
 
+    @Test
+    fun `does not reissue when response already has an authentication retry`() {
+        val retriedRequest = tokenAuthenticator.authenticate(
+            route = null,
+            response = unauthorizedResponse(previousResponse = unauthorizedResponse()),
+        )
+
+        assertNull(retriedRequest)
+        verifyNoInteractions(authRemoteDataSource)
+    }
+
+    @Test
+    fun `does not reissue login endpoint`() {
+        val retriedRequest = tokenAuthenticator.authenticate(
+            route = null,
+            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/auth/login?source=test"),
+        )
+
+        assertNull(retriedRequest)
+        verifyNoInteractions(authRemoteDataSource)
+    }
+
+    @Test
+    fun `does not reissue reissue endpoint`() {
+        val retriedRequest = tokenAuthenticator.authenticate(
+            route = null,
+            response = unauthorizedResponse(requestUrl = "$API_ORIGIN/auth/reissue"),
+        )
+
+        assertNull(retriedRequest)
+        verifyNoInteractions(authRemoteDataSource)
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun reissueCallReturningNewTokens(): Call<BaseResponse<ReissueResponseDto>> {
         val reissueCall = mock(Call::class.java) as Call<BaseResponse<ReissueResponseDto>>
@@ -166,20 +200,28 @@ class TokenAuthenticatorTest {
     private fun mockReissueCall(): Call<BaseResponse<ReissueResponseDto>> =
         mock(Call::class.java) as Call<BaseResponse<ReissueResponseDto>>
 
-    private fun unauthorizedResponse(): Response = Response.Builder()
+    private fun unauthorizedResponse(
+        requestUrl: String = PARTY_URL,
+        previousResponse: Response? = null,
+    ): Response = Response.Builder()
         .request(
             Request.Builder()
-                .url("https://api.example.com/api/v1/party")
+                .url(requestUrl)
                 .header(AUTHORIZATION_HEADER, "Bearer $OLD_ACCESS_TOKEN")
                 .build(),
         )
         .protocol(Protocol.HTTP_1_1)
         .code(401)
         .message("Unauthorized")
+        .apply {
+            previousResponse?.let { priorResponse(it) }
+        }
         .build()
 
     private companion object {
         const val AUTHORIZATION_HEADER = "Authorization"
+        const val API_ORIGIN = "https://api.example.com"
+        const val PARTY_URL = "$API_ORIGIN/api/v1/party"
         const val OLD_ACCESS_TOKEN = "old-access-token"
         const val OLD_REFRESH_TOKEN = "old-refresh-token"
         const val NEW_ACCESS_TOKEN = "new-access-token"
