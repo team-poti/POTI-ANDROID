@@ -28,7 +28,7 @@ class TokenAuthenticator @Inject constructor(
         response: Response,
     ): Request? {
         val requestPath = response.request.url.encodedPath
-        Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! Path: $requestPath")
+        Timber.Forest.tag("TokenAuthenticator").w("401 Unauthorized detected. Path: $requestPath")
 
         if (response.authRetryCount() > MAX_AUTH_RETRY_COUNT) {
             Timber.Forest.tag("TokenAuthenticator")
