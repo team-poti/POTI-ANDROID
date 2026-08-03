@@ -17,7 +17,7 @@ class AuthInterceptor @Inject constructor(
         val requestPath = originalRequest.url.encodedPath
         Timber.d("요청 경로: $requestPath")
 
-        if (isExcludedAuthPath(requestPath)) {
+        if (AuthRequestPolicy.isExcludedAuthPath(requestPath)) {
             return chain.proceed(originalRequest)
         }
 
@@ -37,14 +37,11 @@ class AuthInterceptor @Inject constructor(
 
         if (!accessToken.isNullOrBlank()) {
             Timber.Forest.tag("AuthInterceptor").d("Adding Authorization Header")
-            builder.header("Authorization", "Bearer $accessToken")
+            builder.header(AuthRequestPolicy.AUTHORIZATION_HEADER, "${AuthRequestPolicy.BEARER_PREFIX}$accessToken")
         }
 
         return chain.proceed(builder.build())
     }
-
-    private fun isExcludedAuthPath(path: String): Boolean =
-        path == AUTH_LOGIN_PATH || path == AUTH_REISSUE_PATH
 
     private fun isApiOrigin(requestUrl: HttpUrl): Boolean =
         requestUrl.scheme == apiBaseUrl.scheme &&
@@ -53,7 +50,5 @@ class AuthInterceptor @Inject constructor(
 
     private companion object {
         val apiBaseUrl: HttpUrl = BuildConfig.BASE_URL.toHttpUrl()
-        const val AUTH_LOGIN_PATH = "/api/v1/auth/login"
-        const val AUTH_REISSUE_PATH = "/api/v1/auth/reissue"
     }
 }

@@ -36,7 +36,7 @@ class TokenAuthenticator @Inject constructor(
             return null
         }
 
-        if (isExcludedAuthPath(requestPath)) {
+        if (AuthRequestPolicy.isExcludedAuthPath(requestPath)) {
             Timber.Forest.tag("TokenAuthenticator")
                 .d("Skip token reissue for auth endpoint. Path: $requestPath")
             return null
@@ -133,7 +133,7 @@ class TokenAuthenticator @Inject constructor(
         Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new Bearer token.")
 
         return request.newBuilder()
-            .header(AUTHORIZATION_HEADER, "$BEARER_PREFIX$newAccessToken")
+            .header(AuthRequestPolicy.AUTHORIZATION_HEADER, "${AuthRequestPolicy.BEARER_PREFIX}$newAccessToken")
             .build()
     }
 
@@ -176,11 +176,10 @@ class TokenAuthenticator @Inject constructor(
         }
     }
 
-    private fun isExcludedAuthPath(path: String): Boolean =
-        path == AUTH_LOGIN_PATH || path == AUTH_REISSUE_PATH
-
     private fun Request.accessTokenFromAuthorizationHeader(): String? =
-        header(AUTHORIZATION_HEADER)?.removePrefix(BEARER_PREFIX)?.takeIf { it.isNotBlank() }
+        header(AuthRequestPolicy.AUTHORIZATION_HEADER)
+            ?.removePrefix(AuthRequestPolicy.BEARER_PREFIX)
+            ?.takeIf { it.isNotBlank() }
 
     private fun Response.authRetryCount(): Int {
         var count = 1
@@ -208,10 +207,6 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private companion object {
-        const val AUTH_LOGIN_PATH = "/api/v1/auth/login"
-        const val AUTH_REISSUE_PATH = "/api/v1/auth/reissue"
-        const val AUTHORIZATION_HEADER = "Authorization"
-        const val BEARER_PREFIX = "Bearer "
         const val MAX_AUTH_RETRY_COUNT = 1
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
