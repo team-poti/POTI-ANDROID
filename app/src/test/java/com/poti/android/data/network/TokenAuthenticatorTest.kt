@@ -175,8 +175,29 @@ class TokenAuthenticatorTest {
         return reissueCall
     }
 
+    @Test
+    fun `does not trigger logout when a newer auth generation is active`() {
+        `when`(authTokenStore.clearCachedTokens()).thenReturn(TOKEN_GENERATION)
+        runBlocking {
+            `when`(authTokenStore.persistTokenClearIfCurrent(TOKEN_GENERATION)).thenReturn(true)
+        }
+        `when`(authTokenStore.isLogoutGenerationCurrent(TOKEN_GENERATION)).thenReturn(false)
+        stubReissueResponse(
+            RetrofitResponse.error(HTTP_UNAUTHORIZED, "Invalid refresh token".toResponseBody()),
+        )
+
+        val retriedRequest = tokenAuthenticator.authenticate(null, unauthorizedResponse())
+
+        assertNull(retriedRequest)
+        verify(authSessionManager, never()).triggerLogout()
+    }
+
     private fun assertInvalidRefreshTokenLogsOut(responseCode: Int) {
         `when`(authTokenStore.clearCachedTokens()).thenReturn(TOKEN_GENERATION)
+        runBlocking {
+            `when`(authTokenStore.persistTokenClearIfCurrent(TOKEN_GENERATION)).thenReturn(true)
+        }
+        `when`(authTokenStore.isLogoutGenerationCurrent(TOKEN_GENERATION)).thenReturn(true)
         stubReissueResponse(RetrofitResponse.error(responseCode, "Invalid refresh token".toResponseBody()))
 
         val retriedRequest = tokenAuthenticator.authenticate(null, unauthorizedResponse())

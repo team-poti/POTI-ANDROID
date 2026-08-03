@@ -95,7 +95,7 @@ class AuthTokenStore @Inject constructor(
     suspend fun clearAll() {
         val generation = clearCachedTokens()
         persistenceMutex.withLock {
-            if (isCurrentClearedGeneration(generation)) {
+            if (isLogoutGenerationCurrent(generation)) {
                 preferenceDataSource.clearAll()
             }
         }
@@ -131,7 +131,7 @@ class AuthTokenStore @Inject constructor(
     }
 
     suspend fun persistTokenClearIfCurrent(generation: Long): Boolean = persistenceMutex.withLock {
-        if (!isCurrentClearedGeneration(generation)) return@withLock false
+        if (!isLogoutGenerationCurrent(generation)) return@withLock false
 
         preferenceDataSource.clearTokens()
         true
@@ -155,7 +155,7 @@ class AuthTokenStore @Inject constructor(
         tokenState.value.generation == generation && tokenState.value.tokenPair == tokenPair
     }
 
-    private fun isCurrentClearedGeneration(generation: Long): Boolean = synchronized(cacheLock) {
+    fun isLogoutGenerationCurrent(generation: Long): Boolean = synchronized(cacheLock) {
         tokenState.value.generation == generation && tokenState.value.tokenPair == null
     }
 

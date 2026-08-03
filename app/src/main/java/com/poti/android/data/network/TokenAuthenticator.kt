@@ -140,7 +140,7 @@ class TokenAuthenticator @Inject constructor(
 
     private fun handleLogout(generation: Long) {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
-        runCatching {
+        val tokensCleared = runCatching {
             runBlocking {
                 withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
                     authTokenStore.persistTokenClearIfCurrent(generation)
@@ -149,7 +149,14 @@ class TokenAuthenticator @Inject constructor(
         }.onFailure { error ->
             Timber.Forest.tag("TokenAuthenticator")
                 .e(error, "Failed to persist token clear. Continue logout with cleared in-memory tokens.")
+        }.getOrNull()
+
+        if (tokensCleared == false || !authTokenStore.isLogoutGenerationCurrent(generation)) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .d("Skip logout event because a newer auth state is already active.")
+            return
         }
+
         Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
         authSessionManager.triggerLogout()
     }
