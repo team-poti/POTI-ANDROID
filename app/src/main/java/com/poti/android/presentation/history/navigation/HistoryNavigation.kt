@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.list.model.HistoryMode
@@ -69,14 +70,14 @@ fun NavGraphBuilder.historyNavGraph(
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<HistoryRoute.ParticipantDetail> {
+    slideComposable<HistoryRoute.ParticipantDetail> {
         ParticipantDetailRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<HistoryRoute.RecruiterDetail> {
+    slideComposable<HistoryRoute.RecruiterDetail> {
         RecruiterDetailRoute(
             modifier = Modifier.padding(paddingValues),
             onPopBackStack = navController::popBackStack,
@@ -84,7 +85,7 @@ fun NavGraphBuilder.historyNavGraph(
             onNavigateToParticipantManage = navController::navigateToParticipantManage,
         )
     }
-    composable<HistoryRoute.ParticipantManage> {
+    slideComposable<HistoryRoute.ParticipantManage> {
         ParticipantManageRoute(
             modifier = Modifier.padding(paddingValues),
             popBackStack = navController::popBackStack,
