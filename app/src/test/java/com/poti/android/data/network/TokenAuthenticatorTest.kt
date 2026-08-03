@@ -71,6 +71,16 @@ class TokenAuthenticatorTest {
     }
 
     @Test
+    fun `logs out when reissue returns 400`() {
+        assertInvalidRefreshTokenLogsOut(HTTP_BAD_REQUEST)
+    }
+
+    @Test
+    fun `logs out when reissue returns 404`() {
+        assertInvalidRefreshTokenLogsOut(HTTP_NOT_FOUND)
+    }
+
+    @Test
     fun `logs out when reissue returns 401`() {
         assertInvalidRefreshTokenLogsOut(HTTP_UNAUTHORIZED)
     }
@@ -248,6 +258,8 @@ class TokenAuthenticatorTest {
         const val NEW_ACCESS_TOKEN = "new-access-token"
         const val NEW_REFRESH_TOKEN = "new-refresh-token"
         const val TOKEN_GENERATION = 1L
+        const val HTTP_BAD_REQUEST = 400
+        const val HTTP_NOT_FOUND = 404
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
         const val HTTP_INTERNAL_SERVER_ERROR = 500

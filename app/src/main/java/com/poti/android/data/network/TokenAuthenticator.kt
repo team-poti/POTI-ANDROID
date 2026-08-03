@@ -76,7 +76,7 @@ class TokenAuthenticator @Inject constructor(
             }
 
             when (refreshResponse.code()) {
-                HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> {
+                HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN, HTTP_NOT_FOUND -> {
                     Timber.Forest.tag("TokenAuthenticator")
                         .e("Refresh token is expired or invalid. code=${refreshResponse.code()}. Logout.")
                     val generation = authTokenStore.clearCachedTokens()
@@ -208,8 +208,10 @@ class TokenAuthenticator @Inject constructor(
 
     private companion object {
         const val MAX_AUTH_RETRY_COUNT = 1
+        const val HTTP_BAD_REQUEST = 400
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
+        const val HTTP_NOT_FOUND = 404
         const val HTTP_SERVER_ERROR_START = 500
         const val HTTP_SERVER_ERROR_END = 599
         const val DATASTORE_PERSIST_TIMEOUT_MILLIS = 1_000L
