@@ -28,6 +28,7 @@ fun MainNavHost(
     paddingValues: PaddingValues,
     socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
+    onSplashFinished: () -> Unit = {},
 ) {
     NavHost(
         navController = navigator.navController,
@@ -41,6 +42,7 @@ fun MainNavHost(
         splashNavGraph(
             navController = navigator.navController,
             destination = targetDestination,
+            onNavigated = onSplashFinished,
         )
         authNavGraph(
             navController = navigator.navController,
