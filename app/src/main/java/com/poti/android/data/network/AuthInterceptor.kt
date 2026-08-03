@@ -14,10 +14,10 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val url = originalRequest.url.toString()
-        Timber.d("요청 URL: $url")
+        val requestPath = originalRequest.url.encodedPath
+        Timber.d("요청 경로: $requestPath")
 
-        if (isExcludedAuthPath(originalRequest.url.encodedPath)) {
+        if (isExcludedAuthPath(requestPath)) {
             return chain.proceed(originalRequest)
         }
 
