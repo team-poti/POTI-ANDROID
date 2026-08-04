@@ -13,6 +13,8 @@ fun MainScreen(
     socialLoginLauncher: SocialLoginLauncher,
     navigator: MainNavigator = rememberPotiNavigator(),
     onSplashFinished: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
+    onOnboardingFinished: () -> Unit = {},
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -30,6 +32,8 @@ fun MainScreen(
             paddingValues = innerPadding,
             socialLoginLauncher = socialLoginLauncher,
             onSplashFinished = onSplashFinished,
+            onLoginSuccess = onLoginSuccess,
+            onOnboardingFinished = onOnboardingFinished,
         )
     }
 }

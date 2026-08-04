@@ -8,7 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,7 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var navController: NavHostController? = null
+    private var pendingDeepLink: Uri? by mutableStateOf(null)
 
     @Inject
     lateinit var authSessionManager: AuthSessionManager
@@ -47,14 +49,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        pendingDeepLink = intent.data
+
         enableEdgeToEdge()
 
         setContent {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
             val targetDestination by viewModel.startDestination.collectAsStateWithLifecycle()
-            val coldStartDeepLink = remember { intent.data }
 
             navController = mainNavigator.navController
+
+            val onAuthCompleted = {
+                mainNavigator.navigateToHome()
+                consumeDeepLink(mainNavigator.navController)
+            }
 
             PotiTheme {
                 targetDestination?.let { destination ->
@@ -64,9 +72,11 @@ class MainActivity : ComponentActivity() {
                         socialLoginLauncher = socialLoginLauncher,
                         onSplashFinished = {
                             if (destination == PartyGraph) {
-                                coldStartDeepLink?.let { mainNavigator.navController.navigateToDeepLink(it) }
+                                consumeDeepLink(mainNavigator.navController)
                             }
                         },
+                        onLoginSuccess = onAuthCompleted,
+                        onOnboardingFinished = onAuthCompleted,
                     )
                 }
             }
@@ -76,7 +86,19 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        intent.data?.let { uri -> navController?.navigateToDeepLink(uri) }
+
+        val uri = intent.data ?: return
+        if (viewModel.startDestination.value == PartyGraph) {
+            navController?.navigateToDeepLink(uri)
+        } else {
+            pendingDeepLink = uri
+        }
+    }
+
+    private fun consumeDeepLink(navController: NavHostController) {
+        val uri = pendingDeepLink ?: return
+        pendingDeepLink = null
+        navController.navigateToDeepLink(uri)
     }
 
     private fun NavHostController.navigateToDeepLink(uri: Uri) {

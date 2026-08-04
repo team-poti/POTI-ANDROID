@@ -29,6 +29,8 @@ fun MainNavHost(
     socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
     onSplashFinished: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
+    onOnboardingFinished: () -> Unit = {},
 ) {
     NavHost(
         navController = navigator.navController,
@@ -46,13 +48,13 @@ fun MainNavHost(
         )
         authNavGraph(
             navController = navigator.navController,
-            onNavigateToHome = navigator::navigateToHome,
+            onNavigateToHome = onLoginSuccess,
             socialLoginLauncher = socialLoginLauncher,
         )
         onboardingNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
-            onNavigateToHome = navigator::navigateToHome,
+            onNavigateToHome = onOnboardingFinished,
         )
         partyNavGraph(
             navController = navigator.navController,
