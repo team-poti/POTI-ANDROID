@@ -251,4 +251,7 @@
     <string name="goods_filter_members_separator">&#160;|&#160;</string>
     <string name="goods_filter_member_select_label">멤버 선택</string>
 
+    <!-- FCM -->
+    <string name="default_notification_channel_name">기본 알림</string>
+
 </resources>
