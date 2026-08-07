@@ -25,6 +25,7 @@ class FcmRepositoryImpl @Inject constructor(
     override suspend fun saveFcmToken(token: String): Result<Unit> = executeWithUiMock(
         mock = { },
         real = {
+            authTokenStore.awaitInitialized()
             if (authTokenStore.cachedAccessToken == null) return@executeWithUiMock Result.success(Unit)
 
             httpResponseHandler.safeApiCall {
