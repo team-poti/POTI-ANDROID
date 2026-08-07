@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -74,18 +73,6 @@ class MainActivity : ComponentActivity() {
             val onAuthCompleted = {
                 mainNavigator.navigateToHome()
                 consumeDeepLink(mainNavigator.navController)
-            }
-
-            LaunchedEffect(targetDestination, pendingDeepLink) {
-                val deepLink = pendingDeepLink ?: return@LaunchedEffect
-                if (targetDestination == null) return@LaunchedEffect
-
-                runCatching {
-                    mainNavigator.navController.navigate(deepLink)
-                }.onFailure {
-                    Timber.e(it, "Failed to navigate to deep link: $deepLink")
-                }
-                pendingDeepLink = null
             }
 
             PotiTheme {
