@@ -32,7 +32,7 @@ fun BadgeButton(
         modifier = modifier
             .heightIn(min = 40.dp)
             .clip(CircleShape)
-            .background(PotiTheme.colors.poti200)
+            .background(PotiTheme.colors.poti400)
             .noRippleClickable(onClick)
             .padding(vertical = 8.dp)
             .padding(start = 16.dp, end = 8.dp),
@@ -41,7 +41,7 @@ fun BadgeButton(
     ) {
         Text(
             text = bias,
-            color = PotiTheme.colors.poti800,
+            color = PotiTheme.colors.black,
             style = PotiTheme.typography.body14m,
         )
 
@@ -49,7 +49,7 @@ fun BadgeButton(
             imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_sm),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = PotiTheme.colors.poti800,
+            tint = PotiTheme.colors.black,
         )
     }
 }

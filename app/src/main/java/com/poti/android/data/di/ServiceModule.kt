@@ -30,6 +30,13 @@ object ServiceModule {
     fun provideAuthService(retrofit: Retrofit): AuthService =
         retrofit.create(AuthService::class.java)
 
+    @ReissueClient
+    @Provides
+    @Singleton
+    fun provideReissueAuthService(
+        @ReissueClient retrofit: Retrofit,
+    ): AuthService = retrofit.create(AuthService::class.java)
+
     @Provides
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService =

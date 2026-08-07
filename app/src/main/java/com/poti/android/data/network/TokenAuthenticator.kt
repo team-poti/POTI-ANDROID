@@ -1,20 +1,23 @@
 package com.poti.android.data.network
 
-import com.poti.android.data.local.datasource.PreferenceDataSource
+import com.poti.android.data.local.datasource.AuthTokenStore
+import com.poti.android.data.local.datasource.TokenPair
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.ReissueRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Provider
 
 class TokenAuthenticator @Inject constructor(
-    private val preferenceDataSource: PreferenceDataSource,
+    private val authTokenStore: AuthTokenStore,
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
     private val authSessionManager: AuthSessionManager,
 ) : Authenticator {
@@ -24,80 +27,193 @@ class TokenAuthenticator @Inject constructor(
         route: Route?,
         response: Response,
     ): Request? {
-        val requestUrl = response.request.url.toString()
-        Timber.Forest.tag("TokenAuthenticator").e("401 Unauthorized detected! URL: $requestUrl")
+        val requestPath = response.request.url.encodedPath
+        Timber.Forest.tag("TokenAuthenticator").w("401 Unauthorized detected. Path: $requestPath")
 
-        if (requestUrl.contains("/auth/reissue")) {
-            Timber.Forest.tag("TokenAuthenticator").e("Refresh Token expired. Giving up.")
-            handleLogout()
+        if (response.authRetryCount() > MAX_AUTH_RETRY_COUNT) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .w("Stop token reissue because auth retry limit exceeded. Path: $requestPath")
             return null
         }
 
-        val currentAccessToken = preferenceDataSource.cachedAccessToken
-        val currentRefreshToken = preferenceDataSource.cachedRefreshToken
+        if (AuthRequestPolicy.isExcludedAuthPath(requestPath)) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .d("Skip token reissue for auth endpoint. Path: $requestPath")
+            return null
+        }
 
-        synchronized(lock) {
-            val freshAccessToken = preferenceDataSource.cachedAccessToken
+        val requestAccessToken = response.request.accessTokenFromAuthorizationHeader()
+        if (!authTokenStore.ensureInitializedBlocking()) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .w("Token store initialization timed out. Stop token reissue.")
+            return null
+        }
 
-            if (freshAccessToken != currentAccessToken) {
-                Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
-                return newRequestWithAccessToken(response.request, freshAccessToken)
+        val refreshResult = synchronized(lock) {
+            val latestTokenPair = authTokenStore.cachedTokenPair
+
+            if (latestTokenPair == null) {
+                Timber.tag("TokenAuthenticator").w("Token is empty or was cleared. Stop retry.")
+                return@synchronized RefreshResult.Stop
             }
 
-            if (currentRefreshToken.isNullOrBlank()) {
-                Timber.Forest.tag("TokenAuthenticator").e("RefreshToken is empty. Logout.")
-                handleLogout()
-                return null
+            if (requestAccessToken != latestTokenPair.accessToken) {
+                Timber.tag("TokenAuthenticator").d("Token already refreshed! Retrying.")
+                return@synchronized RefreshResult.Retry(latestTokenPair.accessToken)
             }
 
             Timber.Forest.tag("TokenAuthenticator").d("Requesting token reissue...")
             val refreshResponse = try {
-                authRemoteDataSource.get().reissue(ReissueRequestDto(currentRefreshToken)).execute()
+                authRemoteDataSource.get().reissue(ReissueRequestDto(latestTokenPair.refreshToken)).execute()
+            } catch (e: IOException) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .w(e, "Reissue API call failed due to network error. Keep session.")
+                return@synchronized RefreshResult.Stop
             } catch (e: Exception) {
-                Timber.Forest.tag("TokenAuthenticator").e(e, "Reissue API call failed (Exception). Logout.")
-                handleLogout()
-                return null
+                Timber.Forest.tag("TokenAuthenticator")
+                    .e(e, "Reissue API call failed unexpectedly. Keep session.")
+                return@synchronized RefreshResult.Stop
             }
 
-            if (refreshResponse.isSuccessful) {
-                refreshResponse.body()?.data?.let { reissueData ->
-                    Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
+            when (refreshResponse.code()) {
+                HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN, HTTP_NOT_FOUND -> {
+                    Timber.Forest.tag("TokenAuthenticator")
+                        .e("Refresh token is expired or invalid. code=${refreshResponse.code()}. Logout.")
+                    val generation = authTokenStore.clearCachedTokens()
+                    return@synchronized RefreshResult.Logout(generation)
+                }
 
-                    val newAccessToken = reissueData.accessToken
-                    val newRefreshToken = reissueData.refreshToken
-
-                    runBlocking {
-                        preferenceDataSource.saveTokens(newAccessToken, newRefreshToken)
-                    }
-
-                    return newRequestWithAccessToken(response.request, newAccessToken)
+                in HTTP_SERVER_ERROR_START..HTTP_SERVER_ERROR_END -> {
+                    Timber.Forest.tag("TokenAuthenticator")
+                        .w("Reissue API returned server error. code=${refreshResponse.code()}. Keep session.")
+                    return@synchronized RefreshResult.Stop
                 }
             }
+
+            if (!refreshResponse.isSuccessful) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .w("Reissue API returned non-success response. code=${refreshResponse.code()}. Keep session.")
+                return@synchronized RefreshResult.Stop
+            }
+
+            val reissueData = refreshResponse.body()?.data
+            if (reissueData == null) {
+                Timber.Forest.tag("TokenAuthenticator")
+                    .e("Reissue API returned success but body/data is null. Keep session.")
+                return@synchronized RefreshResult.Stop
+            }
+
+            Timber.Forest.tag("TokenAuthenticator").d("Token reissue SUCCESS! Saving new tokens.")
+
+            val newTokenPair = TokenPair(reissueData.accessToken, reissueData.refreshToken)
+            val generation = authTokenStore.updateCachedTokens(newTokenPair)
+            RefreshResult.PersistAndRetry(newTokenPair, generation)
         }
 
-        handleLogout()
-        return null
+        return when (refreshResult) {
+            is RefreshResult.Retry -> newRequestWithAccessToken(response.request, refreshResult.accessToken)
+            is RefreshResult.PersistAndRetry -> {
+                persistTokensBlocking(refreshResult.tokenPair, refreshResult.generation)
+                newRequestWithAccessToken(response.request, refreshResult.tokenPair.accessToken)
+            }
+
+            is RefreshResult.Logout -> {
+                handleLogout(refreshResult.generation)
+                null
+            }
+
+            RefreshResult.Stop -> null
+        }
     }
 
     private fun newRequestWithAccessToken(
         request: Request,
-        newAccessToken: String?,
+        newAccessToken: String,
     ): Request {
-        if (newAccessToken == null) return request
-
         Timber.Forest.tag("TokenAuthenticator").d("Rebuilding request with new Bearer token.")
 
         return request.newBuilder()
-            .header("Authorization", "Bearer $newAccessToken")
+            .header(AuthRequestPolicy.AUTHORIZATION_HEADER, "${AuthRequestPolicy.BEARER_PREFIX}$newAccessToken")
             .build()
     }
 
-    private fun handleLogout() {
+    private fun handleLogout(generation: Long) {
         Timber.Forest.tag("TokenAuthenticator").w("Executing Logout logic (Clear DataStore).")
-        runBlocking {
-            preferenceDataSource.clearTokens()
-            Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
-            authSessionManager.triggerLogout()
+        val tokensCleared = runCatching {
+            runBlocking {
+                withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
+                    authTokenStore.persistTokenClearIfCurrent(generation)
+                }
+            }
+        }.onFailure { error ->
+            Timber.Forest.tag("TokenAuthenticator")
+                .e(error, "Failed to persist token clear. Continue logout with cleared in-memory tokens.")
+        }.getOrNull()
+
+        if (tokensCleared == false || !authTokenStore.isLogoutGenerationCurrent(generation)) {
+            Timber.Forest.tag("TokenAuthenticator")
+                .d("Skip logout event because a newer auth state is already active.")
+            return
         }
+
+        Timber.Forest.tag("TokenAuthenticator").d("Restarting MainActivity to navigate to Login.")
+        authSessionManager.triggerLogout()
+    }
+
+    private fun persistTokensBlocking(
+        tokenPair: TokenPair,
+        generation: Long,
+    ) {
+        runCatching {
+            runBlocking {
+                withTimeout(DATASTORE_PERSIST_TIMEOUT_MILLIS) {
+                    authTokenStore.persistTokensIfCurrent(tokenPair, generation)
+                }
+            }
+        }.onFailure { error ->
+            Timber.Forest.tag("TokenAuthenticator")
+                .e(error, "Failed to persist refreshed tokens. Keep the updated in-memory token pair.")
+        }
+    }
+
+    private fun Request.accessTokenFromAuthorizationHeader(): String? =
+        header(AuthRequestPolicy.AUTHORIZATION_HEADER)
+            ?.removePrefix(AuthRequestPolicy.BEARER_PREFIX)
+            ?.takeIf { it.isNotBlank() }
+
+    private fun Response.authRetryCount(): Int {
+        var count = 1
+        var priorResponse = priorResponse
+
+        while (priorResponse != null) {
+            count++
+            priorResponse = priorResponse.priorResponse
+        }
+
+        return count
+    }
+
+    private sealed interface RefreshResult {
+        data class Retry(val accessToken: String) : RefreshResult
+
+        data class PersistAndRetry(
+            val tokenPair: TokenPair,
+            val generation: Long,
+        ) : RefreshResult
+
+        data class Logout(val generation: Long) : RefreshResult
+
+        data object Stop : RefreshResult
+    }
+
+    private companion object {
+        const val MAX_AUTH_RETRY_COUNT = 1
+        const val HTTP_BAD_REQUEST = 400
+        const val HTTP_UNAUTHORIZED = 401
+        const val HTTP_FORBIDDEN = 403
+        const val HTTP_NOT_FOUND = 404
+        const val HTTP_SERVER_ERROR_START = 500
+        const val HTTP_SERVER_ERROR_END = 599
+        const val DATASTORE_PERSIST_TIMEOUT_MILLIS = 1_000L
     }
 }

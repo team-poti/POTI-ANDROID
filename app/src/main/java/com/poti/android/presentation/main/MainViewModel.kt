@@ -18,6 +18,7 @@ class MainViewModel @Inject constructor(
     val startDestination = observeAuthStateUseCase()
         .map { authState ->
             when {
+                !authState.isInitialized -> null
                 !authState.accessToken.isNullOrBlank() && authState.isOnboardingFinished -> PartyGraph
                 else -> AuthRoute.Login
             }
