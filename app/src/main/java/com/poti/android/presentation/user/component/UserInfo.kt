@@ -4,8 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -29,47 +29,38 @@ fun UserInfo(
     joinedAt: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(PotiTheme.colors.gray100)
-            .padding(all = 12.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .background(PotiTheme.colors.white)
+            .padding(horizontal = 12.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        UserInfoItem(
-            infoContent = activityMessage,
-            modifier = Modifier.fillMaxWidth(),
+        UserInfoText(text = activityMessage)
+
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_bullet),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = PotiTheme.colors.gray800,
         )
-        UserInfoItem(
-            infoContent = formatJoinedDate(joinedAt),
-            modifier = Modifier.fillMaxWidth(),
-        )
+
+        UserInfoText(text = formatJoinedDate(joinedAt))
     }
 }
 
 @Composable
-private fun UserInfoItem(
-    infoContent: String,
+private fun UserInfoText(
+    text: String,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Text(
+        text = text,
         modifier = modifier,
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_bullet),
-            contentDescription = null,
-            tint = PotiTheme.colors.gray800,
-        )
-
-        Text(
-            text = infoContent,
-            color = PotiTheme.colors.black,
-            style = PotiTheme.typography.caption12m,
-        )
-    }
+        color = PotiTheme.colors.gray800,
+        style = PotiTheme.typography.body14m,
+    )
 }
 
 private fun formatJoinedDate(joinedAt: String): String {
@@ -87,7 +78,9 @@ private fun formatJoinedDate(joinedAt: String): String {
 private fun UserInfoCardPreview() {
     PotiTheme {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .background(PotiTheme.colors.gray100)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserInfo(

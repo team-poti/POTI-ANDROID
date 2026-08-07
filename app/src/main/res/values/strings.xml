@@ -7,8 +7,10 @@
     <string name="bottom_nav_my_page">마이페이지</string>
 
     <!-- Navigation Component -->
-    <string name="header_section_ongoing">진행 중</string>
-    <string name="header_section_ended">종료</string>
+    <string name="header_section_ongoing">진행중 %1$d</string>
+    <string name="header_section_ended">종료 %1$d</string>
+    <string name="header_primary_history_recruit">모집내역</string>
+    <string name="header_primary_history_participate">참여내역</string>
 
     <!-- Button Component -->
     <string name="action_button_next">다음</string>
@@ -22,6 +24,7 @@
 
     <!-- Field Component -->
     <string name="field_label_name">이름</string>
+    <string name="search_bar_placeholder">검색어를 입력하세요</string>
 
 
     <!-- LoginScreen -->
@@ -220,7 +223,6 @@
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
-    <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
     <string name="user_my_page_title">마이</string>

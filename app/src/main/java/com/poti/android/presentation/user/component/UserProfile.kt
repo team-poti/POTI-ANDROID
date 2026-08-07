@@ -22,11 +22,14 @@ import coil.request.ImageRequest
 import com.poti.android.R
 import com.poti.android.core.designsystem.theme.PotiTheme
 
+/**
+ * @param email null이면 이메일을 노출하지 않습니다. 타인의 프로필 조회 시 null을 전달합니다.
+ */
 @Composable
 fun UserProfile(
     nickname: String,
-    email: String,
     modifier: Modifier = Modifier,
+    email: String? = null,
     imageUrl: String? = "",
 ) {
     Column(
@@ -57,13 +60,15 @@ fun UserProfile(
             style = PotiTheme.typography.body16sb,
         )
 
-        Spacer(Modifier.height(2.dp))
+        email?.let {
+            Spacer(Modifier.height(2.dp))
 
-        Text(
-            text = email,
-            color = PotiTheme.colors.gray700,
-            style = PotiTheme.typography.caption12m,
-        )
+            Text(
+                text = it,
+                color = PotiTheme.colors.gray700,
+                style = PotiTheme.typography.caption12m,
+            )
+        }
     }
 }
 
@@ -78,6 +83,11 @@ private fun UserProfilePreview() {
             UserProfile(
                 nickname = "포티포티포티",
                 email = "poti@app.jam",
+                modifier = Modifier,
+            )
+
+            UserProfile(
+                nickname = "포티포티포티",
                 modifier = Modifier,
             )
         }
