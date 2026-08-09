@@ -26,12 +26,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.designsystem.component.modal.PotiModal
-import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.button.PotiModalButton
+import com.poti.android.core.designsystem.component.modal.PotiModal
+import com.poti.android.core.designsystem.theme.PotiTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
@@ -77,7 +77,7 @@ private fun CreateCompleteModalContent(
                     color = PotiTheme.colors.gray100,
                     shape = RoundedCornerShape(8.dp),
                 )
-                .padding(vertical = 7.5.dp)
+                .padding(vertical = 7.5.dp),
         )
 
         Spacer(Modifier.height(12.dp))
@@ -100,7 +100,7 @@ private fun CreateCompleteModalContent(
                     color = PotiTheme.colors.gray100,
                     shape = RoundedCornerShape(8.dp),
                 )
-                .padding(vertical = 8.dp)
+                .padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.height(12.dp))
