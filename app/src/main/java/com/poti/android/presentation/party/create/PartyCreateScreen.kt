@@ -49,6 +49,7 @@ import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
+import com.poti.android.presentation.party.create.model.CreateModalType
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToBack
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToDetail
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToSearch
@@ -127,8 +128,8 @@ fun PartyCreateRoute(
         )
     }
 
-    if (uiState.showDialog) {
-        PotiSmallModal(
+    when (uiState.visibleModal) {
+        CreateModalType.EXIT_CONFIRM -> PotiSmallModal(
             onDismissRequest = { viewModel.processIntent(OnCloseDialog) },
             title = stringResource(R.string.create_exit_dialog_title),
             text = stringResource(R.string.create_exit_dialog_content),
@@ -137,13 +138,13 @@ fun PartyCreateRoute(
             onDismissBtnClick = { viewModel.processIntent(OnBackConfirm) },
             onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
-    }
 
-    if (uiState.showCompleteModal) {
-        CreateCompleteModal(
+        CreateModalType.CREATE_COMPLETE -> CreateCompleteModal(
             onDismiss = { viewModel.processIntent(OnCloseCreateModal) },
             onConfirm = { viewModel.processIntent(OnCreateConfirm) },
         )
+
+        null -> Unit
     }
 
     PartyCreateScreen(
