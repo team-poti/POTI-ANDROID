@@ -69,6 +69,7 @@ data class CreateUiState(
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
     val showDialog: Boolean = false,
+    val showCompleteModal: Boolean = false,
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
@@ -124,6 +125,10 @@ sealed interface CreateUiIntent : UiIntent {
     data class OnDeliveryPriceChange(val delivery: DeliveryOptionUiModel) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
+
+    data object OnCreateConfirm : CreateUiIntent
+
+    data object OnCloseCreateModal : CreateUiIntent
 
     data object ScrollComplete : CreateUiIntent
 }

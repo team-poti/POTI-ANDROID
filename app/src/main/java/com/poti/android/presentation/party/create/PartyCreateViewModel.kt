@@ -156,8 +156,17 @@ class PartyCreateViewModel @Inject constructor(
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
 
+                updateState { copy(showCompleteModal = true) }
+            }
+
+            OnCreateConfirm -> {
+                if (uiState.value.createPartyState is ApiState.Loading) return
+
+                updateState { copy(showCompleteModal = false) }
                 createParty()
             }
+
+            OnCloseCreateModal -> updateState { copy(showCompleteModal = false) }
 
             ScrollComplete -> updateState { copy(errorIndexToScroll = null) }
         }
