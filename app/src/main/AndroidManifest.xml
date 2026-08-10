@@ -28,6 +28,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.party.detail.AddressSearchActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".presentation.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
