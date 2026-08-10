@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.create.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +17,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -158,30 +163,51 @@ private fun CreateCompleteModalNoticeList(
     notices: ImmutableList<String>,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-            .padding(horizontal = 16.dp)
-            .heightIn(max = 280.dp)
-            .verticalScroll(rememberScrollState()),
-    ) {
-        notices.forEach { notice ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_bullet),
-                    contentDescription = null,
-                    tint = PotiTheme.colors.gray900,
-                )
+    val scrollState = rememberScrollState()
+    val showBottomGradient by remember { derivedStateOf { scrollState.canScrollForward } }
 
-                Text(
-                    text = notice,
-                    color = PotiTheme.colors.gray900,
-                    style = PotiTheme.typography.body14m,
-                    modifier = Modifier.weight(1f),
-                )
+    Box(
+        modifier = modifier,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .heightIn(max = 280.dp)
+                .verticalScroll(scrollState),
+        ) {
+            notices.forEach { notice ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_bullet),
+                        contentDescription = null,
+                        tint = PotiTheme.colors.gray900,
+                    )
+
+                    Text(
+                        text = notice,
+                        color = PotiTheme.colors.gray900,
+                        style = PotiTheme.typography.body14m,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
+        }
+
+        if (showBottomGradient) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, PotiTheme.colors.white),
+                        ),
+                    ),
+            )
         }
     }
 }
