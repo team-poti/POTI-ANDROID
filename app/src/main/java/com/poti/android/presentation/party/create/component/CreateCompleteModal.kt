@@ -1,15 +1,18 @@
 package com.poti.android.presentation.party.create.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +25,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -167,13 +173,12 @@ private fun CreateCompleteModalNoticeList(
     val showBottomGradient by remember { derivedStateOf { scrollState.canScrollForward } }
 
     Box(
-        modifier = modifier,
+        modifier = modifier.heightIn(max = 280.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .heightIn(max = 280.dp)
                 .verticalScroll(scrollState),
         ) {
             notices.forEach { notice ->
@@ -208,6 +213,32 @@ private fun CreateCompleteModalNoticeList(
                         ),
                     ),
             )
+        }
+
+        if (scrollState.maxValue > 0) {
+            val scrollbarColor = PotiTheme.colors.gray300
+
+            Canvas(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 2.dp)
+                    .fillMaxHeight()
+                    .width(3.dp),
+            ) {
+                val maxScroll = scrollState.maxValue.toFloat()
+                val totalContentHeight = size.height + maxScroll
+                val thumbHeight = (size.height * size.height / totalContentHeight)
+                    .coerceAtLeast(24.dp.toPx())
+                    .coerceAtMost(size.height)
+                val thumbOffsetY = (scrollState.value / maxScroll) * (size.height - thumbHeight)
+
+                drawRoundRect(
+                    color = scrollbarColor,
+                    topLeft = Offset(0f, thumbOffsetY),
+                    size = Size(size.width, thumbHeight),
+                    cornerRadius = CornerRadius(size.width / 2),
+                )
+            }
         }
     }
 }
