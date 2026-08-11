@@ -11,7 +11,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,9 +18,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.manager.AuthSessionManager
+import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -30,14 +31,14 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private var navController: NavHostController? = null
+    private var pendingDeepLink: Uri? by mutableStateOf(null)
 
     @Inject
     lateinit var authSessionManager: AuthSessionManager
 
     @Inject
     lateinit var socialLoginLauncher: SocialLoginLauncher
-
-    private var pendingDeepLink by mutableStateOf<Uri?>(null)
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -67,16 +68,11 @@ class MainActivity : ComponentActivity() {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
             val targetDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
-            LaunchedEffect(targetDestination, pendingDeepLink) {
-                val deepLink = pendingDeepLink ?: return@LaunchedEffect
-                if (targetDestination == null) return@LaunchedEffect
+            navController = mainNavigator.navController
 
-                runCatching {
-                    mainNavigator.navController.navigate(deepLink)
-                }.onFailure {
-                    Timber.e(it, "Failed to navigate to deep link: $deepLink")
-                }
-                pendingDeepLink = null
+            val onAuthCompleted = {
+                mainNavigator.navigateToHome()
+                consumeDeepLink(mainNavigator.navController)
             }
 
             PotiTheme {
@@ -85,6 +81,13 @@ class MainActivity : ComponentActivity() {
                         targetDestination = destination,
                         navigator = mainNavigator,
                         socialLoginLauncher = socialLoginLauncher,
+                        onSplashFinished = {
+                            if (destination == PartyGraph) {
+                                consumeDeepLink(mainNavigator.navController)
+                            }
+                        },
+                        onLoginSuccess = onAuthCompleted,
+                        onOnboardingFinished = onAuthCompleted,
                     )
                 }
             }
@@ -94,8 +97,26 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        pendingDeepLink = intent.data
+
+        val uri = intent.data ?: return
         intent.data = null
+
+        if (viewModel.startDestination.value == PartyGraph) {
+            navController?.navigateToDeepLink(uri)
+        } else {
+            pendingDeepLink = uri
+        }
+    }
+
+    private fun consumeDeepLink(navController: NavHostController) {
+        val uri = pendingDeepLink ?: return
+        pendingDeepLink = null
+        navController.navigateToDeepLink(uri)
+    }
+
+    private fun NavHostController.navigateToDeepLink(uri: Uri) {
+        runCatching { navigate(uri) }
+            .onFailure { Timber.w(it, "Unhandled deep link: $uri") }
     }
 
     private fun requestNotificationPermission() {

@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.poti.android.core.common.extension.sharedViewModel
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.onboarding.OnboardingArtistRoute
 import com.poti.android.presentation.onboarding.OnboardingGuideRoute
@@ -48,7 +48,7 @@ fun NavGraphBuilder.onboardingNavGraph(
     navigation<OnboardingGraph>(
         startDestination = OnboardingRoute.Guide,
     ) {
-        composable<OnboardingRoute.Guide> { entry ->
+        slideComposable<OnboardingRoute.Guide> { entry ->
             OnboardingGuideRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToOnboardingNickname = navController::navigateToOnboardingNickname,
@@ -56,7 +56,7 @@ fun NavGraphBuilder.onboardingNavGraph(
                 modifier = Modifier.padding(paddingValues),
             )
         }
-        composable<OnboardingRoute.Nickname> { entry ->
+        slideComposable<OnboardingRoute.Nickname> { entry ->
             OnboardingNicknameRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToOnboardingArtist = navController::navigateToOnboardingArtist,
@@ -64,7 +64,7 @@ fun NavGraphBuilder.onboardingNavGraph(
                 modifier = Modifier.padding(paddingValues),
             )
         }
-        composable<OnboardingRoute.Artist> { entry ->
+        slideComposable<OnboardingRoute.Artist> { entry ->
             OnboardingArtistRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToHome = onNavigateToHome,

@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
@@ -47,7 +47,7 @@ fun NavGraphBuilder.productNavGraph(
     navController: NavController,
     onPopBackStack: () -> Unit,
 ) {
-    composable<ProductRoute.ProductCategory> { backStackEntry ->
+    slideComposable<ProductRoute.ProductCategory> { backStackEntry ->
         val artistId = backStackEntry.toRoute<ProductRoute.ProductCategory>().artistId
         ProductCategoryRoute(
             artistId = artistId,
@@ -57,7 +57,7 @@ fun NavGraphBuilder.productNavGraph(
             modifier = Modifier.padding(paddingValues),
         )
     }
-    composable<ProductRoute.ProductPartyList> { backStackEntry ->
+    slideComposable<ProductRoute.ProductPartyList> { backStackEntry ->
         val artistId = backStackEntry.toRoute<ProductRoute.ProductPartyList>().artistId
 
         ProductPartyListRoute(

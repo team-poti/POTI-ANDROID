@@ -12,6 +12,7 @@ data object SplashRoute : Route
 fun NavGraphBuilder.splashNavGraph(
     navController: NavController,
     destination: Route,
+    onNavigated: () -> Unit = {},
 ) {
     composable<SplashRoute> {
         SplashRoute(
@@ -20,6 +21,7 @@ fun NavGraphBuilder.splashNavGraph(
                     popUpTo(SplashRoute) { inclusive = true }
                     launchSingleTop = true
                 }
+                onNavigated()
             },
         )
     }
