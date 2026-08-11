@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.user.profile.ProfileScreenRoute
 import kotlinx.serialization.Serializable
@@ -23,7 +23,7 @@ fun NavGraphBuilder.profileNavGraph(
     paddingValues: PaddingValues,
     onPopBackStack: () -> Unit,
 ) {
-    composable<ProfileRoute.Profile> {
+    slideComposable<ProfileRoute.Profile> {
         ProfileScreenRoute(
             onPopBackStack = onPopBackStack,
             modifier = Modifier.padding(paddingValues),

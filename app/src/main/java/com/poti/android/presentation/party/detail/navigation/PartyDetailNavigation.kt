@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
+import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.sharedViewModel
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.navigation.PartyCreateRoute
 import com.poti.android.presentation.party.detail.PartyDetailRoute
@@ -54,8 +56,13 @@ fun NavGraphBuilder.partyDetailNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
 ) {
-    navigation<PartyDetailGraph>(startDestination = PartyDetailRoute.Detail) {
-        composable<PartyDetailRoute.Detail> { entry ->
+    navigation<PartyDetailGraph>(
+        startDestination = PartyDetailRoute.Detail,
+        deepLinks = listOf(
+            navDeepLink<PartyDetailGraph>(basePath = "${BuildConfig.DEEP_LINK_HOST}/pot"),
+        ),
+    ) {
+        slideComposable<PartyDetailRoute.Detail> { entry ->
             PartyDetailRoute(
                 onPopBackStack = navController::popBackStack,
                 onNavigateToJoin = navController::navigateToPartyJoin,
@@ -65,7 +72,7 @@ fun NavGraphBuilder.partyDetailNavGraph(
                 modifier = Modifier.padding(paddingValues),
             )
         }
-        composable<PartyDetailRoute.Join> { entry ->
+        slideComposable<PartyDetailRoute.Join> { entry ->
             PartyJoinRoute(
                 onPopBackStack = navController::popBackStack,
                 onReload = navController::reloadPartyDetail,
