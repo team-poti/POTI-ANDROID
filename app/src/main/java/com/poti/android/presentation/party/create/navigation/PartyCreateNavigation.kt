@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.poti.android.core.common.extension.sharedViewModel
+import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.create.PartyArtistSelectRoute
 import com.poti.android.presentation.party.create.PartyCreateRoute
@@ -49,7 +49,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
     navigation<PartyCreateGraph>(
         startDestination = PartyCreateRoute.Create,
     ) {
-        composable<PartyCreateRoute.Create> { entry ->
+        slideComposable<PartyCreateRoute.Create> { entry ->
             val viewModel: PartyCreateViewModel = entry.sharedViewModel(navController)
 
             PartyCreateRoute(
@@ -60,7 +60,7 @@ fun NavGraphBuilder.partyCreateNavGraph(
                 modifier = Modifier.padding(paddingValues),
             )
         }
-        composable<PartyCreateRoute.ArtistSelect> { entry ->
+        slideComposable<PartyCreateRoute.ArtistSelect> { entry ->
             val viewModel: PartyCreateViewModel = entry.sharedViewModel(navController)
             PartyArtistSelectRoute(
                 onPopBackStack = navController::popBackStack,
