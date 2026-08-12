@@ -89,6 +89,8 @@ sealed interface PartyDetailIntent : UiIntent {
     data object OnFinalJoinClick : PartyDetailIntent
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
+
+    data object OnShareClick : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {
@@ -99,4 +101,6 @@ sealed interface PartyDetailEffect : UiEffect {
     data class NavigateToProfile(val userId: Long) : PartyDetailEffect
 
     data class ReloadDetail(val partyId: Long) : PartyDetailEffect
+
+    data class SharePartyDetail(val shareText: String) : PartyDetailEffect
 }

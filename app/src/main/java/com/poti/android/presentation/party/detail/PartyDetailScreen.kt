@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.extension.shareText
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -35,6 +37,7 @@ import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
+import com.poti.android.presentation.party.detail.component.PartySharedButton
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -50,6 +53,8 @@ fun PartyDetailRoute(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val shareChooserTitle = stringResource(R.string.party_detail_share_chooser_title)
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -57,6 +62,7 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
+            is PartyDetailEffect.SharePartyDetail -> context.shareText(shareChooserTitle, effect.shareText)
         }
     }
 
@@ -78,6 +84,7 @@ fun PartyDetailRoute(
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
+            onShareClick = { viewModel.processIntent(PartyDetailIntent.OnShareClick) },
             modifier = modifier,
         )
     }
@@ -90,6 +97,7 @@ private fun PartyDetailScreen(
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -165,6 +173,10 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
+            PartySharedButton(
+                onClick = onShareClick,
+            )
+
             ParticipantGuidelines()
         }
     }
@@ -180,6 +192,7 @@ private fun PartyDetailScreenPreview() {
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
+            onShareClick = {},
         )
     }
 }

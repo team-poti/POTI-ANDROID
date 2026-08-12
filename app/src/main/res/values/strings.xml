@@ -73,6 +73,7 @@
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
     <string name="party_detail_upload_date_label">"%s 등록"</string>
     <string name="party_detail_share_button">이 분철팟 공유하기</string>
+    <string name="party_detail_share_chooser_title">분철팟 공유하기</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>

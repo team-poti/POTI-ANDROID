@@ -19,6 +19,7 @@ import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
+import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
@@ -61,8 +62,11 @@ class PartyDetailViewModel @Inject constructor(
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
+            PartyDetailIntent.OnShareClick -> sendEffect(SharePartyDetail(buildShareText(partyId)))
         }
     }
+
+    private fun buildShareText(partyId: Long): String = partyDetailDeepLink(partyId)
 
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }
