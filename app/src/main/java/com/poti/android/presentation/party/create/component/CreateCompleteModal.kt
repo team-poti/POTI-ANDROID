@@ -88,7 +88,7 @@ private fun CreateCompleteModalContent(
                     color = PotiTheme.colors.gray100,
                     shape = RoundedCornerShape(8.dp),
                 )
-                .padding(vertical = 7.5.dp),
+                .padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.height(12.dp))
