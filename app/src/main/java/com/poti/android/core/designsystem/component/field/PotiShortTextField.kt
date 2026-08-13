@@ -39,6 +39,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param trailingIcon 필드 우측 표시되는 아이콘입니다.
  * @param imeAction 키보드 액션 타입으로, 기본값은 Done 입니다. Next 설정 시 아래 위치한 필드로 포커스 이동시킬 수 있습니다.
  * @param focusRequester 필드 포커스를 외부에서 제어하고 싶을 때 사용합니다.
+ * @param onFieldClick 값이 지정되면 직접 입력을 차단하고 필드 클릭 시 콜백을 실행합니다.
  */
 @Composable
 fun PotiShortTextField(
@@ -57,7 +58,7 @@ fun PotiShortTextField(
     readOnly: Boolean = false,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
-    onClick: (() -> Unit)? = null,
+    onFieldClick: (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -72,11 +73,11 @@ fun PotiShortTextField(
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    val clickModifier = if (onClick != null) {
+    val clickModifier = if (onFieldClick != null) {
         Modifier.noRippleClickable(
             interactionSource = interactionSource,
             enabled = enabled,
-            onClick = onClick,
+            onClick = onFieldClick,
         )
     } else {
         Modifier
@@ -99,7 +100,7 @@ fun PotiShortTextField(
                 .heightIn(52.dp)
                 .then(clickModifier),
             keyboardType = keyboardType,
-            enabled = enabled && onClick == null,
+            enabled = enabled && onFieldClick == null,
             imeAction = imeAction,
             onDoneAction = {
                 keyboardController?.hide()

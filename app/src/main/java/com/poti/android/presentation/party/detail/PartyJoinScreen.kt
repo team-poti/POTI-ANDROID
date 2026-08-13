@@ -217,7 +217,7 @@ private fun PartyJoinScreen(
 
                     PotiShortTextField(
                         value = uiState.postalCode,
-                        onClick = onAddressSearchClick,
+                        onFieldClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_postal_placeholder),
                         label = stringResource(R.string.party_join_order_postal_label),
                         error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
@@ -226,7 +226,7 @@ private fun PartyJoinScreen(
 
                     PotiShortTextField(
                         value = uiState.address,
-                        onClick = onAddressSearchClick,
+                        onFieldClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_address_placeholder),
                         label = stringResource(R.string.party_join_order_address_label),
                         error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
