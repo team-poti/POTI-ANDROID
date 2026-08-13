@@ -51,8 +51,16 @@ class PartyDetailViewModel @Inject constructor(
             is PartyDetailIntent.OnMemberRemove -> handleMemberRemove(intent.id)
             is PartyDetailIntent.OnMemberSelect -> handleMemberSelect(intent.item.id)
             is PartyDetailIntent.OnOrderNameChange -> updateState { copy(orderName = intent.value, isOrderNameError = false) }
-            is PartyDetailIntent.OnPostalCodeChange -> updateState { copy(postalCode = intent.value, isPostalCodeError = false) }
-            is PartyDetailIntent.OnAddressChange -> updateState { copy(address = intent.value, isAddressError = false) }
+            is PartyDetailIntent.OnAddressSelected -> updateState {
+                copy(
+                    postalCode = intent.postalCode,
+                    address = intent.address,
+                    detailAddress = "",
+                    isPostalCodeError = false,
+                    isAddressError = false,
+                )
+            }
+            is PartyDetailIntent.OnDetailAddressChange -> updateState { copy(detailAddress = intent.value) }
             is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
             PartyDetailIntent.OnFinalJoinClick -> {
                 if (validateInputs()) postOrder()
@@ -157,7 +165,9 @@ class PartyDetailViewModel @Inject constructor(
             val deliveryInfo = DeliveryInfo(
                 receiverName = currentState.orderName,
                 zipcode = currentState.postalCode,
-                address = currentState.address,
+                address = listOf(currentState.address, currentState.detailAddress)
+                    .filter(String::isNotBlank)
+                    .joinToString(" "),
                 phoneNumber = currentState.contact,
             )
 

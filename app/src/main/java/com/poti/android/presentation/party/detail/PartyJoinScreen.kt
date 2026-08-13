@@ -1,5 +1,9 @@
 package com.poti.android.presentation.party.detail
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -11,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,6 +54,28 @@ fun PartyJoinRoute(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val addressSearchLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        if (result.resultCode != Activity.RESULT_OK) return@rememberLauncherForActivityResult
+
+        val postalCode = result.data
+            ?.getStringExtra(AddressSearchActivity.EXTRA_POSTAL_CODE)
+            .orEmpty()
+        val address = result.data
+            ?.getStringExtra(AddressSearchActivity.EXTRA_ADDRESS)
+            .orEmpty()
+
+        if (postalCode.isNotBlank() && address.isNotBlank()) {
+            viewModel.processIntent(
+                PartyDetailIntent.OnAddressSelected(
+                    postalCode = postalCode,
+                    address = address,
+                ),
+            )
+        }
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -88,8 +115,8 @@ fun PartyJoinRoute(
     PartyJoinScreen(
         uiState = uiState,
         onOrderNameChange = { viewModel.processIntent(PartyDetailIntent.OnOrderNameChange(it)) },
-        onPostalCodeChange = { viewModel.processIntent(PartyDetailIntent.OnPostalCodeChange(it)) },
-        onAddressChange = { viewModel.processIntent(PartyDetailIntent.OnAddressChange(it)) },
+        onAddressSearchClick = { addressSearchLauncher.launch(Intent(context, AddressSearchActivity::class.java)) },
+        onDetailAddressChange = { viewModel.processIntent(PartyDetailIntent.OnDetailAddressChange(it)) },
         onContactChange = { viewModel.processIntent(PartyDetailIntent.OnContactChange(it)) },
         onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
         onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnFinalJoinClick) },
@@ -101,8 +128,8 @@ fun PartyJoinRoute(
 private fun PartyJoinScreen(
     uiState: PartyDetailUiState,
     onOrderNameChange: (String) -> Unit,
-    onPostalCodeChange: (String) -> Unit,
-    onAddressChange: (String) -> Unit,
+    onAddressSearchClick: () -> Unit,
+    onDetailAddressChange: (String) -> Unit,
     onContactChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
@@ -190,20 +217,27 @@ private fun PartyJoinScreen(
 
                     PotiShortTextField(
                         value = uiState.postalCode,
-                        onValueChanged = { onPostalCodeChange(it.take(5)) },
+                        onFieldClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_postal_placeholder),
                         label = stringResource(R.string.party_join_order_postal_label),
                         error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next,
+                        onValueChanged = {},
                     )
 
                     PotiShortTextField(
                         value = uiState.address,
-                        onValueChanged = onAddressChange,
+                        onFieldClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_address_placeholder),
                         label = stringResource(R.string.party_join_order_address_label),
                         error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
+                        onValueChanged = {},
+                    )
+
+                    PotiShortTextField(
+                        value = uiState.detailAddress,
+                        onValueChanged = onDetailAddressChange,
+                        placeholder = stringResource(R.string.party_join_order_detail_address_placeholder),
+                        label = stringResource(R.string.party_join_order_detail_address_label),
                         imeAction = ImeAction.Next,
                     )
 
@@ -234,8 +268,8 @@ private fun PartyJoinScreenPreview() {
             onBackClick = {},
             onJoinClick = {},
             onOrderNameChange = {},
-            onPostalCodeChange = {},
-            onAddressChange = {},
+            onAddressSearchClick = {},
+            onDetailAddressChange = {},
             onContactChange = {},
         )
     }
