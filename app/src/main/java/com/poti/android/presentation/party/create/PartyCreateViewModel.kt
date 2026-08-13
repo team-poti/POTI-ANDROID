@@ -163,7 +163,7 @@ class PartyCreateViewModel @Inject constructor(
             OnCreateConfirm -> {
                 if (uiState.value.createPartyState is ApiState.Loading) return
 
-                updateState { copy(visibleModal = null) }
+                updateState { copy(visibleModal = null, createPartyState = ApiState.Loading) }
                 createParty()
             }
 
@@ -540,8 +540,6 @@ class PartyCreateViewModel @Inject constructor(
     )
 
     private fun createParty() = viewModelScope.launch {
-        updateState { copy(createPartyState = ApiState.Loading) }
-
         uploadImagesUseCase(ImageUploadType.POST, uiState.value.imageUris.map { it.toString() })
             .onSuccess { fileNames ->
                 uploadPartyInfo(fileNames)
