@@ -1,5 +1,6 @@
 package com.poti.android.core.designsystem.component.field
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -55,6 +57,7 @@ fun PotiShortTextField(
     readOnly: Boolean = false,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
+    onClick: (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -65,6 +68,18 @@ fun PotiShortTextField(
         error.isNotEmpty() -> FieldStatus.ERROR
         isFocused -> FieldStatus.FOCUS
         else -> FieldStatus.DEFAULT
+    }
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val clickModifier = if (onClick != null) {
+        Modifier.noRippleClickable(
+            interactionSource = interactionSource,
+            enabled = enabled,
+            onClick = onClick,
+        )
+    } else {
+        Modifier
     }
 
     Column(
@@ -81,9 +96,10 @@ fun PotiShortTextField(
             backgroundColor = PotiTheme.colors.white,
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(52.dp),
+                .heightIn(52.dp)
+                .then(clickModifier),
             keyboardType = keyboardType,
-            enabled = enabled,
+            enabled = enabled && onClick == null,
             imeAction = imeAction,
             onDoneAction = {
                 keyboardController?.hide()

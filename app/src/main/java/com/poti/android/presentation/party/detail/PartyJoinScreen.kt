@@ -35,7 +35,6 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
 import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
-import com.poti.android.core.designsystem.component.field.PotiClickableField
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.modal.PotiLargeModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
@@ -216,20 +215,22 @@ private fun PartyJoinScreen(
                         imeAction = ImeAction.Next,
                     )
 
-                    PotiClickableField(
+                    PotiShortTextField(
                         value = uiState.postalCode,
                         onClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_postal_placeholder),
                         label = stringResource(R.string.party_join_order_postal_label),
                         error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
+                        onValueChanged = {},
                     )
 
-                    PotiClickableField(
+                    PotiShortTextField(
                         value = uiState.address,
                         onClick = onAddressSearchClick,
                         placeholder = stringResource(R.string.party_join_order_address_placeholder),
                         label = stringResource(R.string.party_join_order_address_label),
                         error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
+                        onValueChanged = {},
                     )
 
                     PotiShortTextField(
