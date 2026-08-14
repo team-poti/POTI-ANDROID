@@ -44,7 +44,6 @@ fun PotiMenuToggle(
         modifier = modifier
             .heightIn(min = 80.dp)
             .padding(contentPadding),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(

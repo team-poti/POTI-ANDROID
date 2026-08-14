@@ -46,7 +46,6 @@ fun PotiNoticeItem(
             .background(if (isRead) colors.white else colors.gray100)
             .noRippleClickable(onClick)
             .padding(contentPadding),
-        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             modifier = Modifier.weight(1f),
