@@ -14,7 +14,7 @@ data class PartySearchUiState(
     val nextPageLoadState: NextPageLoadState = NextPageLoadState.Idle,
     val hasNextPage: Boolean = false,
     val nextPage: Int = 0,
-) : UiState {}
+) : UiState
 
 sealed interface NextPageLoadState {
     data object Idle : NextPageLoadState
