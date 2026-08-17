@@ -63,7 +63,16 @@ class PartyDetailViewModel @Inject constructor(
             is PartyDetailIntent.OnDetailAddressChange -> updateState { copy(detailAddress = intent.value) }
             is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
             PartyDetailIntent.OnFinalJoinClick -> {
-                if (validateInputs()) postOrder()
+                if (validateInputs()) {
+                    updateState { copy(isParticipantNoticeModalVisible = true) }
+                }
+            }
+            PartyDetailIntent.OnParticipantNoticeDismiss -> {
+                updateState { copy(isParticipantNoticeModalVisible = false) }
+            }
+            PartyDetailIntent.OnParticipantNoticeConfirm -> {
+                updateState { copy(isParticipantNoticeModalVisible = false) }
+                postOrder()
             }
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }

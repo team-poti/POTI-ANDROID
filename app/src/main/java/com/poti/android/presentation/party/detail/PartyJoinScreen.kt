@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,6 +38,7 @@ import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.modal.PotiLargeModal
+import com.poti.android.core.designsystem.component.modal.PotiNoticeModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -45,6 +47,7 @@ import com.poti.android.presentation.party.detail.component.TotalPrice
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 import com.poti.android.presentation.party.detail.model.PartyDetailUiState
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PartyJoinRoute(
@@ -83,6 +86,19 @@ fun PartyJoinRoute(
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
             else -> {}
         }
+    }
+
+    if (uiState.isParticipantNoticeModalVisible) {
+        PotiNoticeModal(
+            title = stringResource(R.string.party_join_notice_modal_title),
+            subtitle = stringResource(R.string.party_join_notice_modal_subtitle),
+            notices = stringArrayResource(R.array.party_join_notice_modal_notices).toPersistentList(),
+            agreement = stringResource(R.string.party_join_notice_modal_agreement),
+            confirmButtonText = stringResource(R.string.action_button_confirm),
+            onDismiss = { viewModel.processIntent(PartyDetailIntent.OnParticipantNoticeDismiss) },
+            onConfirm = { viewModel.processIntent(PartyDetailIntent.OnParticipantNoticeConfirm) },
+            modifier = modifier,
+        )
     }
 
     if (uiState.isJoinSuccessDialogVisible) {
