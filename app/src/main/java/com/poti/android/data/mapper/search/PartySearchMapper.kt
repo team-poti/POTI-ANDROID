@@ -17,6 +17,6 @@ private fun PartySearchItemResponseDto.toDomain(): PartySearchItem =
         artistId = artistId,
         postImage = postImage.orEmpty(),
         postTitle = postTitle,
-        postCount = postCount.toInt(),
+        postCount = postCount,
         tag = tag,
     )

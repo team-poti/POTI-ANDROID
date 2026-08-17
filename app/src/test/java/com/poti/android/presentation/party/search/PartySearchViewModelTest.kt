@@ -158,7 +158,7 @@ class PartySearchViewModelTest {
         artistId = id,
         postImage = "image-$id",
         postTitle = "title-$id",
-        postCount = id.toInt(),
+        postCount = id,
         tag = null,
     )
 

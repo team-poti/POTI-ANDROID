@@ -10,6 +10,6 @@ data class PartySearchItem(
     val artistId: Long,
     val postImage: String,
     val postTitle: String,
-    val postCount: Int,
+    val postCount: Long,
     val tag: String?,
 )

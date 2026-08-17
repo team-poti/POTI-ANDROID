@@ -164,7 +164,7 @@ private fun PartySearchScreenPreview() {
                         artistId = item.artistId,
                         postImage = item.postImage,
                         postTitle = item.postTitle,
-                        postCount = item.postCount,
+                        postCount = item.postCount.toLong(),
                         tag = item.tag,
                     )
                 },
