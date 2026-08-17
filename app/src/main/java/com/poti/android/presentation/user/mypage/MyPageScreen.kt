@@ -31,6 +31,7 @@ import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.user.component.BadgeButton
 import com.poti.android.presentation.user.component.HistorySummaryCard
 import com.poti.android.presentation.user.component.HistorySummaryType
+import com.poti.android.presentation.user.component.InquirySection
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
@@ -57,6 +58,7 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = {},
+            onInquiryClick = {},
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -71,6 +73,7 @@ fun MyPageRoute(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onInquiryClick: () -> Unit,
     onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -154,6 +157,11 @@ private fun MyPageScreen(
                     modifier = Modifier.weight(1f),
                 )
             }
+
+            InquirySection(
+                onInquiryClick = onInquiryClick,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -184,6 +192,7 @@ private fun ProfileScreenPreview() {
                 ),
             ),
             onArtistClick = {},
+            onInquiryClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
@@ -216,6 +225,7 @@ private fun ProfileScreenPreview2() {
                 ),
             ),
             onArtistClick = {},
+            onInquiryClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
