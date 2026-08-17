@@ -250,7 +250,7 @@
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
     <string name="user_my_page_title">마이</string>
-    <string name="user_select_favorite_artist">나의 최애 선택하기</string>
+    <string name="user_select_favorite_artist">나의 최애 선택</string>
 
     <!-- History List -->
     <string name="history_empty_recruit_ongoing">진행 중인 모집 내역이 없어요</string>
