@@ -26,6 +26,11 @@ fun Context.shareTextToX(text: String) {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, text)
         setPackage(X_PACKAGE_NAME)
+        addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
+        )
     }
 
     runCatching { startActivity(shareIntent) }
