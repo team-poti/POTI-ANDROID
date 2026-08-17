@@ -146,7 +146,7 @@ fun PartyCreateRoute(
             subtitle = stringResource(R.string.create_complete_modal_subtitle),
             notices = stringArrayResource(R.array.create_complete_modal_notices).toPersistentList(),
             agreement = stringResource(R.string.create_complete_modal_agreement),
-            confirmButtonText = stringResource(R.string.create_complete_modal_confirm),
+            confirmButtonText = stringResource(R.string.action_button_confirm),
             onDismiss = { viewModel.processIntent(OnCloseCreateModal) },
             onConfirm = { viewModel.processIntent(OnCreateConfirm) },
         )
