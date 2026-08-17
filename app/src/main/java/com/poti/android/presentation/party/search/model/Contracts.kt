@@ -10,11 +10,12 @@ import com.poti.android.domain.model.party.ProductCategory
 @Immutable
 data class PartySearchUiState(
     val searchKeyword: String = "",
-    val productCategoryLoadState: ApiState<ProductCategory> = ApiState.Loading,
+    val productCategoryLoadState: ApiState<ProductCategory> = ApiState.Init,
 ) : UiState {}
 
 sealed interface PartySearchUiIntent : UiIntent {
+    data class OnSearchKeywordChange(val keyword: String) : PartySearchUiIntent
 }
 
-sealed interface PartySearch : UiEffect {
+sealed interface PartySearchUiEffect : UiEffect {
 }
