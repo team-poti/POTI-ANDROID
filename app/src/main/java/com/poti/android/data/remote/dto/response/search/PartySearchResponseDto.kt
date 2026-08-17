@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class PartySearchResponseDto(
     @SerialName("content")
     val content: List<PartySearchItemResponseDto>,
-    @SerialName("hasNext")
-    val hasNext: Boolean,
+//    @SerialName("hasNext")
+//    val hasNext: Boolean,
 )
 
 @Serializable

@@ -8,7 +8,7 @@ import com.poti.android.domain.model.search.PartySearchResult
 fun PartySearchResponseDto.toDomain(): PartySearchResult =
     PartySearchResult(
         items = content.map { it.toDomain() },
-        hasNext = hasNext,
+        hasNext = false,
     )
 
 private fun PartySearchItemResponseDto.toDomain(): PartySearchItem =
