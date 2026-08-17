@@ -25,7 +25,6 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPageSearch
-import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
@@ -171,16 +170,24 @@ private fun PartySearchScreenPreview() {
     val uiState = PartySearchUiState(
         searchResultLoadState = ApiState.Success(
             PartySearchResult(
-                items = UiMockData.productCategory.groupItems.map { item ->
+                items = listOf(
                     PartySearchItem(
-                        artist = item.artist,
-                        artistId = item.artistId,
-                        postImage = item.postImage,
-                        postTitle = item.postTitle,
-                        postCount = item.postCount.toLong(),
-                        tag = item.tag,
-                    )
-                },
+                        artist = "아이브",
+                        artistId = 1L,
+                        postImage = "",
+                        postTitle = "IVE SWITCH",
+                        postCount = 12L,
+                        tag = "미공포",
+                    ),
+                    PartySearchItem(
+                        artist = "아이브",
+                        artistId = 1L,
+                        postImage = "",
+                        postTitle = "I'VE MINE",
+                        postCount = 8L,
+                        tag = null,
+                    ),
+                ),
                 hasNext = false,
             ),
         ),
