@@ -42,7 +42,6 @@ fun NavGraphBuilder.partyNavGraph(
         )
         searchNavGraph(
             navController = navController,
-            paddingValues = paddingValues,
         )
     }
 }
