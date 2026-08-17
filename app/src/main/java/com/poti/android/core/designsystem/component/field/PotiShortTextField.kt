@@ -1,5 +1,6 @@
 package com.poti.android.core.designsystem.component.field
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
@@ -37,6 +39,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param trailingIcon 필드 우측 표시되는 아이콘입니다.
  * @param imeAction 키보드 액션 타입으로, 기본값은 Done 입니다. Next 설정 시 아래 위치한 필드로 포커스 이동시킬 수 있습니다.
  * @param focusRequester 필드 포커스를 외부에서 제어하고 싶을 때 사용합니다.
+ * @param onFieldClick 값이 지정되면 직접 입력을 차단하고 필드 클릭 시 콜백을 실행합니다.
  */
 @Composable
 fun PotiShortTextField(
@@ -55,6 +58,7 @@ fun PotiShortTextField(
     readOnly: Boolean = false,
     visualTransformation: VisualTransformation? = null,
     neverCoverField: Boolean = false,
+    onFieldClick: (() -> Unit)? = null,
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -65,6 +69,18 @@ fun PotiShortTextField(
         error.isNotEmpty() -> FieldStatus.ERROR
         isFocused -> FieldStatus.FOCUS
         else -> FieldStatus.DEFAULT
+    }
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val clickModifier = if (onFieldClick != null) {
+        Modifier.noRippleClickable(
+            interactionSource = interactionSource,
+            enabled = enabled,
+            onClick = onFieldClick,
+        )
+    } else {
+        Modifier
     }
 
     Column(
@@ -81,9 +97,10 @@ fun PotiShortTextField(
             backgroundColor = PotiTheme.colors.white,
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(52.dp),
+                .heightIn(52.dp)
+                .then(clickModifier),
             keyboardType = keyboardType,
-            enabled = enabled,
+            enabled = enabled && onFieldClick == null,
             imeAction = imeAction,
             onDoneAction = {
                 keyboardController?.hide()

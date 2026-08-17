@@ -42,12 +42,14 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
+import com.poti.android.presentation.party.create.component.CreateCompleteModal
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
+import com.poti.android.presentation.party.create.model.CreateModalType
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToBack
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToDetail
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToSearch
@@ -57,8 +59,10 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBack
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBackConfirm
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBankChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseBottomSheet
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseCreateModal
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseDialog
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateClick
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateConfirm
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeadlineChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliveryPriceChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliverySelect
@@ -124,8 +128,8 @@ fun PartyCreateRoute(
         )
     }
 
-    if (uiState.showDialog) {
-        PotiSmallModal(
+    when (uiState.visibleModal) {
+        CreateModalType.EXIT_CONFIRM -> PotiSmallModal(
             onDismissRequest = { viewModel.processIntent(OnCloseDialog) },
             title = stringResource(R.string.create_exit_dialog_title),
             text = stringResource(R.string.create_exit_dialog_content),
@@ -134,6 +138,13 @@ fun PartyCreateRoute(
             onDismissBtnClick = { viewModel.processIntent(OnBackConfirm) },
             onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
+
+        CreateModalType.CREATE_COMPLETE -> CreateCompleteModal(
+            onDismiss = { viewModel.processIntent(OnCloseCreateModal) },
+            onConfirm = { viewModel.processIntent(OnCreateConfirm) },
+        )
+
+        null -> Unit
     }
 
     PartyCreateScreen(
