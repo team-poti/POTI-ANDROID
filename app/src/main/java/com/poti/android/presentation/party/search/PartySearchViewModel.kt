@@ -30,6 +30,7 @@ class PartySearchViewModel @Inject constructor(
                 is PartySearchUiIntent.OnSearchKeywordChange -> scheduleSearch(intent.keyword)
                 is PartySearchUiIntent.OnSearch -> scheduleSearch(intent.keyword, debounceMillis = 0L)
                 PartySearchUiIntent.OnLoadNextPage -> loadNextPage()
+                PartySearchUiIntent.OnRetryNextPage -> retryNextPage()
             }
         }
 
@@ -52,6 +53,7 @@ class PartySearchViewModel @Inject constructor(
                     isPageLoading = false,
                     hasNextPage = false,
                     nextPage = 0,
+                    isNextPageLoadFailed = false,
                 )
             }
 
@@ -67,7 +69,7 @@ class PartySearchViewModel @Inject constructor(
 
         private fun loadNextPage() {
             val state = uiState.value
-            if (state.isPageLoading || !state.hasNextPage) return
+            if (state.isPageLoading || !state.hasNextPage || state.isNextPageLoadFailed) return
 
             val trimmedKeyword = state.searchKeyword.trim()
             if (trimmedKeyword.isEmpty()) return
@@ -81,6 +83,13 @@ class PartySearchViewModel @Inject constructor(
             }
         }
 
+        private fun retryNextPage() {
+            if (!uiState.value.isNextPageLoadFailed) return
+
+            updateState { copy(isNextPageLoadFailed = false) }
+            loadNextPage()
+        }
+
         private fun resetSearch(keyword: String) {
             updateState {
                 copy(
@@ -89,6 +98,7 @@ class PartySearchViewModel @Inject constructor(
                     isPageLoading = false,
                     hasNextPage = false,
                     nextPage = 0,
+                    isNextPageLoadFailed = false,
                 )
             }
         }
@@ -124,6 +134,7 @@ class PartySearchViewModel @Inject constructor(
                             isPageLoading = false,
                             hasNextPage = result.hasNext,
                             nextPage = page + 1,
+                            isNextPageLoadFailed = false,
                         )
                     }
                 }
@@ -136,6 +147,7 @@ class PartySearchViewModel @Inject constructor(
                                 searchResultLoadState
                             },
                             isPageLoading = false,
+                            isNextPageLoadFailed = !reset,
                         )
                     }
                 }

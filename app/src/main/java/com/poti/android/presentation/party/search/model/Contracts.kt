@@ -14,6 +14,7 @@ data class PartySearchUiState(
     val isPageLoading: Boolean = false,
     val hasNextPage: Boolean = false,
     val nextPage: Int = 0,
+    val isNextPageLoadFailed: Boolean = false,
 ) : UiState {}
 
 sealed interface PartySearchUiIntent : UiIntent {
@@ -22,6 +23,8 @@ sealed interface PartySearchUiIntent : UiIntent {
     data class OnSearch(val keyword: String) : PartySearchUiIntent
 
     data object OnLoadNextPage : PartySearchUiIntent
+
+    data object OnRetryNextPage : PartySearchUiIntent
 }
 
 sealed interface PartySearchUiEffect : UiEffect {

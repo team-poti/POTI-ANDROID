@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,9 @@ import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.search.model.PartySearchUiIntent
 import com.poti.android.presentation.party.search.model.PartySearchUiState
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun PartySearchRoute(
@@ -46,6 +50,7 @@ fun PartySearchRoute(
         onSearchKeywordChange = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearchKeywordChange(keyword)) },
         onSearch = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearch(keyword)) },
         onLoadNextPage = { viewModel.processIntent(PartySearchUiIntent.OnLoadNextPage) },
+        onRetryNextPage = { viewModel.processIntent(PartySearchUiIntent.OnRetryNextPage) },
         modifier = modifier,
     )
 }
@@ -58,10 +63,16 @@ fun PartySearchScreen(
     onSearchKeywordChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onLoadNextPage: () -> Unit,
+    onRetryNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
-    val shouldLoadNextPage by remember(listState, uiState.hasNextPage, uiState.isPageLoading) {
+    val shouldLoadNextPage by remember(
+        listState,
+        uiState.hasNextPage,
+        uiState.isPageLoading,
+        uiState.isNextPageLoadFailed,
+    ) {
         derivedStateOf {
             val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
                 ?: return@derivedStateOf false
@@ -69,6 +80,7 @@ fun PartySearchScreen(
 
             uiState.hasNextPage &&
                 !uiState.isPageLoading &&
+                !uiState.isNextPageLoadFailed &&
                 totalItemsCount > 0 &&
                 lastVisibleItemIndex >= totalItemsCount - 3
         }
@@ -78,6 +90,25 @@ fun PartySearchScreen(
         if (shouldLoadNextPage) {
             onLoadNextPage()
         }
+    }
+
+    LaunchedEffect(listState, uiState.isNextPageLoadFailed) {
+        if (!uiState.isNextPageLoadFailed) return@LaunchedEffect
+
+        snapshotFlow { listState.isScrollInProgress }
+            .distinctUntilChanged()
+            .drop(1)
+            .filter { isScrolling -> isScrolling }
+            .collect {
+                val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                    ?: return@collect
+                val totalItemsCount = listState.layoutInfo.totalItemsCount
+                val isNearEnd = totalItemsCount > 0 && lastVisibleItemIndex >= totalItemsCount - 3
+
+                if (isNearEnd) {
+                    onRetryNextPage()
+                }
+            }
     }
 
     Column(
@@ -148,6 +179,7 @@ private fun PartySearchScreenPreview() {
         onSearchKeywordChange = {},
         onSearch = {},
         onLoadNextPage = {},
+        onRetryNextPage = {},
         onCardClick = { _, _ -> },
     )
 }
