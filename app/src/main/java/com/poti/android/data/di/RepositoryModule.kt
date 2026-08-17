@@ -11,6 +11,7 @@ import com.poti.android.data.repository.PartyRepositoryImpl
 import com.poti.android.data.repository.PaymentRepositoryImpl
 import com.poti.android.data.repository.ReviewRepositoryImpl
 import com.poti.android.data.repository.S3RepositoryImpl
+import com.poti.android.data.repository.SearchRepositoryImpl
 import com.poti.android.data.repository.UserRepositoryImpl
 import com.poti.android.domain.repository.ArtistRepository
 import com.poti.android.domain.repository.AuthRepository
@@ -23,6 +24,7 @@ import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.repository.PaymentRepository
 import com.poti.android.domain.repository.ReviewRepository
 import com.poti.android.domain.repository.S3Repository
+import com.poti.android.domain.repository.SearchRepository
 import com.poti.android.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -52,6 +54,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPartyRepository(partyRepositoryImpl: PartyRepositoryImpl): PartyRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
 
     @Binds
     @Singleton
