@@ -18,7 +18,18 @@ import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.search.model.PartySearchUiState
 
 @Composable
-fun PartySearchRoute(modifier: Modifier = Modifier) {
+fun PartySearchRoute(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    PartySearchScreen(
+        uiState = PartySearchUiState(),
+        onBackClick = onBackClick,
+        onCardClick = { _, _ -> },
+        onSearchKeywordChange = {},
+        onSearch = {},
+        modifier = modifier,
+    )
 }
 
 @Composable
