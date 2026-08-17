@@ -30,6 +30,7 @@ import com.poti.android.presentation.party.search.model.PartySearchUiState
 @Composable
 fun PartySearchRoute(
     onBackClick: () -> Unit,
+    onNavigateToProductPartyList: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PartySearchViewModel = hiltViewModel(),
 ) {
@@ -38,7 +39,7 @@ fun PartySearchRoute(
     PartySearchScreen(
         uiState = uiState,
         onBackClick = onBackClick,
-        onCardClick = { _, _ -> },
+        onCardClick = onNavigateToProductPartyList,
         onSearchKeywordChange = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearchKeywordChange(keyword)) },
         onSearch = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearch(keyword)) },
         onLoadNextPage = { viewModel.processIntent(PartySearchUiIntent.OnLoadNextPage) },
@@ -98,7 +99,7 @@ fun PartySearchScreen(
                         title = groupItem.postTitle,
                         partyCount = groupItem.postCount,
                         tag = groupItem.tag,
-                        onClick = { id, title -> onCardClick(groupItem.artistId, groupItem.postTitle) },
+                        onClick = onCardClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
