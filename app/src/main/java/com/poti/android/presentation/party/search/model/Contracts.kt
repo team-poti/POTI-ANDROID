@@ -25,6 +25,10 @@ sealed interface NextPageLoadState {
 }
 
 sealed interface PartySearchUiIntent : UiIntent {
+    data object OnBackClick : PartySearchUiIntent
+
+    data class OnCardClick(val artistId: Long, val title: String) : PartySearchUiIntent
+
     data class OnSearchKeywordChange(val keyword: String) : PartySearchUiIntent
 
     data class OnSearch(val keyword: String) : PartySearchUiIntent
@@ -35,4 +39,10 @@ sealed interface PartySearchUiIntent : UiIntent {
 }
 
 sealed interface PartySearchUiEffect : UiEffect {
+    data object NavigateBack : PartySearchUiEffect
+
+    data class NavigateToProductPartyList(
+        val artistId: Long,
+        val title: String,
+    ) : PartySearchUiEffect
 }

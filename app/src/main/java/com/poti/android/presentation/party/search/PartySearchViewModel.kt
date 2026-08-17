@@ -28,6 +28,13 @@ class PartySearchViewModel @Inject constructor(
 
         override fun processIntent(intent: PartySearchUiIntent) {
             when (intent) {
+                PartySearchUiIntent.OnBackClick -> sendEffect(PartySearchUiEffect.NavigateBack)
+                is PartySearchUiIntent.OnCardClick -> sendEffect(
+                    PartySearchUiEffect.NavigateToProductPartyList(
+                        artistId = intent.artistId,
+                        title = intent.title,
+                    ),
+                )
                 is PartySearchUiIntent.OnSearchKeywordChange -> scheduleSearch(intent.keyword)
                 is PartySearchUiIntent.OnSearch -> scheduleSearch(intent.keyword, debounceMillis = 0L)
                 PartySearchUiIntent.OnLoadNextPage -> loadNextPage()

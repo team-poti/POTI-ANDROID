@@ -43,6 +43,7 @@ fun HomeRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
+            HomeUiEffect.NavigateToPartySearch -> onNavigateToPartySearch()
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
@@ -53,7 +54,7 @@ fun HomeRoute(
     uiState.homeContentLoadState.onSuccess { homeContent ->
         HomeScreen(
             homeContent = homeContent,
-            onSearchClick = onNavigateToPartySearch,
+            onSearchClick = { viewModel.processIntent(HomeUiIntent.OnSearchClick) },
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },

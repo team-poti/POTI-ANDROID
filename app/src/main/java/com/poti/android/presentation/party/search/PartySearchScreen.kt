@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPageSearch
 import com.poti.android.data.mock.UiMockData
@@ -29,6 +30,7 @@ import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.search.model.NextPageLoadState
+import com.poti.android.presentation.party.search.model.PartySearchUiEffect
 import com.poti.android.presentation.party.search.model.PartySearchUiIntent
 import com.poti.android.presentation.party.search.model.PartySearchUiState
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -44,10 +46,21 @@ fun PartySearchRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            PartySearchUiEffect.NavigateBack -> onBackClick()
+            is PartySearchUiEffect.NavigateToProductPartyList -> {
+                onNavigateToProductPartyList(effect.artistId, effect.title)
+            }
+        }
+    }
+
     PartySearchScreen(
         uiState = uiState,
-        onBackClick = onBackClick,
-        onCardClick = onNavigateToProductPartyList,
+        onBackClick = { viewModel.processIntent(PartySearchUiIntent.OnBackClick) },
+        onCardClick = { artistId, title ->
+            viewModel.processIntent(PartySearchUiIntent.OnCardClick(artistId, title))
+        },
         onSearchKeywordChange = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearchKeywordChange(keyword)) },
         onSearch = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearch(keyword)) },
         onLoadNextPage = { viewModel.processIntent(PartySearchUiIntent.OnLoadNextPage) },
