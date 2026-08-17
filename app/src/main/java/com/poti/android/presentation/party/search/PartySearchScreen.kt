@@ -28,6 +28,7 @@ import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
+import com.poti.android.presentation.party.search.model.NextPageLoadState
 import com.poti.android.presentation.party.search.model.PartySearchUiIntent
 import com.poti.android.presentation.party.search.model.PartySearchUiState
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -70,8 +71,7 @@ fun PartySearchScreen(
     val shouldLoadNextPage by remember(
         listState,
         uiState.hasNextPage,
-        uiState.isPageLoading,
-        uiState.isNextPageLoadFailed,
+        uiState.nextPageLoadState,
     ) {
         derivedStateOf {
             val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
@@ -79,8 +79,7 @@ fun PartySearchScreen(
             val totalItemsCount = listState.layoutInfo.totalItemsCount
 
             uiState.hasNextPage &&
-                !uiState.isPageLoading &&
-                !uiState.isNextPageLoadFailed &&
+                uiState.nextPageLoadState == NextPageLoadState.Idle &&
                 totalItemsCount > 0 &&
                 lastVisibleItemIndex >= totalItemsCount - 3
         }
@@ -92,8 +91,8 @@ fun PartySearchScreen(
         }
     }
 
-    LaunchedEffect(listState, uiState.isNextPageLoadFailed) {
-        if (!uiState.isNextPageLoadFailed) return@LaunchedEffect
+    LaunchedEffect(listState, uiState.nextPageLoadState) {
+        if (uiState.nextPageLoadState != NextPageLoadState.Failure) return@LaunchedEffect
 
         snapshotFlow { listState.isScrollInProgress }
             .distinctUntilChanged()

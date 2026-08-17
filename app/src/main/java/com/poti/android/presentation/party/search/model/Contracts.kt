@@ -11,11 +11,18 @@ import com.poti.android.domain.model.search.PartySearchResult
 data class PartySearchUiState(
     val searchKeyword: String = "",
     val searchResultLoadState: ApiState<PartySearchResult> = ApiState.Init,
-    val isPageLoading: Boolean = false,
+    val nextPageLoadState: NextPageLoadState = NextPageLoadState.Idle,
     val hasNextPage: Boolean = false,
     val nextPage: Int = 0,
-    val isNextPageLoadFailed: Boolean = false,
 ) : UiState {}
+
+sealed interface NextPageLoadState {
+    data object Idle : NextPageLoadState
+
+    data object Loading : NextPageLoadState
+
+    data object Failure : NextPageLoadState
+}
 
 sealed interface PartySearchUiIntent : UiIntent {
     data class OnSearchKeywordChange(val keyword: String) : PartySearchUiIntent

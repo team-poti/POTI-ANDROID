@@ -6,6 +6,7 @@ import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.domain.repository.SearchRepository
 import com.poti.android.domain.usecase.search.SearchPartyUseCase
+import com.poti.android.presentation.party.search.model.NextPageLoadState
 import com.poti.android.presentation.party.search.model.PartySearchUiIntent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy
@@ -123,7 +124,7 @@ class PartySearchViewModelTest {
             val failedState = viewModel.uiState.value
             val failedResult = (failedState.searchResultLoadState as ApiState.Success).data
             assertEquals(listOf(firstItem), failedResult.items)
-            assertTrue(failedState.isNextPageLoadFailed)
+            assertEquals(NextPageLoadState.Failure, failedState.nextPageLoadState)
             assertEquals(1, failedState.nextPage)
 
             viewModel.processIntent(PartySearchUiIntent.OnRetryNextPage)
@@ -133,7 +134,7 @@ class PartySearchViewModelTest {
             val retriedResult = (retriedState.searchResultLoadState as ApiState.Success).data
             assertEquals(listOf(firstItem, secondItem), retriedResult.items)
             assertEquals(listOf(0, 1, 1), searchRepository.requests.map { it.page })
-            assertFalse(retriedState.isNextPageLoadFailed)
+            assertEquals(NextPageLoadState.Idle, retriedState.nextPageLoadState)
             assertFalse(retriedState.hasNextPage)
             assertEquals(2, retriedState.nextPage)
         }
@@ -149,8 +150,7 @@ class PartySearchViewModelTest {
             val state = viewModel.uiState.value
             val failure = state.searchResultLoadState as ApiState.Failure
             assertEquals("search failed", failure.message)
-            assertFalse(state.isNextPageLoadFailed)
-            assertFalse(state.isPageLoading)
+            assertEquals(NextPageLoadState.Idle, state.nextPageLoadState)
         }
 
     private fun item(id: Long) = PartySearchItem(

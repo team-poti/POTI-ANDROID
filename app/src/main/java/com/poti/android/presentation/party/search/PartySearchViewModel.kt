@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.search.SearchPartyUseCase
+import com.poti.android.presentation.party.search.model.NextPageLoadState
 import com.poti.android.presentation.party.search.model.PartySearchUiEffect
 import com.poti.android.presentation.party.search.model.PartySearchUiIntent
 import com.poti.android.presentation.party.search.model.PartySearchUiState
@@ -50,10 +51,9 @@ class PartySearchViewModel @Inject constructor(
                 copy(
                     searchKeyword = keyword,
                     searchResultLoadState = ApiState.Loading,
-                    isPageLoading = false,
+                    nextPageLoadState = NextPageLoadState.Idle,
                     hasNextPage = false,
                     nextPage = 0,
-                    isNextPageLoadFailed = false,
                 )
             }
 
@@ -69,7 +69,7 @@ class PartySearchViewModel @Inject constructor(
 
         private fun loadNextPage() {
             val state = uiState.value
-            if (state.isPageLoading || !state.hasNextPage || state.isNextPageLoadFailed) return
+            if (state.nextPageLoadState != NextPageLoadState.Idle || !state.hasNextPage) return
 
             val trimmedKeyword = state.searchKeyword.trim()
             if (trimmedKeyword.isEmpty()) return
@@ -84,9 +84,9 @@ class PartySearchViewModel @Inject constructor(
         }
 
         private fun retryNextPage() {
-            if (!uiState.value.isNextPageLoadFailed) return
+            if (uiState.value.nextPageLoadState != NextPageLoadState.Failure) return
 
-            updateState { copy(isNextPageLoadFailed = false) }
+            updateState { copy(nextPageLoadState = NextPageLoadState.Idle) }
             loadNextPage()
         }
 
@@ -95,10 +95,9 @@ class PartySearchViewModel @Inject constructor(
                 copy(
                     searchKeyword = keyword,
                     searchResultLoadState = ApiState.Init,
-                    isPageLoading = false,
+                    nextPageLoadState = NextPageLoadState.Idle,
                     hasNextPage = false,
                     nextPage = 0,
-                    isNextPageLoadFailed = false,
                 )
             }
         }
@@ -108,7 +107,9 @@ class PartySearchViewModel @Inject constructor(
             page: Int,
             reset: Boolean,
         ) {
-            updateState { copy(isPageLoading = true) }
+            if (!reset) {
+                updateState { copy(nextPageLoadState = NextPageLoadState.Loading) }
+            }
 
             searchPartyUseCase(
                 keyword = keyword,
@@ -131,10 +132,9 @@ class PartySearchViewModel @Inject constructor(
                                     },
                                 ),
                             ),
-                            isPageLoading = false,
+                            nextPageLoadState = NextPageLoadState.Idle,
                             hasNextPage = result.hasNext,
                             nextPage = page + 1,
-                            isNextPageLoadFailed = false,
                         )
                     }
                 }
@@ -146,8 +146,11 @@ class PartySearchViewModel @Inject constructor(
                             } else {
                                 searchResultLoadState
                             },
-                            isPageLoading = false,
-                            isNextPageLoadFailed = !reset,
+                            nextPageLoadState = if (reset) {
+                                NextPageLoadState.Idle
+                            } else {
+                                NextPageLoadState.Failure
+                            },
                         )
                     }
                 }
