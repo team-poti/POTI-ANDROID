@@ -9,7 +9,7 @@ import com.poti.android.domain.model.party.ProductCategory
 
 @Immutable
 data class PartySearchUiState(
-    val searchText: String = "",
+    val searchKeyword: String = "",
     val productCategoryLoadState: ApiState<ProductCategory> = ApiState.Loading,
 ) : UiState {}
 

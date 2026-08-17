@@ -12,8 +12,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.model.party.GroupItem
-import com.poti.android.domain.model.party.ProductCategory
+import com.poti.android.core.designsystem.component.navigation.PotiHeaderPageSearch
+import com.poti.android.data.mock.UiMockData
 import com.poti.android.presentation.party.home.component.GoodsLargeCard
 import com.poti.android.presentation.party.search.model.PartySearchUiState
 
@@ -24,13 +24,21 @@ fun PartySearchRoute(modifier: Modifier = Modifier) {
 @Composable
 fun PartySearchScreen(
     uiState: PartySearchUiState,
-    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
     onCardClick: (Long, String) -> Unit,
+    onSearchKeywordChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
-        // TODO: 검색 컴포넌트 추가
+        PotiHeaderPageSearch(
+            onNavigationClick = onBackClick,
+            value = uiState.searchKeyword,
+            onValueChange = onSearchKeywordChange,
+            onSearch = onSearch,
+        )
 
         LazyColumn(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
@@ -60,26 +68,14 @@ fun PartySearchScreen(
 private fun PartySearchScreenPreview() {
     val uiState = PartySearchUiState(
         productCategoryLoadState = ApiState.Success(
-            ProductCategory(
-                nickname = "",
-                mainArtist = "",
-                mainArtistId = 1,
-                groupItems = listOf(
-                    GroupItem(
-                        artist = "아티스트명",
-                        artistId = 1,
-                        postImage = "",
-                        postTitle = "상품 종류명",
-                        postCount = 2,
-                        tag = "인기",
-                    ),
-                ),
-                myGroupItems = listOf(),
-            ),
+            UiMockData.productCategory,
         ),
     )
     PartySearchScreen(
         uiState = uiState,
+        onBackClick = {},
+        onSearchKeywordChange = {},
+        onSearch = {},
         onCardClick = { _, _ -> },
     )
 }
