@@ -7,8 +7,6 @@ import kotlinx.serialization.Serializable
 data class ProfileResponseDto(
     @SerialName("userId")
     val userId: Long,
-    @SerialName("email")
-    val email: String,
     @SerialName("nickname")
     val nickname: String,
     @SerialName("profileImageUrl")
@@ -19,8 +17,8 @@ data class ProfileResponseDto(
     val activityMessage: String,
     @SerialName("joinedAt")
     val joinedAt: String,
-    @SerialName("hasFavoriteArtist")
-    val hasFavoriteArtist: Boolean,
+    @SerialName("participationSummary")
+    val participationSummary: ProfileSummaryDto,
     @SerialName("recruitSummary")
     val recruitSummary: ProfileSummaryDto,
 )

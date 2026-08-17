@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProfileSummaryDto(
-    @SerialName("total")
-    val total: Int,
     @SerialName("inProgress")
     val inProgress: Int,
     @SerialName("completed")

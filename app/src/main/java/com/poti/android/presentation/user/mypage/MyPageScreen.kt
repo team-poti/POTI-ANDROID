@@ -181,12 +181,10 @@ private fun ProfileScreenPreview() {
                 hasFavoriteArtist = true,
                 favoriteArtistName = "아이브(ive)",
                 participationSummary = HistorySummary(
-                    total = 12,
                     inProgress = 3,
                     completed = 9,
                 ),
                 recruitSummary = HistorySummary(
-                    total = 7,
                     inProgress = 2,
                     completed = 5,
                 ),
@@ -214,12 +212,10 @@ private fun ProfileScreenPreview2() {
                 hasFavoriteArtist = true,
                 favoriteArtistName = null,
                 participationSummary = HistorySummary(
-                    total = 12,
                     inProgress = 3,
                     completed = 9,
                 ),
                 recruitSummary = HistorySummary(
-                    total = 7,
                     inProgress = 2,
                     completed = 5,
                 ),
