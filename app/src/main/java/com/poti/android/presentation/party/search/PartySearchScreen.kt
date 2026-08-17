@@ -13,12 +13,15 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPageSearch
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.search.PartySearchItem
@@ -92,19 +95,27 @@ fun PartySearchScreen(
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
         ) {
             uiState.searchResultLoadState.onSuccess { searchResult ->
-                items(searchResult.items) { groupItem ->
-                    GoodsLargeCard(
-                        imageUrl = groupItem.postImage,
-                        artist = groupItem.artist,
-                        title = groupItem.postTitle,
-                        partyCount = groupItem.postCount,
-                        tag = groupItem.tag,
-                        onClick = onCardClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        artistId = groupItem.artistId,
-                    )
+                if (searchResult.items.isEmpty()) {
+                    item {
+                        PotiEmptyStateInline(
+                            text = stringResource(R.string.search_message_empty_result),
+                        )
+                    }
+                } else {
+                    items(searchResult.items) { groupItem ->
+                        GoodsLargeCard(
+                            imageUrl = groupItem.postImage,
+                            artist = groupItem.artist,
+                            title = groupItem.postTitle,
+                            partyCount = groupItem.postCount,
+                            tag = groupItem.tag,
+                            onClick = onCardClick,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            artistId = groupItem.artistId,
+                        )
+                    }
                 }
             }
         }
