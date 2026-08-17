@@ -11,6 +11,5 @@ class SearchPartyUseCase @Inject constructor(
         keyword: String,
         page: Int,
         size: Int,
-        sort: String? = null,
-    ): Result<PartySearchResult> = searchRepository.searchParties(keyword, page, size, sort)
+    ): Result<PartySearchResult> = searchRepository.searchParties(keyword, page, size)
 }

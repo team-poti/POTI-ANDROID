@@ -12,7 +12,6 @@ class SearchRemoteDataSource @Inject constructor(
         keyword: String,
         page: Int,
         size: Int,
-        sort: String?,
     ): BaseResponse<PartySearchResponseDto> =
-        searchService.searchParties(keyword, page, size, sort)
+        searchService.searchParties(keyword, page, size)
 }

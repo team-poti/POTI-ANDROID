@@ -7,6 +7,5 @@ interface SearchRepository {
         keyword: String,
         page: Int,
         size: Int,
-        sort: String?,
     ): Result<PartySearchResult>
 }

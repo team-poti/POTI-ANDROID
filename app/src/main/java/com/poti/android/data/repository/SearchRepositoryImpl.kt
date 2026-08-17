@@ -19,7 +19,6 @@ class SearchRepositoryImpl @Inject constructor(
         keyword: String,
         page: Int,
         size: Int,
-        sort: String?,
     ): Result<PartySearchResult> = executeWithUiMock(
         mock = {
             val matchedItems = UiMockData.productCategory.groupItems
@@ -47,7 +46,7 @@ class SearchRepositoryImpl @Inject constructor(
         },
         real = {
             httpResponseHandler.safeApiCall {
-                searchRemoteDataSource.searchParties(keyword, page, size, sort)
+                searchRemoteDataSource.searchParties(keyword, page, size)
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()

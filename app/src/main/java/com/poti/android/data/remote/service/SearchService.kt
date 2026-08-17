@@ -11,6 +11,5 @@ interface SearchService {
         @Query("keyword") keyword: String,
         @Query("page") page: Int,
         @Query("size") size: Int,
-        @Query("sort") sort: String?,
     ): BaseResponse<PartySearchResponseDto>
 }
