@@ -81,6 +81,8 @@ class PartySearchViewModel @Inject constructor(
             val trimmedKeyword = state.searchKeyword.trim()
             if (trimmedKeyword.isEmpty()) return
 
+            updateState { copy(nextPageLoadState = NextPageLoadState.Loading) }
+
             searchJob = viewModelScope.launch {
                 requestSearch(
                     keyword = trimmedKeyword,
@@ -114,10 +116,6 @@ class PartySearchViewModel @Inject constructor(
             page: Int,
             reset: Boolean,
         ) {
-            if (!reset) {
-                updateState { copy(nextPageLoadState = NextPageLoadState.Loading) }
-            }
-
             searchPartyUseCase(
                 keyword = keyword,
                 page = page,

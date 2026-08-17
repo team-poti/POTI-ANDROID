@@ -111,6 +111,22 @@ class PartySearchViewModelTest {
         }
 
     @Test
+    fun `requests next page only once when load intent is sent consecutively`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            searchRepository.enqueue(Result.success(searchResult(item(1), hasNext = true)))
+            searchRepository.enqueue(Result.success(searchResult(item(2), hasNext = false)))
+
+            viewModel.processIntent(PartySearchUiIntent.OnSearch("아이브"))
+            advanceUntilIdle()
+
+            viewModel.processIntent(PartySearchUiIntent.OnLoadNextPage)
+            viewModel.processIntent(PartySearchUiIntent.OnLoadNextPage)
+            advanceUntilIdle()
+
+            assertEquals(listOf(0, 1), searchRepository.requests.map { it.page })
+        }
+
+    @Test
     fun `keeps current results after page failure and retries the same page`() =
         runTest(mainDispatcherRule.testDispatcher) {
             val firstItem = item(1)
