@@ -5,7 +5,6 @@ data class ProductCategory(
     val mainArtist: String?,
     val mainArtistId: Long?,
     val groupItems: List<GroupItem>,
-    val myGroupItems: List<GroupItem>,
 )
 
 data class GroupItem(

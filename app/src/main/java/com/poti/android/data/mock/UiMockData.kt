@@ -132,7 +132,6 @@ object UiMockData {
                 tag = tags[index % tags.size],
             )
         },
-        myGroupItems = emptyList(),
     )
 
     val productPartyList = ProductPartyList(
