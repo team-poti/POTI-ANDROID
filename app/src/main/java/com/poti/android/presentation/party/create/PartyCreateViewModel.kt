@@ -16,6 +16,7 @@ import com.poti.android.domain.usecase.party.CreatePartyUseCase
 import com.poti.android.domain.usecase.party.GetDeliveryOptionsUseCase
 import com.poti.android.domain.usecase.party.SearchArtistUseCase
 import com.poti.android.domain.usecase.party.SearchProductUseCase
+import com.poti.android.presentation.party.create.model.CreateModalType
 import com.poti.android.presentation.party.create.model.CreateUiEffect
 import com.poti.android.presentation.party.create.model.CreateUiEffect.*
 import com.poti.android.presentation.party.create.model.CreateUiIntent
@@ -64,17 +65,17 @@ class PartyCreateViewModel @Inject constructor(
         when (intent) {
             OnCloseBottomSheet -> updateState { copy(showMemberBottomSheet = false) }
 
-            OnCloseDialog -> updateState { copy(showDialog = false) }
+            OnCloseDialog -> updateState { copy(visibleModal = null) }
 
             OnBack -> if (shouldShowDialog()) {
-                updateState { copy(showDialog = true) }
+                updateState { copy(visibleModal = CreateModalType.EXIT_CONFIRM) }
             } else {
-                updateState { copy(showDialog = false) }
+                updateState { copy(visibleModal = null) }
                 sendEffect(NavigateToBack)
             }
 
             OnBackConfirm -> {
-                updateState { copy(showDialog = false) }
+                updateState { copy(visibleModal = null) }
                 sendEffect(NavigateToBack)
             }
 
@@ -156,8 +157,17 @@ class PartyCreateViewModel @Inject constructor(
                 if (uiState.value.createPartyState is ApiState.Loading) return
                 if (validateInputs()) return
 
+                updateState { copy(visibleModal = CreateModalType.CREATE_COMPLETE) }
+            }
+
+            OnCreateConfirm -> {
+                if (uiState.value.createPartyState is ApiState.Loading) return
+
+                updateState { copy(visibleModal = null, createPartyState = ApiState.Loading) }
                 createParty()
             }
+
+            OnCloseCreateModal -> updateState { copy(visibleModal = null) }
 
             ScrollComplete -> updateState { copy(errorIndexToScroll = null) }
         }
@@ -530,8 +540,6 @@ class PartyCreateViewModel @Inject constructor(
     )
 
     private fun createParty() = viewModelScope.launch {
-        updateState { copy(createPartyState = ApiState.Loading) }
-
         uploadImagesUseCase(ImageUploadType.POST, uiState.value.imageUris.map { it.toString() })
             .onSuccess { fileNames ->
                 uploadPartyInfo(fileNames)

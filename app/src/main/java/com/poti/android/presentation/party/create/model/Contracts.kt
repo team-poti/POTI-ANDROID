@@ -19,6 +19,11 @@ enum class MemberSettingStatus {
     EDITABLE,
 }
 
+enum class CreateModalType {
+    EXIT_CONFIRM,
+    CREATE_COMPLETE,
+}
+
 enum class FieldError(
     @get:StringRes val message: Int,
 ) {
@@ -68,7 +73,7 @@ data class CreateUiState(
     val deliveryError: FieldError? = null,
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
-    val showDialog: Boolean = false,
+    val visibleModal: CreateModalType? = null,
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
@@ -124,6 +129,10 @@ sealed interface CreateUiIntent : UiIntent {
     data class OnDeliveryPriceChange(val delivery: DeliveryOptionUiModel) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
+
+    data object OnCreateConfirm : CreateUiIntent
+
+    data object OnCloseCreateModal : CreateUiIntent
 
     data object ScrollComplete : CreateUiIntent
 }

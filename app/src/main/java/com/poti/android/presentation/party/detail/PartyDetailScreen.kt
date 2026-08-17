@@ -137,7 +137,6 @@ private fun PartyDetailScreen(
 
             PartyDetailHeaderInfo(
                 partyDetail = partyDetail,
-                onLikeClick = {},
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             )
 

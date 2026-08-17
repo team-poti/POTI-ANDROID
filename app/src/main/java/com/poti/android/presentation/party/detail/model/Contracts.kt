@@ -80,9 +80,12 @@ sealed interface PartyDetailIntent : UiIntent {
 
     data class OnOrderNameChange(val value: String) : PartyDetailIntent
 
-    data class OnPostalCodeChange(val value: String) : PartyDetailIntent
+    data class OnAddressSelected(
+        val postalCode: String,
+        val address: String,
+    ) : PartyDetailIntent
 
-    data class OnAddressChange(val value: String) : PartyDetailIntent
+    data class OnDetailAddressChange(val value: String) : PartyDetailIntent
 
     data class OnContactChange(val value: String) : PartyDetailIntent
 
