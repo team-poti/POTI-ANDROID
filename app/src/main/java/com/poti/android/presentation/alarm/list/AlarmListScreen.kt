@@ -33,7 +33,8 @@ import com.poti.android.presentation.alarm.list.model.AlarmListUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @Composable
 fun AlarmListRoute(
@@ -131,7 +132,7 @@ private fun previewAlarms(count: Int): ImmutableList<Notification> = List(count)
         type = if (index % previewAlarmSamples.size == 4) NotificationType.EVENT else NotificationType.TRADE,
         deepLink = "",
         isRead = index % 3 != 0,
-        createdAt = LocalDateTime.now().minusMinutes((index + 1) * 47L).toString(),
+        createdAt = OffsetDateTime.now(ZoneOffset.UTC).minusMinutes((index + 1) * 47L).toString(),
     )
 }.toImmutableList()
 
