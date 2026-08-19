@@ -299,4 +299,7 @@
     <string name="account_logout">로그아웃</string>
     <string name="account_withdrawal">회원탈퇴</string>
 
+    <string name="profile_management">내 프로필 관리</string>
+    <string name="profile_nickname">닉네임</string>
+
 </resources>
