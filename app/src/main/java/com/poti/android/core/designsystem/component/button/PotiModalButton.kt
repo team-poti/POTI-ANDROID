@@ -24,6 +24,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 
 enum class ModalButtonType {
     MAIN,
+    SECONDARY,
     SUB_1,
     SUB_2,
     ;
@@ -34,13 +35,14 @@ enum class ModalButtonType {
     ): Color =
         when (this) {
             MAIN -> if (isPressed) colors.poti800 else colors.poti600
+            SECONDARY -> if (isPressed) colors.gray900 else colors.black
             SUB_1 -> if (isPressed) colors.gray300 else colors.gray100
             SUB_2 -> Color.Transparent
         }
 
     fun getContentColor(colors: PotiColors): Color {
         return when (this) {
-            MAIN -> colors.white
+            MAIN, SECONDARY -> colors.white
             SUB_1 -> colors.gray900
             SUB_2 -> colors.poti600
         }
@@ -96,6 +98,13 @@ private fun PotiModalButtonPreview() {
                 onClick = {},
                 modifier = Modifier.width(259.dp),
                 type = ModalButtonType.MAIN,
+            )
+
+            PotiModalButton(
+                text = "Secondary",
+                onClick = {},
+                modifier = Modifier.width(259.dp),
+                type = ModalButtonType.SECONDARY,
             )
 
             PotiModalButton(

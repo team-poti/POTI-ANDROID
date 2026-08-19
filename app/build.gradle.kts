@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.google.services)
 }
 
 val properties = Properties().apply {
@@ -65,6 +66,8 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
+            buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://dev-app.poti.kr"))
+            manifestPlaceholders["deepLinkHost"] = "dev-app.poti.kr"
             buildConfigField(
                 "String",
                 "GOOGLE_WEB_CLIENT_ID",
@@ -74,6 +77,8 @@ android {
         create("prod") {
             dimension = "server"
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
+            buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://app.poti.kr"))
+            manifestPlaceholders["deepLinkHost"] = "app.poti.kr"
             buildConfigField(
                 "String",
                 "GOOGLE_WEB_CLIENT_ID",
@@ -162,4 +167,8 @@ dependencies {
     // Social
     implementation(libs.kakao.user)
     implementation(libs.googleid)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 }

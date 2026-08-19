@@ -10,7 +10,6 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.delivery.DeliveryOption
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -18,6 +17,11 @@ enum class MemberSettingStatus {
     ARTIST_NOT_SELECTED,
     MEMBER_NOT_SELECTED,
     EDITABLE,
+}
+
+enum class CreateModalType {
+    EXIT_CONFIRM,
+    CREATE_COMPLETE,
 }
 
 enum class FieldError(
@@ -34,6 +38,7 @@ enum class FieldError(
     BANK_ERROR(R.string.create_error_need_bank),
     MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
     MEMBER_PRICE_ERROR(R.string.create_error_need_price),
+    DELIVERY_PRICE_ERROR(R.string.create_error_need_delivery_price),
 }
 
 data class CreateUiState(
@@ -63,12 +68,12 @@ data class CreateUiState(
     val showMemberBottomSheet: Boolean = false,
     val isMemberBottomSheetTouched: Boolean = false,
     val memberError: FieldError? = null,
-    val deliveriesState: ApiState<List<DeliveryOption>> = ApiState.Init,
-    val rawDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
-    val selectedDeliveries: ImmutableList<DeliveryOption> = persistentListOf(),
+    val rawDeliveries: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
+    val deliveryOptions: ImmutableList<DeliveryOptionUiModel> = persistentListOf(),
+    val deliveryError: FieldError? = null,
     val createPartyState: ApiState<Long> = ApiState.Init,
     val isAutoFilled: Boolean = false,
-    val showDialog: Boolean = false,
+    val visibleModal: CreateModalType? = null,
     val errorIndexToScroll: Int? = null,
 ) : UiState {
     val isProductFieldReadOnly = selectedArtist == null
@@ -119,9 +124,15 @@ sealed interface CreateUiIntent : UiIntent {
 
     data class OnMemberPriceChange(val member: MemberPriceOption) : CreateUiIntent
 
-    data class OnDeliverySelect(val delivery: DeliveryOption) : CreateUiIntent
+    data class OnDeliverySelect(val delivery: DeliveryOptionUiModel) : CreateUiIntent
+
+    data class OnDeliveryPriceChange(val delivery: DeliveryOptionUiModel) : CreateUiIntent
 
     data object OnCreateClick : CreateUiIntent
+
+    data object OnCreateConfirm : CreateUiIntent
+
+    data object OnCloseCreateModal : CreateUiIntent
 
     data object ScrollComplete : CreateUiIntent
 }

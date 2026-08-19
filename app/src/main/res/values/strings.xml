@@ -7,8 +7,10 @@
     <string name="bottom_nav_my_page">마이페이지</string>
 
     <!-- Navigation Component -->
-    <string name="header_section_ongoing">진행 중</string>
-    <string name="header_section_ended">종료</string>
+    <string name="header_section_ongoing">진행중 %1$d</string>
+    <string name="header_section_ended">종료 %1$d</string>
+    <string name="header_primary_history_recruit">모집내역</string>
+    <string name="header_primary_history_participate">참여내역</string>
 
     <!-- Button Component -->
     <string name="action_button_next">다음</string>
@@ -22,6 +24,7 @@
 
     <!-- Field Component -->
     <string name="field_label_name">이름</string>
+    <string name="search_bar_placeholder">검색어를 입력하세요</string>
 
 
     <!-- LoginScreen -->
@@ -78,16 +81,18 @@
     <string name="party_join_total_price">총 입금 예정 금액</string>
     <string name="party_join_button">참여하기</string>
     <string name="party_join_order_info">주문자 정보</string>
-    <string name="party_join_order_name_placeholder">예) 이포티</string>
+    <string name="party_join_order_name_placeholder">이름을 입력하세요</string>
     <string name="party_join_order_name_error">이름을 입력해주세요</string>
     <string name="party_join_order_postal_label">우편번호</string>
-    <string name="party_join_order_postal_placeholder">예) 12345</string>
+    <string name="party_join_order_postal_placeholder">우편번호를 입력하세요</string>
     <string name="party_join_order_postal_error">우편번호를 입력해주세요</string>
     <string name="party_join_order_address_label">주소</string>
-    <string name="party_join_order_address_placeholder">예) 서울시 솝트구 다솝로 37</string>
+    <string name="party_join_order_address_placeholder">주소를 입력하세요</string>
     <string name="party_join_order_address_error">주소를 입력해주세요</string>
+    <string name="party_join_order_detail_address_label">상세주소</string>
+    <string name="party_join_order_detail_address_placeholder">상세주소를 입력하세요</string>
     <string name="party_join_order_contact_label">연락처</string>
-    <string name="party_join_order_contact_placeholder">예) 010–1234–5678</string>
+    <string name="party_join_order_contact_placeholder">연락처를 입력하세요</string>
     <string name="party_join_order_contact_error">연락처를 입력해주세요</string>
     <string name="party_join_confirm_modal_title">참여가 완료되었어요</string>
     <string name="party_join_confirm_modal_text">모집이 끝나면 입금이 시작돼요</string>
@@ -124,6 +129,7 @@
     <string name="create_error_need_bank">은행 정보를 입력해주세요</string>
     <string name="create_error_need_member">멤버를 1명 이상 추가해주세요</string>
     <string name="create_error_need_price">모든 멤버에 가격을 설정해주세요</string>
+    <string name="create_error_need_delivery_price">선택한 배송 방법의 가격을 설정해주세요</string>
     <string name="create_title_bottomsheet">멤버 편집</string>
     <string name="create_header_artist_search">아티스트 검색</string>
     <string name="create_message_artist_search_empty_result">검색 결과가 없어요\n다른 키워드로 다시 검색해보세요</string>
@@ -137,6 +143,17 @@
     <string name="create_exit_dialog_dismiss_text">나가기</string>
     <string name="create_exit_dialog_confirm_text">계속 작성하기</string>
     <string name="create_error_invalid_date">유효한 날짜 형식으로 입력해주세요</string>
+    <string name="create_complete_modal_subtitle">모집 전 꼭 확인해 주세요!</string>
+    <string-array name="create_complete_modal_notices">
+        <item>모집 시작 후에는 모집 정보를 수정할 수 없습니다.</item>
+        <item>참여자가 있으면 모집글을 삭제할 수 없습니다.</item>
+        <item>최소 모집 인원이 충족되면 분철이 진행되며, 남은 수량은 모집자가 부담합니다. 충족되지 않으면 분철은 자동 종료됩니다.</item>
+        <item>분철 진행 상황에 맞게 상태를 최신으로 유지해 주세요.</item>
+        <item>분철 진행 및 배송에 대한 책임은 모집자에게 있습니다.</item>
+        <item>참여자의 개인정보는 배송 목적 외 사용할 수 없으며, 거래 완료 후 즉시 삭제해 주세요.</item>
+    </string-array>
+    <string name="create_complete_modal_agreement">위 내용을 확인하였으며,\n안내 사항을 준수하겠습니다.</string>
+    <string name="create_complete_modal_confirm">확인</string>
 
     <!-- Party Status -->
     <string name="party_status_recruiting">모집 중</string>
@@ -219,7 +236,6 @@
     <!-- User Component -->
     <string name="user_history_recruit">모집 내역</string>
     <string name="user_history_participate">참여 내역</string>
-    <string name="user_history_all">전체</string>
     <string name="user_history_ongoing">진행중</string>
     <string name="user_history_ended">종료</string>
     <string name="user_my_page_title">마이</string>
@@ -249,5 +265,8 @@
     <string name="goods_filter_rating_format">%.1f</string>
     <string name="goods_filter_members_separator">&#160;|&#160;</string>
     <string name="goods_filter_member_select_label">멤버 선택</string>
+
+    <!-- FCM -->
+    <string name="default_notification_channel_name">기본 알림</string>
 
 </resources>

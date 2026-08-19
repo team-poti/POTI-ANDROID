@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,14 +41,15 @@ import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
-import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
+import com.poti.android.presentation.party.create.component.CreateCompleteModal
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
 import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
+import com.poti.android.presentation.party.create.model.CreateModalType
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToBack
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToDetail
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToSearch
@@ -58,9 +59,12 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBack
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBackConfirm
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnBankChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseBottomSheet
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseCreateModal
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCloseDialog
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateClick
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnCreateConfirm
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeadlineChange
+import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliveryPriceChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDeliverySelect
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnDescriptionChange
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnImagesChanged
@@ -74,6 +78,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnProduct
 import com.poti.android.presentation.party.create.model.CreateUiIntent.OnSearchClick
 import com.poti.android.presentation.party.create.model.CreateUiIntent.ScrollComplete
 import com.poti.android.presentation.party.create.model.CreateUiState
+import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
 import com.poti.android.presentation.party.create.util.DateTransformation
 
 @Composable
@@ -123,8 +128,8 @@ fun PartyCreateRoute(
         )
     }
 
-    if (uiState.showDialog) {
-        PotiSmallModal(
+    when (uiState.visibleModal) {
+        CreateModalType.EXIT_CONFIRM -> PotiSmallModal(
             onDismissRequest = { viewModel.processIntent(OnCloseDialog) },
             title = stringResource(R.string.create_exit_dialog_title),
             text = stringResource(R.string.create_exit_dialog_content),
@@ -133,6 +138,13 @@ fun PartyCreateRoute(
             onDismissBtnClick = { viewModel.processIntent(OnBackConfirm) },
             onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
+
+        CreateModalType.CREATE_COMPLETE -> CreateCompleteModal(
+            onDismiss = { viewModel.processIntent(OnCloseCreateModal) },
+            onConfirm = { viewModel.processIntent(OnCreateConfirm) },
+        )
+
+        null -> Unit
     }
 
     PartyCreateScreen(
@@ -151,6 +163,7 @@ fun PartyCreateRoute(
         onMemberPriceChanged = { viewModel.processIntent(OnMemberPriceChange(it)) },
         onMemberEditBtnClick = { viewModel.processIntent(OnMemberEditClick) },
         onDeliveryRadioBtnClick = { viewModel.processIntent(OnDeliverySelect(it)) },
+        onDeliveryPriceChanged = { viewModel.processIntent(OnDeliveryPriceChange(it)) },
         onCreateBtnClick = { viewModel.processIntent(OnCreateClick) },
         modifier = modifier,
     )
@@ -172,14 +185,15 @@ private fun PartyCreateScreen(
     onBankChanged: (String) -> Unit,
     onMemberPriceChanged: (MemberPriceOption) -> Unit,
     onMemberEditBtnClick: () -> Unit,
-    onDeliveryRadioBtnClick: (DeliveryOption) -> Unit,
+    onDeliveryRadioBtnClick: (DeliveryOptionUiModel) -> Unit,
+    onDeliveryPriceChanged: (DeliveryOptionUiModel) -> Unit,
     onCreateBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     val dateTransformation = remember { DateTransformation() }
 
-    var listBottom by remember { mutableStateOf(0f) }
+    var listBottom by remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(uiState.errorIndexToScroll) {
         uiState.errorIndexToScroll?.let {
@@ -368,9 +382,10 @@ private fun PartyCreateScreen(
                 )
 
                 CreateDeliverySetting(
-                    allDeliveries = uiState.rawDeliveries,
-                    selectedDeliveries = uiState.selectedDeliveries,
+                    deliveryOptions = uiState.deliveryOptions,
                     onDeliveryClick = onDeliveryRadioBtnClick,
+                    onPriceChange = onDeliveryPriceChanged,
+                    errorMessage = uiState.deliveryError?.let { stringResource(it.message) } ?: "",
                 )
             }
 

@@ -53,6 +53,10 @@ lottieCompose = "6.6.6"
 # --- Google Identity ---
 googleId = "1.2.0"
 
+# --- Firebase ---
+firebaseBom = "34.15.0"
+google-services = "4.5.0"
+
 
 [libraries]
 # --- Android Core ---
@@ -112,6 +116,10 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 # --- Google Identity ---
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 
+# --- Firebase ---
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+
 [plugins]
 # --- Android & Kotlin ---
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -123,3 +131,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

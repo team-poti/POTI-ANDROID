@@ -1,13 +1,14 @@
 package com.poti.android.core.designsystem.component.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,11 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
-import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 enum class PotiHeaderTabType(
@@ -35,90 +36,77 @@ fun PotiHeaderSection(
     selectedTab: PotiHeaderTabType,
     ongoingCount: Int,
     endedCount: Int,
-    modifier: Modifier = Modifier,
     onTabSelected: (PotiHeaderTabType) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    TabRow(
-        selectedTabIndex = selectedTab.ordinal,
-        containerColor = PotiTheme.colors.white,
+    Row(
         modifier = modifier,
-        divider = {
-            HorizontalDivider(
-                color = PotiTheme.colors.gray300,
-                thickness = 2.dp,
-            )
-        },
-        indicator = { tabPositions ->
-            TabRowDefaults.SecondaryIndicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedTab.ordinal]),
-                height = 2.dp,
-                color = PotiTheme.colors.poti600,
-            )
-        },
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         PotiHeaderTabType.entries.forEach { tabType ->
-            PotiHeaderSectionTab(
+            val count = when (tabType) {
+                PotiHeaderTabType.ONGOING -> ongoingCount
+                PotiHeaderTabType.ENDED -> endedCount
+            }
+
+            PotiHeaderSectionChip(
                 tabType = tabType,
-                selectedTab = selectedTab,
-                onTabSelected = { onTabSelected(tabType) },
-                ongoingCount = ongoingCount,
-                endedCount = endedCount,
+                count = count,
+                selected = selectedTab == tabType,
+                onClick = { onTabSelected(tabType) },
             )
         }
     }
 }
 
 @Composable
-private fun PotiHeaderSectionTab(
+private fun PotiHeaderSectionChip(
     tabType: PotiHeaderTabType,
-    selectedTab: PotiHeaderTabType,
-    onTabSelected: (PotiHeaderTabType) -> Unit,
-    ongoingCount: Int,
-    endedCount: Int,
+    count: Int,
+    selected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSelected = selectedTab == tabType
-    val count = when (tabType) {
-        PotiHeaderTabType.ONGOING -> ongoingCount
-        PotiHeaderTabType.ENDED -> endedCount
-    }
+    val backgroundColor = if (selected) PotiTheme.colors.gray900 else PotiTheme.colors.gray100
+    val contentColor = if (selected) PotiTheme.colors.white else PotiTheme.colors.gray900
 
-    val activeColor = PotiTheme.colors.black
-    val inactiveColor = PotiTheme.colors.gray700
-
-    Column(
+    Row(
         modifier = modifier
-            .padding(vertical = 8.dp)
-            .noRippleClickable { onTabSelected(tabType) },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp),
+            .heightIn(min = 36.dp)
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .selectable(
+                selected = selected,
+                interactionSource = null,
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = count.toString(),
-            style = PotiTheme.typography.display18b,
-            color = if (isSelected) activeColor else inactiveColor,
-        )
-        Text(
-            text = stringResource(tabType.labelResId),
-            style = PotiTheme.typography.body14m,
-            color = if (isSelected) activeColor else inactiveColor,
+            text = stringResource(tabType.labelResId, count),
+            style = PotiTheme.typography.body14sb,
+            color = contentColor,
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PotiHeaderSectionPreview() {
     var selectedTab by remember { mutableStateOf(PotiHeaderTabType.ONGOING) }
 
     PotiTheme {
-        Column {
-            PotiHeaderSection(
-                selectedTab = selectedTab,
-                ongoingCount = 2,
-                endedCount = 5,
-                onTabSelected = { selectedTab = it },
-            )
-        }
+        PotiHeaderSection(
+            selectedTab = selectedTab,
+            ongoingCount = 3,
+            endedCount = 3,
+            onTabSelected = { selectedTab = it },
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .fillMaxWidth(),
+        )
     }
 }
