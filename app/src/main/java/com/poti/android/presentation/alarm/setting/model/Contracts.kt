@@ -12,9 +12,13 @@ data class AlarmSettingUiState(
 
 sealed interface AlarmSettingUiIntent : UiIntent {
     data object OnBackClick : AlarmSettingUiIntent
+
     data class OnTradeToggle(val enabled: Boolean) : AlarmSettingUiIntent
+
     data class OnEventToggle(val enabled: Boolean) : AlarmSettingUiIntent
+
     data object OnAllowSystemAlarm : AlarmSettingUiIntent
+
     data object OnModalClose : AlarmSettingUiIntent
 }
 
