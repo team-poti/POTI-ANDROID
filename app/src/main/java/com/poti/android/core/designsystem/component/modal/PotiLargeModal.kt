@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
@@ -35,6 +40,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param image 이미지 에셋 아이디입니다. lg-2일 때 사용합니다.
  * @param dismissOnBackPress 시스템 뒤로가기 시 모달을 닫는 여부입니다. 기본값 true입니다.
  * @param dismissOnClickOutside 모달 바깥 영역 터치 시 모달을 닫는 여부입니다. 기본값 true입니다.
+ * @param topSlot title 위에 배치됩니다. 아이콘처럼 상단에 노출할 요소가 있을 때 사용합니다. 간격은 호출부에서 지정합니다.
  * @param content 텍스트~버튼 사이 공간에 배치됩니다. lg-1일 때 사용합니다.
  *
  * @author
@@ -53,6 +59,7 @@ fun PotiLargeModal(
     @DrawableRes image: Int? = null,
     dismissOnBackPress: Boolean = true,
     dismissOnClickOutside: Boolean = true,
+    topSlot: (@Composable ColumnScope.() -> Unit)? = null,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val hasSubBtn = subBtnText != null && onSubBtnClick != null
@@ -70,6 +77,8 @@ fun PotiLargeModal(
                 .padding(top = 36.dp, bottom = if (hasSubBtn) 12.dp else 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            topSlot?.invoke(this)
+
             Text(
                 text = title,
                 modifier = Modifier
@@ -147,6 +156,30 @@ private fun PotiLarge2Preview() {
             btnText = "확인",
             onBtnClick = {},
             image = R.drawable.ic_launcher_background,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PotiLargeModalTopSlotPreview() {
+    PotiTheme {
+        PotiLargeModal(
+            onDismissRequest = {},
+            title = "큰 내용",
+            text = "작은 내용",
+            btnText = "확인",
+            onBtnClick = {},
+            topSlot = {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_alarm),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .size(48.dp),
+                )
+            },
         )
     }
 }
