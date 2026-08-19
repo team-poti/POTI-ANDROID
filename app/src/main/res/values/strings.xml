@@ -315,13 +315,15 @@
     <!-- Withdrawal -->
     <string name="withdrawal_title">회원 탈퇴</string>
     <string name="withdrawal_reason_label">탈퇴 사유</string>
-    <string name="withdrawal_reason_goods_difficulty">원하는 굿즈를 찾기 어려워요.</string>
-    <string name="withdrawal_reason_process_inconvenient">분철 모집 또는 참여 과정이 불편해요.</string>
-    <string name="withdrawal_reason_lack_features">필요한 기능이 부족해요.</string>
-    <string name="withdrawal_reason_frequent_errors">오류나 버그를 자주 경험했어요.</string>
-    <string name="withdrawal_reason_using_other_service">다른 서비스를 이용하고 있어요.</string>
-    <string name="withdrawal_reason_low_usage">이용 빈도가 낮아요.</string>
-    <string name="withdrawal_reason_etc">기타</string>
+    <string-array name="withdrawal_reason_options">
+        <item>원하는 굿즈를 찾기 어려워요.</item>
+        <item>분철 모집 또는 참여 과정이 불편해요.</item>
+        <item>필요한 기능이 부족해요.</item>
+        <item>오류나 버그를 자주 경험했어요.</item>
+        <item>다른 서비스를 이용하고 있어요.</item>
+        <item>이용 빈도가 낮아요.</item>
+        <item>기타</item>
+    </string-array>
     <string name="withdrawal_button">탈퇴하기</string>
 
 </resources>
