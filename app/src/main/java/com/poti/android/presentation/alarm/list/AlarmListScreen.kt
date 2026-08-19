@@ -1,4 +1,4 @@
-package com.poti.android.presentation.alarm
+package com.poti.android.presentation.alarm.list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,42 +27,42 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.notification.Notification
 import com.poti.android.domain.type.NotificationType
-import com.poti.android.presentation.alarm.model.AlarmUiEffect
-import com.poti.android.presentation.alarm.model.AlarmUiIntent
-import com.poti.android.presentation.alarm.model.AlarmUiState
+import com.poti.android.presentation.alarm.list.model.AlarmListUiEffect
+import com.poti.android.presentation.alarm.list.model.AlarmListUiIntent
+import com.poti.android.presentation.alarm.list.model.AlarmListUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import java.time.LocalDateTime
 
 @Composable
-fun AlarmRoute(
+fun AlarmListRoute(
     onPopBackStack: () -> Unit,
     navigateToSetting: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AlarmViewModel = hiltViewModel(),
+    viewModel: AlarmListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            AlarmUiEffect.NavigateBack -> onPopBackStack()
-            AlarmUiEffect.NavigateToSetting -> navigateToSetting()
+            AlarmListUiEffect.NavigateBack -> onPopBackStack()
+            AlarmListUiEffect.NavigateToSetting -> navigateToSetting()
         }
     }
 
-    AlarmScreen(
+    AlarmListScreen(
         uiState = uiState,
-        onBackClick = { viewModel.processIntent(AlarmUiIntent.OnBackClick) },
-        onSettingClick = { viewModel.processIntent(AlarmUiIntent.OnSettingClick) },
-        onAlarmClick = { alarm -> viewModel.processIntent(AlarmUiIntent.OnAlarmClick(alarm)) },
+        onBackClick = { viewModel.processIntent(AlarmListUiIntent.OnBackClick) },
+        onSettingClick = { viewModel.processIntent(AlarmListUiIntent.OnSettingClick) },
+        onAlarmClick = { alarm -> viewModel.processIntent(AlarmListUiIntent.OnAlarmClick(alarm)) },
         modifier = modifier,
     )
 }
 
 @Composable
-private fun AlarmScreen(
-    uiState: AlarmUiState,
+private fun AlarmListScreen(
+    uiState: AlarmListUiState,
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onAlarmClick: (Notification) -> Unit,
@@ -137,10 +137,10 @@ private fun previewAlarms(count: Int): ImmutableList<Notification> = List(count)
 
 @Preview(showBackground = true, name = "알림 없음")
 @Composable
-private fun AlarmScreenEmptyPreview() {
+private fun AlarmListScreenEmptyPreview() {
     PotiTheme {
-        AlarmScreen(
-            uiState = AlarmUiState(alarmsLoadState = ApiState.Success(persistentListOf())),
+        AlarmListScreen(
+            uiState = AlarmListUiState(alarmsLoadState = ApiState.Success(persistentListOf())),
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
@@ -151,10 +151,10 @@ private fun AlarmScreenEmptyPreview() {
 
 @Preview(showBackground = true, name = "알림 3개")
 @Composable
-private fun AlarmScreenPreview() {
+private fun AlarmListScreenPreview() {
     PotiTheme {
-        AlarmScreen(
-            uiState = AlarmUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 3))),
+        AlarmListScreen(
+            uiState = AlarmListUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 3))),
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
@@ -165,10 +165,10 @@ private fun AlarmScreenPreview() {
 
 @Preview(showBackground = true, name = "알림 스크롤")
 @Composable
-private fun AlarmScreenScrollablePreview() {
+private fun AlarmListScreenScrollablePreview() {
     PotiTheme {
-        AlarmScreen(
-            uiState = AlarmUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 20))),
+        AlarmListScreen(
+            uiState = AlarmListUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 20))),
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
