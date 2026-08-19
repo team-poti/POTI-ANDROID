@@ -277,6 +277,10 @@
     <string name="goods_filter_members_separator">&#160;|&#160;</string>
     <string name="goods_filter_member_select_label">멤버 선택</string>
 
+    <!-- Alarm -->
+    <string name="alarm_title">알림</string>
+    <string name="alarm_empty">새로운 알림이 없어요\n알림이 도착하면 알려드릴게요</string>
+
     <!-- FCM -->
     <string name="default_notification_channel_name">기본 알림</string>
 
