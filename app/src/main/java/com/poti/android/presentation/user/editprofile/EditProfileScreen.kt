@@ -50,8 +50,8 @@ fun EditProfileScreen(
             PotiShortTextField(
                 value = "",
                 onValueChanged = {},
-                label = "닉네임",
-                placeholder = "닉네임",
+                label = stringResource(R.string.profile_nickname),
+                placeholder = stringResource(R.string.profile_nickname),
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
