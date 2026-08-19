@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.R
+import com.poti.android.core.designsystem.component.button.PotiMenuButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
@@ -26,17 +29,33 @@ fun SettingScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = {},
-            title = "헤더 타이틀",
+            title = stringResource(R.string.setting_title),
         )
 
         Text(
-            text = "내 정보",
+            text = stringResource(R.string.setting_my_info),
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
         )
 
-        // TODO: PotiMenuButton 머지되면 추가
+        PotiMenuButton(
+            text = stringResource(R.string.setting_my_account),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.setting_my_profile),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.setting_my_address),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
 
         PotiDivider(
             PotiDividerStyle.LARGE,
@@ -44,13 +63,17 @@ fun SettingScreen(
         )
 
         Text(
-            text = "앱 설정",
+            text = stringResource(R.string.setting_app),
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
         )
 
-        // TODO: PotiMenuButton 머지되면 추가
+        PotiMenuButton(
+            text = stringResource(R.string.setting_alarm),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
 
         PotiDivider(
             PotiDividerStyle.LARGE,
@@ -58,13 +81,23 @@ fun SettingScreen(
         )
 
         Text(
-            text = "서비스 정보",
+            text = stringResource(R.string.service_info),
             style = PotiTheme.typography.body14m,
             color = PotiTheme.colors.gray800,
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
         )
 
-        // TODO: PotiMenuButton 머지되면 추가
+        PotiMenuButton(
+            text = stringResource(R.string.setting_personal_info_privacy),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.version_info),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
     }
 }
 

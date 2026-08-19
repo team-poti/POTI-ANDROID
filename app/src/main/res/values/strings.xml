@@ -280,4 +280,16 @@
     <!-- FCM -->
     <string name="default_notification_channel_name">기본 알림</string>
 
+    <!-- Setting -->
+    <string name="setting_title">설정</string>
+    <string name="setting_my_info">내 정보</string>
+    <string name="setting_my_account">내 계정</string>
+    <string name="setting_my_profile">내 프로필 관리</string>
+    <string name="setting_my_address">내 주소 관리</string>
+    <string name="setting_app">앱 설정</string>
+    <string name="setting_alarm">알림 설정</string>
+    <string name="service_info">서비스 정보</string>
+    <string name="setting_personal_info_privacy">개인정보 처리방침 및 이용 약관</string>
+    <string name="version_info">버전 정보</string>
+
 </resources>
