@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +27,7 @@ import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
 fun AddressManagementRoute(modifier: Modifier = Modifier) {
@@ -75,6 +80,14 @@ fun AddressManagementScreen(
                         label = stringResource(R.string.delivery_postal_label),
                         error = "",
                         onValueChanged = {},
+                        trailingIcon = {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_search),
+                                contentDescription = null,
+                                tint = PotiTheme.colors.gray700,
+                                modifier = Modifier.size(24.dp),
+                            )
+                        },
                     )
 
                     PotiShortTextField(
