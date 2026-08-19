@@ -329,5 +329,8 @@
     <string name="withdrawal_confirm_modal_text">회원탈퇴 후에는 계정 정보가 모두 삭제되며, 복구할 수 없어요.</string>
     <string name="withdrawal_confirm_modal_dismiss">취소</string>
     <string name="withdrawal_confirm_modal_confirm">탈퇴</string>
+    <string name="withdrawal_unavailable_modal_title">회원 탈퇴를 할 수 없어요</string>
+    <string name="withdrawal_unavailable_modal_text">진행 중인 모집이나 참여 내역이 있어 지금은 탈퇴할 수 없어요. 진행 중인 거래가 모두 종료된 후 다시 시도해 주세요.</string>
+    <string name="withdrawal_unavailable_modal_confirm">확인</string>
 
 </resources>
