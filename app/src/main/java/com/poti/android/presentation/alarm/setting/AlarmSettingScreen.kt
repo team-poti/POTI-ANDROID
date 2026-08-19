@@ -61,6 +61,7 @@ fun AlarmSettingRoute(
 
                 Spacer(Modifier.height(12.dp))
             },
+            content = { Spacer(Modifier.height(24.dp)) },
         )
     }
 
