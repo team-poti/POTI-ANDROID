@@ -11,6 +11,7 @@ import com.poti.android.presentation.party.create.navigation.navigateToPartyCrea
 import com.poti.android.presentation.party.home.HomeRoute
 import com.poti.android.presentation.party.product.navigation.navigateToProductCategory
 import com.poti.android.presentation.party.product.navigation.navigateToProductPartyList
+import com.poti.android.presentation.party.search.navigation.navigateToPartySearch
 import kotlinx.serialization.Serializable
 
 sealed interface HomeRoute : Route {
@@ -24,6 +25,7 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     composable<HomeRoute.Home> {
         HomeRoute(
+            onNavigateToPartySearch = navController::navigateToPartySearch,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
             onNavigateToGoodsPartyList = navController::navigateToProductPartyList,
             onNavigateToProductCategory = navController::navigateToProductCategory,

@@ -9,6 +9,7 @@ import com.poti.android.data.remote.service.ParticipationService
 import com.poti.android.data.remote.service.PartyService
 import com.poti.android.data.remote.service.PaymentService
 import com.poti.android.data.remote.service.ReviewService
+import com.poti.android.data.remote.service.SearchService
 import com.poti.android.data.remote.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -56,6 +57,11 @@ object ServiceModule {
     @Singleton
     fun providePartyService(retrofit: Retrofit): PartyService =
         retrofit.create(PartyService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSearchService(retrofit: Retrofit): SearchService =
+        retrofit.create(SearchService::class.java)
 
     @Provides
     @Singleton
