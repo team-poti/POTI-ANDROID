@@ -3,6 +3,8 @@ package com.poti.android.presentation.setting
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,6 +26,8 @@ fun SettingRoute(modifier: Modifier = Modifier) {
 fun SettingScreen(
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -32,72 +36,78 @@ fun SettingScreen(
             title = stringResource(R.string.setting_title),
         )
 
-        Text(
-            text = stringResource(R.string.setting_my_info),
-            style = PotiTheme.typography.body14m,
-            color = PotiTheme.colors.gray800,
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState),
+        ) {
+            Text(
+                text = stringResource(R.string.setting_my_info),
+                style = PotiTheme.typography.body14m,
+                color = PotiTheme.colors.gray800,
+                modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.setting_my_account),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.setting_my_account),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.setting_my_profile),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.setting_my_profile),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.setting_my_address),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.setting_my_address),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
-        PotiDivider(
-            PotiDividerStyle.LARGE,
-            modifier = Modifier.padding(vertical = 8.dp),
-        )
+            PotiDivider(
+                PotiDividerStyle.LARGE,
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
 
-        Text(
-            text = stringResource(R.string.setting_app),
-            style = PotiTheme.typography.body14m,
-            color = PotiTheme.colors.gray800,
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
-        )
+            Text(
+                text = stringResource(R.string.setting_app),
+                style = PotiTheme.typography.body14m,
+                color = PotiTheme.colors.gray800,
+                modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.setting_alarm),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.setting_alarm),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
-        PotiDivider(
-            PotiDividerStyle.LARGE,
-            modifier = Modifier.padding(vertical = 8.dp),
-        )
+            PotiDivider(
+                PotiDividerStyle.LARGE,
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
 
-        Text(
-            text = stringResource(R.string.service_info),
-            style = PotiTheme.typography.body14m,
-            color = PotiTheme.colors.gray800,
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
-        )
+            Text(
+                text = stringResource(R.string.service_info),
+                style = PotiTheme.typography.body14m,
+                color = PotiTheme.colors.gray800,
+                modifier = Modifier.padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.setting_personal_info_privacy),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.setting_personal_info_privacy),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
 
-        PotiMenuButton(
-            text = stringResource(R.string.version_info),
-            onClick = {},
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+            PotiMenuButton(
+                text = stringResource(R.string.version_info),
+                onClick = {},
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
+        }
     }
 }
 
