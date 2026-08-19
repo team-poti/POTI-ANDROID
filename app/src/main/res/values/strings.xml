@@ -325,5 +325,9 @@
         <item>기타</item>
     </string-array>
     <string name="withdrawal_button">탈퇴하기</string>
+    <string name="withdrawal_confirm_modal_title">정말 탈퇴하시겠어요?</string>
+    <string name="withdrawal_confirm_modal_text">회원탈퇴 후에는 계정 정보가 모두 삭제되며, 복구할 수 없어요.</string>
+    <string name="withdrawal_confirm_modal_dismiss">취소</string>
+    <string name="withdrawal_confirm_modal_confirm">탈퇴</string>
 
 </resources>
