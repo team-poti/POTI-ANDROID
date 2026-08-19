@@ -33,7 +33,7 @@ fun AccountSettingScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = {},
-            title = stringResource(R.string.setting_my_account),
+            title = stringResource(R.string.my_account),
         )
 
         Column(
