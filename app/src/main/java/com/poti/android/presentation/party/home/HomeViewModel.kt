@@ -25,6 +25,7 @@ class HomeViewModel @Inject constructor(
             is HomeUiIntent.OnProductCardClick -> sendEffect(NavigateToGoodsPartyList(intent.artistId, intent.title))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
             HomeUiIntent.OnOtherProductCategoryClick -> sendEffect(NavigateToOtherProductCategory)
+            HomeUiIntent.OnAlarmClick -> sendEffect(NavigateToAlarmList)
         }
     }
 
