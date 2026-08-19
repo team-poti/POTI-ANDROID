@@ -106,6 +106,7 @@ fun SettingScreen(
                 text = stringResource(R.string.version_info),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
+                trailingText = "1.0.0",
             )
         }
     }
