@@ -31,7 +31,7 @@ fun EditProfileScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = {},
-            title = stringResource(R.string.profile_management),
+            title = stringResource(R.string.profile_management_title),
         )
 
         Column(

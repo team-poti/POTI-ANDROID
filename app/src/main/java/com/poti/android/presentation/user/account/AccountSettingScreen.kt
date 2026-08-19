@@ -33,7 +33,7 @@ fun AccountSettingScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = {},
-            title = stringResource(R.string.my_account),
+            title = stringResource(R.string.account_setting_title),
         )
 
         Column(
@@ -76,7 +76,7 @@ fun AccountSettingScreen(
             )
 
             PotiMenuButton(
-                text = stringResource(R.string.account_withdrawal),
+                text = stringResource(R.string.account_withdrawal_menu),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
             )

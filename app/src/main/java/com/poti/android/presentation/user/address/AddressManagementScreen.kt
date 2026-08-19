@@ -44,7 +44,7 @@ fun AddressManagementScreen(
     ) {
         PotiHeaderPage(
             onNavigationClick = {},
-            title = stringResource(R.string.address_management),
+            title = stringResource(R.string.address_management_title),
         )
 
         BoxWithConstraints(

@@ -49,19 +49,19 @@ fun SettingScreen(
             )
 
             PotiMenuButton(
-                text = stringResource(R.string.my_account),
+                text = stringResource(R.string.setting_menu_account),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             PotiMenuButton(
-                text = stringResource(R.string.profile_management),
+                text = stringResource(R.string.setting_menu_profile_management),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             PotiMenuButton(
-                text = stringResource(R.string.address_management),
+                text = stringResource(R.string.setting_menu_address_management),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
