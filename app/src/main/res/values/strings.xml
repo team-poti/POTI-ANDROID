@@ -291,6 +291,12 @@
     <string name="alarm_setting_permission_modal_button">푸시 알림 허용</string>
     <string name="alarm_setting_permission_modal_sub_button">나중에</string>
 
+    <!-- Relative Time -->
+    <string name="time_just_now">방금 전</string>
+    <string name="time_minutes_ago">%1$d분 전</string>
+    <string name="time_hours_ago">%1$d시간 전</string>
+    <string name="time_days_ago">%1$d일 전</string>
+
     <!-- FCM -->
     <string name="default_notification_channel_name">기본 알림</string>
 
