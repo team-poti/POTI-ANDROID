@@ -39,7 +39,7 @@ fun GoodsLargeCard(
     artist: String,
     artistId: Long,
     title: String,
-    partyCount: Int,
+    partyCount: Long,
     tag: String?,
     onClick: (Long, String) -> Unit,
     modifier: Modifier = Modifier,

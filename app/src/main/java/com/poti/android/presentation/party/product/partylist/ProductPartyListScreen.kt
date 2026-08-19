@@ -1,10 +1,12 @@
 package com.poti.android.presentation.party.product.partylist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,7 @@ import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartySummary
 import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
@@ -141,7 +144,9 @@ private fun ProductPartyListScreen(
     }
 
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         Column {
             PotiHeaderPage(

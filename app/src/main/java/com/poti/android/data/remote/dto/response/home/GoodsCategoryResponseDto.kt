@@ -13,8 +13,6 @@ data class GoodsCategoryResponseDto(
     val mainArtistId: Long?,
     @SerialName("groupItems")
     val groupItems: List<GroupItemDto>?,
-    @SerialName("myGroupItems")
-    val myGroupItems: List<GroupItemDto>?,
 )
 
 @Serializable
