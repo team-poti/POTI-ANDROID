@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.core.designsystem.component.button.ModalButtonType
@@ -69,12 +70,14 @@ fun PotiSmallModal(
                     .padding(top = 16.dp, bottom = 8.dp),
                 color = PotiTheme.colors.black,
                 style = PotiTheme.typography.body16sb,
+                textAlign = TextAlign.Center,
             )
 
             Text(
                 text = text,
                 color = PotiTheme.colors.gray800,
                 style = PotiTheme.typography.body16m,
+                textAlign = TextAlign.Center,
             )
 
             Row(
