@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -36,13 +37,13 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiErrorMessage
 import com.poti.android.core.designsystem.component.field.PotiLongTextField
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
+import com.poti.android.core.designsystem.component.modal.PotiNoticeModal
 import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
-import com.poti.android.presentation.party.create.component.CreateCompleteModal
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
@@ -80,6 +81,7 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.ScrollCom
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
 import com.poti.android.presentation.party.create.util.DateTransformation
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PartyCreateRoute(
@@ -139,7 +141,12 @@ fun PartyCreateRoute(
             onConfirmBtnClick = { viewModel.processIntent(OnCloseDialog) },
         )
 
-        CreateModalType.CREATE_COMPLETE -> CreateCompleteModal(
+        CreateModalType.CREATE_COMPLETE -> PotiNoticeModal(
+            title = stringResource(R.string.create_notice_title),
+            subtitle = stringResource(R.string.create_complete_modal_subtitle),
+            notices = stringArrayResource(R.array.create_complete_modal_notices).toPersistentList(),
+            agreement = stringResource(R.string.create_complete_modal_agreement),
+            confirmButtonText = stringResource(R.string.action_button_confirm),
             onDismiss = { viewModel.processIntent(OnCloseCreateModal) },
             onConfirm = { viewModel.processIntent(OnCreateConfirm) },
         )

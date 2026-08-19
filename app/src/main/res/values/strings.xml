@@ -19,6 +19,7 @@
     <string name="action_button_reset">초기화</string>
     <string name="action_button_done">완료</string>
     <string name="action_button_continue">계속</string>
+    <string name="action_button_confirm">확인</string>
     <string name="action_button_select_all">전체 선택</string>
     <string name="action_button_refresh">초기화</string>
 
@@ -97,6 +98,16 @@
     <string name="party_join_order_contact_error">연락처를 입력해주세요</string>
     <string name="party_join_confirm_modal_title">참여가 완료되었어요</string>
     <string name="party_join_confirm_modal_text">모집이 끝나면 입금이 시작돼요</string>
+    <string name="party_join_notice_modal_title">참여자 안내 사항</string>
+    <string name="party_join_notice_modal_subtitle">참여 전 꼭 확인해 주세요!</string>
+    <string-array name="party_join_notice_modal_notices">
+        <item>참여 신청 후에는 취소할 수 없습니다. 참여 전 상품 정보를 꼭 확인해 주세요.</item>
+        <item>모집 완료 후 24시간 이내 입금을 완료해 주세요. 미입금 시 참여가 취소되며, 서비스 이용이 제한될 수 있습니다.</item>
+        <item>입금 요청 및 배송 등 주요 안내는 알림으로 전달됩니다.</item>
+        <item>마감일까지 최소 모집 인원이 모이지 않으면 분철은 자동 종료됩니다.</item>
+        <item>문의나 거래 중 문제가 발생하면 문의하기를 이용해 주세요.</item>
+    </string-array>
+    <string name="party_join_notice_modal_agreement">위 내용을 확인하였으며,\n안내 사항을 준수하겠습니다.</string>
 
     <!-- PartyCreate -->
     <string name="create_label_won">원</string>
@@ -154,7 +165,6 @@
         <item>참여자의 개인정보는 배송 목적 외 사용할 수 없으며, 거래 완료 후 즉시 삭제해 주세요.</item>
     </string-array>
     <string name="create_complete_modal_agreement">위 내용을 확인하였으며,\n안내 사항을 준수하겠습니다.</string>
-    <string name="create_complete_modal_confirm">확인</string>
 
     <!-- Party Status -->
     <string name="party_status_recruiting">모집 중</string>
