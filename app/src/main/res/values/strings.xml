@@ -61,6 +61,7 @@
     <string name="party_detail_shipping_price_format">%1$s %2$s원</string>
     <string name="party_detail_uploader">모집자</string>
     <string name="party_detail_participants">참여자</string>
+    <string name="party_detail_participants_empty">현재 참여 중인 사용자가 없어요</string>
     <string name="party_detail_review_count">%d개의 평가</string>
     <string name="party_detail_participants_count">%1$d/%2$d</string>
     <string-array name="party_detail_announcement">
