@@ -57,8 +57,8 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = {},
-            onInquiryClick = {},
+            onArtistClick = {}, // TODO: [천민재] 최애 아티스트 ID 필요
+            onInquiryClick = {}, // TODO: [천민재] 추후 구글폼 링크 연결
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -86,9 +86,9 @@ private fun MyPageScreen(
         PotiHeaderPrimary(
             title = stringResource(R.string.user_my_page_title),
             firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = {},
+            onFirstIconClick = {}, // TODO [천민재] 설정 페이지 이동처리
             secondIconRes = R.drawable.ic_alarm,
-            onSecondIconClick = {},
+            onSecondIconClick = {}, // TODO [천민재] 알람페이지 이동처리
             containerColor = PotiTheme.colors.gray100,
         )
         Column(

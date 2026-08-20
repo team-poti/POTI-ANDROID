@@ -11,13 +11,17 @@ import com.poti.android.domain.model.history.HistoryListContent
 
 data class HistoryListUiState(
     val historyListLoadState: ApiState<HistoryListContent> = ApiState.Init,
-    val mode: HistoryMode = HistoryMode.PARTICIPATION,
+    val mode: HistoryMode = HistoryMode.RECRUIT,
     val selectedTab: PotiHeaderTabType = PotiHeaderTabType.ONGOING,
+    /** 하단 내비게이션으로 진입했는지 여부입니다. true면 뒤로가기 없이 모드 토글 헤더를 사용합니다. */
+    val isRootEntry: Boolean = false,
 ) : UiState {
     val titleRes = when (mode) {
         HistoryMode.RECRUIT -> R.string.user_history_recruit
         HistoryMode.PARTICIPATION -> R.string.user_history_participate
     }
+
+    val isRecruitMode = mode == HistoryMode.RECRUIT
 
     val emptyTextRes = when (mode) {
         HistoryMode.RECRUIT -> {
@@ -48,6 +52,8 @@ sealed interface HistoryListUiIntent : UiIntent {
     data object OnBackClick : HistoryListUiIntent
 
     data object OnSwitchModeClick : HistoryListUiIntent
+
+    data class OnModeSelected(val mode: HistoryMode) : HistoryListUiIntent
 
     data class OnTabSelected(val tab: PotiHeaderTabType) : HistoryListUiIntent
 
