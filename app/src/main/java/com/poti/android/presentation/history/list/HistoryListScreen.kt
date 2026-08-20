@@ -136,7 +136,7 @@ private fun HistoryListScreen(
                 ongoingCount = uiState.ongoingCount,
                 endedCount = uiState.endedCount,
                 onTabSelected = onTabChanged,
-                modifier = Modifier.padding(start = 16.dp)
+                modifier = Modifier.padding(start = 16.dp),
             )
 
             if (uiState.items.isEmpty()) {

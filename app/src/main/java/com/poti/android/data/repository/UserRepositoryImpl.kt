@@ -6,6 +6,7 @@ import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
+import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.domain.model.user.UserMyPage
@@ -29,6 +30,19 @@ class UserRepositoryImpl @Inject constructor(
                     favoriteArtistId = favoriteArtistId,
                 )
                 userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
+                    .handleApiResponse()
+                    .getOrThrow()
+                Unit
+            }
+        },
+    )
+
+    override suspend fun patchFavoriteArtist(artistId: Long): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = FavoriteArtistRequestDto(artistId = artistId)
+                userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
                     .handleApiResponse()
                     .getOrThrow()
                 Unit

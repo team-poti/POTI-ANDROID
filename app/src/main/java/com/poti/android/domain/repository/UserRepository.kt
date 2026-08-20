@@ -9,6 +9,10 @@ interface UserRepository {
         favoriteArtistId: Long?,
     ): Result<Unit>
 
+    suspend fun patchFavoriteArtist(
+        artistId: Long,
+    ): Result<Unit>
+
     suspend fun postNicknameDuplicate(
         nickname: String,
     ): Result<Boolean>
