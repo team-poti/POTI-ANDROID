@@ -1,6 +1,7 @@
 package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
+import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
@@ -43,7 +44,7 @@ class UserRepositoryImpl @Inject constructor(
             httpResponseHandler.safeApiCall {
                 val requestDto = FavoriteArtistRequestDto(artistId = artistId)
                 userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
-                    .handleApiResponse()
+                    .handleNullableApiResponse()
                     .getOrThrow()
                 Unit
             }
