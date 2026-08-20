@@ -2,12 +2,12 @@ package com.poti.android.core.common.extension
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.core.net.toUri
 
 private const val X_PACKAGE_NAME = "com.twitter.android"
-private const val PLAY_STORE_MARKET_URL = "market://details?id="
-private const val PLAY_STORE_WEB_URL = "https://play.google.com/store/apps/details?id="
+private const val X_WEB_INTENT_URL = "https://x.com/intent/post?text="
 
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -22,7 +22,7 @@ fun Context.shareText(title: String, text: String) {
 }
 
 fun Context.shareTextToX(text: String) {
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+    val appIntent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, text)
         setPackage(X_PACKAGE_NAME)
@@ -32,15 +32,9 @@ fun Context.shareTextToX(text: String) {
                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
         )
     }
+    val webIntent = Intent(Intent.ACTION_VIEW, "$X_WEB_INTENT_URL${Uri.encode(text)}".toUri())
 
-    runCatching { startActivity(shareIntent) }
-        .recoverCatching { openPlayStore(X_PACKAGE_NAME) }
-}
-
-fun Context.openPlayStore(packageName: String) {
-    val marketIntent = Intent(Intent.ACTION_VIEW, "$PLAY_STORE_MARKET_URL$packageName".toUri())
-    val webIntent = Intent(Intent.ACTION_VIEW, "$PLAY_STORE_WEB_URL$packageName".toUri())
-
-    runCatching { startActivity(marketIntent) }
+    runCatching { startActivity(appIntent) }
         .recoverCatching { startActivity(webIntent) }
 }
+
