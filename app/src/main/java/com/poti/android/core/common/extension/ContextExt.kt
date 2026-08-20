@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.core.net.toUri
+import timber.log.Timber
 
 private const val X_PACKAGE_NAME = "com.twitter.android"
 private const val X_WEB_INTENT_URL = "https://x.com/intent/post?text="
@@ -13,7 +14,10 @@ fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.shareText(title: String, text: String) {
+fun Context.shareText(
+    title: String,
+    text: String,
+) {
     val sendIntent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, text)
@@ -36,5 +40,5 @@ fun Context.shareTextToX(text: String) {
 
     runCatching { startActivity(appIntent) }
         .recoverCatching { startActivity(webIntent) }
+        .onFailure { Timber.e(it, "X 공유 실패") }
 }
-

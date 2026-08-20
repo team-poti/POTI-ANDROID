@@ -15,16 +15,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.R
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun PartySharedButton(
+fun PartyShareButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -55,7 +54,7 @@ fun PartySharedButton(
 @Composable
 private fun PartySharedButtonPreview() {
     PotiTheme {
-        PartySharedButton(
+        PartyShareButton(
             onClick = { },
         )
     }

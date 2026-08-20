@@ -41,7 +41,7 @@ import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
-import com.poti.android.presentation.party.detail.component.PartySharedButton
+import com.poti.android.presentation.party.detail.component.PartyShareButton
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -189,17 +189,17 @@ private fun PartyDetailScreen(
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
             Text("System Share Sheet", Modifier.align(Alignment.CenterHorizontally))
-            PartySharedButton(
+            PartyShareButton(
                 onClick = onSystemShareClick,
             )
 
             Text("Kakao Share SDK", Modifier.align(Alignment.CenterHorizontally))
-            PartySharedButton(
+            PartyShareButton(
                 onClick = onKakaoShareClick,
             )
 
             Text("X(twitter) Intent", Modifier.align(Alignment.CenterHorizontally))
-            PartySharedButton(
+            PartyShareButton(
                 onClick = onXShareClick,
             )
 
