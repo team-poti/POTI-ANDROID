@@ -93,7 +93,11 @@ sealed interface PartyDetailIntent : UiIntent {
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
 
-    data object OnShareClick : PartyDetailIntent
+    data object OnSystemShareClick : PartyDetailIntent
+
+    data object OnKakaoShareClick : PartyDetailIntent
+
+    data object OnXShareClick : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {
@@ -105,5 +109,9 @@ sealed interface PartyDetailEffect : UiEffect {
 
     data class ReloadDetail(val partyId: Long) : PartyDetailEffect
 
-    data class SharePartyDetail(val shareText: String) : PartyDetailEffect
+    data class ShareToSystem(val shareText: String) : PartyDetailEffect
+
+    data class ShareToKakao(val shareText: String) : PartyDetailEffect
+
+    data class ShareToX(val shareText: String) : PartyDetailEffect
 }

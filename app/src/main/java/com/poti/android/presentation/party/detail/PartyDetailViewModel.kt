@@ -70,7 +70,9 @@ class PartyDetailViewModel @Inject constructor(
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
-            PartyDetailIntent.OnShareClick -> sendEffect(SharePartyDetail(buildShareText(partyId)))
+            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(buildShareText(partyId)))
+            PartyDetailIntent.OnKakaoShareClick -> sendEffect(ShareToKakao(buildShareText(partyId)))
+            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(buildShareText(partyId)))
         }
     }
 

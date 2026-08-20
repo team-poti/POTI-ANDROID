@@ -11,8 +11,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +26,7 @@ import coil.compose.AsyncImage
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.shareText
+import com.poti.android.core.common.extension.shareTextToX
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -62,7 +65,9 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
-            is PartyDetailEffect.SharePartyDetail -> context.shareText(shareChooserTitle, effect.shareText)
+            is PartyDetailEffect.ShareToSystem -> context.shareText(shareChooserTitle, effect.shareText)
+            is PartyDetailEffect.ShareToKakao -> Unit // TODO: 카카오 공유 SDK 연동 후 구현
+            is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
         }
     }
 
@@ -84,7 +89,9 @@ fun PartyDetailRoute(
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
-            onShareClick = { viewModel.processIntent(PartyDetailIntent.OnShareClick) },
+            onSystemShareClick = { viewModel.processIntent(PartyDetailIntent.OnSystemShareClick) },
+            onKakaoShareClick = { viewModel.processIntent(PartyDetailIntent.OnKakaoShareClick) },
+            onXShareClick = { viewModel.processIntent(PartyDetailIntent.OnXShareClick) },
             modifier = modifier,
         )
     }
@@ -97,7 +104,9 @@ private fun PartyDetailScreen(
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
-    onShareClick: () -> Unit,
+    onSystemShareClick: () -> Unit,
+    onKakaoShareClick: () -> Unit,
+    onXShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -172,8 +181,19 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
+            Text("System Share Sheet", Modifier.align(Alignment.CenterHorizontally))
             PartySharedButton(
-                onClick = onShareClick,
+                onClick = onSystemShareClick,
+            )
+
+            Text("Kakao Share SDK", Modifier.align(Alignment.CenterHorizontally))
+            PartySharedButton(
+                onClick = onKakaoShareClick,
+            )
+
+            Text("X(twitter) Intent", Modifier.align(Alignment.CenterHorizontally))
+            PartySharedButton(
+                onClick = onXShareClick,
             )
 
             ParticipantGuidelines()
@@ -191,7 +211,9 @@ private fun PartyDetailScreenPreview() {
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
-            onShareClick = {},
+            onSystemShareClick = {},
+            onKakaoShareClick = {},
+            onXShareClick = {},
         )
     }
 }
