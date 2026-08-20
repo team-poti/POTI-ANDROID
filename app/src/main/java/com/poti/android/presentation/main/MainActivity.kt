@@ -15,12 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.share.KakaoShareLauncher
 import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
         requestNotificationPermission()
 
-        pendingDeepLink = intent?.data
+        pendingDeepLink = intent?.resolveDeepLink()
         intent?.data = null
 
         setContent {
@@ -98,7 +100,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
 
-        val uri = intent.data ?: return
+        val uri = intent.resolveDeepLink() ?: return
         intent.data = null
 
         if (viewModel.startDestination.value == PartyGraph) {
@@ -106,6 +108,13 @@ class MainActivity : ComponentActivity() {
         } else {
             pendingDeepLink = uri
         }
+    }
+
+    private fun Intent.resolveDeepLink(): Uri? {
+        val uri = data ?: return null
+        if (uri.host != KakaoShareLauncher.LINK_HOST) return uri
+
+        return uri.getQueryParameter(KakaoShareLauncher.PARAM_DEEP_LINK)?.toUri()
     }
 
     private fun consumeDeepLink(navController: NavHostController) {

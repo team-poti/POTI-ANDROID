@@ -3,6 +3,7 @@ package com.poti.android.presentation.party.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
@@ -70,13 +71,24 @@ class PartyDetailViewModel @Inject constructor(
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
-            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(buildShareText(partyId)))
-            PartyDetailIntent.OnKakaoShareClick -> sendEffect(ShareToKakao(buildShareText(partyId)))
-            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(buildShareText(partyId)))
+            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
+            PartyDetailIntent.OnKakaoShareClick -> handleKakaoShare()
+            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(partyDetailDeepLink(partyId)))
         }
     }
 
-    private fun buildShareText(partyId: Long): String = partyDetailDeepLink(partyId)
+    private fun handleKakaoShare() {
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
+
+        sendEffect(
+            ShareToKakao(
+                title = partyDetail.title,
+                description = "${partyDetail.artist} · ${partyDetail.currentCount}/${partyDetail.totalCount}명 모집 중",
+                imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
+                deepLink = partyDetailDeepLink(partyId),
+            ),
+        )
+    }
 
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }

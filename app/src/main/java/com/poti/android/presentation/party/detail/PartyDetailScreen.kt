@@ -33,6 +33,7 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.share.KakaoShareLauncher
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
@@ -66,7 +67,13 @@ fun PartyDetailRoute(
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
             is PartyDetailEffect.ShareToSystem -> context.shareText(shareChooserTitle, effect.shareText)
-            is PartyDetailEffect.ShareToKakao -> Unit // TODO: 카카오 공유 SDK 연동 후 구현
+            is PartyDetailEffect.ShareToKakao -> KakaoShareLauncher.share(
+                context = context,
+                title = effect.title,
+                description = effect.description,
+                imageUrl = effect.imageUrl,
+                deepLink = effect.deepLink,
+            )
             is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
         }
     }

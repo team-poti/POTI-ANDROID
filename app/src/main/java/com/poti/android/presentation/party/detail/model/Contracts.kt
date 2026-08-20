@@ -111,7 +111,12 @@ sealed interface PartyDetailEffect : UiEffect {
 
     data class ShareToSystem(val shareText: String) : PartyDetailEffect
 
-    data class ShareToKakao(val shareText: String) : PartyDetailEffect
+    data class ShareToKakao(
+        val title: String,
+        val description: String,
+        val imageUrl: String,
+        val deepLink: String,
+    ) : PartyDetailEffect
 
     data class ShareToX(val shareText: String) : PartyDetailEffect
 }
