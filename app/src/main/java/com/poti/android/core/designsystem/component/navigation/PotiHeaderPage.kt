@@ -53,6 +53,7 @@ fun PotiHeaderPage(
         modifier = modifier,
         potiHeaderPageType = potiHeaderPageType,
         containerColor = containerColor,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Column(
             modifier = Modifier.weight(1f),
@@ -131,7 +132,9 @@ fun PotiHeaderPageSearch(
             value = value,
             onValueChange = onValueChange,
             onSearch = onSearch,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 12.dp),
             placeholder = placeholder,
             onClear = onClear,
             focusRequester = focusRequester,
@@ -154,6 +157,7 @@ private fun PotiHeaderPageBase(
     modifier: Modifier = Modifier,
     potiHeaderPageType: PotiHeaderPageType = PotiHeaderPageType.BACK,
     containerColor: Color = PotiTheme.colors.white,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
@@ -161,7 +165,7 @@ private fun PotiHeaderPageBase(
             .background(containerColor)
             .padding(horizontal = 4.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = horizontalArrangement,
     ) {
         PotiIconButton(
             iconRes = potiHeaderPageType.iconResId,

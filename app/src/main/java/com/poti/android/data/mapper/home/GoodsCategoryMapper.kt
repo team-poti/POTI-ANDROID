@@ -11,7 +11,6 @@ fun GoodsCategoryResponseDto.toDomain(): ProductCategory =
         mainArtist = mainArtist,
         mainArtistId = mainArtistId,
         groupItems = groupItems?.map { it.toDomain() }.orEmpty(),
-        myGroupItems = myGroupItems?.map { it.toDomain() }.orEmpty(),
     )
 
 fun GroupItemDto.toDomain(): GroupItem =

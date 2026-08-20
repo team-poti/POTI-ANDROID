@@ -31,6 +31,7 @@ data class PartyDetailUiState(
     val isPostalCodeError: Boolean = false,
     val isAddressError: Boolean = false,
     val isContactError: Boolean = false,
+    val isParticipantNoticeModalVisible: Boolean = false,
     val isJoinSuccessDialogVisible: Boolean = false,
 ) : UiState {
     val isDetailJoinEnable: Boolean
@@ -90,6 +91,10 @@ sealed interface PartyDetailIntent : UiIntent {
     data class OnContactChange(val value: String) : PartyDetailIntent
 
     data object OnFinalJoinClick : PartyDetailIntent
+
+    data object OnParticipantNoticeDismiss : PartyDetailIntent
+
+    data object OnParticipantNoticeConfirm : PartyDetailIntent
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
 

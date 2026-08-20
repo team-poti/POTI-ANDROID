@@ -1,0 +1,48 @@
+package com.poti.android.presentation.party.search.model
+
+import androidx.compose.runtime.Immutable
+import com.poti.android.core.base.UiEffect
+import com.poti.android.core.base.UiIntent
+import com.poti.android.core.base.UiState
+import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.search.PartySearchResult
+
+@Immutable
+data class PartySearchUiState(
+    val searchKeyword: String = "",
+    val searchResultLoadState: ApiState<PartySearchResult> = ApiState.Init,
+    val nextPageLoadState: NextPageLoadState = NextPageLoadState.Idle,
+    val hasNextPage: Boolean = false,
+    val nextPage: Int = 0,
+) : UiState
+
+sealed interface NextPageLoadState {
+    data object Idle : NextPageLoadState
+
+    data object Loading : NextPageLoadState
+
+    data object Failure : NextPageLoadState
+}
+
+sealed interface PartySearchUiIntent : UiIntent {
+    data object OnBackClick : PartySearchUiIntent
+
+    data class OnCardClick(val artistId: Long, val title: String) : PartySearchUiIntent
+
+    data class OnSearchKeywordChange(val keyword: String) : PartySearchUiIntent
+
+    data class OnSearch(val keyword: String) : PartySearchUiIntent
+
+    data object OnLoadNextPage : PartySearchUiIntent
+
+    data object OnRetryNextPage : PartySearchUiIntent
+}
+
+sealed interface PartySearchUiEffect : UiEffect {
+    data object NavigateBack : PartySearchUiEffect
+
+    data class NavigateToProductPartyList(
+        val artistId: Long,
+        val title: String,
+    ) : PartySearchUiEffect
+}

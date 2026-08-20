@@ -32,6 +32,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 
 @Composable
 fun HomeRoute(
+    onNavigateToPartySearch: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
     onNavigateToProductCategory: (Long?, Boolean) -> Unit,
@@ -42,6 +43,7 @@ fun HomeRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
+            HomeUiEffect.NavigateToPartySearch -> onNavigateToPartySearch()
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
@@ -52,6 +54,7 @@ fun HomeRoute(
     uiState.homeContentLoadState.onSuccess { homeContent ->
         HomeScreen(
             homeContent = homeContent,
+            onSearchClick = { viewModel.processIntent(HomeUiIntent.OnSearchClick) },
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
@@ -64,6 +67,7 @@ fun HomeRoute(
 @Composable
 private fun HomeScreen(
     homeContent: HomeContent,
+    onSearchClick: () -> Unit,
     onFloatingClick: () -> Unit,
     onMyArtistCategoryClick: (Long?) -> Unit,
     onOtherProductCategoryClick: (Long?) -> Unit,
@@ -78,7 +82,7 @@ private fun HomeScreen(
         Column {
             PotiHeaderPrimary(
                 firstIconRes = R.drawable.ic_search,
-                onFirstIconClick = {},
+                onFirstIconClick = onSearchClick,
                 secondIconRes = R.drawable.ic_alarm,
                 onSecondIconClick = {},
             )
@@ -138,6 +142,7 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     PotiTheme {
         HomeScreen(
+            onSearchClick = {},
             homeContent = UiMockData.homeContent,
             onFloatingClick = { },
             onMyArtistCategoryClick = { },

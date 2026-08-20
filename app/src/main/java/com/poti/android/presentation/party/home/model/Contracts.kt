@@ -12,6 +12,8 @@ data class HomeUiState(
 ) : UiState
 
 sealed interface HomeUiIntent : UiIntent {
+    data object OnSearchClick : HomeUiIntent
+
     data class OnMyArtistCategoryClick(val artistId: Long?) : HomeUiIntent
 
     data class OnProductCardClick(val artistId: Long, val title: String) : HomeUiIntent
@@ -24,6 +26,8 @@ sealed interface HomeUiIntent : UiIntent {
 }
 
 sealed interface HomeUiEffect : UiEffect {
+    data object NavigateToPartySearch : HomeUiEffect
+
     data object NavigateToPartyCreate : HomeUiEffect
 
     data class NavigateToMyArtistCategory(val artistId: Long?) : HomeUiEffect
