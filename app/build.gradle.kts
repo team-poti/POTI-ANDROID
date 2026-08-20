@@ -164,6 +164,7 @@ dependencies {
 
     // Kakao
     implementation(libs.kakao.user)
+    implementation(libs.kakao.share)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
