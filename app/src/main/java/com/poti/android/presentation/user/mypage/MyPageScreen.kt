@@ -19,6 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
@@ -41,15 +43,24 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 @Composable
 fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
+    onNavigateToFavoriteArtist: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.processIntent(MyPageUiIntent.OnResume)
+    }
+
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is MyPageUiEffect.NavigateToHistoryList -> {
                 onNavigateToHistoryList(effect.mode, effect.tab)
+            }
+
+            MyPageUiEffect.NavigateToFavoriteArtist -> {
+                onNavigateToFavoriteArtist()
             }
         }
     }
@@ -57,7 +68,7 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = {}, // TODO: [천민재] 최애 아티스트 ID 필요
+            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
             onInquiryClick = {}, // TODO: [천민재] 추후 구글폼 링크 연결
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
