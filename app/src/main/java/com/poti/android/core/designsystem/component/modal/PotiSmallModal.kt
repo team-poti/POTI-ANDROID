@@ -34,6 +34,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
  * @param onDismissBtnClick 좌측 버튼 클릭 콜백입니다.
  * @param onConfirmBtnClick 우측 버튼 클릭 콜백입니다.
  * @param modifier
+ * @param confirmBtnType 우측 버튼 타입입니다. 기본값은 [ModalButtonType.MAIN]입니다.
  * @param dismissOnBackPress 시스템 뒤로가기 시 모달을 닫는 여부입니다. 기본값 true입니다.
  * @param dismissOnClickOutside 모달 바깥 영역 터치 시 모달을 닫는 여부입니다. 기본값 true입니다.
  */
@@ -47,6 +48,7 @@ fun PotiSmallModal(
     onDismissBtnClick: () -> Unit,
     onConfirmBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
+    confirmBtnType: ModalButtonType = ModalButtonType.MAIN,
     dismissOnBackPress: Boolean = true,
     dismissOnClickOutside: Boolean = true,
 ) {
@@ -98,7 +100,7 @@ fun PotiSmallModal(
                     onClick = onConfirmBtnClick,
                     modifier = Modifier
                         .weight(1f),
-                    type = ModalButtonType.MAIN,
+                    type = confirmBtnType,
                 )
             }
         }

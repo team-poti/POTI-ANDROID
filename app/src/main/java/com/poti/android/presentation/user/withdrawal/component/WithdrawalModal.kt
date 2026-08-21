@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.poti.android.R
+import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 
 @Composable
@@ -18,6 +19,7 @@ fun WithdrawalModal(modifier: Modifier = Modifier) {
         onDismissBtnClick = {},
         onConfirmBtnClick = {},
         modifier = modifier,
+        confirmBtnType = ModalButtonType.SECONDARY,
     )
 }
 
