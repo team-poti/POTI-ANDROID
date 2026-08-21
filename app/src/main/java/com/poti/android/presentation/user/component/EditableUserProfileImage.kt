@@ -2,7 +2,6 @@ package com.poti.android.presentation.user.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -28,13 +27,9 @@ fun EditableUserProfileImage(
     editButtonSize: Dp = 36.dp,
     editButtonOverhang: Dp = 7.dp,
 ) {
-    val containerWidth = imageSize + editButtonOverhang * 2
-    val editButtonXOffset = imageSize / 2 - editButtonSize / 2 + editButtonOverhang
-    val editButtonYOffset = imageSize / 2 - editButtonSize / 2
-
     Box(
         modifier = modifier.size(
-            width = containerWidth,
+            width = imageSize + editButtonOverhang * 2,
             height = imageSize,
         ),
         contentAlignment = Alignment.Center,
@@ -46,11 +41,8 @@ fun EditableUserProfileImage(
 
         Box(
             modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .size(editButtonSize)
-                .offset(
-                    x = editButtonXOffset,
-                    y = editButtonYOffset,
-                )
                 .clip(CircleShape)
                 .background(PotiTheme.colors.black)
                 .noRippleClickable(onEditClick),
