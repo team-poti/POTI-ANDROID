@@ -1,13 +1,11 @@
 package com.poti.android.presentation.user.address
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -47,7 +45,7 @@ fun AddressManagementScreen(
             title = stringResource(R.string.address_management_title),
         )
 
-        BoxWithConstraints(
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -55,7 +53,7 @@ fun AddressManagementScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = maxHeight)
+                    .weight(1f)
                     .verticalScroll(scrollState)
                     .padding(horizontal = 16.dp),
             ) {
@@ -116,18 +114,17 @@ fun AddressManagementScreen(
                         keyboardType = KeyboardType.Number,
                     )
                 }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                PotiActionButton(
-                    text = stringResource(R.string.action_button_save),
-                    onClick = {},
-                    type = ActionButtonType.DEACTIVE_MAIN,
-                    modifier = Modifier
-                        .padding(top = 4.dp, bottom = 14.dp)
-                        .fillMaxWidth(),
-                )
             }
+
+            PotiActionButton(
+                text = stringResource(R.string.action_button_save),
+                onClick = {},
+                type = ActionButtonType.DEACTIVE_MAIN,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 14.dp)
+                    .fillMaxWidth(),
+            )
         }
     }
 }

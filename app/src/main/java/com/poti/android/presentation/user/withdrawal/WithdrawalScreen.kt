@@ -1,11 +1,8 @@
 package com.poti.android.presentation.user.withdrawal
 
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -42,7 +39,7 @@ fun WithdrawalScreen(
             title = stringResource(R.string.withdrawal_title),
         )
 
-        BoxWithConstraints(
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -50,7 +47,7 @@ fun WithdrawalScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = maxHeight)
+                    .weight(1f)
                     .verticalScroll(scrollState)
                     .padding(horizontal = 16.dp),
             ) {
@@ -66,18 +63,17 @@ fun WithdrawalScreen(
                     selectedOptionIndex = 1,
                     onClick = {},
                 )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                PotiActionButton(
-                    text = stringResource(R.string.withdrawal_button),
-                    onClick = {},
-                    type = ActionButtonType.DEACTIVE_MAIN,
-                    modifier = Modifier
-                        .padding(top = 4.dp, bottom = 14.dp)
-                        .fillMaxWidth(),
-                )
             }
+
+            PotiActionButton(
+                text = stringResource(R.string.withdrawal_button),
+                onClick = {},
+                type = ActionButtonType.DEACTIVE_MAIN,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 14.dp)
+                    .fillMaxWidth(),
+            )
         }
     }
 }
