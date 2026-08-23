@@ -1,12 +1,15 @@
 package com.poti.android.presentation.user.mypage.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.common.extension.slideComposable
+import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.navigation.navigateToHistoryList
 import com.poti.android.presentation.user.favoriteartist.FavoriteArtistRoute
@@ -37,7 +40,10 @@ fun NavGraphBuilder.myPageNavGraph(
         MyPageRoute(
             onNavigateToHistoryList = navController::navigateToHistoryList,
             onNavigateToFavoriteArtist = navController::navigateToFavoriteArtist,
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.gray100)
+                .padding(paddingValues),
         )
     }
     slideComposable<MyPageRoute.FavoriteArtist> {
