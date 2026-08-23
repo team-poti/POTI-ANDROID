@@ -28,11 +28,19 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun AddressManagementRoute(modifier: Modifier = Modifier) {
+fun AddressManagementRoute(
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AddressManagementScreen(
+        onBackClick = onPopBackStack,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun AddressManagementScreen(
+private fun AddressManagementScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -41,7 +49,7 @@ fun AddressManagementScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.address_management_title),
         )
 
@@ -132,5 +140,7 @@ fun AddressManagementScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AddressManagementScreenPreview() {
-    AddressManagementScreen()
+    AddressManagementScreen(
+        onBackClick = {},
+    )
 }
