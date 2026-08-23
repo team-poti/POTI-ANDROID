@@ -33,6 +33,7 @@ import com.poti.android.presentation.party.home.model.HomeUiIntent
 @Composable
 fun HomeRoute(
     onNavigateToPartySearch: () -> Unit,
+    onNavigateToAlarmList: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
     onNavigateToProductCategory: (Long?, Boolean) -> Unit,
@@ -48,6 +49,7 @@ fun HomeRoute(
             is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
+            HomeUiEffect.NavigateToAlarmList -> onNavigateToAlarmList()
         }
     }
 
@@ -59,6 +61,7 @@ fun HomeRoute(
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
             onProductCardClick = { artistId, title -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title)) },
+            onAlarmClick = { viewModel.processIntent(HomeUiIntent.OnAlarmClick) },
             modifier = modifier,
         )
     }
@@ -72,6 +75,7 @@ private fun HomeScreen(
     onMyArtistCategoryClick: (Long?) -> Unit,
     onOtherProductCategoryClick: (Long?) -> Unit,
     onProductCardClick: (Long, String) -> Unit,
+    onAlarmClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -84,7 +88,7 @@ private fun HomeScreen(
                 firstIconRes = R.drawable.ic_search,
                 onFirstIconClick = onSearchClick,
                 secondIconRes = R.drawable.ic_alarm,
-                onSecondIconClick = {},
+                onSecondIconClick = onAlarmClick,
             )
 
             Column(
@@ -148,6 +152,7 @@ private fun HomeScreenPreview() {
             onMyArtistCategoryClick = { },
             onOtherProductCategoryClick = {},
             onProductCardClick = { _, _ -> },
+            onAlarmClick = {},
         )
     }
 }
