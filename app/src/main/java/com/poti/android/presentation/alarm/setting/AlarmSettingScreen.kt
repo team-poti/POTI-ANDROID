@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
@@ -37,6 +38,9 @@ fun AlarmSettingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val isSystemNotificationEnabled = {
+        NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -73,10 +77,20 @@ fun AlarmSettingRoute(
         uiState = uiState,
         onBackClick = { viewModel.processIntent(AlarmSettingUiIntent.OnBackClick) },
         onTradeToggle = { enabled ->
-            viewModel.processIntent(AlarmSettingUiIntent.OnTradeToggle(enabled))
+            viewModel.processIntent(
+                AlarmSettingUiIntent.OnTradeToggle(
+                    enabled = enabled,
+                    isSystemNotificationEnabled = isSystemNotificationEnabled(),
+                ),
+            )
         },
         onEventToggle = { enabled ->
-            viewModel.processIntent(AlarmSettingUiIntent.OnEventToggle(enabled))
+            viewModel.processIntent(
+                AlarmSettingUiIntent.OnEventToggle(
+                    enabled = enabled,
+                    isSystemNotificationEnabled = isSystemNotificationEnabled(),
+                ),
+            )
         },
         modifier = modifier,
     )

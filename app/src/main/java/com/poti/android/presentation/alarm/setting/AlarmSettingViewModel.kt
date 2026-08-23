@@ -27,8 +27,8 @@ class AlarmSettingViewModel @Inject constructor(
     override fun processIntent(intent: AlarmSettingUiIntent) {
         when (intent) {
             AlarmSettingUiIntent.OnBackClick -> sendEffect(AlarmSettingUiEffect.NavigateBack)
-            is AlarmSettingUiIntent.OnTradeToggle -> updateTradeAlarm(intent.enabled)
-            is AlarmSettingUiIntent.OnEventToggle -> updateEventAlarm(intent.enabled)
+            is AlarmSettingUiIntent.OnTradeToggle -> updateTradeAlarm(intent)
+            is AlarmSettingUiIntent.OnEventToggle -> updateEventAlarm(intent)
             AlarmSettingUiIntent.OnAllowSystemAlarm -> requestSystemAlarmPermission()
             AlarmSettingUiIntent.OnModalClose -> updateState { copy(showModal = false) }
         }
@@ -49,23 +49,29 @@ class AlarmSettingViewModel @Inject constructor(
         }
     }
 
-    private fun updateTradeAlarm(enabled: Boolean) {
+    private fun updateTradeAlarm(intent: AlarmSettingUiIntent.OnTradeToggle) {
         updateAlarmSetting(
-            isTradeEnabled = enabled,
+            isTradeEnabled = intent.enabled,
             isEventEnabled = uiState.value.isEventEnabled,
+            isTurnedOn = intent.enabled,
+            isSystemNotificationEnabled = intent.isSystemNotificationEnabled,
         )
     }
 
-    private fun updateEventAlarm(enabled: Boolean) {
+    private fun updateEventAlarm(intent: AlarmSettingUiIntent.OnEventToggle) {
         updateAlarmSetting(
             isTradeEnabled = uiState.value.isTradeEnabled,
-            isEventEnabled = enabled,
+            isEventEnabled = intent.enabled,
+            isTurnedOn = intent.enabled,
+            isSystemNotificationEnabled = intent.isSystemNotificationEnabled,
         )
     }
 
     private fun updateAlarmSetting(
         isTradeEnabled: Boolean,
         isEventEnabled: Boolean,
+        isTurnedOn: Boolean,
+        isSystemNotificationEnabled: Boolean,
     ) {
         if (uiState.value.updateState is ApiState.Loading) return
 
@@ -85,6 +91,10 @@ class AlarmSettingViewModel @Inject constructor(
                 isEventEnabled = isEventEnabled,
             ).onSuccess { _ ->
                 updateState { copy(updateState = ApiState.Success(Unit)) }
+
+                if (isTurnedOn && !isSystemNotificationEnabled) {
+                    showPermissionModal()
+                }
             }.onFailure { error ->
                 updateState {
                     copy(
