@@ -100,6 +100,8 @@ class HistoryListViewModel @Inject constructor(
     }
 
     private fun selectTab(tab: PotiHeaderTabType) {
+        if (uiState.value.selectedTab == tab) return
+
         updateState { copy(selectedTab = tab) }
         loadUserHistoryList()
     }
