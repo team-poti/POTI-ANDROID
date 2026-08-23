@@ -7,6 +7,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.user.account.navigation.navigateToAccountSetting
+import com.poti.android.presentation.user.address.navigation.navigateToAddressManagement
+import com.poti.android.presentation.user.editprofile.navigation.navigateToEditProfile
 import com.poti.android.presentation.user.setting.SettingRoute
 import kotlinx.serialization.Serializable
 
@@ -26,9 +29,9 @@ fun NavGraphBuilder.settingNavGraph(
     slideComposable<SettingRoute.Setting> {
         SettingRoute(
             onPopBackStack = navController::popBackStack,
-            onNavigateToAccount = {},
-            onNavigateToProfileManagement = {},
-            onNavigateToAddressManagement = {},
+            onNavigateToAccount = navController::navigateToAccountSetting,
+            onNavigateToProfileManagement = navController::navigateToEditProfile,
+            onNavigateToAddressManagement = navController::navigateToAddressManagement,
             onNavigateToAlarmSetting = {},
             onNavigateToPersonalInfoPrivacy = {},
             modifier = Modifier.padding(paddingValues),
