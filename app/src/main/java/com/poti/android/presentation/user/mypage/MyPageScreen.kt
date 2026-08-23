@@ -44,7 +44,7 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 @Composable
 fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
-    onNavigateToFavoriteArtist: () -> Unit,
+    onNavigateToFavoriteArtist: (String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
@@ -62,8 +62,8 @@ fun MyPageRoute(
                 onNavigateToHistoryList(effect.mode, effect.tab)
             }
 
-            MyPageUiEffect.NavigateToFavoriteArtist -> {
-                onNavigateToFavoriteArtist()
+            is MyPageUiEffect.NavigateToFavoriteArtist -> {
+                onNavigateToFavoriteArtist(effect.favoriteArtistName)
             }
         }
     }

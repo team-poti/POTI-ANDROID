@@ -38,12 +38,7 @@ class MyPageViewModel @Inject constructor(
     private fun handleArtistClick() {
         val userMyPage = (uiState.value.userMyPageLoadState as? ApiState.Success)?.data ?: return
 
-        if (userMyPage.hasFavoriteArtist) {
-            // TODO: [천민재] 최애가 이미 있을 때의 동작은 기획 확인 후 처리 예정
-            return
-        }
-
-        sendEffect(NavigateToFavoriteArtist)
+        sendEffect(NavigateToFavoriteArtist(userMyPage.favoriteArtistName))
     }
 
     private fun loadUserMyPage() = launchScope {

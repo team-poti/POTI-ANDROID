@@ -21,15 +21,17 @@ sealed interface MyPageRoute : Route {
     data object MyPage : MyPageRoute
 
     @Serializable
-    data object FavoriteArtist : MyPageRoute
+    data class FavoriteArtist(
+        val favoriteArtistName: String? = null,
+    ) : MyPageRoute
 }
 
 fun NavController.navigateToMyPage() {
     navigate(MyPageRoute.MyPage)
 }
 
-fun NavController.navigateToFavoriteArtist() {
-    navigate(MyPageRoute.FavoriteArtist)
+fun NavController.navigateToFavoriteArtist(favoriteArtistName: String?) {
+    navigate(MyPageRoute.FavoriteArtist(favoriteArtistName))
 }
 
 fun NavGraphBuilder.myPageNavGraph(

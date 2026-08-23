@@ -24,7 +24,9 @@ sealed interface MyPageUiIntent : UiIntent {
 }
 
 sealed interface MyPageUiEffect : UiEffect {
-    data object NavigateToFavoriteArtist : MyPageUiEffect
+    data class NavigateToFavoriteArtist(
+        val favoriteArtistName: String?,
+    ) : MyPageUiEffect
 
     data class NavigateToHistoryList(
         val mode: HistoryMode,

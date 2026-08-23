@@ -1,5 +1,7 @@
 package com.poti.android.presentation.user.favoriteartist
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.artist.GetArtistsUseCase
@@ -7,6 +9,7 @@ import com.poti.android.domain.usecase.user.UpdateFavoriteArtistUseCase
 import com.poti.android.presentation.user.favoriteartist.model.FavoriteArtistUiEffect
 import com.poti.android.presentation.user.favoriteartist.model.FavoriteArtistUiIntent
 import com.poti.android.presentation.user.favoriteartist.model.FavoriteArtistUiState
+import com.poti.android.presentation.user.mypage.navigation.MyPageRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
@@ -16,9 +19,12 @@ import javax.inject.Inject
 class FavoriteArtistViewModel @Inject constructor(
     private val getArtistsUseCase: GetArtistsUseCase,
     private val updateFavoriteArtistUseCase: UpdateFavoriteArtistUseCase,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<FavoriteArtistUiState, FavoriteArtistUiIntent, FavoriteArtistUiEffect>(
         initialState = FavoriteArtistUiState(),
     ) {
+    private val favoriteArtistName = savedStateHandle.toRoute<MyPageRoute.FavoriteArtist>().favoriteArtistName
+
     init {
         fetchArtists()
     }
@@ -34,7 +40,14 @@ class FavoriteArtistViewModel @Inject constructor(
     private fun fetchArtists() = launchScope {
         getArtistsUseCase()
             .onSuccess { artists ->
-                updateState { copy(artists = ApiState.Success(artists.toImmutableList())) }
+                val currentArtistId = artists.firstOrNull { it.name == favoriteArtistName }?.artistId
+
+                updateState {
+                    copy(
+                        artists = ApiState.Success(artists.toImmutableList()),
+                        selectedArtistId = currentArtistId,
+                    )
+                }
             }
             .onFailure { error ->
                 updateState { copy(artists = ApiState.Failure(error.message ?: "Failed")) }
