@@ -1,5 +1,7 @@
 package com.poti.android.presentation.alarm.list
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
@@ -35,6 +38,7 @@ import com.poti.android.presentation.alarm.list.model.AlarmListUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
@@ -52,6 +56,7 @@ fun AlarmListRoute(
         when (effect) {
             AlarmListUiEffect.NavigateBack -> onPopBackStack()
             AlarmListUiEffect.NavigateToSetting -> navigateToSetting()
+            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
             is AlarmListUiEffect.ShowToast -> context.toast(context.getString(effect.messageRes))
         }
     }
@@ -116,6 +121,14 @@ private fun AlarmListScreen(
             }
         }
     }
+}
+
+private fun Context.openDeepLink(deepLink: String) {
+    val intent = Intent(Intent.ACTION_VIEW, deepLink.toUri())
+        .setPackage(packageName)
+
+    runCatching { startActivity(intent) }
+        .onFailure { Timber.w(it, "Unable to open deep link: $deepLink") }
 }
 
 private val previewAlarmSamples = listOf(

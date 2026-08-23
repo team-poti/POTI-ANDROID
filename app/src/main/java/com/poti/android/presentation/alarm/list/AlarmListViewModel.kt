@@ -62,5 +62,9 @@ class AlarmListViewModel @Inject constructor(
         }
     }
 
-    private fun handleAlarmClick(alarm: Notification) {}
+    private fun handleAlarmClick(alarm: Notification) {
+        if (alarm.deepLink.isBlank()) return
+
+        sendEffect(AlarmListUiEffect.OpenDeepLink(alarm.deepLink))
+    }
 }

@@ -27,6 +27,10 @@ sealed interface AlarmListUiEffect : UiEffect {
 
     data object NavigateToSetting : AlarmListUiEffect
 
+    data class OpenDeepLink(
+        val deepLink: String,
+    ) : AlarmListUiEffect
+
     data class ShowToast(
         @param:StringRes val messageRes: Int,
     ) : AlarmListUiEffect
