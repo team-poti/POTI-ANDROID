@@ -1,4 +1,4 @@
-package com.poti.android.presentation.setting
+package com.poti.android.presentation.user.setting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +21,8 @@ import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.setting.model.SettingUiEffect
-import com.poti.android.presentation.setting.model.SettingUiIntent
+import com.poti.android.presentation.user.setting.model.SettingUiEffect
+import com.poti.android.presentation.user.setting.model.SettingUiIntent
 
 @Composable
 fun SettingRoute(

@@ -1,10 +1,10 @@
-package com.poti.android.presentation.setting
+package com.poti.android.presentation.user.setting
 
 import com.poti.android.BuildConfig
 import com.poti.android.core.base.BaseViewModel
-import com.poti.android.presentation.setting.model.SettingUiEffect
-import com.poti.android.presentation.setting.model.SettingUiIntent
-import com.poti.android.presentation.setting.model.SettingUiState
+import com.poti.android.presentation.user.setting.model.SettingUiEffect
+import com.poti.android.presentation.user.setting.model.SettingUiIntent
+import com.poti.android.presentation.user.setting.model.SettingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

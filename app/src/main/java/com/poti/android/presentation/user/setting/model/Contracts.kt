@@ -1,4 +1,4 @@
-package com.poti.android.presentation.setting.model
+package com.poti.android.presentation.user.setting.model
 
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
