@@ -1,6 +1,7 @@
 package com.poti.android.data.remote.service
 
 import com.poti.android.core.network.model.BaseResponse
+import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.AccountResponseDto
@@ -35,4 +36,9 @@ interface UserService {
 
     @GET("/api/v1/users/me/account")
     suspend fun getUserAccount(): BaseResponse<AccountResponseDto>
+
+    @PATCH("/api/v1/users/me/profile")
+    suspend fun patchProfile(
+        @Body editProfileRequest: EditProfileRequestDto,
+    ): BaseResponse<Unit>
 }

@@ -21,4 +21,9 @@ interface UserRepository {
     ): Result<UserProfile>
 
     suspend fun getUserAccount(): Result<UserAccount>
+
+    suspend fun patchProfile(
+        nickname: String,
+        profileImageUrl: String,
+    ): Result<Unit>
 }

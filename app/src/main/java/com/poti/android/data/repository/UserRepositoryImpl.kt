@@ -6,6 +6,7 @@ import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
+import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.domain.model.user.UserAccount
@@ -86,6 +87,25 @@ class UserRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()
+            }
+        },
+    )
+
+    override suspend fun patchProfile(
+        nickname: String,
+        profileImageUrl: String,
+    ): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = EditProfileRequestDto(
+                    nickname = nickname,
+                    profileImageUrl = profileImageUrl,
+                )
+                userRemoteDataSource.patchProfile(editProfileRequest = requestDto)
+                    .handleApiResponse()
+                    .getOrThrow()
+                Unit
             }
         },
     )
