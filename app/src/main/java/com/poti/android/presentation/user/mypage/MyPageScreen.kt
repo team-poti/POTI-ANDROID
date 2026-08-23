@@ -40,6 +40,7 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 @Composable
 fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
+    onNavigateToSetting: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
@@ -57,6 +58,7 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = {},
+            onSettingClick = onNavigateToSetting,
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -71,6 +73,7 @@ fun MyPageRoute(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onSettingClick: () -> Unit,
     onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -83,7 +86,7 @@ private fun MyPageScreen(
         PotiHeaderPrimary(
             title = stringResource(R.string.user_my_page_title),
             firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = {},
+            onFirstIconClick = onSettingClick,
             secondIconRes = R.drawable.ic_alarm,
             onSecondIconClick = {},
             containerColor = PotiTheme.colors.gray100,
@@ -184,6 +187,7 @@ private fun ProfileScreenPreview() {
                 ),
             ),
             onArtistClick = {},
+            onSettingClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
@@ -216,6 +220,7 @@ private fun ProfileScreenPreview2() {
                 ),
             ),
             onArtistClick = {},
+            onSettingClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )

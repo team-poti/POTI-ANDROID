@@ -8,6 +8,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.user.mypage.navigation.MyPageRoute
 import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
 import com.poti.android.presentation.user.profile.navigation.profileNavGraph
+import com.poti.android.presentation.user.setting.navigation.settingNavGraph
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,6 +28,10 @@ fun NavGraphBuilder.userNavGraph(
         profileNavGraph(
             paddingValues = paddingValues,
             onPopBackStack = navController::popBackStack,
+        )
+        settingNavGraph(
+            navController = navController,
+            paddingValues = paddingValues,
         )
     }
 }

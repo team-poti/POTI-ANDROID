@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.navigation.navigateToHistoryList
 import com.poti.android.presentation.user.mypage.MyPageRoute
+import com.poti.android.presentation.user.setting.navigation.navigateToSetting
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute : Route {
@@ -27,6 +28,7 @@ fun NavGraphBuilder.myPageNavGraph(
     composable<MyPageRoute.MyPage> {
         MyPageRoute(
             onNavigateToHistoryList = navController::navigateToHistoryList,
+            onNavigateToSetting = navController::navigateToSetting,
             modifier = Modifier.padding(paddingValues),
         )
     }
