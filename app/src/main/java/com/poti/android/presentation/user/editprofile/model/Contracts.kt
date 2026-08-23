@@ -5,12 +5,13 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.presentation.onboarding.model.ErrorText
 
 data class EditProfileUiState(
     val profileImageUrl: String? = null,
     val selectedImageUri: Uri? = null,
     val nickname: String = "",
-    val nicknameError: String? = null,
+    val nicknameError: ErrorText? = null,
     val isNicknameValid: Boolean = false,
     val saveState: ApiState<Unit> = ApiState.Init,
 ) : UiState {
