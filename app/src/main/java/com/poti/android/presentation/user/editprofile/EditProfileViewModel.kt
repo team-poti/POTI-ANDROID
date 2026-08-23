@@ -2,7 +2,11 @@ package com.poti.android.presentation.user.editprofile
 
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.type.ImageUploadType
+import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.user.CheckNicknameDuplicationUseCase
+import com.poti.android.domain.usecase.user.EditProfileUseCase
 import com.poti.android.domain.usecase.user.GetUserMyPageUseCase
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiEffect
@@ -18,6 +22,8 @@ private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 class EditProfileViewModel @Inject constructor(
     private val getUserMyPageUseCase: GetUserMyPageUseCase,
     private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
+    private val uploadImagesUseCase: UploadImagesUseCase,
+    private val editProfileUseCase: EditProfileUseCase,
 ) : BaseViewModel<EditProfileUiState, EditProfileUiIntent, EditProfileUiEffect>(
         initialState = EditProfileUiState(),
     ) {
@@ -28,8 +34,7 @@ class EditProfileViewModel @Inject constructor(
                 updateState { copy(selectedImageUri = intent.uri) }
             }
             is EditProfileUiIntent.OnNicknameChange -> handleNicknameChange(intent.value)
-            // TODO: 닉네임/프로필 이미지 저장 API가 아직 없어서 처리 불가
-            EditProfileUiIntent.OnSaveClick -> {}
+            EditProfileUiIntent.OnSaveClick -> handleSaveClick()
         }
     }
 
@@ -74,6 +79,31 @@ class EditProfileViewModel @Inject constructor(
 
         if (error == null && value.length >= 2 && value != originalNickname) {
             checkNicknameDuplication(value)
+        }
+    }
+
+    private fun handleSaveClick() = launchScope {
+        val currentState = uiState.value
+        updateState { copy(saveState = ApiState.Loading) }
+
+        val uploadedFileName = currentState.selectedImageUri?.let { uri ->
+            uploadImagesUseCase(
+                uploadType = ImageUploadType.PROFILE,
+                uriStrings = listOf(uri.toString()),
+            ).getOrElse { error ->
+                updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
+                return@launchScope
+            }.first()
+        }
+
+        editProfileUseCase(
+            nickname = currentState.nickname,
+            profileImageUrl = uploadedFileName ?: currentState.profileImageUrl.orEmpty(),
+        ).onSuccess {
+            updateState { copy(saveState = ApiState.Success(Unit)) }
+            sendEffect(EditProfileUiEffect.NavigateBack)
+        }.onFailure { error ->
+            updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
         }
     }
 
