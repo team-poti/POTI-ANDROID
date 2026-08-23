@@ -225,44 +225,44 @@ private fun PartyJoinScreen(
                     PotiShortTextField(
                         value = uiState.orderName,
                         onValueChanged = onOrderNameChange,
-                        placeholder = stringResource(R.string.party_join_order_name_placeholder),
-                        label = stringResource(R.string.field_label_name),
-                        error = if (uiState.isOrderNameError) stringResource(R.string.party_join_order_name_error) else "",
+                        placeholder = stringResource(R.string.delivery_name_placeholder),
+                        label = stringResource(R.string.delivery_name_label),
+                        error = if (uiState.isOrderNameError) stringResource(R.string.delivery_name_error) else "",
                         imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
                         value = uiState.postalCode,
                         onFieldClick = onAddressSearchClick,
-                        placeholder = stringResource(R.string.party_join_order_postal_placeholder),
-                        label = stringResource(R.string.party_join_order_postal_label),
-                        error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
+                        placeholder = stringResource(R.string.delivery_postal_placeholder),
+                        label = stringResource(R.string.delivery_postal_label),
+                        error = if (uiState.isPostalCodeError) stringResource(R.string.delivery_postal_error) else "",
                         onValueChanged = {},
                     )
 
                     PotiShortTextField(
                         value = uiState.address,
                         onFieldClick = onAddressSearchClick,
-                        placeholder = stringResource(R.string.party_join_order_address_placeholder),
-                        label = stringResource(R.string.party_join_order_address_label),
-                        error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
+                        placeholder = stringResource(R.string.delivery_address_placeholder),
+                        label = stringResource(R.string.delivery_address_label),
+                        error = if (uiState.isAddressError) stringResource(R.string.delivery_address_error) else "",
                         onValueChanged = {},
                     )
 
                     PotiShortTextField(
                         value = uiState.detailAddress,
                         onValueChanged = onDetailAddressChange,
-                        placeholder = stringResource(R.string.party_join_order_detail_address_placeholder),
-                        label = stringResource(R.string.party_join_order_detail_address_label),
+                        placeholder = stringResource(R.string.delivery_detail_address_placeholder),
+                        label = stringResource(R.string.delivery_detail_address_label),
                         imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
                         value = uiState.contact,
                         onValueChanged = onContactChange,
-                        placeholder = stringResource(R.string.party_join_order_contact_placeholder),
-                        label = stringResource(R.string.party_join_order_contact_label),
-                        error = if (uiState.isContactError) stringResource(R.string.party_join_order_contact_error) else "",
+                        placeholder = stringResource(R.string.delivery_contact_placeholder),
+                        label = stringResource(R.string.delivery_contact_label),
+                        error = if (uiState.isContactError) stringResource(R.string.delivery_contact_error) else "",
                         keyboardType = KeyboardType.Number,
                     )
                 }
