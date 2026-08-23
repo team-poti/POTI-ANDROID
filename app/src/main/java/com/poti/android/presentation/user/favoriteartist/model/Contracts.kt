@@ -22,8 +22,6 @@ sealed interface FavoriteArtistUiIntent : UiIntent {
     data class OnArtistSelect(val artistId: Long) : FavoriteArtistUiIntent
 
     data object OnSaveClick : FavoriteArtistUiIntent
-
-    data object OnInquiryClick : FavoriteArtistUiIntent
 }
 
 sealed interface FavoriteArtistUiEffect : UiEffect {

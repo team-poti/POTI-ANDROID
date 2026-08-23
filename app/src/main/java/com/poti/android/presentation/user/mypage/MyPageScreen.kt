@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,8 @@ fun MyPageRoute(
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+    val inquiryUrl = stringResource(R.string.user_inquiry_url)
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.processIntent(MyPageUiIntent.OnResume)
@@ -69,7 +72,7 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
-            onInquiryClick = {}, // TODO: [천민재] 추후 구글폼 링크 연결
+            onInquiryClick = { uriHandler.openUri(inquiryUrl) },
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),

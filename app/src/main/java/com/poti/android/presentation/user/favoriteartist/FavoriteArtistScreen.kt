@@ -1,14 +1,13 @@
 package com.poti.android.presentation.user.favoriteartist
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
@@ -17,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +44,8 @@ fun FavoriteArtistRoute(
     viewModel: FavoriteArtistViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+    val inquiryUrl = stringResource(R.string.user_inquiry_url)
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -59,7 +61,7 @@ fun FavoriteArtistRoute(
             viewModel.processIntent(FavoriteArtistUiIntent.OnArtistSelect(artistId))
         },
         onSaveClick = { viewModel.processIntent(FavoriteArtistUiIntent.OnSaveClick) },
-        onInquiryClick = { viewModel.processIntent(FavoriteArtistUiIntent.OnInquiryClick) },
+        onInquiryClick = { uriHandler.openUri(inquiryUrl) },
         modifier = modifier,
     )
 }
@@ -82,22 +84,11 @@ private fun FavoriteArtistScreen(
             )
         },
         bottomBar = {
-            Column(
-                modifier = Modifier.background(PotiTheme.colors.white),
-            ) {
-                InquiryRow(
-                    onInquiryClick = onInquiryClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp),
-                )
-
-                PotiBottomButton(
-                    text = stringResource(R.string.action_button_done),
-                    onClick = onSaveClick,
-                    enabled = uiState.isSaveEnabled,
-                )
-            }
+            PotiBottomButton(
+                text = stringResource(R.string.action_button_done),
+                onClick = onSaveClick,
+                enabled = uiState.isSaveEnabled,
+            )
         },
     ) { innerPadding ->
         uiState.artists.onSuccess { artists ->
@@ -125,6 +116,15 @@ private fun FavoriteArtistScreen(
                         onClick = { onArtistClick(artist.artistId) },
                     )
                 }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    InquiryRow(
+                        onInquiryClick = onInquiryClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 72.dp),
+                    )
+                }
             }
         }
     }
@@ -136,7 +136,9 @@ private fun InquiryRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .noRippleClickable(onClick = onInquiryClick)
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -148,7 +150,6 @@ private fun InquiryRow(
 
         Text(
             text = stringResource(R.string.user_inquiry_action),
-            modifier = Modifier.noRippleClickable(onClick = onInquiryClick),
             color = PotiTheme.colors.poti800,
             style = PotiTheme.typography.body14sb,
         )

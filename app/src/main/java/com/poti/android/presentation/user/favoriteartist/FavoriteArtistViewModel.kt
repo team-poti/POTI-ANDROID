@@ -28,7 +28,6 @@ class FavoriteArtistViewModel @Inject constructor(
             FavoriteArtistUiIntent.OnBackClick -> sendEffect(FavoriteArtistUiEffect.NavigateBack)
             is FavoriteArtistUiIntent.OnArtistSelect -> selectArtist(intent.artistId)
             FavoriteArtistUiIntent.OnSaveClick -> saveFavoriteArtist()
-            FavoriteArtistUiIntent.OnInquiryClick -> Unit // TODO: [천민재] 추후 구글폼 링크 연결
         }
     }
 
