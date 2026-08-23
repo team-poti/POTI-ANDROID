@@ -28,11 +28,17 @@ sealed interface AlarmSettingUiIntent : UiIntent {
 
     data object OnAllowSystemAlarm : AlarmSettingUiIntent
 
+    data class OnResume(
+        val isSystemNotificationEnabled: Boolean,
+    ) : AlarmSettingUiIntent
+
     data object OnModalClose : AlarmSettingUiIntent
 }
 
 sealed interface AlarmSettingUiEffect : UiEffect {
     data object NavigateBack : AlarmSettingUiEffect
+
+    data object OpenSystemNotificationSetting : AlarmSettingUiEffect
 
     data class ShowToast(
         @param:StringRes val messageRes: Int,

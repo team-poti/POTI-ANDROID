@@ -30,6 +30,8 @@ class AlarmSettingViewModel @Inject constructor(
             is AlarmSettingUiIntent.OnTradeToggle -> updateTradeAlarm(intent)
             is AlarmSettingUiIntent.OnEventToggle -> updateEventAlarm(intent)
             AlarmSettingUiIntent.OnAllowSystemAlarm -> requestSystemAlarmPermission()
+            is AlarmSettingUiIntent.OnResume ->
+                closePermissionModalIfGranted(intent.isSystemNotificationEnabled)
             AlarmSettingUiIntent.OnModalClose -> updateState { copy(showModal = false) }
         }
     }
@@ -112,5 +114,13 @@ class AlarmSettingViewModel @Inject constructor(
         updateState { copy(showModal = true) }
     }
 
-    private fun requestSystemAlarmPermission() {}
+    private fun requestSystemAlarmPermission() {
+        sendEffect(AlarmSettingUiEffect.OpenSystemNotificationSetting)
+    }
+
+    private fun closePermissionModalIfGranted(isSystemNotificationEnabled: Boolean) {
+        if (!isSystemNotificationEnabled) return
+
+        updateState { copy(showModal = false) }
+    }
 }
