@@ -22,11 +22,19 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun WithdrawalRoute(modifier: Modifier = Modifier) {
+fun WithdrawalRoute(
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    WithdrawalScreen(
+        onBackClick = onPopBackStack,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun WithdrawalScreen(
+private fun WithdrawalScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -35,7 +43,7 @@ fun WithdrawalScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.withdrawal_title),
         )
 
@@ -81,5 +89,7 @@ fun WithdrawalScreen(
 @Preview(showBackground = true)
 @Composable
 private fun WithdrawalScreenPreview() {
-    WithdrawalScreen()
+    WithdrawalScreen(
+        onBackClick = {},
+    )
 }
