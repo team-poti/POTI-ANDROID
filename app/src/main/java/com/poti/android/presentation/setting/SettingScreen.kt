@@ -7,23 +7,68 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiMenuButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.presentation.setting.model.SettingUiEffect
+import com.poti.android.presentation.setting.model.SettingUiIntent
 
 @Composable
-fun SettingRoute(modifier: Modifier = Modifier) {
+fun SettingRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToAccount: () -> Unit,
+    onNavigateToProfileManagement: () -> Unit,
+    onNavigateToAddressManagement: () -> Unit,
+    onNavigateToAlarmSetting: () -> Unit,
+    onNavigateToPersonalInfoPrivacy: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SettingViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            SettingUiEffect.NavigateBack -> onPopBackStack()
+            SettingUiEffect.NavigateToAccount -> onNavigateToAccount()
+            SettingUiEffect.NavigateToProfileManagement -> onNavigateToProfileManagement()
+            SettingUiEffect.NavigateToAddressManagement -> onNavigateToAddressManagement()
+            SettingUiEffect.NavigateToAlarmSetting -> onNavigateToAlarmSetting()
+            SettingUiEffect.NavigateToPersonalInfoPrivacy -> onNavigateToPersonalInfoPrivacy()
+        }
+    }
+
+    SettingScreen(
+        appVersion = uiState.appVersion,
+        onBackClick = { viewModel.processIntent(SettingUiIntent.OnBackClick) },
+        onAccountClick = { viewModel.processIntent(SettingUiIntent.OnAccountClick) },
+        onProfileManagementClick = { viewModel.processIntent(SettingUiIntent.OnProfileManagementClick) },
+        onAddressManagementClick = { viewModel.processIntent(SettingUiIntent.OnAddressManagementClick) },
+        onAlarmClick = { viewModel.processIntent(SettingUiIntent.OnAlarmClick) },
+        onPersonalInfoPrivacyClick = { viewModel.processIntent(SettingUiIntent.OnPersonalInfoPrivacyClick) },
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun SettingScreen(
+private fun SettingScreen(
+    appVersion: String,
+    onBackClick: () -> Unit,
+    onAccountClick: () -> Unit,
+    onProfileManagementClick: () -> Unit,
+    onAddressManagementClick: () -> Unit,
+    onAlarmClick: () -> Unit,
+    onPersonalInfoPrivacyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -32,7 +77,7 @@ fun SettingScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.setting_title),
         )
 
@@ -50,19 +95,19 @@ fun SettingScreen(
 
             PotiMenuButton(
                 text = stringResource(R.string.setting_menu_account),
-                onClick = {},
+                onClick = onAccountClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             PotiMenuButton(
                 text = stringResource(R.string.setting_menu_profile_management),
-                onClick = {},
+                onClick = onProfileManagementClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
             PotiMenuButton(
                 text = stringResource(R.string.setting_menu_address_management),
-                onClick = {},
+                onClick = onAddressManagementClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
@@ -80,7 +125,7 @@ fun SettingScreen(
 
             PotiMenuButton(
                 text = stringResource(R.string.setting_alarm),
-                onClick = {},
+                onClick = onAlarmClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
@@ -98,7 +143,7 @@ fun SettingScreen(
 
             PotiMenuButton(
                 text = stringResource(R.string.setting_personal_info_privacy),
-                onClick = {},
+                onClick = onPersonalInfoPrivacyClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
 
@@ -106,7 +151,7 @@ fun SettingScreen(
                 text = stringResource(R.string.version_info),
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = "1.0.0",
+                trailingText = appVersion,
             )
         }
     }
@@ -115,5 +160,13 @@ fun SettingScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingScreenPreview() {
-    SettingScreen()
+    SettingScreen(
+        appVersion = "1.0.0",
+        onBackClick = {},
+        onAccountClick = {},
+        onProfileManagementClick = {},
+        onAddressManagementClick = {},
+        onAlarmClick = {},
+        onPersonalInfoPrivacyClick = {},
+    )
 }
