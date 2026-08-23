@@ -4,6 +4,7 @@ import com.poti.android.domain.model.artist.Artist
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.artist.MemberPriceOption
+import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.DeliveryDetail
@@ -35,6 +36,7 @@ import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.domain.model.payment.PaymentResult
 import com.poti.android.domain.model.user.HistorySummary
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.domain.model.user.UserSummary
@@ -319,6 +321,12 @@ object UiMockData {
         favoriteArtistName = "IVE",
         participationSummary = HistorySummary(8, 2, 6),
         recruitSummary = userProfile.recruitSummary,
+    )
+
+    val userAccount = UserAccount(
+        nickname = userProfile.nickname,
+        email = userProfile.email,
+        socialType = SocialType.KAKAO,
     )
 
     val userAuth = UserAuth(

@@ -8,6 +8,7 @@ import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.domain.repository.UserRepository
@@ -70,6 +71,18 @@ class UserRepositoryImpl @Inject constructor(
         real = {
             httpResponseHandler.safeApiCall {
                 userRemoteDataSource.getUserProfile(userId)
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
+
+    override suspend fun getUserAccount(): Result<UserAccount> = executeWithUiMock(
+        mock = { UiMockData.userAccount },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getUserAccount()
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()

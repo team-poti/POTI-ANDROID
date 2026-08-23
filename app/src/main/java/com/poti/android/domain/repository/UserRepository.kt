@@ -1,5 +1,6 @@
 package com.poti.android.domain.repository
 
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 
@@ -18,4 +19,6 @@ interface UserRepository {
     suspend fun getUserProfile(
         userId: Long,
     ): Result<UserProfile>
+
+    suspend fun getUserAccount(): Result<UserAccount>
 }
