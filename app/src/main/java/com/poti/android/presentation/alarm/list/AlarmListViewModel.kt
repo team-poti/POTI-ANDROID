@@ -1,6 +1,7 @@
 package com.poti.android.presentation.alarm.list
 
 import androidx.lifecycle.viewModelScope
+import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.notification.Notification
@@ -56,6 +57,7 @@ class AlarmListViewModel @Inject constructor(
                         ),
                     )
                 }
+                sendEffect(AlarmListUiEffect.ShowToast(R.string.alarm_load_failed))
             }
         }
     }
