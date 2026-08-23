@@ -19,11 +19,22 @@ import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 
 @Composable
-fun AccountSettingRoute(modifier: Modifier = Modifier) {
+fun AccountSettingRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToWithdrawal: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AccountSettingScreen(
+        onBackClick = onPopBackStack,
+        onWithdrawalClick = onNavigateToWithdrawal,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun AccountSettingScreen(
+private fun AccountSettingScreen(
+    onBackClick: () -> Unit,
+    onWithdrawalClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -32,7 +43,7 @@ fun AccountSettingScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.account_setting_title),
         )
 
@@ -77,7 +88,7 @@ fun AccountSettingScreen(
 
             PotiMenuButton(
                 text = stringResource(R.string.account_withdrawal_menu),
-                onClick = {},
+                onClick = onWithdrawalClick,
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
         }
@@ -87,5 +98,8 @@ fun AccountSettingScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AccountSettingScreenPreview() {
-    AccountSettingScreen()
+    AccountSettingScreen(
+        onBackClick = {},
+        onWithdrawalClick = {},
+    )
 }
