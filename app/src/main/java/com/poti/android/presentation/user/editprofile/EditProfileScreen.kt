@@ -124,7 +124,7 @@ private fun EditProfileScreen(
                 text = stringResource(R.string.action_button_save),
                 onClick = onSaveClick,
                 enabled = isSaveEnabled,
-                type = ActionButtonType.DEACTIVE_MAIN,
+                type = ActionButtonType.SECONDARY_MAIN,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 4.dp, bottom = 14.dp)

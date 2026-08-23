@@ -8,6 +8,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.presentation.onboarding.model.ErrorText
 
 data class EditProfileUiState(
+    val originalNickname: String = "",
     val profileImageUrl: String? = null,
     val selectedImageUri: Uri? = null,
     val nickname: String = "",
@@ -15,8 +16,11 @@ data class EditProfileUiState(
     val isNicknameValid: Boolean = false,
     val saveState: ApiState<Unit> = ApiState.Init,
 ) : UiState {
+    val isModified: Boolean
+        get() = nickname != originalNickname || selectedImageUri != null
+
     val isSaveEnabled: Boolean
-        get() = isNicknameValid && nickname.isNotBlank()
+        get() = isNicknameValid && isModified
 }
 
 sealed interface EditProfileUiIntent : UiIntent {

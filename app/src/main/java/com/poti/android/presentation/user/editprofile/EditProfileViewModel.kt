@@ -21,8 +21,6 @@ class EditProfileViewModel @Inject constructor(
 ) : BaseViewModel<EditProfileUiState, EditProfileUiIntent, EditProfileUiEffect>(
         initialState = EditProfileUiState(),
     ) {
-    private var originalNickname: String = ""
-
     override fun processIntent(intent: EditProfileUiIntent) {
         when (intent) {
             EditProfileUiIntent.OnBackClick -> sendEffect(EditProfileUiEffect.NavigateBack)
@@ -42,9 +40,9 @@ class EditProfileViewModel @Inject constructor(
     private fun loadCurrentProfile() = launchScope {
         getUserMyPageUseCase()
             .onSuccess { userMyPage ->
-                originalNickname = userMyPage.nickname
                 updateState {
                     copy(
+                        originalNickname = userMyPage.nickname,
                         nickname = userMyPage.nickname,
                         profileImageUrl = userMyPage.profileImageUrl,
                         isNicknameValid = true,
@@ -57,6 +55,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun handleNicknameChange(value: String) {
+        val originalNickname = uiState.value.originalNickname
         val hasSpecialChar = !value.matches(NICKNAME_REGEX)
 
         val error: ErrorText? = when {
