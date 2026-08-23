@@ -13,7 +13,6 @@ data class HistoryListUiState(
     val historyListLoadState: ApiState<HistoryListContent> = ApiState.Init,
     val mode: HistoryMode = HistoryMode.RECRUIT,
     val selectedTab: PotiHeaderTabType = PotiHeaderTabType.ONGOING,
-    /** 하단 내비게이션으로 진입했는지 여부입니다. true면 뒤로가기 없이 모드 토글 헤더를 사용합니다. */
     val isRootEntry: Boolean = false,
 ) : UiState {
     val titleRes = when (mode) {
