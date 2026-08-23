@@ -17,11 +17,19 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.presentation.user.component.EditableUserProfileImage
 
 @Composable
-fun EditProfileRoute(modifier: Modifier = Modifier) {
+fun EditProfileRoute(
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    EditProfileScreen(
+        onBackClick = onPopBackStack,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun EditProfileScreen(
+private fun EditProfileScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -30,7 +38,7 @@ fun EditProfileScreen(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.profile_management_title),
         )
 
@@ -61,5 +69,7 @@ fun EditProfileScreen(
 @Preview(showBackground = true)
 @Composable
 private fun EditProfileScreenPreview() {
-    EditProfileScreen()
+    EditProfileScreen(
+        onBackClick = {},
+    )
 }
