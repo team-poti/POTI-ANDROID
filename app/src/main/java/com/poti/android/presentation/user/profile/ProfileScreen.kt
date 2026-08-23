@@ -77,7 +77,8 @@ private fun ProfileScreen(
                 .fillMaxSize()
                 .background(PotiTheme.colors.gray100)
                 .verticalScroll(scrollState)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
