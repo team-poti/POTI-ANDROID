@@ -160,7 +160,7 @@ private fun ProductCategoryScreen(
                         imageUrl = groupItem.postImage,
                         artist = groupItem.artist,
                         title = groupItem.postTitle,
-                        partyCount = groupItem.postCount,
+                        partyCount = groupItem.postCount.toLong(),
                         tag = groupItem.tag,
                         onClick = { id, title -> onCardClick(groupItem.artistId, groupItem.postTitle) },
                         modifier = Modifier

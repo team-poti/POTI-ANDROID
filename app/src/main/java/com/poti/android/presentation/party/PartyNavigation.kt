@@ -10,6 +10,7 @@ import com.poti.android.presentation.party.detail.navigation.partyDetailNavGraph
 import com.poti.android.presentation.party.home.navigation.HomeRoute
 import com.poti.android.presentation.party.home.navigation.homeNavGraph
 import com.poti.android.presentation.party.product.navigation.productNavGraph
+import com.poti.android.presentation.party.search.navigation.searchNavGraph
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,6 +38,9 @@ fun NavGraphBuilder.partyNavGraph(
         )
         partyCreateNavGraph(
             paddingValues = paddingValues,
+            navController = navController,
+        )
+        searchNavGraph(
             navController = navController,
         )
     }

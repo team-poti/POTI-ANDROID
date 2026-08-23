@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,6 +38,7 @@ import com.poti.android.core.designsystem.component.display.PotiListOptionPrice
 import com.poti.android.core.designsystem.component.display.PotiListOptionPriceSize
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.modal.PotiLargeModal
+import com.poti.android.core.designsystem.component.modal.PotiNoticeModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -45,6 +47,7 @@ import com.poti.android.presentation.party.detail.component.TotalPrice
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 import com.poti.android.presentation.party.detail.model.PartyDetailUiState
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun PartyJoinRoute(
@@ -83,6 +86,19 @@ fun PartyJoinRoute(
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
             else -> {}
         }
+    }
+
+    if (uiState.isParticipantNoticeModalVisible) {
+        PotiNoticeModal(
+            title = stringResource(R.string.party_join_notice_modal_title),
+            subtitle = stringResource(R.string.party_join_notice_modal_subtitle),
+            notices = stringArrayResource(R.array.party_join_notice_modal_notices).toPersistentList(),
+            agreement = stringResource(R.string.party_join_notice_modal_agreement),
+            confirmButtonText = stringResource(R.string.action_button_confirm),
+            onDismiss = { viewModel.processIntent(PartyDetailIntent.OnParticipantNoticeDismiss) },
+            onConfirm = { viewModel.processIntent(PartyDetailIntent.OnParticipantNoticeConfirm) },
+            modifier = modifier,
+        )
     }
 
     if (uiState.isJoinSuccessDialogVisible) {
@@ -209,44 +225,44 @@ private fun PartyJoinScreen(
                     PotiShortTextField(
                         value = uiState.orderName,
                         onValueChanged = onOrderNameChange,
-                        placeholder = stringResource(R.string.party_join_order_name_placeholder),
-                        label = stringResource(R.string.field_label_name),
-                        error = if (uiState.isOrderNameError) stringResource(R.string.party_join_order_name_error) else "",
+                        placeholder = stringResource(R.string.delivery_name_placeholder),
+                        label = stringResource(R.string.delivery_name_label),
+                        error = if (uiState.isOrderNameError) stringResource(R.string.delivery_name_error) else "",
                         imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
                         value = uiState.postalCode,
                         onFieldClick = onAddressSearchClick,
-                        placeholder = stringResource(R.string.party_join_order_postal_placeholder),
-                        label = stringResource(R.string.party_join_order_postal_label),
-                        error = if (uiState.isPostalCodeError) stringResource(R.string.party_join_order_postal_error) else "",
+                        placeholder = stringResource(R.string.delivery_postal_placeholder),
+                        label = stringResource(R.string.delivery_postal_label),
+                        error = if (uiState.isPostalCodeError) stringResource(R.string.delivery_postal_error) else "",
                         onValueChanged = {},
                     )
 
                     PotiShortTextField(
                         value = uiState.address,
                         onFieldClick = onAddressSearchClick,
-                        placeholder = stringResource(R.string.party_join_order_address_placeholder),
-                        label = stringResource(R.string.party_join_order_address_label),
-                        error = if (uiState.isAddressError) stringResource(R.string.party_join_order_address_error) else "",
+                        placeholder = stringResource(R.string.delivery_address_placeholder),
+                        label = stringResource(R.string.delivery_address_label),
+                        error = if (uiState.isAddressError) stringResource(R.string.delivery_address_error) else "",
                         onValueChanged = {},
                     )
 
                     PotiShortTextField(
                         value = uiState.detailAddress,
                         onValueChanged = onDetailAddressChange,
-                        placeholder = stringResource(R.string.party_join_order_detail_address_placeholder),
-                        label = stringResource(R.string.party_join_order_detail_address_label),
+                        placeholder = stringResource(R.string.delivery_detail_address_placeholder),
+                        label = stringResource(R.string.delivery_detail_address_label),
                         imeAction = ImeAction.Next,
                     )
 
                     PotiShortTextField(
                         value = uiState.contact,
                         onValueChanged = onContactChange,
-                        placeholder = stringResource(R.string.party_join_order_contact_placeholder),
-                        label = stringResource(R.string.party_join_order_contact_label),
-                        error = if (uiState.isContactError) stringResource(R.string.party_join_order_contact_error) else "",
+                        placeholder = stringResource(R.string.delivery_contact_placeholder),
+                        label = stringResource(R.string.delivery_contact_label),
+                        error = if (uiState.isContactError) stringResource(R.string.delivery_contact_error) else "",
                         keyboardType = KeyboardType.Number,
                     )
                 }

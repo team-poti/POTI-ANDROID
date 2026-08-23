@@ -19,6 +19,7 @@ class HomeViewModel @Inject constructor(
     ) {
     override fun processIntent(intent: HomeUiIntent) {
         when (intent) {
+            HomeUiIntent.OnSearchClick -> sendEffect(NavigateToPartySearch)
             HomeUiIntent.OnFloatingClick -> sendEffect(NavigateToPartyCreate)
             is HomeUiIntent.OnMyArtistCategoryClick -> sendEffect(NavigateToMyArtistCategory(if (uiState.value.artistIdToNull) null else intent.artistId))
             is HomeUiIntent.OnProductCardClick -> sendEffect(NavigateToGoodsPartyList(intent.artistId, intent.title))

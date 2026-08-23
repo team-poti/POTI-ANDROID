@@ -1,4 +1,4 @@
-package com.poti.android.presentation.party.create.component
+package com.poti.android.core.designsystem.component.modal
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -31,8 +31,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,13 +39,17 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.button.PotiModalButton
-import com.poti.android.core.designsystem.component.modal.PotiModal
 import com.poti.android.core.designsystem.theme.PotiTheme
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun CreateCompleteModal(
+fun PotiNoticeModal(
+    title: String,
+    subtitle: String,
+    notices: ImmutableList<String>,
+    agreement: String,
+    confirmButtonText: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
@@ -56,7 +58,12 @@ fun CreateCompleteModal(
         onDismissRequest = onDismiss,
         modifier = modifier.padding(horizontal = 28.dp),
     ) {
-        CreateCompleteModalContent(
+        PotiNoticeModalContent(
+            title = title,
+            subtitle = subtitle,
+            notices = notices,
+            agreement = agreement,
+            confirmButtonText = confirmButtonText,
             onDismiss = onDismiss,
             onConfirm = onConfirm,
         )
@@ -64,60 +71,44 @@ fun CreateCompleteModal(
 }
 
 @Composable
-private fun CreateCompleteModalContent(
+private fun PotiNoticeModalContent(
+    title: String,
+    subtitle: String,
+    notices: ImmutableList<String>,
+    agreement: String,
+    confirmButtonText: String,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-    ) {
-        CreateCompleteModalHeader(onDismiss = onDismiss)
+    Column(modifier = modifier) {
+        NoticeModalHeader(
+            title = title,
+            onDismiss = onDismiss,
+        )
 
         Spacer(Modifier.height(5.dp))
 
-        Text(
-            text = stringResource(R.string.create_complete_modal_subtitle),
+        NoticeTextBox(
+            text = subtitle,
             color = PotiTheme.colors.poti800,
-            style = PotiTheme.typography.body14m,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .background(
-                    color = PotiTheme.colors.gray100,
-                    shape = RoundedCornerShape(8.dp),
-                )
-                .padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.height(12.dp))
 
-        CreateCompleteModalNoticeList(
-            notices = rememberCreateCompleteModalNotices(),
-        )
+        NoticeList(notices = notices)
 
         Spacer(Modifier.height(12.dp))
 
-        Text(
-            text = stringResource(R.string.create_complete_modal_agreement),
+        NoticeTextBox(
+            text = agreement,
             color = PotiTheme.colors.gray900,
-            style = PotiTheme.typography.body14m,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .background(
-                    color = PotiTheme.colors.gray100,
-                    shape = RoundedCornerShape(8.dp),
-                )
-                .padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.height(12.dp))
 
         PotiModalButton(
-            text = stringResource(R.string.create_complete_modal_confirm),
+            text = confirmButtonText,
             onClick = onConfirm,
             modifier = Modifier
                 .fillMaxWidth()
@@ -130,7 +121,8 @@ private fun CreateCompleteModalContent(
 }
 
 @Composable
-private fun CreateCompleteModalHeader(
+private fun NoticeModalHeader(
+    title: String,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -142,7 +134,7 @@ private fun CreateCompleteModalHeader(
             .padding(start = 16.dp, end = 4.dp, top = 4.dp),
     ) {
         Text(
-            text = stringResource(R.string.create_notice_title),
+            text = title,
             color = PotiTheme.colors.black,
             style = PotiTheme.typography.title18sb,
         )
@@ -159,22 +151,36 @@ private fun CreateCompleteModalHeader(
 }
 
 @Composable
-private fun rememberCreateCompleteModalNotices(): ImmutableList<String> {
-    val noticesArray = stringArrayResource(R.array.create_complete_modal_notices)
-    return remember(noticesArray) { noticesArray.toPersistentList() }
+private fun NoticeTextBox(
+    text: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        color = color,
+        style = PotiTheme.typography.body14m,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .background(
+                color = PotiTheme.colors.gray100,
+                shape = RoundedCornerShape(8.dp),
+            )
+            .padding(vertical = 8.dp),
+    )
 }
 
 @Composable
-private fun CreateCompleteModalNoticeList(
+private fun NoticeList(
     notices: ImmutableList<String>,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     val showBottomGradient by remember { derivedStateOf { scrollState.canScrollForward } }
 
-    Box(
-        modifier = modifier.heightIn(max = 280.dp),
-    ) {
+    Box(modifier = modifier.heightIn(max = 280.dp)) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier
@@ -182,9 +188,7 @@ private fun CreateCompleteModalNoticeList(
                 .verticalScroll(scrollState),
         ) {
             notices.forEach { notice ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_bullet),
                         contentDescription = null,
@@ -245,13 +249,21 @@ private fun CreateCompleteModalNoticeList(
 
 @Preview
 @Composable
-private fun CreateCompleteModalContentPreview() {
+private fun PotiNoticeModalContentPreview() {
     PotiTheme {
         Surface(
             shape = RoundedCornerShape(12.dp),
             color = PotiTheme.colors.white,
         ) {
-            CreateCompleteModalContent(
+            PotiNoticeModalContent(
+                title = "모집자 안내 사항",
+                subtitle = "모집 전 꼭 확인해 주세요!",
+                notices = persistentListOf(
+                    "모집 시작 후에는 모집 정보를 수정할 수 없습니다.",
+                    "참여자가 있으면 모집글을 삭제할 수 없습니다.",
+                ),
+                agreement = "위 내용을 확인하였으며,\n안내 사항을 준수하겠습니다.",
+                confirmButtonText = "확인",
                 onDismiss = {},
                 onConfirm = {},
             )
