@@ -24,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.constant.ExternalLinks
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
@@ -51,7 +52,6 @@ fun MyPageRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
-    val inquiryUrl = stringResource(R.string.user_inquiry_url)
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.processIntent(MyPageUiIntent.OnResume)
@@ -73,7 +73,7 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
-            onInquiryClick = { uriHandler.openUri(inquiryUrl) },
+            onInquiryClick = { uriHandler.openUri(ExternalLinks.INQUIRY) },
             onSettingClick = onNavigateToSetting,
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(

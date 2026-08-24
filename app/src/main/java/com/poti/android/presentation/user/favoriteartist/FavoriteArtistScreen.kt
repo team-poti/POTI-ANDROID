@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.constant.ExternalLinks
 import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.state.ApiState
@@ -45,7 +46,6 @@ fun FavoriteArtistRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
-    val inquiryUrl = stringResource(R.string.user_inquiry_url)
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -61,7 +61,7 @@ fun FavoriteArtistRoute(
             viewModel.processIntent(FavoriteArtistUiIntent.OnArtistSelect(artistId))
         },
         onSaveClick = { viewModel.processIntent(FavoriteArtistUiIntent.OnSaveClick) },
-        onInquiryClick = { uriHandler.openUri(inquiryUrl) },
+        onInquiryClick = { uriHandler.openUri(ExternalLinks.INQUIRY) },
         modifier = modifier,
     )
 }

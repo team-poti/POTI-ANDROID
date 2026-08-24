@@ -33,7 +33,6 @@ fun NavGraphBuilder.settingNavGraph(
             onNavigateToProfileManagement = navController::navigateToEditProfile,
             onNavigateToAddressManagement = navController::navigateToAddressManagement,
             onNavigateToAlarmSetting = {},
-            onNavigateToPersonalInfoPrivacy = {},
             modifier = Modifier.padding(paddingValues),
         )
     }
