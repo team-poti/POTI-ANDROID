@@ -47,6 +47,8 @@ import com.poti.android.domain.model.party.GroupItem as PartyGroupItem
 import com.poti.android.domain.model.party.PartySummary as PartyListSummary
 
 object UiMockData {
+    private const val MOCK_USER_EMAIL = "poti@example.com"
+
     private val historyPartySummary = PartySummary(
         imageUrl = "",
         artist = "IVE",
@@ -311,7 +313,7 @@ object UiMockData {
 
     val userMyPage = UserMyPage(
         nickname = userProfile.nickname,
-        email = "poti@example.com",
+        email = MOCK_USER_EMAIL,
         profileImageUrl = null,
         ratingAvg = userProfile.ratingAvg.toString(),
         activityMessage = userProfile.activityMessage,
@@ -323,8 +325,8 @@ object UiMockData {
     )
 
     val userAccount = UserAccount(
-        nickname = userProfile.nickname,
-        email = userProfile.email,
+        nickname = userMyPage.nickname,
+        email = userMyPage.email,
         socialType = SocialType.KAKAO,
     )
 
