@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.editprofile
 
+import androidx.lifecycle.viewModelScope
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
@@ -14,6 +15,8 @@ import com.poti.android.presentation.user.editprofile.model.EditProfileUiEffect
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiIntent
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,6 +31,8 @@ class EditProfileViewModel @Inject constructor(
 ) : BaseViewModel<EditProfileUiState, EditProfileUiIntent, EditProfileUiEffect>(
         initialState = EditProfileUiState(),
     ) {
+    private var nicknameCheckJob: Job? = null
+
     override fun processIntent(intent: EditProfileUiIntent) {
         when (intent) {
             EditProfileUiIntent.OnBackClick -> sendEffect(EditProfileUiEffect.NavigateBack)
@@ -63,6 +68,8 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun handleNicknameChange(value: String) {
+        nicknameCheckJob?.cancel()
+
         val originalNickname = uiState.value.originalNickname
         val hasSpecialChar = !value.matches(NICKNAME_REGEX)
 
@@ -117,33 +124,39 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-    private fun checkNicknameDuplication(nickname: String) = launchScope {
-        checkNicknameDuplicationUseCase(nickname)
-            .onSuccess { isDuplicated ->
-                if (isDuplicated) {
-                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
-                    return@onSuccess
-                }
-                updateState {
-                    copy(
-                        nicknameError = null,
-                        isNicknameValid = true,
-                    )
-                }
-            }
-            .onFailure { error ->
-                if (error is NetworkError.BadRequest) {
-                    when (error.code) {
-                        40003 -> {
-                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
-                        }
-                        else -> {
-                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
-                        }
+    private fun checkNicknameDuplication(nickname: String) {
+        nicknameCheckJob = viewModelScope.launch {
+            checkNicknameDuplicationUseCase(nickname)
+                .onSuccess { isDuplicated ->
+                    if (uiState.value.nickname != nickname) return@onSuccess
+
+                    if (isDuplicated) {
+                        updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                        return@onSuccess
                     }
-                } else {
-                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+                    updateState {
+                        copy(
+                            nicknameError = null,
+                            isNicknameValid = true,
+                        )
+                    }
                 }
-            }
+                .onFailure { error ->
+                    if (uiState.value.nickname != nickname) return@onFailure
+
+                    if (error is NetworkError.BadRequest) {
+                        when (error.code) {
+                            40003 -> {
+                                updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                            }
+                            else -> {
+                                updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
+                            }
+                        }
+                    } else {
+                        updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+                    }
+                }
+        }
     }
 }
