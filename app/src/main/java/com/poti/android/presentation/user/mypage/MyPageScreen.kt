@@ -15,10 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
@@ -31,6 +34,7 @@ import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.user.component.BadgeButton
 import com.poti.android.presentation.user.component.HistorySummaryCard
 import com.poti.android.presentation.user.component.HistorySummaryType
+import com.poti.android.presentation.user.component.InquirySection
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
@@ -40,15 +44,26 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 @Composable
 fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
+    onNavigateToFavoriteArtist: (String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
+    val inquiryUrl = stringResource(R.string.user_inquiry_url)
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.processIntent(MyPageUiIntent.OnResume)
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is MyPageUiEffect.NavigateToHistoryList -> {
                 onNavigateToHistoryList(effect.mode, effect.tab)
+            }
+
+            is MyPageUiEffect.NavigateToFavoriteArtist -> {
+                onNavigateToFavoriteArtist(effect.favoriteArtistName)
             }
         }
     }
@@ -56,7 +71,8 @@ fun MyPageRoute(
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
         MyPageScreen(
             userMyPage = userMyPage,
-            onArtistClick = {},
+            onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
+            onInquiryClick = { uriHandler.openUri(inquiryUrl) },
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -71,6 +87,7 @@ fun MyPageRoute(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onInquiryClick: () -> Unit,
     onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -83,9 +100,9 @@ private fun MyPageScreen(
         PotiHeaderPrimary(
             title = stringResource(R.string.user_my_page_title),
             firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = {},
+            onFirstIconClick = {}, // TODO [천민재] 설정 페이지 이동처리
             secondIconRes = R.drawable.ic_alarm,
-            onSecondIconClick = {},
+            onSecondIconClick = {}, // TODO [천민재] 알람페이지 이동처리
             containerColor = PotiTheme.colors.gray100,
         )
         Column(
@@ -93,7 +110,8 @@ private fun MyPageScreen(
                 .fillMaxSize()
                 .background(PotiTheme.colors.gray100)
                 .verticalScroll(scrollState)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 37.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -154,6 +172,11 @@ private fun MyPageScreen(
                     modifier = Modifier.weight(1f),
                 )
             }
+
+            InquirySection(
+                onInquiryClick = onInquiryClick,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -173,17 +196,16 @@ private fun ProfileScreenPreview() {
                 hasFavoriteArtist = true,
                 favoriteArtistName = "아이브(ive)",
                 participationSummary = HistorySummary(
-                    total = 12,
                     inProgress = 3,
                     completed = 9,
                 ),
                 recruitSummary = HistorySummary(
-                    total = 7,
                     inProgress = 2,
                     completed = 5,
                 ),
             ),
             onArtistClick = {},
+            onInquiryClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
@@ -205,17 +227,16 @@ private fun ProfileScreenPreview2() {
                 hasFavoriteArtist = true,
                 favoriteArtistName = null,
                 participationSummary = HistorySummary(
-                    total = 12,
                     inProgress = 3,
                     completed = 9,
                 ),
                 recruitSummary = HistorySummary(
-                    total = 7,
                     inProgress = 2,
                     completed = 5,
                 ),
             ),
             onArtistClick = {},
+            onInquiryClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )

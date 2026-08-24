@@ -37,8 +37,9 @@ class HistoryListViewModel @Inject constructor(
 
     override fun processIntent(intent: HistoryListUiIntent) {
         when (intent) {
-            HistoryListUiIntent.OnBackClick -> sendEffect(HistoryListUiEffect.NavigateBack)
+            HistoryListUiIntent.OnBackClick -> sendEffect(NavigateBack)
             HistoryListUiIntent.OnSwitchModeClick -> switchMode()
+            is HistoryListUiIntent.OnModeSelected -> selectMode(intent.mode)
             is HistoryListUiIntent.OnTabSelected -> selectTab(intent.tab)
             is HistoryListUiIntent.OnCardClick -> {
                 if (uiState.value.mode == HistoryMode.RECRUIT) {
@@ -60,6 +61,8 @@ class HistoryListViewModel @Inject constructor(
                     HistorySummaryType.COMPLETED -> PotiHeaderTabType.ENDED
                     else -> PotiHeaderTabType.ONGOING
                 },
+                // 인자 없이 진입하면 하단 내비게이션 경로로 간주합니다.
+                isRootEntry = initialMode == null,
             )
         }
 
@@ -83,7 +86,22 @@ class HistoryListViewModel @Inject constructor(
         loadUserHistoryList()
     }
 
+    private fun selectMode(mode: HistoryMode) {
+        if (uiState.value.mode == mode) return
+
+        updateState {
+            copy(
+                mode = mode,
+                selectedTab = PotiHeaderTabType.ONGOING,
+            )
+        }
+
+        loadUserHistoryList()
+    }
+
     private fun selectTab(tab: PotiHeaderTabType) {
+        if (uiState.value.selectedTab == tab) return
+
         updateState { copy(selectedTab = tab) }
         loadUserHistoryList()
     }

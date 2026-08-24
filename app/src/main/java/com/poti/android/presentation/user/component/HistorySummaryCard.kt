@@ -28,11 +28,8 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.user.HistorySummary
 import kotlinx.serialization.Serializable
 
-// TODO: [천민재] ALL은 Figma 개편으로 UI에서 제거되었으나, API 응답(HistorySummary.total)과
-//  분철 내역 진입 파라미터로는 여전히 사용되므로 enum 값은 유지한다.
 @Serializable
 enum class HistorySummaryType {
-    ALL,
     IN_PROGRESS,
     COMPLETED,
 }
@@ -138,7 +135,6 @@ private fun HistoryItem(
 @Composable
 private fun HistorySummaryCardPreview() {
     val summary = HistorySummary(
-        total = 7,
         inProgress = 2,
         completed = 5,
     )

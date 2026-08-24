@@ -63,7 +63,7 @@ private fun BadgeButtonPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             BadgeButton(
-                bias = "나의 최애 선택하기",
+                bias = "나의 최애 선택",
                 onClick = {},
                 modifier = Modifier,
             )

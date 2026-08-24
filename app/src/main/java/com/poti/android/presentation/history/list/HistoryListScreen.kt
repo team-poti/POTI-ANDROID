@@ -22,10 +22,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poti.android.R
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimaryToggle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderSection
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderTabType
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -38,6 +40,7 @@ import com.poti.android.presentation.history.component.HistoryCardItem
 import com.poti.android.presentation.history.list.model.HistoryListUiEffect
 import com.poti.android.presentation.history.list.model.HistoryListUiIntent
 import com.poti.android.presentation.history.list.model.HistoryListUiState
+import com.poti.android.presentation.history.list.model.HistoryMode
 import com.poti.android.presentation.history.mapper.color
 import com.poti.android.presentation.history.mapper.labelResId
 import com.poti.android.presentation.history.mapper.statusColor
@@ -68,6 +71,9 @@ fun HistoryListRoute(
         uiState = uiState,
         onBackClick = { viewModel.processIntent(HistoryListUiIntent.OnBackClick) },
         onSwitchModeClick = { viewModel.processIntent(HistoryListUiIntent.OnSwitchModeClick) },
+        onModeSelected = { mode ->
+            viewModel.processIntent(HistoryListUiIntent.OnModeSelected(mode))
+        },
         onTabChanged = { tab ->
             viewModel.processIntent(HistoryListUiIntent.OnTabSelected(tab))
         },
@@ -83,6 +89,7 @@ private fun HistoryListScreen(
     uiState: HistoryListUiState,
     onBackClick: () -> Unit,
     onSwitchModeClick: () -> Unit,
+    onModeSelected: (HistoryMode) -> Unit,
     onTabChanged: (PotiHeaderTabType) -> Unit,
     onCardClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -91,11 +98,21 @@ private fun HistoryListScreen(
         modifier = modifier,
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            PotiHeaderPage(
-                onNavigationClick = onBackClick,
-                title = stringResource(uiState.titleRes),
-                onTrailingIconClick = onSwitchModeClick,
-            )
+            if (uiState.isRootEntry) {
+                PotiHeaderPrimaryToggle(
+                    firstText = stringResource(R.string.header_primary_history_recruit),
+                    secondText = stringResource(R.string.header_primary_history_participate),
+                    firstSelected = uiState.isRecruitMode,
+                    onFirstClick = { onModeSelected(HistoryMode.RECRUIT) },
+                    onSecondClick = { onModeSelected(HistoryMode.PARTICIPATION) },
+                )
+            } else {
+                PotiHeaderPage(
+                    onNavigationClick = onBackClick,
+                    title = stringResource(uiState.titleRes),
+                    onTrailingIconClick = onSwitchModeClick,
+                )
+            }
         },
     ) { innerPadding ->
         Column(
@@ -119,6 +136,7 @@ private fun HistoryListScreen(
                 ongoingCount = uiState.ongoingCount,
                 endedCount = uiState.endedCount,
                 onTabSelected = onTabChanged,
+                modifier = Modifier.padding(start = 16.dp),
             )
 
             if (uiState.items.isEmpty()) {
@@ -130,7 +148,7 @@ private fun HistoryListScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
-                        horizontal = 16.dp,
+                        horizontal = 8.dp,
                         vertical = 12.dp,
                     ),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -186,9 +204,11 @@ private fun HistoryListScreenPreview_Ongoing() {
                     ),
                 ),
                 selectedTab = PotiHeaderTabType.ONGOING,
+                isRootEntry = true,
             ),
             onBackClick = {},
             onSwitchModeClick = {},
+            onModeSelected = {},
             onTabChanged = {},
             onCardClick = {},
         )
@@ -212,6 +232,7 @@ private fun HistoryListScreenPreview_Ended() {
             ),
             onBackClick = {},
             onSwitchModeClick = {},
+            onModeSelected = {},
             onTabChanged = {},
             onCardClick = {},
         )
