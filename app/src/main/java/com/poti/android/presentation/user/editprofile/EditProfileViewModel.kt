@@ -92,35 +92,43 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
-    private fun handleSaveClick() = launchScope {
+    private fun handleSaveClick() {
         val currentState = uiState.value
+        if (currentState.saveState is ApiState.Loading) return
+
         updateState { copy(saveState = ApiState.Loading) }
 
-        val uploadedFileName = currentState.selectedImageUri?.let { uri ->
-            uploadImagesUseCase(
-                uploadType = ImageUploadType.PROFILE,
-                uriStrings = listOf(uri.toString()),
-            ).getOrElse { error ->
+        launchScope(
+            onError = { error ->
                 updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
-                return@launchScope
-            }.first()
-        }
-
-        editProfileUseCase(
-            nickname = currentState.nickname,
-            profileImageUrl = uploadedFileName ?: currentState.profileImageUrl.orEmpty(),
-        ).onSuccess {
-            updateState {
-                copy(
-                    originalNickname = currentState.nickname,
-                    profileImageUrl = uploadedFileName ?: currentState.profileImageUrl,
-                    savedProfileImageUri = currentState.selectedImageUri ?: currentState.savedProfileImageUri,
-                    selectedImageUri = null,
-                    saveState = ApiState.Success(Unit),
-                )
+            },
+        ) {
+            val uploadedFileName = currentState.selectedImageUri?.let { uri ->
+                uploadImagesUseCase(
+                    uploadType = ImageUploadType.PROFILE,
+                    uriStrings = listOf(uri.toString()),
+                ).getOrElse { error ->
+                    updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
+                    return@launchScope
+                }.first()
             }
-        }.onFailure { error ->
-            updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
+
+            editProfileUseCase(
+                nickname = currentState.nickname,
+                profileImageUrl = uploadedFileName ?: currentState.profileImageUrl.orEmpty(),
+            ).onSuccess {
+                updateState {
+                    copy(
+                        originalNickname = currentState.nickname,
+                        profileImageUrl = uploadedFileName ?: currentState.profileImageUrl,
+                        savedProfileImageUri = currentState.selectedImageUri ?: currentState.savedProfileImageUri,
+                        selectedImageUri = null,
+                        saveState = ApiState.Success(Unit),
+                    )
+                }
+            }.onFailure { error ->
+                updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
+            }
         }
     }
 
