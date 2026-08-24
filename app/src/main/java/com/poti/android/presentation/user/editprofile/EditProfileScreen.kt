@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.field.PotiShortTextField
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.user.component.EditableUserProfileImage
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiEffect
@@ -78,11 +80,14 @@ private fun EditProfileScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.profile_management_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(

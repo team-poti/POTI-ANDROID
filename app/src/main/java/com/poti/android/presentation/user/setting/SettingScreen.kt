@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -74,11 +75,14 @@ private fun SettingScreen(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.setting_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(

@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.address
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,11 +47,14 @@ private fun AddressManagementScreen(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.address_management_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(

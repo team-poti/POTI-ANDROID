@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.withdrawal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,11 +41,14 @@ private fun WithdrawalScreen(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.withdrawal_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(

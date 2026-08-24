@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import com.poti.android.core.designsystem.component.button.PotiMenuButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.presentation.user.account.model.AccountSettingUiEffect
@@ -69,11 +71,14 @@ private fun AccountSettingScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.account_setting_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(
