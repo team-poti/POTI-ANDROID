@@ -3,6 +3,7 @@ package com.poti.android.presentation.user.editprofile
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.network.model.NetworkError
 import com.poti.android.domain.type.ImageUploadType
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.user.CheckNicknameDuplicationUseCase
@@ -121,8 +122,19 @@ class EditProfileViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
-                updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+            .onFailure { error ->
+                if (error is NetworkError.BadRequest) {
+                    when (error.code) {
+                        40003 -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                        }
+                        else -> {
+                            updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
+                        }
+                    }
+                } else {
+                    updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
+                }
             }
     }
 }
