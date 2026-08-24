@@ -47,7 +47,9 @@ fun EditProfileRoute(
     }
 
     EditProfileScreen(
-        profileImageUrl = uiState.selectedImageUri?.toString() ?: uiState.profileImageUrl,
+        profileImageUrl = uiState.selectedImageUri?.toString()
+            ?: uiState.savedProfileImageUri?.toString()
+            ?: uiState.profileImageUrl,
         nickname = uiState.nickname,
         nicknameError = uiState.nicknameError,
         isSaveEnabled = uiState.isSaveEnabled,

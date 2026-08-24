@@ -51,6 +51,8 @@ class EditProfileViewModel @Inject constructor(
                         originalNickname = userMyPage.nickname,
                         nickname = userMyPage.nickname,
                         profileImageUrl = userMyPage.profileImageUrl,
+                        savedProfileImageUri = null,
+                        selectedImageUri = null,
                         isNicknameValid = true,
                     )
                 }
@@ -101,8 +103,15 @@ class EditProfileViewModel @Inject constructor(
             nickname = currentState.nickname,
             profileImageUrl = uploadedFileName ?: currentState.profileImageUrl.orEmpty(),
         ).onSuccess {
-            updateState { copy(saveState = ApiState.Success(Unit)) }
-            sendEffect(EditProfileUiEffect.NavigateBack)
+            updateState {
+                copy(
+                    originalNickname = currentState.nickname,
+                    profileImageUrl = uploadedFileName ?: currentState.profileImageUrl,
+                    savedProfileImageUri = currentState.selectedImageUri ?: currentState.savedProfileImageUri,
+                    selectedImageUri = null,
+                    saveState = ApiState.Success(Unit),
+                )
+            }
         }.onFailure { error ->
             updateState { copy(saveState = ApiState.Failure(error.message ?: "Failed")) }
         }

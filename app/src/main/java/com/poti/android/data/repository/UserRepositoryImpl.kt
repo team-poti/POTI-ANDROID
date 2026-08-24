@@ -118,7 +118,7 @@ class UserRepositoryImpl @Inject constructor(
                     profileImageUrl = profileImageUrl,
                 )
                 userRemoteDataSource.patchProfile(editProfileRequest = requestDto)
-                    .handleApiResponse()
+                    .handleNullableApiResponse()
                     .getOrThrow()
                 Unit
             }
