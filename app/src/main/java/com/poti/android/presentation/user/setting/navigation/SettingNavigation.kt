@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.alarm.navigation.navigateToAlarmSetting
 import com.poti.android.presentation.user.account.navigation.navigateToAccountSetting
 import com.poti.android.presentation.user.address.navigation.navigateToAddressManagement
 import com.poti.android.presentation.user.editprofile.navigation.navigateToEditProfile
@@ -32,7 +33,7 @@ fun NavGraphBuilder.settingNavGraph(
             onNavigateToAccount = navController::navigateToAccountSetting,
             onNavigateToProfileManagement = navController::navigateToEditProfile,
             onNavigateToAddressManagement = navController::navigateToAddressManagement,
-            onNavigateToAlarmSetting = {},
+            onNavigateToAlarmSetting = navController::navigateToAlarmSetting,
             modifier = Modifier.padding(paddingValues),
         )
     }

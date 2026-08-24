@@ -1,5 +1,6 @@
 package com.poti.android.presentation.alarm.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -87,11 +88,14 @@ private fun AlarmSettingScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.alarm_setting_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         PotiMenuToggle(
