@@ -8,6 +8,7 @@ import com.poti.android.domain.model.user.UserAccount
 
 data class AccountSettingUiState(
     val userAccountLoadState: ApiState<UserAccount> = ApiState.Loading,
+    val isLoggingOut: Boolean = false,
 ) : UiState
 
 sealed interface AccountSettingUiIntent : UiIntent {

@@ -194,6 +194,8 @@ class LoginViewModelTest {
         override suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit> =
             Result.success(Unit)
 
+        override suspend fun logout(): Result<Unit> = Result.success(Unit)
+
         override suspend fun withdrawal(): Result<Unit> = Result.success(Unit)
     }
 
