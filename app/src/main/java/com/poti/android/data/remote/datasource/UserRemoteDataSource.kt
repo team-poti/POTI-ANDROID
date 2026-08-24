@@ -2,6 +2,7 @@ package com.poti.android.data.remote.datasource
 
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
+import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.AccountResponseDto
@@ -17,6 +18,9 @@ class UserRemoteDataSource @Inject constructor(
 ) {
     suspend fun patchOnboarding(onboardingRequest: OnboardingRequestDto): BaseResponse<OnboardingResponseDto> =
         userService.patchOnboarding(onboardingRequest = onboardingRequest)
+
+    suspend fun patchFavoriteArtist(favoriteArtistRequest: FavoriteArtistRequestDto): BaseResponse<Unit> =
+        userService.patchFavoriteArtist(favoriteArtistRequest = favoriteArtistRequest)
 
     suspend fun postNicknameDuplicate(nicknameDuplicateRequest: NicknameDuplicateRequestDto): BaseResponse<NicknameDuplicateResponseDto> =
         userService.postNicknameDuplicate(nicknameDuplicateRequest = nicknameDuplicateRequest)

@@ -1,12 +1,14 @@
 package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
+import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
 import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
+import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.domain.model.user.UserAccount
@@ -32,6 +34,19 @@ class UserRepositoryImpl @Inject constructor(
                 )
                 userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
                     .handleApiResponse()
+                    .getOrThrow()
+                Unit
+            }
+        },
+    )
+
+    override suspend fun patchFavoriteArtist(artistId: Long): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = FavoriteArtistRequestDto(artistId = artistId)
+                userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
+                    .handleNullableApiResponse()
                     .getOrThrow()
                 Unit
             }

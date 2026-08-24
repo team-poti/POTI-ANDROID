@@ -2,6 +2,7 @@ package com.poti.android.data.remote.service
 
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
+import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.AccountResponseDto
@@ -20,6 +21,11 @@ interface UserService {
     suspend fun patchOnboarding(
         @Body onboardingRequest: OnboardingRequestDto,
     ): BaseResponse<OnboardingResponseDto>
+
+    @PATCH("/api/v1/users/me/favorite-artist")
+    suspend fun patchFavoriteArtist(
+        @Body favoriteArtistRequest: FavoriteArtistRequestDto,
+    ): BaseResponse<Unit>
 
     @POST("/api/v1/users/nickname/duplicate")
     suspend fun postNicknameDuplicate(

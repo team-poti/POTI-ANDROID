@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.alarm.navigation.alarmNavGraph
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
@@ -64,6 +65,10 @@ fun MainNavHost(
             paddingValues = paddingValues,
         )
         userNavGraph(
+            navController = navigator.navController,
+            paddingValues = paddingValues,
+        )
+        alarmNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
         )

@@ -300,26 +300,25 @@ object UiMockData {
 
     val userProfile = UserProfile(
         userId = 1,
-        email = "poti@example.com",
         nickname = "포티공주",
         profileImageUrl = "",
         ratingAvg = 4.8,
         activityMessage = "안전하고 즐거운 분철해요.",
         joinedAt = "2026.01",
-        hasFavoriteArtist = true,
-        recruitSummary = HistorySummary(12, 2, 10),
+        participationSummary = HistorySummary(2, 6),
+        recruitSummary = HistorySummary(2, 10),
     )
 
     val userMyPage = UserMyPage(
         nickname = userProfile.nickname,
-        email = userProfile.email,
+        email = "poti@example.com",
         profileImageUrl = null,
         ratingAvg = userProfile.ratingAvg.toString(),
         activityMessage = userProfile.activityMessage,
         joinedAt = userProfile.joinedAt,
         hasFavoriteArtist = true,
         favoriteArtistName = "IVE",
-        participationSummary = HistorySummary(8, 2, 6),
+        participationSummary = userProfile.participationSummary,
         recruitSummary = userProfile.recruitSummary,
     )
 

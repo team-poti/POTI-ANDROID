@@ -8,19 +8,17 @@ import com.poti.android.domain.model.user.UserProfile
 fun ProfileResponseDto.toDomain(): UserProfile =
     UserProfile(
         userId = userId,
-        email = email,
         nickname = nickname,
         profileImageUrl = profileImageUrl,
         ratingAvg = ratingAvg,
         activityMessage = activityMessage,
         joinedAt = joinedAt,
-        hasFavoriteArtist = hasFavoriteArtist,
+        participationSummary = participationSummary.toDomain(),
         recruitSummary = recruitSummary.toDomain(),
     )
 
 fun ProfileSummaryDto.toDomain(): HistorySummary =
     HistorySummary(
-        total = total,
         inProgress = inProgress,
         completed = completed,
     )

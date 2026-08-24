@@ -23,6 +23,8 @@ sealed interface HomeUiIntent : UiIntent {
     data object OnFloatingClick : HomeUiIntent
 
     data object LoadHomeContent : HomeUiIntent
+
+    data object OnAlarmClick : HomeUiIntent
 }
 
 sealed interface HomeUiEffect : UiEffect {
@@ -35,4 +37,6 @@ sealed interface HomeUiEffect : UiEffect {
     data object NavigateToOtherProductCategory : HomeUiEffect
 
     data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
+
+    data object NavigateToAlarmList : HomeUiEffect
 }
