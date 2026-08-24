@@ -29,18 +29,25 @@ class AccountSettingViewModel @Inject constructor(
         loadUserAccount()
     }
 
-    private fun loadUserAccount() = launchScope {
-        getUserAccountUseCase()
-            .onSuccess { userAccount ->
-                updateState {
-                    copy(userAccountLoadState = ApiState.Success(userAccount))
+    private fun loadUserAccount() {
+        updateState { copy(userAccountLoadState = ApiState.Loading) }
+        launchScope(
+            onError = { error ->
+                updateState { copy(userAccountLoadState = ApiState.Failure(error.message ?: "Failed")) }
+            },
+        ) {
+            getUserAccountUseCase()
+                .onSuccess { userAccount ->
+                    updateState {
+                        copy(userAccountLoadState = ApiState.Success(userAccount))
+                    }
                 }
-            }
-            .onFailure { throwable ->
-                updateState {
-                    copy(userAccountLoadState = ApiState.Failure(throwable.message ?: "Failed"))
+                .onFailure { throwable ->
+                    updateState {
+                        copy(userAccountLoadState = ApiState.Failure(throwable.message ?: "Failed"))
+                    }
                 }
-            }
+        }
     }
 
     private fun logout() {

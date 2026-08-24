@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
-import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiMenuButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
@@ -45,31 +45,23 @@ fun AccountSettingRoute(
         }
     }
 
-    uiState.userAccountLoadState.onSuccess { userAccount ->
-        AccountSettingScreen(
-            userAccount = userAccount,
-            onBackClick = { viewModel.processIntent(AccountSettingUiIntent.OnBackClick) },
-            onLogoutClick = { viewModel.processIntent(AccountSettingUiIntent.OnLogoutClick) },
-            onWithdrawalClick = { viewModel.processIntent(AccountSettingUiIntent.OnWithdrawalClick) },
-            modifier = modifier,
-        )
-    }
+    AccountSettingScreen(
+        userAccountLoadState = uiState.userAccountLoadState,
+        onBackClick = { viewModel.processIntent(AccountSettingUiIntent.OnBackClick) },
+        onLogoutClick = { viewModel.processIntent(AccountSettingUiIntent.OnLogoutClick) },
+        onWithdrawalClick = { viewModel.processIntent(AccountSettingUiIntent.OnWithdrawalClick) },
+        modifier = modifier,
+    )
 }
 
 @Composable
 private fun AccountSettingScreen(
-    userAccount: UserAccount,
+    userAccountLoadState: ApiState<UserAccount>,
     onBackClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onWithdrawalClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-    val socialTypeText = when (userAccount.socialType) {
-        SocialType.KAKAO -> stringResource(R.string.social_type_kakao)
-        SocialType.GOOGLE -> stringResource(R.string.social_type_google)
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -81,51 +73,72 @@ private fun AccountSettingScreen(
             containerColor = PotiTheme.colors.white,
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_name),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = userAccount.nickname,
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_email),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = userAccount.email,
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.social_account),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = socialTypeText,
-            )
-
-            PotiDivider(
-                PotiDividerStyle.LARGE,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_logout),
-                onClick = onLogoutClick,
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_withdrawal_menu),
-                onClick = onWithdrawalClick,
-                modifier = Modifier.padding(horizontal = 8.dp),
+        if (userAccountLoadState is ApiState.Success) {
+            AccountSettingContent(
+                userAccount = userAccountLoadState.data,
+                onLogoutClick = onLogoutClick,
+                onWithdrawalClick = onWithdrawalClick,
             )
         }
+    }
+}
+
+@Composable
+private fun AccountSettingContent(
+    userAccount: UserAccount,
+    onLogoutClick: () -> Unit,
+    onWithdrawalClick: () -> Unit,
+) {
+    val scrollState = rememberScrollState()
+    val socialTypeText = when (userAccount.socialType) {
+        SocialType.KAKAO -> stringResource(R.string.social_type_kakao)
+        SocialType.GOOGLE -> stringResource(R.string.social_type_google)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+    ) {
+        Spacer(modifier = Modifier.height(12.dp))
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_name),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = userAccount.nickname,
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_email),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = userAccount.email,
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.social_account),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = socialTypeText,
+        )
+
+        PotiDivider(
+            PotiDividerStyle.LARGE,
+            modifier = Modifier.padding(vertical = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_logout),
+            onClick = onLogoutClick,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_withdrawal_menu),
+            onClick = onWithdrawalClick,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
     }
 }
 
@@ -133,10 +146,12 @@ private fun AccountSettingScreen(
 @Composable
 private fun AccountSettingScreenPreview() {
     AccountSettingScreen(
-        userAccount = UserAccount(
-            nickname = "포티공주",
-            email = "poti@example.com",
-            socialType = SocialType.KAKAO,
+        userAccountLoadState = ApiState.Success(
+            UserAccount(
+                nickname = "포티공주",
+                email = "poti@example.com",
+                socialType = SocialType.KAKAO,
+            ),
         ),
         onBackClick = {},
         onLogoutClick = {},
