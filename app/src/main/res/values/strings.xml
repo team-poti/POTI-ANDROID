@@ -94,6 +94,12 @@
     <string name="party_detail_share_button">이 분철팟 공유하기</string>
     <string name="party_detail_share_chooser_title">분철팟 공유하기</string>
 
+    <!-- PartyShare -->
+    <string name="party_share_link_copy">링크 복사</string>
+    <string name="party_share_kakao_talk">카카오톡</string>
+    <string name="party_share_x">X</string>
+    <string name="party_share_system">공유하기</string>
+
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>
     <string name="party_join_option_member_placeholder">분철 받을 멤버를 선택하세요</string>
