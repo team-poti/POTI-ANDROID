@@ -79,6 +79,7 @@
     <string name="party_detail_shipping_price_format">%1$s %2$s원</string>
     <string name="party_detail_uploader">모집자</string>
     <string name="party_detail_participants">참여자</string>
+    <string name="party_detail_participants_empty">현재 참여 중인 사용자가 없어요</string>
     <string name="party_detail_review_count">%d개의 평가</string>
     <string name="party_detail_participants_count">%1$d/%2$d</string>
     <string-array name="party_detail_announcement">
@@ -90,6 +91,8 @@
     <string name="party_detail_join_party">분철팟 참여하기</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
     <string name="party_detail_upload_date_label">"%s 등록"</string>
+    <string name="party_detail_share_button">이 분철팟 공유하기</string>
+    <string name="party_detail_share_chooser_title">분철팟 공유하기</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>

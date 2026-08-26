@@ -105,6 +105,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 
 # -- Kakao ---
 kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
+kakao-share = { group = "com.kakao.sdk", name = "v2-share", version.ref = "kakao" }
 lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 
 # --- Firebase ---

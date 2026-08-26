@@ -41,8 +41,18 @@ android {
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         debug {
+            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("boolean", "USE_UI_MOCK", "false")
         }
         create("mock") {
@@ -154,6 +164,7 @@ dependencies {
 
     // Kakao
     implementation(libs.kakao.user)
+    implementation(libs.kakao.share)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
