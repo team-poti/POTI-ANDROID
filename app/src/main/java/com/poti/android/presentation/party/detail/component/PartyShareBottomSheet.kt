@@ -33,7 +33,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 @Composable
 fun PartyShareBottomSheet(
     onDismiss: () -> Unit,
-    onLinkCopyClick: () -> Unit,
+    onCopyLinkClick: () -> Unit,
     onKakaoShareClick: () -> Unit,
     onXShareClick: () -> Unit,
     onSystemShareClick: () -> Unit,
@@ -44,7 +44,7 @@ fun PartyShareBottomSheet(
         modifier = modifier,
     ) {
         PartyShareBottomSheetContent(
-            onLinkCopyClick = onLinkCopyClick,
+            onLinkCopyClick = onCopyLinkClick,
             onKakaoShareClick = onKakaoShareClick,
             onXShareClick = onXShareClick,
             onSystemShareClick = onSystemShareClick,
@@ -54,7 +54,7 @@ fun PartyShareBottomSheet(
 }
 
 @Composable
-fun PartyShareBottomSheetContent(
+private fun PartyShareBottomSheetContent(
     onLinkCopyClick: () -> Unit,
     onKakaoShareClick: () -> Unit,
     onXShareClick: () -> Unit,
