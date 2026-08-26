@@ -7,7 +7,19 @@ import com.kakao.sdk.share.WebSharerClient
 import timber.log.Timber
 import java.net.URLEncoder
 
-object KakaoShareLauncher {
+data class PartyShareContent(
+    val artist: String,
+    val title: String,
+    val description: String,
+    val imageUrl: String,
+    val participantCount: Int,
+    val totalCount: Int,
+    val host: String,
+    val partyId: Long,
+    val deepLink: String,
+)
+
+object KakaoShareManager {
     const val LINK_HOST = "kakaolink"
     const val PARAM_DEEP_LINK = "deepLink"
 
@@ -25,27 +37,9 @@ object KakaoShareLauncher {
 
     fun sharePartyDetail(
         context: Context,
-        artist: String,
-        title: String,
-        description: String,
-        imageUrl: String,
-        participantCount: Int,
-        totalCount: Int,
-        host: String,
-        partyId: Long,
-        deepLink: String,
+        content: PartyShareContent,
     ) {
-        val templateArgs = mapOf(
-            ARG_IMAGE to imageUrl,
-            ARG_ARTIST to artist,
-            ARG_TITLE to title,
-            ARG_DESCRIPTION to description,
-            ARG_PARTICIPANT_COUNT to participantCount.toString(),
-            ARG_TOTAL_COUNT to totalCount.toString(),
-            ARG_HOST to host,
-            ARG_POT_ID to partyId.toString(),
-            ARG_DEEP_LINK to URLEncoder.encode(deepLink, Charsets.UTF_8.name()),
-        )
+        val templateArgs = content.toTemplateArgs()
 
         if (ShareClient.instance.isKakaoTalkSharingAvailable(context)) {
             ShareClient.instance.shareCustom(context, PARTY_DETAIL_TEMPLATE_ID, templateArgs) { sharingResult, error ->
@@ -59,6 +53,19 @@ object KakaoShareLauncher {
             shareWithWebSharer(context, templateArgs)
         }
     }
+
+    private fun PartyShareContent.toTemplateArgs(): Map<String, String> =
+        mapOf(
+            ARG_IMAGE to imageUrl,
+            ARG_ARTIST to artist,
+            ARG_TITLE to title,
+            ARG_DESCRIPTION to description,
+            ARG_PARTICIPANT_COUNT to participantCount.toString(),
+            ARG_TOTAL_COUNT to totalCount.toString(),
+            ARG_HOST to host,
+            ARG_POT_ID to partyId.toString(),
+            ARG_DEEP_LINK to URLEncoder.encode(deepLink, Charsets.UTF_8.name()),
+        )
 
     private fun shareWithWebSharer(
         context: Context,

@@ -8,6 +8,7 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.core.share.PartyShareContent
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.DeliveryInfo
@@ -123,15 +124,17 @@ class PartyDetailViewModel @Inject constructor(
 
         sendEffect(
             ShareToKakao(
-                artist = partyDetail.artist.toArtistDisplayName(),
-                title = partyDetail.title,
-                description = partyDetail.content,
-                imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
-                participantCount = partyDetail.currentCount,
-                totalCount = partyDetail.totalCount,
-                host = BuildConfig.DEEP_LINK_HOST,
-                partyId = partyId,
-                deepLink = deepLink,
+                PartyShareContent(
+                    artist = partyDetail.artist.toArtistDisplayName(),
+                    title = partyDetail.title,
+                    description = partyDetail.content,
+                    imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
+                    participantCount = partyDetail.currentCount,
+                    totalCount = partyDetail.totalCount,
+                    host = BuildConfig.DEEP_LINK_HOST,
+                    partyId = partyId,
+                    deepLink = deepLink,
+                ),
             ),
         )
     }

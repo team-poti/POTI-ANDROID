@@ -7,6 +7,7 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.core.share.PartyShareContent
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinOption
@@ -127,17 +128,7 @@ sealed interface PartyDetailEffect : UiEffect {
 
     data class ShareToSystem(val shareText: String) : PartyDetailEffect
 
-    data class ShareToKakao(
-        val artist: String,
-        val title: String,
-        val description: String,
-        val imageUrl: String,
-        val participantCount: Int,
-        val totalCount: Int,
-        val host: String,
-        val partyId: Long,
-        val deepLink: String,
-    ) : PartyDetailEffect
+    data class ShareToKakao(val content: PartyShareContent) : PartyDetailEffect
 
     data class ShareToX(val shareText: String) : PartyDetailEffect
 }
