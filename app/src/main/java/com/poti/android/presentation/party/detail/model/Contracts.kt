@@ -128,9 +128,14 @@ sealed interface PartyDetailEffect : UiEffect {
     data class ShareToSystem(val shareText: String) : PartyDetailEffect
 
     data class ShareToKakao(
+        val artist: String,
         val title: String,
         val description: String,
         val imageUrl: String,
+        val participantCount: Int,
+        val totalCount: Int,
+        val host: String,
+        val partyId: Long,
         val deepLink: String,
     ) : PartyDetailEffect
 

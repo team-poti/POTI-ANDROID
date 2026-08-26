@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.poti.android.BuildConfig
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
@@ -114,14 +115,21 @@ class PartyDetailViewModel @Inject constructor(
         }
     }
 
+    private fun String.toArtistDisplayName(): String = substringBefore("(").trim()
+
     private fun handleKakaoShare() {
         val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
 
         sendEffect(
             ShareToKakao(
+                artist = partyDetail.artist.toArtistDisplayName(),
                 title = partyDetail.title,
-                description = "${partyDetail.artist} · ${partyDetail.currentCount}/${partyDetail.totalCount}명 모집 중",
+                description = partyDetail.content,
                 imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
+                participantCount = partyDetail.currentCount,
+                totalCount = partyDetail.totalCount,
+                host = BuildConfig.DEEP_LINK_HOST,
+                partyId = partyId,
                 deepLink = partyDetailDeepLink(partyId),
             ),
         )
@@ -153,7 +161,7 @@ class PartyDetailViewModel @Inject constructor(
             allNames.partition { it in availableNameSet }
         }
 
-        val artistName = partyDetail.artist.substringBefore("(").trim()
+        val artistName = partyDetail.artist.toArtistDisplayName()
         val artistHashTag = artistName.filterNot(Char::isWhitespace)
 
         return buildString {

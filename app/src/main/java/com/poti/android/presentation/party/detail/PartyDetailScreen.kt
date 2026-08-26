@@ -67,11 +67,16 @@ fun PartyDetailRoute(
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
             is PartyDetailEffect.ShareToSystem -> context.shareText(shareChooserTitle, effect.shareText)
-            is PartyDetailEffect.ShareToKakao -> KakaoShareLauncher.share(
+            is PartyDetailEffect.ShareToKakao -> KakaoShareLauncher.sharePartyDetail(
                 context = context,
+                artist = effect.artist,
                 title = effect.title,
                 description = effect.description,
                 imageUrl = effect.imageUrl,
+                participantCount = effect.participantCount,
+                totalCount = effect.totalCount,
+                host = effect.host,
+                partyId = effect.partyId,
                 deepLink = effect.deepLink,
             )
             is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
