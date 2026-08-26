@@ -139,11 +139,19 @@ class PartyDetailViewModel @Inject constructor(
         val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return@launchScope
         val availableMembers = uiState.value.partyJoinOption.getSuccessDataOrNull()?.memberOptions
             ?: getPartyJoinOptionsUseCase(partyId).getOrNull()?.memberOptions.orEmpty()
-        val allMembers = uiState.value.artistMembers.ifEmpty {
-            getMembersUseCase(artistId = partyDetail.artistId).getOrNull().orEmpty()
-        }
+        val allMembers = uiState.value.artistMembers.ifEmpty { fetchArtistMembersForShare(partyDetail.artistId) }
 
         sendEffect(ShareToX(buildXShareText(partyDetail, availableMembers, allMembers)))
+    }
+
+    /**
+     * 프리페치가 실패해 멤버 정보가 비어 있을 때 공유 시점에 다시 받아온다.
+     * 이후 공유에서 재요청하지 않도록 state에도 반영한다.
+     */
+    private suspend fun fetchArtistMembersForShare(artistId: Long): List<Member> {
+        val members = getMembersUseCase(artistId = artistId).getOrNull().orEmpty()
+        updateState { copy(artistMembers = members.toImmutableList()) }
+        return members
     }
 
     private fun buildXShareText(
