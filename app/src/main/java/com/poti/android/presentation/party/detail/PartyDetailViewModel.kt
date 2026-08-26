@@ -41,6 +41,7 @@ class PartyDetailViewModel @Inject constructor(
         initialState = PartyDetailUiState(),
     ) {
     private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
+    private val deepLink: String = partyDetailDeepLink(partyId)
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -93,12 +94,12 @@ class PartyDetailViewModel @Inject constructor(
             PartyDetailIntent.OnShareClick -> updateState { copy(showShareBottomSheet = true) }
             PartyDetailIntent.OnCopyLinkClick -> {
                 closeShareBottomSheet()
-                sendEffect(CopyLink(partyDetailDeepLink(partyId)))
+                sendEffect(CopyLink(deepLink))
             }
 
             PartyDetailIntent.OnSystemShareClick -> {
                 closeShareBottomSheet()
-                sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
+                sendEffect(ShareToSystem(deepLink))
             }
 
             PartyDetailIntent.OnKakaoShareClick -> {
@@ -130,7 +131,7 @@ class PartyDetailViewModel @Inject constructor(
                 totalCount = partyDetail.totalCount,
                 host = BuildConfig.DEEP_LINK_HOST,
                 partyId = partyId,
-                deepLink = partyDetailDeepLink(partyId),
+                deepLink = deepLink,
             ),
         )
     }
@@ -178,7 +179,7 @@ class PartyDetailViewModel @Inject constructor(
             if (available.isNotEmpty()) appendLine("⭕️ ${available.joinToString(", ")}")
             if (unavailable.isNotEmpty()) appendLine("❌ ${unavailable.joinToString(", ")}")
             appendLine("\n#포티 #분철 #$artistHashTag @poti_kr")
-            append("\n${partyDetailDeepLink(partyId)}")
+            append("\n$deepLink")
         }
     }
 
