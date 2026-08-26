@@ -8,6 +8,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import com.poti.android.R
 import timber.log.Timber
 
 private const val X_PACKAGE_NAME = "com.twitter.android"
@@ -17,9 +18,12 @@ fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.copyToClipboard(text: String) {
+fun Context.copyToClipboard(
+    text: String,
+    label: String = getString(R.string.clipboard_default_label),
+) {
     val clipboardManager = getSystemService<ClipboardManager>() ?: return
-    clipboardManager.setPrimaryClip(ClipData.newPlainText(text, text))
+    clipboardManager.setPrimaryClip(ClipData.newPlainText(label, text))
 }
 
 fun Context.shareText(
