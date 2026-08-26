@@ -62,6 +62,7 @@ class PartyDetailViewModel @Inject constructor(
                     isAddressError = false,
                 )
             }
+
             is PartyDetailIntent.OnDetailAddressChange -> updateState { copy(detailAddress = intent.value) }
             is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
             PartyDetailIntent.OnFinalJoinClick -> {
@@ -69,20 +70,43 @@ class PartyDetailViewModel @Inject constructor(
                     updateState { copy(isParticipantNoticeModalVisible = true) }
                 }
             }
+
             PartyDetailIntent.OnParticipantNoticeDismiss -> {
                 updateState { copy(isParticipantNoticeModalVisible = false) }
             }
+
             PartyDetailIntent.OnParticipantNoticeConfirm -> {
                 updateState { copy(isParticipantNoticeModalVisible = false) }
                 postOrder()
             }
+
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
-            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
-            PartyDetailIntent.OnKakaoShareClick -> handleKakaoShare()
-            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(partyDetailDeepLink(partyId)))
+
+            PartyDetailIntent.OnShareClick -> updateState { copy(showShareBottomSheet = true) }
+            PartyDetailIntent.OnCopyLinkClick -> {
+                closeShareBottomSheet()
+                sendEffect(CopyLink(partyDetailDeepLink(partyId)))
+            }
+
+            PartyDetailIntent.OnSystemShareClick -> {
+                closeShareBottomSheet()
+                sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
+            }
+
+            PartyDetailIntent.OnKakaoShareClick -> {
+                closeShareBottomSheet()
+                handleKakaoShare()
+            }
+
+            PartyDetailIntent.OnXShareClick -> {
+                closeShareBottomSheet()
+                sendEffect(ShareToX(partyDetailDeepLink(partyId)))
+            }
+
+            PartyDetailIntent.OnDismissShareBottomSheet -> closeShareBottomSheet()
         }
     }
 
@@ -228,4 +252,7 @@ class PartyDetailViewModel @Inject constructor(
             price = this.price.toMoneyString(),
             id = this.deliveryId.toString(),
         )
+
+    private fun closeShareBottomSheet() =
+        updateState { copy(showShareBottomSheet = false) }
 }

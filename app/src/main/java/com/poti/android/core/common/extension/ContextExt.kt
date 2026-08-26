@@ -1,9 +1,12 @@
 package com.poti.android.core.common.extension
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import timber.log.Timber
 
@@ -12,6 +15,11 @@ private const val X_WEB_INTENT_URL = "https://x.com/intent/post?text="
 
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.copyToClipboard(text: String) {
+    val clipboardManager = getSystemService<ClipboardManager>() ?: return
+    clipboardManager.setPrimaryClip(ClipData.newPlainText(text, text))
 }
 
 fun Context.shareText(

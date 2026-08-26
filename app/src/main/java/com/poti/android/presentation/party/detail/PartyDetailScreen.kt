@@ -11,10 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
+import com.poti.android.core.common.extension.copyToClipboard
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.shareText
 import com.poti.android.core.common.extension.shareTextToX
@@ -41,6 +40,7 @@ import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
+import com.poti.android.presentation.party.detail.component.PartyShareBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyShareButton
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
@@ -75,6 +75,7 @@ fun PartyDetailRoute(
                 deepLink = effect.deepLink,
             )
             is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
+            is PartyDetailEffect.CopyLink -> context.copyToClipboard(effect.link)
         }
     }
 
@@ -89,6 +90,16 @@ fun PartyDetailRoute(
         )
     }
 
+    if (uiState.showShareBottomSheet) {
+        PartyShareBottomSheet(
+            onDismiss = { viewModel.processIntent(PartyDetailIntent.OnDismissShareBottomSheet) },
+            onCopyLinkClick = { viewModel.processIntent(PartyDetailIntent.OnCopyLinkClick) },
+            onKakaoShareClick = { viewModel.processIntent(PartyDetailIntent.OnKakaoShareClick) },
+            onXShareClick = { viewModel.processIntent(PartyDetailIntent.OnXShareClick) },
+            onSystemShareClick = { viewModel.processIntent(PartyDetailIntent.OnSystemShareClick) },
+        )
+    }
+
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
@@ -96,9 +107,7 @@ fun PartyDetailRoute(
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
-            onSystemShareClick = { viewModel.processIntent(PartyDetailIntent.OnSystemShareClick) },
-            onKakaoShareClick = { viewModel.processIntent(PartyDetailIntent.OnKakaoShareClick) },
-            onXShareClick = { viewModel.processIntent(PartyDetailIntent.OnXShareClick) },
+            onShareClick = { viewModel.processIntent(PartyDetailIntent.OnShareClick) },
             modifier = modifier,
         )
     }
@@ -111,9 +120,7 @@ private fun PartyDetailScreen(
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
-    onSystemShareClick: () -> Unit,
-    onKakaoShareClick: () -> Unit,
-    onXShareClick: () -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -188,20 +195,7 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
-            Text("System Share Sheet", Modifier.align(Alignment.CenterHorizontally))
-            PartyShareButton(
-                onClick = onSystemShareClick,
-            )
-
-            Text("Kakao Share SDK", Modifier.align(Alignment.CenterHorizontally))
-            PartyShareButton(
-                onClick = onKakaoShareClick,
-            )
-
-            Text("X(twitter) Intent", Modifier.align(Alignment.CenterHorizontally))
-            PartyShareButton(
-                onClick = onXShareClick,
-            )
+            PartyShareButton(onClick = onShareClick)
 
             ParticipantGuidelines()
         }
@@ -218,9 +212,7 @@ private fun PartyDetailScreenPreview() {
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
-            onSystemShareClick = {},
-            onKakaoShareClick = {},
-            onXShareClick = {},
+            onShareClick = {},
         )
     }
 }

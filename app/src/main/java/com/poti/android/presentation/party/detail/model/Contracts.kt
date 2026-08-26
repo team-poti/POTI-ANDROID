@@ -33,6 +33,7 @@ data class PartyDetailUiState(
     val isContactError: Boolean = false,
     val isParticipantNoticeModalVisible: Boolean = false,
     val isJoinSuccessDialogVisible: Boolean = false,
+    val showShareBottomSheet: Boolean = false,
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
@@ -98,6 +99,12 @@ sealed interface PartyDetailIntent : UiIntent {
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
 
+    data object OnShareClick : PartyDetailIntent
+
+    data object OnDismissShareBottomSheet : PartyDetailIntent
+
+    data object OnCopyLinkClick : PartyDetailIntent
+
     data object OnSystemShareClick : PartyDetailIntent
 
     data object OnKakaoShareClick : PartyDetailIntent
@@ -113,6 +120,8 @@ sealed interface PartyDetailEffect : UiEffect {
     data class NavigateToProfile(val userId: Long) : PartyDetailEffect
 
     data class ReloadDetail(val partyId: Long) : PartyDetailEffect
+
+    data class CopyLink(val link: String) : PartyDetailEffect
 
     data class ShareToSystem(val shareText: String) : PartyDetailEffect
 
