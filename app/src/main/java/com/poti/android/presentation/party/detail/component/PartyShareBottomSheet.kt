@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -67,6 +69,7 @@ fun PartyShareBottomSheetContent(
             iconRes = R.drawable.ic_link,
             label = stringResource(R.string.party_share_link_copy),
             onClick = onLinkCopyClick,
+            iconColor = PotiTheme.colors.black,
         )
 
         PartyShareBottomSheetButton(
@@ -88,6 +91,7 @@ fun PartyShareBottomSheetContent(
             iconRes = R.drawable.ic_share,
             label = stringResource(R.string.party_share_system),
             onClick = onSystemShareClick,
+            iconColor = PotiTheme.colors.black,
         )
     }
 }
@@ -100,6 +104,7 @@ private fun PartyShareBottomSheetButton(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues = PaddingValues(all = 18.dp),
     backgroundColor: Color = PotiTheme.colors.gray100,
+    iconColor: Color = Color.Unspecified,
 ) {
     Column(
         modifier = modifier.noRippleClickable(onClick),
@@ -109,6 +114,7 @@ private fun PartyShareBottomSheetButton(
         Image(
             painter = painterResource(iconRes),
             contentDescription = null,
+            colorFilter = if (iconColor.isSpecified) ColorFilter.tint(iconColor) else null,
             modifier = Modifier
                 .clip(CircleShape)
                 .size(64.dp)
