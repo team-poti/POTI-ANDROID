@@ -7,11 +7,14 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.DeliveryInfo
 import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
+import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
+import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
 import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
 import com.poti.android.domain.usecase.party.JoinPartyUseCase
@@ -30,6 +33,7 @@ import javax.inject.Inject
 class PartyDetailViewModel @Inject constructor(
     private val getPartyDetailUseCase: GetPartyDetailUseCase,
     private val getPartyJoinOptionsUseCase: GetPartyJoinOptionsUseCase,
+    private val getMembersUseCase: GetMembersUseCase,
     private val joinPartyUseCase: JoinPartyUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
@@ -103,7 +107,7 @@ class PartyDetailViewModel @Inject constructor(
 
             PartyDetailIntent.OnXShareClick -> {
                 closeShareBottomSheet()
-                sendEffect(ShareToX(partyDetailDeepLink(partyId)))
+                handleXShare()
             }
 
             PartyDetailIntent.OnDismissShareBottomSheet -> closeShareBottomSheet()
@@ -123,6 +127,45 @@ class PartyDetailViewModel @Inject constructor(
         )
     }
 
+    private fun handleXShare() = launchScope {
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return@launchScope
+        val availableMembers = uiState.value.partyJoinOption.getSuccessDataOrNull()?.memberOptions
+            ?: getPartyJoinOptionsUseCase(partyId).getOrNull()?.memberOptions.orEmpty()
+        val allMembers = uiState.value.artistMembers.ifEmpty {
+            getMembersUseCase(artistId = partyDetail.artistId).getOrNull().orEmpty()
+        }
+
+        sendEffect(ShareToX(buildXShareText(partyDetail, availableMembers, allMembers)))
+    }
+
+    private fun buildXShareText(
+        partyDetail: PartyDetail,
+        availableMembers: List<Members>,
+        allMembers: List<Member>,
+    ): String {
+        val availableNames = availableMembers.map { it.memberName.trim() }
+        val allNames = allMembers.map { it.name.trim() }
+        val availableNameSet = availableNames.toSet()
+
+        val (available, unavailable) = if (allNames.isEmpty()) {
+            availableNames to emptyList()
+        } else {
+            allNames.partition { it in availableNameSet }
+        }
+
+        val artistName = partyDetail.artist.substringBefore("(").trim()
+        val artistHashTag = artistName.filterNot(Char::isWhitespace)
+
+        return buildString {
+            appendLine("$artistName ${partyDetail.title}")
+            if (available.isNotEmpty() || unavailable.isNotEmpty()) appendLine()
+            if (available.isNotEmpty()) appendLine("⭕️ ${available.joinToString(", ")}")
+            if (unavailable.isNotEmpty()) appendLine("❌ ${unavailable.joinToString(", ")}")
+            appendLine("\n#포티 #분철 #$artistHashTag @poti_kr")
+            append("\n${partyDetailDeepLink(partyId)}")
+        }
+    }
+
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }
 
@@ -130,11 +173,27 @@ class PartyDetailViewModel @Inject constructor(
             .onSuccess { partyDetail ->
                 Timber.d("getPartyDetail 실행: $partyDetail")
                 updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
+                prefetchShareMembers(partyDetail.artistId)
             }
             .onFailure { error ->
                 Timber.d("getPartyDetail 실패: $error")
                 updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
             }
+    }
+
+    /**
+     * X 공유 텍스트에 쓰일 멤버 정보를 미리 받아둔다.
+     * 공유 시점 지연을 막기 위한 선반영이므로, 실패해도 상세 화면에는 영향을 주지 않는다.
+     */
+    private fun prefetchShareMembers(artistId: Long) {
+        fetchPartyJoinOption()
+        fetchArtistMembers(artistId)
+    }
+
+    private fun fetchArtistMembers(artistId: Long) = launchScope {
+        getMembersUseCase(artistId = artistId)
+            .onSuccess { members -> updateState { copy(artistMembers = members.toImmutableList()) } }
+            .onFailure { error -> Timber.d("getMemberList 실패: $error") }
     }
 
     private fun handleDetailJoin() {

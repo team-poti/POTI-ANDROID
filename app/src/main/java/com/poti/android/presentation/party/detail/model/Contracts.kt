@@ -7,6 +7,7 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.type.PartyStatusType
@@ -34,6 +35,7 @@ data class PartyDetailUiState(
     val isParticipantNoticeModalVisible: Boolean = false,
     val isJoinSuccessDialogVisible: Boolean = false,
     val showShareBottomSheet: Boolean = false,
+    val artistMembers: ImmutableList<Member> = persistentListOf(),
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
