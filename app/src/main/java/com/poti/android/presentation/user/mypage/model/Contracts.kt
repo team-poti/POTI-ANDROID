@@ -13,6 +13,10 @@ data class MyPageUiState(
 ) : UiState
 
 sealed interface MyPageUiIntent : UiIntent {
+    data object OnArtistClick : MyPageUiIntent
+
+    data object OnResume : MyPageUiIntent
+
     data class OnHistoryClick(
         val mode: HistoryMode,
         val tab: HistorySummaryType,
@@ -20,6 +24,10 @@ sealed interface MyPageUiIntent : UiIntent {
 }
 
 sealed interface MyPageUiEffect : UiEffect {
+    data class NavigateToFavoriteArtist(
+        val favoriteArtistName: String?,
+    ) : MyPageUiEffect
+
     data class NavigateToHistoryList(
         val mode: HistoryMode,
         val tab: HistorySummaryType,

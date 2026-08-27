@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.alarm.navigation.alarmNavGraph
 import com.poti.android.presentation.auth.navigation.authNavGraph
 import com.poti.android.presentation.history.navigation.historyNavGraph
 import com.poti.android.presentation.onboarding.navigation.onboardingNavGraph
 import com.poti.android.presentation.party.partyNavGraph
 import com.poti.android.presentation.splash.SplashRoute
 import com.poti.android.presentation.splash.splashNavGraph
-import com.poti.android.presentation.user.mypage.navigation.myPageNavGraph
-import com.poti.android.presentation.user.profile.navigation.profileNavGraph
+import com.poti.android.presentation.user.userNavGraph
 
 private const val DURATION = 160
 
@@ -64,13 +64,13 @@ fun MainNavHost(
             navController = navigator.navController,
             paddingValues = paddingValues,
         )
-        myPageNavGraph(
+        userNavGraph(
             navController = navigator.navController,
             paddingValues = paddingValues,
         )
-        profileNavGraph(
+        alarmNavGraph(
+            navController = navigator.navController,
             paddingValues = paddingValues,
-            onPopBackStack = navigator.navController::popBackStack,
         )
     }
 }

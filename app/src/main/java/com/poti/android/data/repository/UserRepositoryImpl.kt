@@ -1,13 +1,17 @@
 package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
+import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
+import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
+import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.domain.repository.UserRepository
@@ -30,6 +34,19 @@ class UserRepositoryImpl @Inject constructor(
                 )
                 userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
                     .handleApiResponse()
+                    .getOrThrow()
+                Unit
+            }
+        },
+    )
+
+    override suspend fun patchFavoriteArtist(artistId: Long): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = FavoriteArtistRequestDto(artistId = artistId)
+                userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
+                    .handleNullableApiResponse()
                     .getOrThrow()
                 Unit
             }
@@ -73,6 +90,37 @@ class UserRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()
+            }
+        },
+    )
+
+    override suspend fun getUserAccount(): Result<UserAccount> = executeWithUiMock(
+        mock = { UiMockData.userAccount },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getUserAccount()
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .toDomain()
+            }
+        },
+    )
+
+    override suspend fun patchProfile(
+        nickname: String,
+        profileImageUrl: String,
+    ): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                val requestDto = EditProfileRequestDto(
+                    nickname = nickname,
+                    profileImageUrl = profileImageUrl,
+                )
+                userRemoteDataSource.patchProfile(editProfileRequest = requestDto)
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                Unit
             }
         },
     )

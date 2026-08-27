@@ -77,6 +77,17 @@ jobs:
                   GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
               run: echo "${GOOGLE_SERVICES_JSON}" > app/google-services.json
 
+            - name: Create debug.keystore
+              if: steps.changes.outputs.android == 'true'
+              env:
+                  DEBUG_KEYSTORE: ${{ secrets.DEBUG_KEYSTORE }}
+              run: |
+                  if [ -z "$DEBUG_KEYSTORE" ]; then
+                    echo "::error::DEBUG_KEYSTORE secret is not set. Register it with: base64 -w0 app/debug.keystore"
+                    exit 1
+                  fi
+                  echo "$DEBUG_KEYSTORE" | base64 -d > app/debug.keystore
+
             - name: Run ktlintCheck
               if: steps.changes.outputs.android == 'true'
               id: ktlint

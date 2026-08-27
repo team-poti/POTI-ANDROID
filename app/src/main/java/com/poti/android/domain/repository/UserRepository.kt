@@ -1,5 +1,6 @@
 package com.poti.android.domain.repository
 
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 
@@ -7,6 +8,10 @@ interface UserRepository {
     suspend fun patchOnboarding(
         nickname: String,
         favoriteArtistId: Long?,
+    ): Result<Unit>
+
+    suspend fun patchFavoriteArtist(
+        artistId: Long,
     ): Result<Unit>
 
     suspend fun postNicknameDuplicate(
@@ -18,4 +23,11 @@ interface UserRepository {
     suspend fun getUserProfile(
         userId: Long,
     ): Result<UserProfile>
+
+    suspend fun getUserAccount(): Result<UserAccount>
+
+    suspend fun patchProfile(
+        nickname: String,
+        profileImageUrl: String,
+    ): Result<Unit>
 }
