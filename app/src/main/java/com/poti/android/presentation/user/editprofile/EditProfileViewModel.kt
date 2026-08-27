@@ -1,16 +1,14 @@
 package com.poti.android.presentation.user.editprofile
 
 import androidx.lifecycle.viewModelScope
-import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.core.network.model.NetworkError
+import com.poti.android.core.common.util.NicknameValidator
 import com.poti.android.domain.type.ImageUploadType
 import com.poti.android.domain.usecase.image.UploadImagesUseCase
 import com.poti.android.domain.usecase.user.CheckNicknameDuplicationUseCase
 import com.poti.android.domain.usecase.user.EditProfileUseCase
 import com.poti.android.domain.usecase.user.GetUserMyPageUseCase
-import com.poti.android.presentation.onboarding.model.ErrorText
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiEffect
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiIntent
 import com.poti.android.presentation.user.editprofile.model.EditProfileUiState
@@ -19,8 +17,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-
-private val NICKNAME_REGEX = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]*$".toRegex()
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
@@ -71,13 +67,7 @@ class EditProfileViewModel @Inject constructor(
         nicknameCheckJob?.cancel()
 
         val originalNickname = uiState.value.originalNickname
-        val hasSpecialChar = !value.matches(NICKNAME_REGEX)
-
-        val error: ErrorText? = when {
-            value.length < 2 && value.isNotEmpty() -> ErrorText.StringResource(R.string.onboarding_nickname_error_min_length)
-            hasSpecialChar -> ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)
-            else -> null
-        }
+        val error = NicknameValidator.validateFormat(value)
 
         updateState {
             copy(
@@ -87,7 +77,7 @@ class EditProfileViewModel @Inject constructor(
             )
         }
 
-        if (error == null && value.length >= 2 && value != originalNickname) {
+        if (error == null && value.length >= NicknameValidator.MIN_LENGTH && value != originalNickname) {
             checkNicknameDuplication(value)
         }
     }
@@ -139,7 +129,7 @@ class EditProfileViewModel @Inject constructor(
                     if (uiState.value.nickname != nickname) return@onSuccess
 
                     if (isDuplicated) {
-                        updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
+                        updateState { copy(nicknameError = NicknameValidator.duplicateNicknameError()) }
                         return@onSuccess
                     }
                     updateState {
@@ -152,18 +142,7 @@ class EditProfileViewModel @Inject constructor(
                 .onFailure { error ->
                     if (uiState.value.nickname != nickname) return@onFailure
 
-                    if (error is NetworkError.BadRequest) {
-                        when (error.code) {
-                            40003 -> {
-                                updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_duplicate)) }
-                            }
-                            else -> {
-                                updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_special_characters)) }
-                            }
-                        }
-                    } else {
-                        updateState { copy(nicknameError = ErrorText.StringResource(R.string.onboarding_nickname_error_server)) }
-                    }
+                    updateState { copy(nicknameError = NicknameValidator.toDuplicationCheckError(error)) }
                 }
         }
     }
