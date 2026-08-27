@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.account
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,84 +9,152 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiMenuButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
+import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.auth.SocialType
+import com.poti.android.domain.model.user.UserAccount
+import com.poti.android.presentation.user.account.model.AccountSettingUiEffect
+import com.poti.android.presentation.user.account.model.AccountSettingUiIntent
 
 @Composable
-fun AccountSettingRoute(modifier: Modifier = Modifier) {
+fun AccountSettingRoute(
+    onPopBackStack: () -> Unit,
+    onNavigateToWithdrawal: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: AccountSettingViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            AccountSettingUiEffect.NavigateBack -> onPopBackStack()
+            AccountSettingUiEffect.NavigateToWithdrawal -> onNavigateToWithdrawal()
+        }
+    }
+
+    AccountSettingScreen(
+        userAccountLoadState = uiState.userAccountLoadState,
+        onBackClick = { viewModel.processIntent(AccountSettingUiIntent.OnBackClick) },
+        onLogoutClick = { viewModel.processIntent(AccountSettingUiIntent.OnLogoutClick) },
+        onWithdrawalClick = { viewModel.processIntent(AccountSettingUiIntent.OnWithdrawalClick) },
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun AccountSettingScreen(
+private fun AccountSettingScreen(
+    userAccountLoadState: ApiState<UserAccount>,
+    onBackClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onWithdrawalClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.account_setting_title),
+            containerColor = PotiTheme.colors.white,
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            Spacer(modifier = Modifier.height(12.dp))
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_name),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = "",
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_email),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = "",
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.social_account),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-                trailingText = "",
-            )
-
-            PotiDivider(
-                PotiDividerStyle.LARGE,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_logout),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-
-            PotiMenuButton(
-                text = stringResource(R.string.account_withdrawal_menu),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 8.dp),
+        if (userAccountLoadState is ApiState.Success) {
+            AccountSettingContent(
+                userAccount = userAccountLoadState.data,
+                onLogoutClick = onLogoutClick,
+                onWithdrawalClick = onWithdrawalClick,
             )
         }
+    }
+}
+
+@Composable
+private fun AccountSettingContent(
+    userAccount: UserAccount,
+    onLogoutClick: () -> Unit,
+    onWithdrawalClick: () -> Unit,
+) {
+    val scrollState = rememberScrollState()
+    val socialTypeText = when (userAccount.socialType) {
+        SocialType.KAKAO -> stringResource(R.string.social_type_kakao)
+        SocialType.GOOGLE -> stringResource(R.string.social_type_google)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+    ) {
+        Spacer(modifier = Modifier.height(12.dp))
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_name),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = userAccount.nickname,
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_email),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = userAccount.email,
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.social_account),
+            onClick = {},
+            modifier = Modifier.padding(horizontal = 8.dp),
+            trailingText = socialTypeText,
+        )
+
+        PotiDivider(
+            PotiDividerStyle.LARGE,
+            modifier = Modifier.padding(vertical = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_logout),
+            onClick = onLogoutClick,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
+
+        PotiMenuButton(
+            text = stringResource(R.string.account_withdrawal_menu),
+            onClick = onWithdrawalClick,
+            modifier = Modifier.padding(horizontal = 8.dp),
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun AccountSettingScreenPreview() {
-    AccountSettingScreen()
+    AccountSettingScreen(
+        userAccountLoadState = ApiState.Success(
+            UserAccount(
+                nickname = "포티공주",
+                email = "poti@example.com",
+                socialType = SocialType.KAKAO,
+            ),
+        ),
+        onBackClick = {},
+        onLogoutClick = {},
+        onWithdrawalClick = {},
+    )
 }

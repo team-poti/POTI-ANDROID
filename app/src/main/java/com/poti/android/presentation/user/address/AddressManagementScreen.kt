@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.address
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,21 +29,32 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 
 @Composable
-fun AddressManagementRoute(modifier: Modifier = Modifier) {
+fun AddressManagementRoute(
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AddressManagementScreen(
+        onBackClick = onPopBackStack,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun AddressManagementScreen(
+private fun AddressManagementScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.address_management_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(
@@ -132,5 +144,7 @@ fun AddressManagementScreen(
 @Preview(showBackground = true)
 @Composable
 private fun AddressManagementScreenPreview() {
-    AddressManagementScreen()
+    AddressManagementScreen(
+        onBackClick = {},
+    )
 }

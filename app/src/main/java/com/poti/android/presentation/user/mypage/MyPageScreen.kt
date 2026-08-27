@@ -24,6 +24,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.constant.ExternalLinks
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
@@ -45,12 +46,12 @@ import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
     onNavigateToFavoriteArtist: (String?) -> Unit,
+    onNavigateToSetting: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
-    val inquiryUrl = stringResource(R.string.user_inquiry_url)
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.processIntent(MyPageUiIntent.OnResume)
@@ -72,7 +73,8 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
-            onInquiryClick = { uriHandler.openUri(inquiryUrl) },
+            onInquiryClick = { uriHandler.openUri(ExternalLinks.INQUIRY) },
+            onSettingClick = onNavigateToSetting,
             onHistoryClick = { mode, type ->
                 viewModel.processIntent(
                     MyPageUiIntent.OnHistoryClick(mode, type),
@@ -87,6 +89,7 @@ fun MyPageRoute(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onSettingClick: () -> Unit,
     onInquiryClick: () -> Unit,
     onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
     modifier: Modifier = Modifier,
@@ -100,9 +103,9 @@ private fun MyPageScreen(
         PotiHeaderPrimary(
             title = stringResource(R.string.user_my_page_title),
             firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = {}, // TODO [천민재] 설정 페이지 이동처리
+            onFirstIconClick = onSettingClick,
             secondIconRes = R.drawable.ic_alarm,
-            onSecondIconClick = {}, // TODO [천민재] 알람페이지 이동처리
+            onSecondIconClick = {},
             containerColor = PotiTheme.colors.gray100,
         )
         Column(
@@ -206,6 +209,7 @@ private fun ProfileScreenPreview() {
             ),
             onArtistClick = {},
             onInquiryClick = {},
+            onSettingClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )
@@ -237,6 +241,7 @@ private fun ProfileScreenPreview2() {
             ),
             onArtistClick = {},
             onInquiryClick = {},
+            onSettingClick = {},
             onHistoryClick = { _, _ -> },
             modifier = Modifier,
         )

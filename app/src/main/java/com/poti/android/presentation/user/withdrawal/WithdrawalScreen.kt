@@ -1,5 +1,6 @@
 package com.poti.android.presentation.user.withdrawal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,21 +23,32 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
-fun WithdrawalRoute(modifier: Modifier = Modifier) {
+fun WithdrawalRoute(
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    WithdrawalScreen(
+        onBackClick = onPopBackStack,
+        modifier = modifier,
+    )
 }
 
 @Composable
-fun WithdrawalScreen(
+private fun WithdrawalScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
-            onNavigationClick = {},
+            onNavigationClick = onBackClick,
             title = stringResource(R.string.withdrawal_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         Column(
@@ -81,5 +93,7 @@ fun WithdrawalScreen(
 @Preview(showBackground = true)
 @Composable
 private fun WithdrawalScreenPreview() {
-    WithdrawalScreen()
+    WithdrawalScreen(
+        onBackClick = {},
+    )
 }

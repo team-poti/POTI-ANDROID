@@ -15,5 +15,7 @@ interface AuthRepository {
 
     suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit>
 
+    suspend fun logout(): Result<Unit>
+
     suspend fun withdrawal(): Result<Unit>
 }
