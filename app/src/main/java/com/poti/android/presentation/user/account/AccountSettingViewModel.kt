@@ -58,6 +58,7 @@ class AccountSettingViewModel @Inject constructor(
             onError = { updateState { copy(isLoggingOut = false) } },
         ) {
             logoutUseCase()
+                .onSuccess { updateState { copy(isLoggingOut = false) } }
                 .onFailure { updateState { copy(isLoggingOut = false) } }
         }
     }

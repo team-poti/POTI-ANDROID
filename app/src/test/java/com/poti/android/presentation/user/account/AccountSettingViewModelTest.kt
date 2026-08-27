@@ -18,7 +18,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,7 +53,7 @@ class AccountSettingViewModelTest {
             advanceUntilIdle()
 
             assertEquals(1, authRepository.logoutCallCount)
-            assertTrue(viewModel.uiState.value.isLoggingOut)
+            assertFalse(viewModel.uiState.value.isLoggingOut)
         }
 
     @Test
