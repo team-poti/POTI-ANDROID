@@ -104,7 +104,10 @@ class MainActivity : ComponentActivity() {
         val uri = intent.resolveDeepLink() ?: return
         intent.data = null
 
-        if (viewModel.startDestination.value == PartyGraph) {
+        if (
+            viewModel.startDestination.value == PartyGraph ||
+            authSessionManager.isGuest.value
+        ) {
             navController?.navigateToDeepLink(uri)
         } else {
             pendingDeepLink = uri
