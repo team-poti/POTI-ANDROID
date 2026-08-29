@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
+import com.poti.android.data.mapper.user.toRequestDto
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
@@ -115,6 +116,18 @@ class UserRepositoryImpl @Inject constructor(
                     .handleNullableApiResponse()
                     .getOrThrow()
                     ?.toDomain()
+            }
+        },
+    )
+
+    override suspend fun saveMyAddress(deliveryInfo: DeliveryInfo): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.patchMyAddress(myAddressRequest = deliveryInfo.toRequestDto())
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                Unit
             }
         },
     )

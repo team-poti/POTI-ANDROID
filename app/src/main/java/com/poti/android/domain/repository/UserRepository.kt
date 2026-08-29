@@ -29,6 +29,10 @@ interface UserRepository {
 
     suspend fun getMyAddress(): Result<DeliveryInfo?>
 
+    suspend fun saveMyAddress(
+        deliveryInfo: DeliveryInfo,
+    ): Result<Unit>
+
     suspend fun patchProfile(
         nickname: String,
         profileImageUrl: String,
