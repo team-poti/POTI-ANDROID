@@ -59,8 +59,13 @@ fun ProductCategoryRoute(
 
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
-            title = if (viewModel.isMyArtist) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
-            isMyArtsit = viewModel.isMyArtist,
+            title = when {
+                !viewModel.isMyArtist -> stringResource(R.string.home_other_goods)
+                // TODO: [천민재] home 화면과 동일한 임시 문자열
+                goodsCategory.nickname.isBlank() -> stringResource(R.string.home_recommend_goods_guest)
+                else -> stringResource(R.string.home_recommend_goods, goodsCategory.nickname)
+            },
+            isMyArtist = viewModel.isMyArtist,
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
@@ -81,7 +86,7 @@ fun ProductCategoryRoute(
 @Composable
 private fun ProductCategoryScreen(
     title: String,
-    isMyArtsit: Boolean,
+    isMyArtist: Boolean,
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
@@ -142,7 +147,7 @@ private fun ProductCategoryScreen(
                 ),
             ) {
                 item {
-                    if (isMyArtsit) {
+                    if (isMyArtist) {
                         PotiSmallButton(
                             text = stringResource(selectedSortType.displayRes),
                             onClick = onSortFilterClick,
@@ -190,7 +195,7 @@ private fun ProductCategoryScreenPreview() {
     PotiTheme {
         ProductCategoryScreen(
             title = "",
-            isMyArtsit = false,
+            isMyArtist = false,
             productCategory = UiMockData.productCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,

@@ -7,7 +7,7 @@ import com.poti.android.domain.model.party.ProductCategory
 
 fun GoodsCategoryResponseDto.toDomain(): ProductCategory =
     ProductCategory(
-        nickname = nickname,
+        nickname = nickname.orEmpty(),
         mainArtist = mainArtist,
         mainArtistId = mainArtistId,
         groupItems = groupItems?.map { it.toDomain() }.orEmpty(),
