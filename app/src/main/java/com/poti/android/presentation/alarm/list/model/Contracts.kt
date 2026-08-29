@@ -12,7 +12,13 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 data class AlarmListUiState(
     val alarmsLoadState: ApiState<ImmutableList<Notification>> = ApiState.Init,
-) : UiState
+) : UiState {
+    val alarmReadAllEnabled = if (alarmsLoadState is ApiState.Success) {
+        alarmsLoadState.data.any { alarm -> !alarm.isRead }
+    } else {
+        false
+    }
+}
 
 sealed interface AlarmListUiIntent : UiIntent {
     data object OnBackClick : AlarmListUiIntent
@@ -20,6 +26,8 @@ sealed interface AlarmListUiIntent : UiIntent {
     data object OnSettingClick : AlarmListUiIntent
 
     data class OnAlarmClick(val alarm: Notification) : AlarmListUiIntent
+
+    data object OnAlarmReadAllClick : AlarmListUiIntent
 }
 
 sealed interface AlarmListUiEffect : UiEffect {

@@ -20,8 +20,8 @@ private const val ALARM_PAGE_SIZE = 20
 class AlarmListViewModel @Inject constructor(
     private val getNotificationsUseCase: GetNotificationsUseCase,
 ) : BaseViewModel<AlarmListUiState, AlarmListUiIntent, AlarmListUiEffect>(
-        initialState = AlarmListUiState(),
-    ) {
+    initialState = AlarmListUiState(),
+) {
     init {
         loadAlarms()
     }
@@ -31,6 +31,7 @@ class AlarmListViewModel @Inject constructor(
             AlarmListUiIntent.OnBackClick -> sendEffect(AlarmListUiEffect.NavigateBack)
             AlarmListUiIntent.OnSettingClick -> sendEffect(AlarmListUiEffect.NavigateToSetting)
             is AlarmListUiIntent.OnAlarmClick -> handleAlarmClick(intent.alarm)
+            AlarmListUiIntent.OnAlarmReadAllClick -> handleAlarmReadAllClick()
         }
     }
 
@@ -67,4 +68,6 @@ class AlarmListViewModel @Inject constructor(
 
         sendEffect(AlarmListUiEffect.OpenDeepLink(alarm.deepLink))
     }
+
+    private fun handleAlarmReadAllClick() {}
 }
