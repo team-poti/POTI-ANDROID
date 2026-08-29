@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class HomeResponseDto(
     @SerialName("nickname")
-    val nickname: String,
+    val nickname: String?,
     @SerialName("mainArtist")
     val mainArtist: String?,
     @SerialName("mainArtistId")

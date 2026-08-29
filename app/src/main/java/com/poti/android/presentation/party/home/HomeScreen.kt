@@ -109,7 +109,12 @@ private fun HomeScreen(
 
                 HomeGoodsSection(
                     artistId = homeContent.mainArtistId,
-                    title = R.string.home_recommend_goods,
+                    // TODO: [천민재] 임시 문구 사용 중
+                    title = if (homeContent.nickname.isBlank()) {
+                        R.string.home_recommend_goods_guest
+                    } else {
+                        R.string.home_recommend_goods
+                    },
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
                     onMoreClick = onMyArtistCategoryClick,
