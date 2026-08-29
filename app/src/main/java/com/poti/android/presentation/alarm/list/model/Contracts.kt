@@ -1,5 +1,6 @@
 package com.poti.android.presentation.alarm.list.model
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -25,4 +26,12 @@ sealed interface AlarmListUiEffect : UiEffect {
     data object NavigateBack : AlarmListUiEffect
 
     data object NavigateToSetting : AlarmListUiEffect
+
+    data class OpenDeepLink(
+        val deepLink: String,
+    ) : AlarmListUiEffect
+
+    data class ShowToast(
+        @param:StringRes val messageRes: Int,
+    ) : AlarmListUiEffect
 }

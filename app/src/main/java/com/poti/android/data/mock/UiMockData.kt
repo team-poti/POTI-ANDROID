@@ -27,6 +27,8 @@ import com.poti.android.domain.model.home.Banner
 import com.poti.android.domain.model.home.GroupItem
 import com.poti.android.domain.model.home.HomeContent
 import com.poti.android.domain.model.image.PresignedUploadInfo
+import com.poti.android.domain.model.notification.Notification
+import com.poti.android.domain.model.notification.NotificationSetting
 import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.Participant
 import com.poti.android.domain.model.party.PartyDetail
@@ -41,6 +43,7 @@ import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.domain.model.user.UserSummary
 import com.poti.android.domain.type.HistoryListType
+import com.poti.android.domain.type.NotificationType
 import com.poti.android.domain.type.ParticipantStatusType
 import com.poti.android.domain.type.PartyStatusType
 import com.poti.android.domain.model.party.GroupItem as PartyGroupItem
@@ -328,6 +331,23 @@ object UiMockData {
         nickname = userMyPage.nickname,
         email = userMyPage.email,
         socialType = SocialType.KAKAO,
+    )
+
+    val notifications = List(10) { index ->
+        Notification(
+            id = index.toLong(),
+            title = if (index % 5 == 4) "이벤트 알림" else "거래 알림",
+            body = "포티에서 알림이 도착했어요.",
+            type = if (index % 5 == 4) NotificationType.EVENT else NotificationType.TRADE,
+            deepLink = "",
+            isRead = index % 3 == 0,
+            createdAt = "2026-06-06T12:00:00",
+        )
+    }
+
+    val notificationSetting = NotificationSetting(
+        isTradeEnabled = true,
+        isEventEnabled = true,
     )
 
     val userAuth = UserAuth(
