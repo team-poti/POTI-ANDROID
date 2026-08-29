@@ -32,14 +32,16 @@ class LoginViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var authRepository: FakeAuthRepository
+    private lateinit var authSessionManager: AuthSessionManager
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setUp() {
         authRepository = FakeAuthRepository()
+        authSessionManager = AuthSessionManager()
         viewModel = LoginViewModel(
             loginUseCase = LoginUseCase(authRepository),
-            enterGuestModeUseCase = EnterGuestModeUseCase(AuthSessionManager()),
+            enterGuestModeUseCase = EnterGuestModeUseCase(authSessionManager),
         )
     }
 
@@ -54,6 +56,20 @@ class LoginViewModelTest {
 
             assertEquals(listOf(LoginEffect.LaunchSocialLogin(SocialType.KAKAO)), effects)
             assertEquals(LoginPhase.SOCIAL_LOGIN, viewModel.uiState.value.phase)
+        }
+
+    @Test
+    fun `enters guest mode and navigates to home once when browse is clicked repeatedly`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val effects = collectEffects()
+
+            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
+            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
+            advanceUntilIdle()
+
+            assertTrue(authSessionManager.isGuest.value)
+            assertEquals(LoginPhase.SUCCESS, viewModel.uiState.value.phase)
+            assertEquals(listOf(LoginEffect.NavigateToHome), effects)
         }
 
     @Test

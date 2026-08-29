@@ -34,6 +34,7 @@ class LoginViewModel @Inject constructor(
     private fun enterGuestMode() {
         if (!uiState.value.phase.canStartLogin) return
 
+        updateState { copy(phase = LoginPhase.SUCCESS) }
         enterGuestModeUseCase()
         sendEffect(LoginEffect.NavigateToHome)
     }
