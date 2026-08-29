@@ -41,9 +41,10 @@ class PartyDetailViewModel @Inject constructor(
     ) {
     private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
 
+    private var isMyAddressLoaded = false
+
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
-        fetchMyAddress()
     }
 
     override fun processIntent(intent: PartyDetailIntent) {
@@ -122,6 +123,7 @@ class PartyDetailViewModel @Inject constructor(
     private fun handleDetailJoin() {
         updateState { copy(showJoinBottomSheet = true) }
         fetchPartyJoinOption()
+        fetchMyAddress()
     }
 
     private fun fetchPartyJoinOption() = launchScope {
@@ -163,24 +165,30 @@ class PartyDetailViewModel @Inject constructor(
         updateState { copy(selectedDeliveryIds = newSet) }
     }
 
-    private fun fetchMyAddress() = launchScope {
-        getMyAddressUseCase()
-            .onSuccess { saved ->
-                saved ?: return@onSuccess
-                updateState {
-                    copy(
-                        savedAddress = saved,
-                        orderName = saved.receiverName,
-                        postalCode = saved.zipcode,
-                        address = saved.address,
-                        detailAddress = saved.addressDetail,
-                        contact = saved.phoneNumber,
-                    )
+    private fun fetchMyAddress() {
+        if (isMyAddressLoaded) return
+        isMyAddressLoaded = true
+
+        launchScope {
+            getMyAddressUseCase()
+                .onSuccess { saved ->
+                    saved ?: return@onSuccess
+                    updateState {
+                        copy(
+                            savedAddress = saved,
+                            orderName = orderName.ifBlank { saved.receiverName },
+                            postalCode = postalCode.ifBlank { saved.zipcode },
+                            address = address.ifBlank { saved.address },
+                            detailAddress = detailAddress.ifBlank { saved.addressDetail },
+                            contact = contact.ifBlank { saved.phoneNumber },
+                        )
+                    }
                 }
-            }
-            .onFailure { error ->
-                Timber.e(error, "내 배송지 조회 실패")
-            }
+                .onFailure { error ->
+                    isMyAddressLoaded = false
+                    Timber.e(error, "내 배송지 조회 실패")
+                }
+        }
     }
 
     private fun validateInputs(): Boolean {
@@ -232,16 +240,20 @@ class PartyDetailViewModel @Inject constructor(
 
             joinPartyUseCase(joinInfo = joinInfo)
                 .onSuccess {
-                    if (currentState.isRegisterMyAddressChecked) {
-                        saveMyAddressUseCase(deliveryInfo = deliveryInfo)
-                            .onFailure { error -> Timber.e(error, "내 배송지 저장 실패") }
-                    }
                     updateState { copy(isJoinSuccessDialogVisible = true) }
+                    if (uiState.value.isRegisterMyAddressChecked) {
+                        registerMyAddress(deliveryInfo)
+                    }
                 }
                 .onFailure { error ->
                     Timber.e(error, "postPartyJoin 실패")
                 }
         }
+    }
+
+    private fun registerMyAddress(deliveryInfo: DeliveryInfo) = launchScope {
+        saveMyAddressUseCase(deliveryInfo = deliveryInfo)
+            .onFailure { error -> Timber.e(error, "내 배송지 저장 실패") }
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =
