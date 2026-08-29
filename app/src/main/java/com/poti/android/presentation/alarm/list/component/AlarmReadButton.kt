@@ -41,11 +41,11 @@ fun AlarmReadButton(
                 color = if (enabled) PotiTheme.colors.black else PotiTheme.colors.gray100,
                 shape = RoundedCornerShape(8.dp),
             )
-            .padding(all = 14.dp)
+            .padding(all = 14.dp),
     )
 }
 
-private class AlarmReadButtonPreviewProvider: PreviewParameterProvider<Boolean> {
+private class AlarmReadButtonPreviewProvider : PreviewParameterProvider<Boolean> {
     override val values: Sequence<Boolean>
         get() = sequenceOf(true, false)
 }
@@ -59,7 +59,7 @@ private fun AlarmReadButtonPreview(
         AlarmReadButton(
             onClick = {},
             enabled = enabled,
-            modifier = Modifier.padding(all = 20.dp)
+            modifier = Modifier.padding(all = 20.dp),
         )
     }
 }

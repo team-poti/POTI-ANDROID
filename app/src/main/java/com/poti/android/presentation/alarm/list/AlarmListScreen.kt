@@ -68,7 +68,7 @@ fun AlarmListRoute(
         onBackClick = { viewModel.processIntent(AlarmListUiIntent.OnBackClick) },
         onSettingClick = { viewModel.processIntent(AlarmListUiIntent.OnSettingClick) },
         onAlarmClick = { alarm -> viewModel.processIntent(AlarmListUiIntent.OnAlarmClick(alarm)) },
-        onAlarmReadAllClick = {viewModel.processIntent(AlarmListUiIntent.OnAlarmReadAllClick)},
+        onAlarmReadAllClick = { viewModel.processIntent(AlarmListUiIntent.OnAlarmReadAllClick) },
         modifier = modifier,
     )
 }
@@ -100,7 +100,7 @@ private fun AlarmListScreen(
                     .padding(horizontal = 16.dp)
                     .padding(top = 4.dp, bottom = 14.dp),
             )
-        }
+        },
     ) { innerPadding ->
         uiState.alarmsLoadState.onSuccess { alarms ->
             if (alarms.isEmpty()) {
@@ -111,9 +111,9 @@ private fun AlarmListScreen(
                         .padding(top = 12.dp),
                 )
             } else {
-                LazyColumn (
+                LazyColumn(
                     modifier = Modifier.padding(innerPadding),
-                ){
+                ) {
                     items(
                         items = alarms,
                         key = { alarm -> alarm.id },

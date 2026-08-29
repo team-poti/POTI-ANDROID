@@ -26,8 +26,8 @@ class AlarmListViewModel @Inject constructor(
     private val readNotificationUseCase: ReadNotificationUseCase,
     private val readAllNotificationsUseCase: ReadAllNotificationsUseCase,
 ) : BaseViewModel<AlarmListUiState, AlarmListUiIntent, AlarmListUiEffect>(
-    initialState = AlarmListUiState(),
-) {
+        initialState = AlarmListUiState(),
+    ) {
     init {
         loadAlarms()
     }
