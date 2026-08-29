@@ -1,6 +1,7 @@
 package com.poti.android.data.repository
 
 import com.poti.android.core.network.model.handleApiResponse
+import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.notification.toDomain
 import com.poti.android.data.mock.UiMockData
@@ -77,6 +78,32 @@ class NotificationRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()
+            }
+        },
+    )
+
+    override suspend fun readNotification(notificationId: Long): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                notificationRemoteDataSource
+                    .patchNotificationRead(notificationId = notificationId)
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                Unit
+            }
+        },
+    )
+
+    override suspend fun readAllNotifications(): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                notificationRemoteDataSource
+                    .patchNotificationReadAll()
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                Unit
             }
         },
     )
