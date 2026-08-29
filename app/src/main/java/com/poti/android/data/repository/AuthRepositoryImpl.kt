@@ -74,6 +74,12 @@ class AuthRepositoryImpl @Inject constructor(
         },
     )
 
+    override suspend fun logout(): Result<Unit> = suspendRunCatching {
+        deleteFcmToken()
+        authTokenStore.clearAll()
+        authSessionManager.triggerLogout()
+    }
+
     override suspend fun withdrawal(): Result<Unit> = executeWithUiMock(
         mock = {
             authTokenStore.clearAll()

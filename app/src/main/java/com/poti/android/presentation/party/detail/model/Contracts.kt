@@ -97,6 +97,12 @@ sealed interface PartyDetailIntent : UiIntent {
     data object OnParticipantNoticeConfirm : PartyDetailIntent
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
+
+    data object OnSystemShareClick : PartyDetailIntent
+
+    data object OnKakaoShareClick : PartyDetailIntent
+
+    data object OnXShareClick : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {
@@ -107,4 +113,15 @@ sealed interface PartyDetailEffect : UiEffect {
     data class NavigateToProfile(val userId: Long) : PartyDetailEffect
 
     data class ReloadDetail(val partyId: Long) : PartyDetailEffect
+
+    data class ShareToSystem(val shareText: String) : PartyDetailEffect
+
+    data class ShareToKakao(
+        val title: String,
+        val description: String,
+        val imageUrl: String,
+        val deepLink: String,
+    ) : PartyDetailEffect
+
+    data class ShareToX(val shareText: String) : PartyDetailEffect
 }

@@ -130,11 +130,14 @@ private fun AlarmSettingScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.background(PotiTheme.colors.white),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(R.string.alarm_setting_title),
+            containerColor = PotiTheme.colors.white,
         )
 
         PotiMenuToggle(

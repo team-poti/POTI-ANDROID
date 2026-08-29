@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poti.android.R
+import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTag
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagColor
 import com.poti.android.core.designsystem.component.display.PotiPrimaryTagSize
@@ -45,26 +46,32 @@ fun PartyParticipantsInfo(
             )
         }
 
-        partyDetail.participants.forEach { participant ->
-            participant.selectedMembers.forEach { selectedMember ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    PotiProfileSummary(
-                        profileImageUrl = participant.profileImage,
-                        nickname = participant.nickname,
-                        sizeType = PotiProfileSummarySize.LARGE,
-                        rating = participant.rating.toString(),
-                        modifier = Modifier.weight(1f),
-                    )
+        if (partyDetail.participants.isNotEmpty()) {
+            partyDetail.participants.forEach { participant ->
+                participant.selectedMembers.forEach { selectedMember ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        PotiProfileSummary(
+                            profileImageUrl = participant.profileImage,
+                            nickname = participant.nickname,
+                            sizeType = PotiProfileSummarySize.LARGE,
+                            rating = participant.rating.toString(),
+                            modifier = Modifier.weight(1f),
+                        )
 
-                    PotiPrimaryTag(
-                        text = selectedMember,
-                        colorType = PotiPrimaryTagColor.GRAY,
-                        sizeType = PotiPrimaryTagSize.LARGE,
-                    )
+                        PotiPrimaryTag(
+                            text = selectedMember,
+                            colorType = PotiPrimaryTagColor.GRAY,
+                            sizeType = PotiPrimaryTagSize.LARGE,
+                        )
+                    }
                 }
             }
+        } else {
+            PotiEmptyStateInline(
+                text = stringResource(R.string.party_detail_participants_empty),
+            )
         }
     }
 }
@@ -75,6 +82,16 @@ private fun PartyParticipantsInfoPreview() {
     PotiTheme {
         PartyParticipantsInfo(
             partyDetail = UiMockData.partyDetail,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PartyParticipantsInfoPreviewEmpty() {
+    PotiTheme {
+        PartyParticipantsInfo(
+            partyDetail = UiMockData.partyDetail.copy(participants = emptyList()),
         )
     }
 }

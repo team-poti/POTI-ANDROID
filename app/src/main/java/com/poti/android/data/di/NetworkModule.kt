@@ -31,10 +31,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BASIC
-        } else {
+        level = if (!BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.NONE
+        } else {
+            runCatching {
+                HttpLoggingInterceptor.Level.valueOf(BuildConfig.HTTP_LOG_LEVEL)
+            }.getOrDefault(HttpLoggingInterceptor.Level.BASIC)
         }
     }
 

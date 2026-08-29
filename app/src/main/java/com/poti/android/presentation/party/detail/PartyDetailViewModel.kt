@@ -3,6 +3,7 @@ package com.poti.android.presentation.party.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
+import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
@@ -19,6 +20,7 @@ import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
 import com.poti.android.presentation.party.detail.model.PartyDetailUiState
 import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
+import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
@@ -78,7 +80,23 @@ class PartyDetailViewModel @Inject constructor(
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
+            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
+            PartyDetailIntent.OnKakaoShareClick -> handleKakaoShare()
+            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(partyDetailDeepLink(partyId)))
         }
+    }
+
+    private fun handleKakaoShare() {
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
+
+        sendEffect(
+            ShareToKakao(
+                title = partyDetail.title,
+                description = "${partyDetail.artist} · ${partyDetail.currentCount}/${partyDetail.totalCount}명 모집 중",
+                imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
+                deepLink = partyDetailDeepLink(partyId),
+            ),
+        )
     }
 
     private fun fetchPartyDetail() = launchScope {

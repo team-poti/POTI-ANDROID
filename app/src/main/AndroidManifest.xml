@@ -13,6 +13,12 @@
 
     <queries>
         <package android:name="com.kakao.talk"/>
+        <package android:name="com.twitter.android"/>
+
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="market" />
+        </intent>
     </queries>
 
     <application
@@ -52,6 +58,16 @@
                 <data
                     android:scheme="https"
                     android:host="${deepLinkHost}" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="kakao${KAKAO_NATIVE_APP_KEY}"
+                    android:host="kakaolink" />
             </intent-filter>
         </activity>
 

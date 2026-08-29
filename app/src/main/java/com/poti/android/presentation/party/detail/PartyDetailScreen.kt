@@ -11,10 +11,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,12 +25,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.extension.shareText
+import com.poti.android.core.common.extension.shareTextToX
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.share.KakaoShareLauncher
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
@@ -35,6 +41,7 @@ import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
 import com.poti.android.presentation.party.detail.component.PartyParticipantsInfo
+import com.poti.android.presentation.party.detail.component.PartyShareButton
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -50,6 +57,8 @@ fun PartyDetailRoute(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val shareChooserTitle = stringResource(R.string.party_detail_share_chooser_title)
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -57,6 +66,15 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
             is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
+            is PartyDetailEffect.ShareToSystem -> context.shareText(shareChooserTitle, effect.shareText)
+            is PartyDetailEffect.ShareToKakao -> KakaoShareLauncher.share(
+                context = context,
+                title = effect.title,
+                description = effect.description,
+                imageUrl = effect.imageUrl,
+                deepLink = effect.deepLink,
+            )
+            is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
         }
     }
 
@@ -78,6 +96,9 @@ fun PartyDetailRoute(
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
+            onSystemShareClick = { viewModel.processIntent(PartyDetailIntent.OnSystemShareClick) },
+            onKakaoShareClick = { viewModel.processIntent(PartyDetailIntent.OnKakaoShareClick) },
+            onXShareClick = { viewModel.processIntent(PartyDetailIntent.OnXShareClick) },
             modifier = modifier,
         )
     }
@@ -90,6 +111,9 @@ private fun PartyDetailScreen(
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
+    onSystemShareClick: () -> Unit,
+    onKakaoShareClick: () -> Unit,
+    onXShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -164,6 +188,21 @@ private fun PartyDetailScreen(
 
             PotiDivider(styleType = PotiDividerStyle.LARGE)
 
+            Text("System Share Sheet", Modifier.align(Alignment.CenterHorizontally))
+            PartyShareButton(
+                onClick = onSystemShareClick,
+            )
+
+            Text("Kakao Share SDK", Modifier.align(Alignment.CenterHorizontally))
+            PartyShareButton(
+                onClick = onKakaoShareClick,
+            )
+
+            Text("X(twitter) Intent", Modifier.align(Alignment.CenterHorizontally))
+            PartyShareButton(
+                onClick = onXShareClick,
+            )
+
             ParticipantGuidelines()
         }
     }
@@ -179,6 +218,9 @@ private fun PartyDetailScreenPreview() {
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},
+            onSystemShareClick = {},
+            onKakaoShareClick = {},
+            onXShareClick = {},
         )
     }
 }

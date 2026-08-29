@@ -18,6 +18,8 @@ class MyPageViewModel @Inject constructor(
     ) {
     override fun processIntent(intent: MyPageUiIntent) {
         when (intent) {
+            MyPageUiIntent.OnArtistClick -> handleArtistClick()
+            MyPageUiIntent.OnResume -> loadUserMyPage()
             is MyPageUiIntent.OnHistoryClick -> {
                 sendEffect(
                     NavigateToHistoryList(
@@ -31,6 +33,12 @@ class MyPageViewModel @Inject constructor(
 
     init {
         loadUserMyPage()
+    }
+
+    private fun handleArtistClick() {
+        val userMyPage = (uiState.value.userMyPageLoadState as? ApiState.Success)?.data ?: return
+
+        sendEffect(NavigateToFavoriteArtist(userMyPage.favoriteArtistName))
     }
 
     private fun loadUserMyPage() = launchScope {

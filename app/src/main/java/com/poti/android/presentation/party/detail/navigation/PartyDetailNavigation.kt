@@ -17,8 +17,13 @@ import com.poti.android.presentation.party.detail.PartyJoinRoute
 import com.poti.android.presentation.user.profile.navigation.navigateToProfile
 import kotlinx.serialization.Serializable
 
+private const val PARTY_DETAIL_DEEP_LINK_BASE_PATH = "${BuildConfig.DEEP_LINK_HOST}/pot"
+
 @Serializable
 data class PartyDetailGraph(val partyId: Long) : Route
+
+fun partyDetailDeepLink(partyId: Long): String =
+    "$PARTY_DETAIL_DEEP_LINK_BASE_PATH/$partyId"
 
 sealed interface PartyDetailRoute : Route {
     @Serializable
@@ -59,7 +64,7 @@ fun NavGraphBuilder.partyDetailNavGraph(
     navigation<PartyDetailGraph>(
         startDestination = PartyDetailRoute.Detail,
         deepLinks = listOf(
-            navDeepLink<PartyDetailGraph>(basePath = "${BuildConfig.DEEP_LINK_HOST}/pot"),
+            navDeepLink<PartyDetailGraph>(basePath = PARTY_DETAIL_DEEP_LINK_BASE_PATH),
         ),
     ) {
         slideComposable<PartyDetailRoute.Detail> { entry ->
