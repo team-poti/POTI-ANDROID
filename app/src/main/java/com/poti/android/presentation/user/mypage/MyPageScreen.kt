@@ -39,6 +39,7 @@ import com.poti.android.presentation.user.component.InquirySection
 import com.poti.android.presentation.user.component.RatingBadge
 import com.poti.android.presentation.user.component.UserInfo
 import com.poti.android.presentation.user.component.UserProfile
+import com.poti.android.presentation.user.mypage.component.GuestMyPageContent
 import com.poti.android.presentation.user.mypage.model.MyPageUiEffect
 import com.poti.android.presentation.user.mypage.model.MyPageUiIntent
 
@@ -47,6 +48,7 @@ fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
     onNavigateToFavoriteArtist: (String?) -> Unit,
     onNavigateToSetting: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
@@ -66,7 +68,18 @@ fun MyPageRoute(
             is MyPageUiEffect.NavigateToFavoriteArtist -> {
                 onNavigateToFavoriteArtist(effect.favoriteArtistName)
             }
+
+            MyPageUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.isGuest) {
+        GuestMyPageScreen(
+            onSettingClick = onNavigateToSetting,
+            onLoginClick = { viewModel.processIntent(MyPageUiIntent.OnLoginClick) },
+            modifier = modifier,
+        )
+        return
     }
 
     uiState.userMyPageLoadState.onSuccess { userMyPage ->
@@ -81,6 +94,38 @@ fun MyPageRoute(
                 )
             },
             modifier = modifier,
+        )
+    }
+}
+
+@Composable
+private fun GuestMyPageScreen(
+    onSettingClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.gray100),
+    ) {
+        PotiHeaderPrimary(
+            title = stringResource(R.string.user_my_page_title),
+            firstIconRes = R.drawable.ic_setting,
+            onFirstIconClick = onSettingClick,
+            secondIconRes = R.drawable.ic_alarm,
+            onSecondIconClick = {},
+            containerColor = PotiTheme.colors.gray100,
+        )
+
+        GuestMyPageContent(
+            onLoginClick = onLoginClick,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(PotiTheme.colors.white),
         )
     }
 }
@@ -218,32 +263,11 @@ private fun ProfileScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun ProfileScreenPreview2() {
+private fun GuestMyPageScreenPreview() {
     PotiTheme {
-        MyPageScreen(
-            userMyPage = UserMyPage(
-                nickname = "분철의 악마",
-                email = "akkma@app.jam",
-                profileImageUrl = "",
-                ratingAvg = "4.8",
-                activityMessage = "최근 3일 이내 활동",
-                joinedAt = "2025-12-28",
-                hasFavoriteArtist = true,
-                favoriteArtistName = null,
-                participationSummary = HistorySummary(
-                    inProgress = 3,
-                    completed = 9,
-                ),
-                recruitSummary = HistorySummary(
-                    inProgress = 2,
-                    completed = 5,
-                ),
-            ),
-            onArtistClick = {},
-            onInquiryClick = {},
+        GuestMyPageScreen(
             onSettingClick = {},
-            onHistoryClick = { _, _ -> },
-            modifier = Modifier,
+            onLoginClick = {},
         )
     }
 }

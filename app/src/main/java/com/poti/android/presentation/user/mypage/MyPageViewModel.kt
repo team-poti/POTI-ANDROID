@@ -2,6 +2,7 @@ package com.poti.android.presentation.user.mypage
 
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.usecase.auth.IsGuestUseCase
 import com.poti.android.domain.usecase.user.GetUserMyPageUseCase
 import com.poti.android.presentation.user.mypage.model.MyPageUiEffect
 import com.poti.android.presentation.user.mypage.model.MyPageUiEffect.*
@@ -13,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     private val getUserMyPageUseCase: GetUserMyPageUseCase,
+    private val isGuestUseCase: IsGuestUseCase,
 ) : BaseViewModel<MyPageUiState, MyPageUiIntent, MyPageUiEffect>(
         initialState = MyPageUiState(),
     ) {
@@ -20,6 +22,7 @@ class MyPageViewModel @Inject constructor(
         when (intent) {
             MyPageUiIntent.OnArtistClick -> handleArtistClick()
             MyPageUiIntent.OnResume -> loadUserMyPage()
+            MyPageUiIntent.OnLoginClick -> sendEffect(NavigateToLogin)
             is MyPageUiIntent.OnHistoryClick -> {
                 sendEffect(
                     NavigateToHistoryList(
@@ -42,6 +45,11 @@ class MyPageViewModel @Inject constructor(
     }
 
     private fun loadUserMyPage() = launchScope {
+        if (isGuestUseCase()) {
+            updateState { copy(isGuest = true) }
+            return@launchScope
+        }
+
         getUserMyPageUseCase()
             .onSuccess { userMyPage ->
                 updateState {

@@ -275,6 +275,8 @@
     <string name="user_select_favorite_artist">나의 최애 선택</string>
     <string name="user_inquiry_description">궁금한 점이나 건의사항이 있다면 알려주세요</string>
     <string name="user_inquiry_action">문의하기</string>
+    <string name="user_guest_description">로그인하고 원하는 분철에\n참여해보세요!</string>
+    <string name="user_guest_login">로그인</string>
 
     <!-- Favorite Artist -->
     <string name="favorite_artist_title">나의 최애 선택</string>
