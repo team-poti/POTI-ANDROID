@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
             val onAuthCompleted = {
                 mainNavigator.navigateToHome()
                 consumeDeepLink(mainNavigator.navController)
+                consumePendingReturnDeepLink(mainNavigator.navController)
             }
 
             PotiTheme {
@@ -120,6 +121,11 @@ class MainActivity : ComponentActivity() {
     private fun consumeDeepLink(navController: NavHostController) {
         val uri = pendingDeepLink ?: return
         pendingDeepLink = null
+        navController.navigateToDeepLink(uri)
+    }
+
+    private fun consumePendingReturnDeepLink(navController: NavHostController) {
+        val uri = authSessionManager.consumePendingReturnDeepLink()?.toUri() ?: return
         navController.navigateToDeepLink(uri)
     }
 

@@ -21,6 +21,8 @@ class AuthSessionManager @Inject constructor() {
     private val _isGuest = MutableStateFlow(false)
     val isGuest: StateFlow<Boolean> = _isGuest.asStateFlow()
 
+    private var pendingReturnDeepLink: String? = null
+
     fun triggerLogout() {
         _logoutEvent.tryEmit(Unit)
     }
@@ -32,4 +34,11 @@ class AuthSessionManager @Inject constructor() {
     fun exitGuest() {
         _isGuest.value = false
     }
+
+    fun setPendingReturnDeepLink(deepLink: String) {
+        pendingReturnDeepLink = deepLink
+    }
+
+    fun consumePendingReturnDeepLink(): String? =
+        pendingReturnDeepLink.also { pendingReturnDeepLink = null }
 }

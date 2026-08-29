@@ -20,6 +20,7 @@ import com.poti.android.domain.model.party.PartyJoinInfo
 import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
+import com.poti.android.domain.usecase.auth.SetPendingReturnDeepLinkUseCase
 import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
 import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
 import com.poti.android.domain.usecase.party.JoinPartyUseCase
@@ -48,6 +49,7 @@ class PartyDetailViewModel @Inject constructor(
     private val getMyAddressUseCase: GetMyAddressUseCase,
     private val saveMyAddressUseCase: SaveMyAddressUseCase,
     private val isGuestUseCase: IsGuestUseCase,
+    private val setPendingReturnDeepLinkUseCase: SetPendingReturnDeepLinkUseCase,
     @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
@@ -139,6 +141,7 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun handleLoginRequiredConfirm() {
         updateState { copy(showLoginRequiredDialog = false) }
+        setPendingReturnDeepLinkUseCase(partyDetailDeepLink(partyId))
         sendEffect(NavigateToLogin)
     }
 
