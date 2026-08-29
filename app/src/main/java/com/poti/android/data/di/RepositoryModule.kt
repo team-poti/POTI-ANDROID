@@ -6,6 +6,7 @@ import com.poti.android.data.repository.DeliveryRepositoryImpl
 import com.poti.android.data.repository.FileUploadRepositoryImpl
 import com.poti.android.data.repository.HomeRepositoryImpl
 import com.poti.android.data.repository.ImageRepositoryImpl
+import com.poti.android.data.repository.NotificationRepositoryImpl
 import com.poti.android.data.repository.ParticipationRepositoryImpl
 import com.poti.android.data.repository.PartyRepositoryImpl
 import com.poti.android.data.repository.PaymentRepositoryImpl
@@ -19,6 +20,7 @@ import com.poti.android.domain.repository.DeliveryRepository
 import com.poti.android.domain.repository.FileUploadRepository
 import com.poti.android.domain.repository.HomeRepository
 import com.poti.android.domain.repository.ImageRepository
+import com.poti.android.domain.repository.NotificationRepository
 import com.poti.android.domain.repository.ParticipationRepository
 import com.poti.android.domain.repository.PartyRepository
 import com.poti.android.domain.repository.PaymentRepository
@@ -86,4 +88,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFileUploadRepository(fileUploadRepositoryImpl: FileUploadRepositoryImpl): FileUploadRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(notificationRepositoryImpl: NotificationRepositoryImpl): NotificationRepository
 }
