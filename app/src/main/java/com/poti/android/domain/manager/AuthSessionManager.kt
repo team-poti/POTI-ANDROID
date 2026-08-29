@@ -18,7 +18,6 @@ class AuthSessionManager @Inject constructor() {
     )
     val logoutEvent = _logoutEvent.asSharedFlow()
 
-    // 게스트(로그인 없이 둘러보기) 세션 상태. 영속화하지 않고 프로세스 생존 동안만 유지한다.
     private val _isGuest = MutableStateFlow(false)
     val isGuest: StateFlow<Boolean> = _isGuest.asStateFlow()
 

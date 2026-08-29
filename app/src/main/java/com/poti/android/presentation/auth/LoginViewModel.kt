@@ -3,6 +3,7 @@ package com.poti.android.presentation.auth
 import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.domain.model.auth.SocialType
+import com.poti.android.domain.usecase.auth.EnterGuestModeUseCase
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val enterGuestModeUseCase: EnterGuestModeUseCase,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
@@ -25,7 +27,15 @@ class LoginViewModel @Inject constructor(
             }
             is LoginIntent.OnSocialLoginResult -> handleSocialLoginResult(intent)
             LoginIntent.OnSocialLoginAborted -> finishLogin()
+            LoginIntent.OnBrowseAsGuestClick -> enterGuestMode()
         }
+    }
+
+    private fun enterGuestMode() {
+        if (!uiState.value.phase.canStartLogin) return
+
+        enterGuestModeUseCase()
+        sendEffect(LoginEffect.NavigateToHome)
     }
 
     private fun handleSocialLoginResult(intent: LoginIntent.OnSocialLoginResult) {

@@ -40,7 +40,6 @@ import kotlin.coroutines.cancellation.CancellationException
 fun LoginRoute(
     onNavigateToOnboarding: () -> Unit,
     onNavigateToHome: () -> Unit,
-    onBrowseAsGuest: () -> Unit,
     socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
@@ -82,7 +81,9 @@ fun LoginRoute(
         onGoogleClick = {
             viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
         },
-        onBrowseAsGuestClick = onBrowseAsGuest,
+        onBrowseAsGuestClick = {
+            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
+        },
         modifier = modifier,
     )
 }
