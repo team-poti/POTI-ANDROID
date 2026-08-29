@@ -31,9 +31,11 @@ class HistoryListViewModel @Inject constructor(
 ) : BaseViewModel<HistoryListUiState, HistoryListUiIntent, HistoryListUiEffect>(
         initialState = HistoryListUiState(),
     ) {
-    private val route = savedStateHandle.toRoute<HistoryRoute.HistoryList>()
-    private val initialMode = route.mode
-    private val initialType = route.type
+    private val route = runCatching {
+        savedStateHandle.toRoute<HistoryRoute.HistoryList>()
+    }.getOrNull()
+    private val initialMode = route?.mode
+    private val initialType = route?.type
 
     override fun processIntent(intent: HistoryListUiIntent) {
         when (intent) {

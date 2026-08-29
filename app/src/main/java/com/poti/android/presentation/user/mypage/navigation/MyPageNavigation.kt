@@ -14,6 +14,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.navigation.navigateToHistoryList
 import com.poti.android.presentation.user.favoriteartist.FavoriteArtistRoute
 import com.poti.android.presentation.user.mypage.MyPageRoute
+import com.poti.android.presentation.user.setting.navigation.navigateToSetting
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute : Route {
@@ -41,6 +42,7 @@ fun NavGraphBuilder.myPageNavGraph(
     composable<MyPageRoute.MyPage> {
         MyPageRoute(
             onNavigateToHistoryList = navController::navigateToHistoryList,
+            onNavigateToSetting = navController::navigateToSetting,
             onNavigateToFavoriteArtist = navController::navigateToFavoriteArtist,
             modifier = Modifier
                 .fillMaxSize()

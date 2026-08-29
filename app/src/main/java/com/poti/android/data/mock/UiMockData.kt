@@ -4,6 +4,7 @@ import com.poti.android.domain.model.artist.Artist
 import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.artist.MemberPriceOption
+import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.DeliveryDetail
@@ -35,6 +36,7 @@ import com.poti.android.domain.model.party.ProductCategory
 import com.poti.android.domain.model.party.ProductPartyList
 import com.poti.android.domain.model.payment.PaymentResult
 import com.poti.android.domain.model.user.HistorySummary
+import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
 import com.poti.android.domain.model.user.UserSummary
@@ -45,6 +47,8 @@ import com.poti.android.domain.model.party.GroupItem as PartyGroupItem
 import com.poti.android.domain.model.party.PartySummary as PartyListSummary
 
 object UiMockData {
+    private const val MOCK_USER_EMAIL = "poti@example.com"
+
     private val historyPartySummary = PartySummary(
         imageUrl = "",
         artist = "IVE",
@@ -309,7 +313,7 @@ object UiMockData {
 
     val userMyPage = UserMyPage(
         nickname = userProfile.nickname,
-        email = "poti@example.com",
+        email = MOCK_USER_EMAIL,
         profileImageUrl = null,
         ratingAvg = userProfile.ratingAvg.toString(),
         activityMessage = userProfile.activityMessage,
@@ -318,6 +322,12 @@ object UiMockData {
         favoriteArtistName = "IVE",
         participationSummary = userProfile.participationSummary,
         recruitSummary = userProfile.recruitSummary,
+    )
+
+    val userAccount = UserAccount(
+        nickname = userMyPage.nickname,
+        email = userMyPage.email,
+        socialType = SocialType.KAKAO,
     )
 
     val userAuth = UserAuth(
