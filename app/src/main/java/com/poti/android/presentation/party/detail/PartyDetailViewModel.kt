@@ -7,8 +7,8 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.model.party.DeliveryInfo
 import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.PartyJoinInfo
