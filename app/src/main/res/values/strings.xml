@@ -48,6 +48,7 @@
 
     <!-- LoginScreen -->
     <string name="login_poti_description">굿즈 분철을 더 간편하게</string>
+    <string name="login_browse_as_guest">로그인 없이 둘러보기</string>
 
     <!-- Onboarding -->
     <string name="onboarding_guide_label">공동구매부터 분철 정산까지\n한 번에 관리해요</string>

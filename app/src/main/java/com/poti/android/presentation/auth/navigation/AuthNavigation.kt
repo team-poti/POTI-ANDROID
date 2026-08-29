@@ -23,6 +23,7 @@ fun NavGraphBuilder.authNavGraph(
         LoginRoute(
             onNavigateToOnboarding = navController::navigateToOnboardingGuide,
             onNavigateToHome = onNavigateToHome,
+            onBrowseAsGuest = {},
             socialLoginLauncher = socialLoginLauncher,
         )
     }
