@@ -14,6 +14,13 @@ sealed interface AuthRoute : Route {
     data object Login : AuthRoute
 }
 
+fun NavController.navigateToLogin() {
+    navigate(AuthRoute.Login) {
+        popUpTo(0) { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
 fun NavGraphBuilder.authNavGraph(
     navController: NavController,
     onNavigateToHome: () -> Unit,

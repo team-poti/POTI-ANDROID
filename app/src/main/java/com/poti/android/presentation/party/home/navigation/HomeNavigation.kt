@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.alarm.navigation.navigateToAlarmList
+import com.poti.android.presentation.auth.navigation.navigateToLogin
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.home.HomeRoute
 import com.poti.android.presentation.party.product.navigation.navigateToProductCategory
@@ -31,6 +32,7 @@ fun NavGraphBuilder.homeNavGraph(
             onNavigateToAlarmList = navController::navigateToAlarmList,
             onNavigateToGoodsPartyList = navController::navigateToProductPartyList,
             onNavigateToProductCategory = navController::navigateToProductCategory,
+            onNavigateToLogin = navController::navigateToLogin,
             modifier = Modifier.padding(paddingValues),
         )
     }

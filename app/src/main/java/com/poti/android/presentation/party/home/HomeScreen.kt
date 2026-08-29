@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -21,6 +22,7 @@ import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPrimary
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.data.mock.UiMockData
@@ -37,6 +39,7 @@ fun HomeRoute(
     onNavigateToPartyCreate: () -> Unit,
     onNavigateToGoodsPartyList: (Long, String) -> Unit,
     onNavigateToProductCategory: (Long?, Boolean) -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -50,7 +53,20 @@ fun HomeRoute(
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
             HomeUiEffect.NavigateToAlarmList -> onNavigateToAlarmList()
+            HomeUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.showLoginRequiredDialog) {
+        PotiSmallModal(
+            onDismissRequest = { viewModel.processIntent(HomeUiIntent.OnLoginRequiredDismiss) },
+            title = stringResource(R.string.login_required_title),
+            text = stringResource(R.string.login_required_create),
+            dismissBtnText = stringResource(R.string.login_required_dismiss),
+            confirmBtnText = stringResource(R.string.login_required_confirm),
+            onDismissBtnClick = { viewModel.processIntent(HomeUiIntent.OnLoginRequiredDismiss) },
+            onConfirmBtnClick = { viewModel.processIntent(HomeUiIntent.OnLoginRequiredConfirm) },
+        )
     }
 
     uiState.homeContentLoadState.onSuccess { homeContent ->
