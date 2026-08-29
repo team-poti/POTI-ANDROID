@@ -1,4 +1,4 @@
-package com.poti.android.core.designsystem.component.display
+package com.poti.android.core.designsystem.component.button
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poti.android.core.designsystem.component.display.PotiCheckBox
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.designsystem.theme.PotiTheme.colors
 import com.poti.android.core.designsystem.theme.PotiTheme.typography
@@ -31,7 +32,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme.typography
  * @param enabled 활성화 여부, 비활성 시 흐리게 표시되며 클릭되지 않습니다
  */
 @Composable
-fun PotiCheckBoxItem(
+fun PotiCheckBoxButton(
     text: String,
     selected: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -71,15 +72,15 @@ private fun PotiCheckBoxItemPreview() {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PotiCheckBoxItem(text = "버튼", selected = false, onCheckedChange = {})
+            PotiCheckBoxButton(text = "버튼", selected = false, onCheckedChange = {})
 
-            PotiCheckBoxItem(text = "버튼", selected = true, onCheckedChange = {})
+            PotiCheckBoxButton(text = "버튼", selected = true, onCheckedChange = {})
 
-            PotiCheckBoxItem(text = "버튼", selected = false, onCheckedChange = {}, enabled = false)
+            PotiCheckBoxButton(text = "버튼", selected = false, onCheckedChange = {}, enabled = false)
 
-            PotiCheckBoxItem(text = "버튼", selected = true, onCheckedChange = {}, enabled = false)
+            PotiCheckBoxButton(text = "버튼", selected = true, onCheckedChange = {}, enabled = false)
 
-            PotiCheckBoxItem(text = "버튼", selected = selected, onCheckedChange = { selected = it })
+            PotiCheckBoxButton(text = "버튼", selected = selected, onCheckedChange = { selected = it })
         }
     }
 }
