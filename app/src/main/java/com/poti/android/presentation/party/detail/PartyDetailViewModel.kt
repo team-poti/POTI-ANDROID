@@ -192,9 +192,8 @@ class PartyDetailViewModel @Inject constructor(
             val deliveryInfo = DeliveryInfo(
                 receiverName = currentState.orderName,
                 zipcode = currentState.postalCode,
-                address = listOf(currentState.address, currentState.detailAddress)
-                    .filter(String::isNotBlank)
-                    .joinToString(" "),
+                address = currentState.address,
+                addressDetail = currentState.detailAddress,
                 phoneNumber = currentState.contact,
             )
 

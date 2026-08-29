@@ -11,7 +11,8 @@ fun PartyJoinInfo.toRequestDto(): PartyJoinRequestDto = PartyJoinRequestDto(
     deliveryInfoDto = DeliveryInfoDto(
         receiverName = deliveryInfo.receiverName,
         zipcode = deliveryInfo.zipcode,
-        addressLine = deliveryInfo.address,
+        address = deliveryInfo.address,
+        addressDetail = deliveryInfo.addressDetail,
         phone = deliveryInfo.phoneNumber,
     ),
     items = joinItems.map { item ->
