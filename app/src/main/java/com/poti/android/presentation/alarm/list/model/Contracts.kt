@@ -12,9 +12,10 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 data class AlarmListUiState(
     val alarmsLoadState: ApiState<ImmutableList<Notification>> = ApiState.Init,
+    val readAllState: ApiState<Unit> = ApiState.Init,
 ) : UiState {
     val alarmReadAllEnabled = if (alarmsLoadState is ApiState.Success) {
-        alarmsLoadState.data.any { alarm -> !alarm.isRead }
+        readAllState !is ApiState.Loading && alarmsLoadState.data.any { alarm -> !alarm.isRead }
     } else {
         false
     }
