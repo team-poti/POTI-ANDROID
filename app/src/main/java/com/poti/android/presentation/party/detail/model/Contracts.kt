@@ -40,6 +40,7 @@ data class PartyDetailUiState(
     val isJoinSuccessDialogVisible: Boolean = false,
     val showShareBottomSheet: Boolean = false,
     val artistMembers: ImmutableList<Member> = persistentListOf(),
+    val showLoginRequiredDialog: Boolean = false,
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
@@ -139,6 +140,10 @@ sealed interface PartyDetailIntent : UiIntent {
     data object OnKakaoShareClick : PartyDetailIntent
 
     data object OnXShareClick : PartyDetailIntent
+
+    data object OnLoginRequiredConfirm : PartyDetailIntent
+
+    data object OnLoginRequiredDismiss : PartyDetailIntent
 }
 
 sealed interface PartyDetailEffect : UiEffect {
@@ -157,4 +162,6 @@ sealed interface PartyDetailEffect : UiEffect {
     data class ShareToKakao(val content: PartyShareContent) : PartyDetailEffect
 
     data class ShareToX(val shareText: String) : PartyDetailEffect
+
+    data object NavigateToLogin : PartyDetailEffect
 }

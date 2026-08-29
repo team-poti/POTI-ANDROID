@@ -55,8 +55,7 @@
     <string name="login_required_join">분철에 참여하려면 로그인이 필요해요</string>
     <string name="login_required_create">분철을 등록하려면 로그인이 필요해요</string>
     <string name="login_required_dismiss">다음에 하기</string>
-    <!-- TODO(디자인 확인): 참여/모집 공통 우측 버튼 문구. 현재 Figma 기준 "계속 작성하기" -->
-    <string name="login_required_confirm">계속 작성하기</string>
+    <string name="login_required_confirm">로그인하기</string>
 
     <!-- Onboarding -->
     <string name="onboarding_guide_label">공동구매부터 분철 정산까지\n한 번에 관리해요</string>
