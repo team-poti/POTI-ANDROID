@@ -11,6 +11,7 @@ import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
@@ -102,6 +103,18 @@ class UserRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()
+            }
+        },
+    )
+
+    override suspend fun getMyAddress(): Result<DeliveryInfo?> = executeWithUiMock(
+        mock = { UiMockData.myAddress },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getMyAddress()
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                    ?.toDomain()
             }
         },
     )

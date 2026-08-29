@@ -6,6 +6,7 @@ import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.DeliveryDetail
 import com.poti.android.domain.model.history.DepositInfo
@@ -331,6 +332,14 @@ object UiMockData {
         nickname = userMyPage.nickname,
         email = userMyPage.email,
         socialType = SocialType.KAKAO,
+    )
+
+    val myAddress = DeliveryInfo(
+        receiverName = "이포티",
+        zipcode = "01234",
+        address = "서울특별시 솝트구 다솝로 456",
+        addressDetail = "101동 1002호",
+        phoneNumber = "010-1234-5678",
     )
 
     val notifications = List(10) { index ->
