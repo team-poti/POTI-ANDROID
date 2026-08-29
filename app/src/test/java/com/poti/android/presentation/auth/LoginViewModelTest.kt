@@ -2,11 +2,13 @@ package com.poti.android.presentation.auth
 
 import com.poti.android.MainDispatcherRule
 import com.poti.android.core.auth.SocialLoginResult
+import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.usecase.auth.EnterGuestModeUseCase
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -35,7 +37,10 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         authRepository = FakeAuthRepository()
-        viewModel = LoginViewModel(LoginUseCase(authRepository))
+        viewModel = LoginViewModel(
+            loginUseCase = LoginUseCase(authRepository),
+            enterGuestModeUseCase = EnterGuestModeUseCase(AuthSessionManager()),
+        )
     }
 
     @Test
