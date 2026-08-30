@@ -19,7 +19,7 @@ import kotlinx.collections.immutable.toImmutableList
 data class PartyDetailUiState(
     val partyDetail: ApiState<PartyDetail> = ApiState.Loading,
     val showJoinBottomSheet: Boolean = false,
-    val partyJoinOption: ApiState<PartyJoinOption> = ApiState.Loading,
+    val partyJoinOption: ApiState<PartyJoinOption> = ApiState.Init,
     val memberMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val deliveryMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val selectedMemberIds: Set<String> = emptySet(),

@@ -16,6 +16,7 @@ import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
+import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
 import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
@@ -28,6 +29,7 @@ import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
 import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -141,12 +143,21 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun handleXShare() = launchScope {
         val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return@launchScope
-        val availableMembers = uiState.value.partyJoinOption.getSuccessDataOrNull()?.memberOptions
-            ?: getPartyJoinOptionsUseCase(partyId).getOrNull()?.memberOptions.orEmpty()
+        val availableMembers = awaitPartyJoinOption()?.memberOptions.orEmpty()
         val allMembers = uiState.value.artistMembers.ifEmpty { fetchArtistMembersForShare(partyDetail.artistId) }
 
         sendEffect(ShareToX(buildXShareText(partyDetail, availableMembers, allMembers)))
     }
+
+    private suspend fun awaitPartyJoinOption(): PartyJoinOption? =
+        when (val option = uiState.value.partyJoinOption) {
+            is ApiState.Success -> option.data
+            ApiState.Loading -> uiState.first { it.partyJoinOption !is ApiState.Loading }
+                .partyJoinOption
+                .getSuccessDataOrNull()
+
+            else -> loadPartyJoinOption()
+        }
 
     private suspend fun fetchArtistMembersForShare(artistId: Long): List<Member> {
         val members = getMembersUseCase(artistId = artistId).getOrNull().orEmpty()
@@ -189,7 +200,6 @@ class PartyDetailViewModel @Inject constructor(
             .onSuccess { partyDetail ->
                 Timber.d("getPartyDetail 실행: $partyDetail")
                 updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
-                prefetchShareMembers(partyDetail.artistId)
             }
             .onFailure { error ->
                 Timber.d("getPartyDetail 실패: $error")
@@ -197,26 +207,17 @@ class PartyDetailViewModel @Inject constructor(
             }
     }
 
-    private fun prefetchShareMembers(artistId: Long) {
-        fetchPartyJoinOption()
-        fetchArtistMembers(artistId)
-    }
-
-    private fun fetchArtistMembers(artistId: Long) = launchScope {
-        getMembersUseCase(artistId = artistId)
-            .onSuccess { members -> updateState { copy(artistMembers = members.toImmutableList()) } }
-            .onFailure { error -> Timber.d("getMemberList 실패: $error") }
-    }
-
     private fun handleDetailJoin() {
         updateState { copy(showJoinBottomSheet = true) }
         fetchPartyJoinOption()
     }
 
-    private fun fetchPartyJoinOption() = launchScope {
+    private fun fetchPartyJoinOption() = launchScope { loadPartyJoinOption() }
+
+    private suspend fun loadPartyJoinOption(): PartyJoinOption? {
         updateState { copy(partyJoinOption = ApiState.Loading) }
 
-        getPartyJoinOptionsUseCase(partyId = partyId)
+        return getPartyJoinOptionsUseCase(partyId = partyId)
             .onSuccess { joinOptions ->
                 updateState {
                     copy(
@@ -229,6 +230,7 @@ class PartyDetailViewModel @Inject constructor(
             .onFailure { error ->
                 updateState { copy(partyJoinOption = ApiState.Failure(error.message ?: "Failed")) }
             }
+            .getOrNull()
     }
 
     private fun handleMemberSelect(selectedId: String) {
