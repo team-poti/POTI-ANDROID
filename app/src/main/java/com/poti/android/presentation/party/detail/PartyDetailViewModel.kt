@@ -146,7 +146,7 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun handleXShare() = launchScope {
         val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return@launchScope
-        val availableMembers = awaitPartyJoinOption()?.memberOptions.orEmpty()
+        val availableMembers = awaitPartyJoinOption()?.memberOptions
         val allMembers = uiState.value.artistMembers.ifEmpty { fetchArtistMembersForShare(partyDetail.artistId) }
 
         sendEffect(ShareToX(buildXShareText(partyDetail, availableMembers, allMembers)))
@@ -170,17 +170,19 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun buildXShareText(
         partyDetail: PartyDetail,
-        availableMembers: List<Members>,
+        availableMembers: List<Members>?,
         allMembers: List<Member>,
     ): String {
-        val availableNames = availableMembers.map { it.memberName.trim() }
+        val availableNames = availableMembers?.map { it.memberName.trim() }
         val allNames = allMembers.map { it.name.trim() }
-        val availableNameSet = availableNames.toSet()
 
-        val (available, unavailable) = if (allNames.isEmpty()) {
-            availableNames to emptyList()
-        } else {
-            allNames.partition { it in availableNameSet }
+        val (available, unavailable) = when {
+            availableNames == null -> emptyList<String>() to emptyList()
+            allNames.isEmpty() -> availableNames to emptyList()
+            else -> {
+                val availableNameSet = availableNames.toSet()
+                allNames.partition { it in availableNameSet }
+            }
         }
 
         val artistName = partyDetail.artist.toArtistDisplayName()
