@@ -1,5 +1,6 @@
 package com.poti.android.presentation.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +42,19 @@ import kotlin.coroutines.cancellation.CancellationException
 fun LoginRoute(
     onNavigateToOnboarding: () -> Unit,
     onNavigateToHome: () -> Unit,
+    canNavigateBack: Boolean,
+    onNavigateBack: () -> Unit,
     socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = canNavigateBack) {
+        viewModel.onLoginCancelled()
+        onNavigateBack()
+    }
 
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { effect ->

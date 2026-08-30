@@ -41,4 +41,8 @@ class AuthSessionManager @Inject constructor() {
 
     fun consumePendingReturnDeepLink(): String? =
         pendingReturnDeepLink.also { pendingReturnDeepLink = null }
+
+    fun clearPendingReturnDeepLink() {
+        pendingReturnDeepLink = null
+    }
 }

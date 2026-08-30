@@ -8,6 +8,7 @@ import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.usecase.auth.ClearPendingReturnDeepLinkUseCase
 import com.poti.android.domain.usecase.auth.EnterGuestModeUseCase
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -42,6 +43,7 @@ class LoginViewModelTest {
         viewModel = LoginViewModel(
             loginUseCase = LoginUseCase(authRepository),
             enterGuestModeUseCase = EnterGuestModeUseCase(authSessionManager),
+            clearPendingReturnDeepLinkUseCase = ClearPendingReturnDeepLinkUseCase(authSessionManager),
         )
     }
 

@@ -16,7 +16,6 @@ sealed interface AuthRoute : Route {
 
 fun NavController.navigateToLogin() {
     navigate(AuthRoute.Login) {
-        popUpTo(0) { inclusive = true }
         launchSingleTop = true
     }
 }
@@ -30,6 +29,8 @@ fun NavGraphBuilder.authNavGraph(
         LoginRoute(
             onNavigateToOnboarding = navController::navigateToOnboardingGuide,
             onNavigateToHome = onNavigateToHome,
+            canNavigateBack = navController.previousBackStackEntry != null,
+            onNavigateBack = { navController.popBackStack() },
             socialLoginLauncher = socialLoginLauncher,
         )
     }

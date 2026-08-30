@@ -3,6 +3,7 @@ package com.poti.android.presentation.auth
 import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.domain.model.auth.SocialType
+import com.poti.android.domain.usecase.auth.ClearPendingReturnDeepLinkUseCase
 import com.poti.android.domain.usecase.auth.EnterGuestModeUseCase
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -17,7 +18,12 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val enterGuestModeUseCase: EnterGuestModeUseCase,
+    private val clearPendingReturnDeepLinkUseCase: ClearPendingReturnDeepLinkUseCase,
 ) : BaseViewModel<LoginState, LoginIntent, LoginEffect>(LoginState()) {
+    fun onLoginCancelled() {
+        clearPendingReturnDeepLinkUseCase()
+    }
+
     override fun processIntent(intent: LoginIntent) {
         when (intent) {
             is LoginIntent.OnSocialLoginClick -> {
