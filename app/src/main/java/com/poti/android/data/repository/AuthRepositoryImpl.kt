@@ -101,7 +101,6 @@ class AuthRepositoryImpl @Inject constructor(
             authSessionManager.triggerLogout()
         },
         real = {
-            deleteFcmToken()
             httpResponseHandler.safeApiCall {
                 authRemoteDataSource.withdrawal(
                     request = WithdrawalRequestDto(reason = reason),
