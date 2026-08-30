@@ -22,7 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.core.share.KakaoShareLauncher
+import com.poti.android.core.share.KakaoShareManager
 import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,9 +112,9 @@ class MainActivity : ComponentActivity() {
 
     private fun Intent.resolveDeepLink(): Uri? {
         val uri = data ?: return null
-        if (uri.host != KakaoShareLauncher.LINK_HOST) return uri
+        if (uri.host != KakaoShareManager.LINK_HOST) return uri
 
-        return uri.getQueryParameter(KakaoShareLauncher.PARAM_DEEP_LINK)?.toUri()
+        return uri.getQueryParameter(KakaoShareManager.PARAM_DEEP_LINK)?.toUri()
     }
 
     private fun consumeDeepLink(navController: NavHostController) {
