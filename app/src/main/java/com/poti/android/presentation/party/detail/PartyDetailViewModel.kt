@@ -25,6 +25,8 @@ import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
 import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -238,22 +240,35 @@ class PartyDetailViewModel @Inject constructor(
                 joinItems = joinItems,
             )
 
-            joinPartyUseCase(joinInfo = joinInfo)
-                .onSuccess {
-                    updateState { copy(isJoinSuccessDialogVisible = true) }
-                    if (uiState.value.isRegisterMyAddressChecked) {
-                        registerMyAddress(deliveryInfo)
+            coroutineScope {
+                val joinDeferred = async {
+                    joinPartyUseCase(joinInfo = joinInfo)
+                }
+                val saveAddressDeferred =
+                    if (currentState.isRegisterMyAddressChecked) {
+                        async {
+                            saveMyAddressUseCase(deliveryInfo = deliveryInfo)
+                        }
+                    } else {
+                        null
                     }
-                }
-                .onFailure { error ->
-                    Timber.e(error, "postPartyJoin 실패")
-                }
-        }
-    }
 
-    private fun registerMyAddress(deliveryInfo: DeliveryInfo) = launchScope {
-        saveMyAddressUseCase(deliveryInfo = deliveryInfo)
-            .onFailure { error -> Timber.e(error, "내 배송지 저장 실패") }
+                val joinResult = joinDeferred.await()
+                val saveAddressResult = saveAddressDeferred?.await()
+
+                saveAddressResult?.onFailure { error ->
+                    Timber.e(error, "내 배송지 저장 실패")
+                }
+
+                joinResult
+                    .onSuccess {
+                        updateState { copy(isJoinSuccessDialogVisible = true) }
+                    }
+                    .onFailure { error ->
+                        Timber.e(error, "postPartyJoin 실패")
+                    }
+            }
+        }
     }
 
     private fun Members.toFieldMenuItem(): FieldMenuItem =
