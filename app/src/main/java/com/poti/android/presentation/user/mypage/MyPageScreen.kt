@@ -75,7 +75,6 @@ fun MyPageRoute(
 
     if (uiState.isGuest) {
         GuestMyPageScreen(
-            onSettingClick = onNavigateToSetting,
             onLoginClick = { viewModel.processIntent(MyPageUiIntent.OnLoginClick) },
             modifier = modifier,
         )
@@ -100,7 +99,6 @@ fun MyPageRoute(
 
 @Composable
 private fun GuestMyPageScreen(
-    onSettingClick: () -> Unit,
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -112,7 +110,7 @@ private fun GuestMyPageScreen(
         PotiHeaderPrimary(
             title = stringResource(R.string.user_my_page_title),
             firstIconRes = R.drawable.ic_setting,
-            onFirstIconClick = onSettingClick,
+            onFirstIconClick = {},
             secondIconRes = R.drawable.ic_alarm,
             onSecondIconClick = {},
             containerColor = PotiTheme.colors.gray100,
@@ -266,7 +264,6 @@ private fun ProfileScreenPreview() {
 private fun GuestMyPageScreenPreview() {
     PotiTheme {
         GuestMyPageScreen(
-            onSettingClick = {},
             onLoginClick = {},
         )
     }
