@@ -5,6 +5,7 @@ import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.core.fcm.remote.datasource.FcmRemoteDataSource
 import com.poti.android.core.fcm.remote.dto.request.FcmTokenRequestDto
 import com.poti.android.core.network.model.handleApiResponse
+import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.PreferenceDataSource
@@ -89,6 +90,8 @@ class AuthRepositoryImpl @Inject constructor(
             deleteFcmToken()
             httpResponseHandler.safeApiCall {
                 authRemoteDataSource.withdrawal()
+                    .handleNullableApiResponse()
+                    .getOrThrow()
                 authTokenStore.clearAll()
                 authSessionManager.triggerLogout()
             }

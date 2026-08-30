@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.toast
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
@@ -25,6 +27,8 @@ import com.poti.android.core.designsystem.component.display.PotiListRadio
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.type.WithdrawalReasonType
+import com.poti.android.presentation.user.withdrawal.component.WithdrawalModal
+import com.poti.android.presentation.user.withdrawal.component.WithdrawalUnavailableModal
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiEffect
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiIntent
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiState
@@ -37,17 +41,47 @@ fun WithdrawalRoute(
     viewModel: WithdrawalViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             WithdrawalUiEffect.NavigateBack -> onPopBackStack()
+            is WithdrawalUiEffect.ShowError -> context.toast(effect.message)
         }
+    }
+
+    if (uiState.showWithdrawalModal) {
+        WithdrawalModal(
+            onDismissRequest = {
+                viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalModalDismiss)
+            },
+            onDismissClick = {
+                viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalModalDismiss)
+            },
+            onConfirmClick = {
+                viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalConfirmClick)
+            },
+        )
+    }
+
+    if (uiState.showWithdrawalUnavailableModal) {
+        WithdrawalUnavailableModal(
+            onDismissRequest = {
+                viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalUnavailableModalClose)
+            },
+            onConfirmClick = {
+                viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalUnavailableModalClose)
+            },
+        )
     }
 
     WithdrawalScreen(
         uiState = uiState,
         onReasonSelect = { reason ->
             viewModel.processIntent(WithdrawalUiIntent.OnReasonSelect(reason))
+        },
+        onWithdrawalClick = {
+            viewModel.processIntent(WithdrawalUiIntent.OnWithdrawalClick)
         },
         onBackClick = { viewModel.processIntent(WithdrawalUiIntent.OnBackClick) },
         modifier = modifier,
@@ -58,6 +92,7 @@ fun WithdrawalRoute(
 private fun WithdrawalScreen(
     uiState: WithdrawalUiState,
     onReasonSelect: (WithdrawalReasonType) -> Unit,
+    onWithdrawalClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,7 +138,7 @@ private fun WithdrawalScreen(
 
             PotiActionButton(
                 text = stringResource(R.string.withdrawal_button),
-                onClick = {},
+                onClick = onWithdrawalClick,
                 type = ActionButtonType.SECONDARY_MAIN,
                 enabled = uiState.isWithdrawalEnabled,
                 modifier = Modifier
@@ -121,6 +156,7 @@ private fun WithdrawalScreenPreview() {
     WithdrawalScreen(
         uiState = WithdrawalUiState(),
         onReasonSelect = {},
+        onWithdrawalClick = {},
         onBackClick = {},
     )
 }
