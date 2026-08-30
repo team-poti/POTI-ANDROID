@@ -54,6 +54,7 @@
     <string name="login_required_title">로그인 후 이용 가능해요</string>
     <string name="login_required_join">분철에 참여하려면 로그인이 필요해요</string>
     <string name="login_required_create">분철을 등록하려면 로그인이 필요해요</string>
+    <string name="login_required_history">분철 내역을 보려면 로그인이 필요해요</string>
     <string name="login_required_dismiss">다음에 하기</string>
     <string name="login_required_confirm">로그인하기</string>
 
