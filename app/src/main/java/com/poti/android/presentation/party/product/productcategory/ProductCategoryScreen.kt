@@ -28,6 +28,7 @@ import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.data.mock.UiMockData
@@ -44,6 +45,7 @@ fun ProductCategoryRoute(
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
     onNavigateToProductPartyList: (Long, String) -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductCategoryViewModel = hiltViewModel(),
 ) {
@@ -54,7 +56,20 @@ fun ProductCategoryRoute(
             ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
             is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
             is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(effect.artistId, effect.title)
+            ProductCategoryUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.showLoginRequiredDialog) {
+        PotiSmallModal(
+            onDismissRequest = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredDismiss) },
+            title = stringResource(R.string.login_required_title),
+            text = stringResource(R.string.login_required_create),
+            dismissBtnText = stringResource(R.string.login_required_dismiss),
+            confirmBtnText = stringResource(R.string.login_required_confirm),
+            onDismissBtnClick = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredDismiss) },
+            onConfirmBtnClick = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredConfirm) },
+        )
     }
 
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->

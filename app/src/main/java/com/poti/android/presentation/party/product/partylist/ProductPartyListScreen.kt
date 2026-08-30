@@ -29,6 +29,7 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.party.PartySummary
@@ -49,6 +50,7 @@ fun ProductPartyListRoute(
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long, String, String) -> Unit,
     onNavigateToPartyDetail: (Long) -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductPartyListViewModel = hiltViewModel(),
 ) {
@@ -59,7 +61,20 @@ fun ProductPartyListRoute(
             ProductPartyListUiEffect.NavigateBack -> onPopBackStack()
             is ProductPartyListUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId, effect.artistName, effect.productName)
             is ProductPartyListUiEffect.NavigateToPartyDetail -> onNavigateToPartyDetail(effect.partyId)
+            ProductPartyListUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.showLoginRequiredDialog) {
+        PotiSmallModal(
+            onDismissRequest = { viewModel.processIntent(ProductPartyListUiIntent.OnLoginRequiredDismiss) },
+            title = stringResource(R.string.login_required_title),
+            text = stringResource(R.string.login_required_create),
+            dismissBtnText = stringResource(R.string.login_required_dismiss),
+            confirmBtnText = stringResource(R.string.login_required_confirm),
+            onDismissBtnClick = { viewModel.processIntent(ProductPartyListUiIntent.OnLoginRequiredDismiss) },
+            onConfirmBtnClick = { viewModel.processIntent(ProductPartyListUiIntent.OnLoginRequiredConfirm) },
+        )
     }
 
     if (uiState.isMemberFilterBottomSheetVisible) {
