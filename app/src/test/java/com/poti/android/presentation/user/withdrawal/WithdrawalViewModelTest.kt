@@ -1,12 +1,14 @@
 package com.poti.android.presentation.user.withdrawal
 
 import com.poti.android.MainDispatcherRule
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.network.model.NetworkError
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
-import com.poti.android.domain.type.WithdrawalReasonType
+import com.poti.android.domain.usecase.auth.GetWithdrawalReasonsUseCase
 import com.poti.android.domain.usecase.auth.WithdrawalUseCase
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiIntent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,6 +35,7 @@ class WithdrawalViewModelTest {
     fun setUp() {
         authRepository = FakeAuthRepository()
         viewModel = WithdrawalViewModel(
+            getWithdrawalReasonsUseCase = GetWithdrawalReasonsUseCase(authRepository),
             withdrawalUseCase = WithdrawalUseCase(authRepository),
         )
     }
@@ -43,13 +46,22 @@ class WithdrawalViewModelTest {
     }
 
     @Test
+    fun `loads withdrawal reasons on initialization`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            advanceUntilIdle()
+
+            val state = viewModel.uiState.value.withdrawalReasons as ApiState.Success
+            assertEquals(listOf(WITHDRAWAL_REASON), state.data)
+        }
+
+    @Test
     fun `selecting a reason enables withdrawal`() {
         viewModel.processIntent(
-            WithdrawalUiIntent.OnReasonSelect(WithdrawalReasonType.LOW_FREQUENCY),
+            WithdrawalUiIntent.OnReasonSelect(WITHDRAWAL_REASON),
         )
 
         assertEquals(
-            WithdrawalReasonType.LOW_FREQUENCY,
+            WITHDRAWAL_REASON,
             viewModel.uiState.value.selectedReason,
         )
         assertTrue(viewModel.uiState.value.isWithdrawalEnabled)
@@ -75,6 +87,7 @@ class WithdrawalViewModelTest {
             advanceUntilIdle()
 
             assertEquals(1, authRepository.withdrawalCallCount)
+            assertEquals(WITHDRAWAL_REASON.code, authRepository.lastWithdrawalReason)
         }
 
     @Test
@@ -98,13 +111,15 @@ class WithdrawalViewModelTest {
 
     private fun selectReason() {
         viewModel.processIntent(
-            WithdrawalUiIntent.OnReasonSelect(WithdrawalReasonType.LOW_FREQUENCY),
+            WithdrawalUiIntent.OnReasonSelect(WITHDRAWAL_REASON),
         )
     }
 
     private class FakeAuthRepository : AuthRepository {
         var withdrawalResult: Result<Unit> = Result.success(Unit)
         var withdrawalCallCount: Int = 0
+            private set
+        var lastWithdrawalReason: String? = null
             private set
 
         override fun observeAuthState(): Flow<AuthState> = emptyFlow()
@@ -119,9 +134,20 @@ class WithdrawalViewModelTest {
 
         override suspend fun logout(): Result<Unit> = error("Not used")
 
-        override suspend fun withdrawal(): Result<Unit> {
+        override suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>> =
+            Result.success(listOf(WITHDRAWAL_REASON))
+
+        override suspend fun withdrawal(reason: String): Result<Unit> {
             withdrawalCallCount += 1
+            lastWithdrawalReason = reason
             return withdrawalResult
         }
+    }
+
+    private companion object {
+        val WITHDRAWAL_REASON = WithdrawalReason(
+            code = "LOW_FREQUENCY",
+            label = "이용 빈도가 낮아요.",
+        )
     }
 }

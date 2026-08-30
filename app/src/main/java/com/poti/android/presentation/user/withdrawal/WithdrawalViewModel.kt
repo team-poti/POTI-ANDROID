@@ -3,19 +3,26 @@ package com.poti.android.presentation.user.withdrawal
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.network.model.NetworkError
+import com.poti.android.domain.usecase.auth.GetWithdrawalReasonsUseCase
 import com.poti.android.domain.usecase.auth.WithdrawalUseCase
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiEffect
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiIntent
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import javax.inject.Inject
 
 @HiltViewModel
 class WithdrawalViewModel @Inject constructor(
+    private val getWithdrawalReasonsUseCase: GetWithdrawalReasonsUseCase,
     private val withdrawalUseCase: WithdrawalUseCase,
 ) : BaseViewModel<WithdrawalUiState, WithdrawalUiIntent, WithdrawalUiEffect>(
         initialState = WithdrawalUiState(),
     ) {
+    init {
+        getWithdrawalReasons()
+    }
+
     override fun processIntent(intent: WithdrawalUiIntent) {
         when (intent) {
             WithdrawalUiIntent.OnBackClick -> sendEffect(WithdrawalUiEffect.NavigateBack)
@@ -33,6 +40,20 @@ class WithdrawalViewModel @Inject constructor(
         }
     }
 
+    private fun getWithdrawalReasons() = launchScope {
+        getWithdrawalReasonsUseCase()
+            .onSuccess { reasons ->
+                updateState {
+                    copy(withdrawalReasons = ApiState.Success(reasons.toImmutableList()))
+                }
+            }
+            .onFailure { error ->
+                updateState {
+                    copy(withdrawalReasons = ApiState.Failure(error.message ?: "탈퇴 사유 조회에 실패했습니다."))
+                }
+            }
+    }
+
     private fun showWithdrawalModal() {
         if (!uiState.value.isWithdrawalEnabled) return
 
@@ -40,6 +61,7 @@ class WithdrawalViewModel @Inject constructor(
     }
 
     private fun withdrawal() {
+        val reason = uiState.value.selectedReason?.code ?: return
         if (!uiState.value.isWithdrawalEnabled) return
 
         updateState {
@@ -52,7 +74,7 @@ class WithdrawalViewModel @Inject constructor(
         launchScope(
             onError = ::handleWithdrawalFailure,
         ) {
-            withdrawalUseCase()
+            withdrawalUseCase(reason = reason)
                 .onSuccess {
                     updateState { copy(withdrawalState = ApiState.Success(Unit)) }
                 }

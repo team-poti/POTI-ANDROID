@@ -4,10 +4,12 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
-import com.poti.android.domain.type.WithdrawalReasonType
+import com.poti.android.domain.model.auth.WithdrawalReason
+import kotlinx.collections.immutable.ImmutableList
 
 data class WithdrawalUiState(
-    val selectedReason: WithdrawalReasonType? = null,
+    val withdrawalReasons: ApiState<ImmutableList<WithdrawalReason>> = ApiState.Loading,
+    val selectedReason: WithdrawalReason? = null,
     val withdrawalState: ApiState<Unit> = ApiState.Init,
     val showWithdrawalModal: Boolean = false,
     val showWithdrawalUnavailableModal: Boolean = false,
@@ -22,7 +24,7 @@ sealed interface WithdrawalUiIntent : UiIntent {
     data object OnBackClick : WithdrawalUiIntent
 
     data class OnReasonSelect(
-        val reason: WithdrawalReasonType,
+        val reason: WithdrawalReason,
     ) : WithdrawalUiIntent
 
     data object OnWithdrawalClick : WithdrawalUiIntent

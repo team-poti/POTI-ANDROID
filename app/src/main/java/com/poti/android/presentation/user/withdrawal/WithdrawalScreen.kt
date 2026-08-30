@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,18 +19,20 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.toast
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.ActionButtonType
 import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiListRadio
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.domain.type.WithdrawalReasonType
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.presentation.user.withdrawal.component.WithdrawalModal
 import com.poti.android.presentation.user.withdrawal.component.WithdrawalUnavailableModal
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiEffect
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiIntent
 import com.poti.android.presentation.user.withdrawal.model.WithdrawalUiState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -91,13 +92,16 @@ fun WithdrawalRoute(
 @Composable
 private fun WithdrawalScreen(
     uiState: WithdrawalUiState,
-    onReasonSelect: (WithdrawalReasonType) -> Unit,
+    onReasonSelect: (WithdrawalReason) -> Unit,
     onWithdrawalClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val withdrawalReasons = WithdrawalReasonType.entries
+    val withdrawalReasons = when (val state = uiState.withdrawalReasons) {
+        is ApiState.Success -> state.data
+        else -> persistentListOf()
+    }
 
     Column(
         modifier = modifier
@@ -130,7 +134,7 @@ private fun WithdrawalScreen(
                 )
 
                 PotiListRadio(
-                    options = stringArrayResource(R.array.withdrawal_reason_options).toImmutableList(),
+                    options = withdrawalReasons.map { it.label }.toImmutableList(),
                     selectedOptionIndex = withdrawalReasons.indexOf(uiState.selectedReason),
                     onClick = { index -> onReasonSelect(withdrawalReasons[index]) },
                 )

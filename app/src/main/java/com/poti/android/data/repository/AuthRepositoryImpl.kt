@@ -14,10 +14,12 @@ import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
 import com.poti.android.data.remote.dto.request.auth.LoginRequestDto
+import com.poti.android.data.remote.dto.request.auth.WithdrawalRequestDto
 import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
@@ -81,7 +83,19 @@ class AuthRepositoryImpl @Inject constructor(
         authSessionManager.triggerLogout()
     }
 
-    override suspend fun withdrawal(): Result<Unit> = executeWithUiMock(
+    override suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>> = executeWithUiMock(
+        mock = { UiMockData.withdrawalReasons },
+        real = {
+            httpResponseHandler.safeApiCall {
+                authRemoteDataSource.getWithdrawalReasons()
+                    .handleApiResponse()
+                    .getOrThrow()
+                    .map { it.toDomain() }
+            }
+        },
+    )
+
+    override suspend fun withdrawal(reason: String): Result<Unit> = executeWithUiMock(
         mock = {
             authTokenStore.clearAll()
             authSessionManager.triggerLogout()
@@ -89,7 +103,9 @@ class AuthRepositoryImpl @Inject constructor(
         real = {
             deleteFcmToken()
             httpResponseHandler.safeApiCall {
-                authRemoteDataSource.withdrawal()
+                authRemoteDataSource.withdrawal(
+                    request = WithdrawalRequestDto(reason = reason),
+                )
                     .handleNullableApiResponse()
                     .getOrThrow()
                 authTokenStore.clearAll()
