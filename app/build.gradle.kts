@@ -16,10 +16,15 @@ val properties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
-fun requiredLocalProperty(key: String): String =
-    requireNotNull(properties[key] as? String) {
-        "$key is required in local.properties"
+fun requiredLocalProperty(key: String): String {
+    val value = properties[key] as? String
+
+    require(!value.isNullOrBlank()) {
+        "$key must not be blank in local.properties"
     }
+
+    return value
+}
 
 fun buildConfigString(value: String): String = "\"$value\""
 
