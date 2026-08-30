@@ -119,7 +119,10 @@ class PartyDetailViewModel @Inject constructor(
         }
     }
 
-    private fun String.toArtistDisplayName(): String = substringBefore("(").trim()
+    private fun String.toArtistDisplayName(): String {
+        val name = trim()
+        return name.replace(ENGLISH_NAME_REGEX, "").trim().ifBlank { name }
+    }
 
     private fun handleKakaoShare() {
         val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
@@ -181,7 +184,7 @@ class PartyDetailViewModel @Inject constructor(
         }
 
         val artistName = partyDetail.artist.toArtistDisplayName()
-        val artistHashTag = artistName.filterNot(Char::isWhitespace)
+        val artistHashTag = artistName.filter(Char::isLetterOrDigit)
 
         return buildString {
             appendLine("$artistName ${partyDetail.title}")
@@ -328,4 +331,8 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun closeShareBottomSheet() =
         updateState { copy(showShareBottomSheet = false) }
+
+    companion object {
+        private val ENGLISH_NAME_REGEX = """\s*\((?:[^()]|\([^()]*\))*\)$""".toRegex()
+    }
 }
