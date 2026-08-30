@@ -69,13 +69,12 @@ class LoginViewModel @Inject constructor(
         launchScope(onError = ::handleServerLoginFailure) {
             loginUseCase(socialType = socialType, token = token)
                 .onSuccess { response ->
+                    finishLogin()
                     if (response.isNewUser) {
                         Timber.i("신규 회원입니다. 온보딩 상태: 미완료(false)로 저장 -> 온보딩으로 이동")
-                        updateState { copy(phase = LoginPhase.SUCCESS) }
                         sendEffect(LoginEffect.NavigateToOnboarding)
                     } else {
                         Timber.i("기존 회원입니다. 온보딩 상태: 완료(true)로 저장 -> 홈으로 이동")
-                        updateState { copy(phase = LoginPhase.SUCCESS) }
                         sendEffect(LoginEffect.NavigateToHome)
                     }
                 }
@@ -90,11 +89,11 @@ class LoginViewModel @Inject constructor(
         cause: Throwable,
     ) {
         Timber.e(cause, "소셜 로그인 실패: $socialType")
-        updateState { copy(phase = LoginPhase.FAILURE) }
+        finishLogin()
     }
 
     private fun handleServerLoginFailure(error: Throwable) {
         Timber.e(error, "서버 로그인 실패")
-        updateState { copy(phase = LoginPhase.FAILURE) }
+        finishLogin()
     }
 }
