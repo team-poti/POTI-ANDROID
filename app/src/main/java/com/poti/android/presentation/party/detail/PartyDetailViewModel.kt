@@ -2,16 +2,22 @@ package com.poti.android.presentation.party.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.poti.android.BuildConfig
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.core.share.PartyShareContent
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
+import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinInfo
+import com.poti.android.domain.model.party.PartyJoinOption
+import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
 import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
 import com.poti.android.domain.usecase.party.JoinPartyUseCase
@@ -27,6 +33,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,6 +41,7 @@ import javax.inject.Inject
 class PartyDetailViewModel @Inject constructor(
     private val getPartyDetailUseCase: GetPartyDetailUseCase,
     private val getPartyJoinOptionsUseCase: GetPartyJoinOptionsUseCase,
+    private val getMembersUseCase: GetMembersUseCase,
     private val joinPartyUseCase: JoinPartyUseCase,
     private val getMyAddressUseCase: GetMyAddressUseCase,
     private val saveMyAddressUseCase: SaveMyAddressUseCase,
@@ -42,6 +50,7 @@ class PartyDetailViewModel @Inject constructor(
         initialState = PartyDetailUiState(),
     ) {
     private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
+    private val deepLink: String = partyDetailDeepLink(partyId)
 
     private var isMyAddressLoaded = false
 
@@ -89,10 +98,35 @@ class PartyDetailViewModel @Inject constructor(
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
             }
-            PartyDetailIntent.OnSystemShareClick -> sendEffect(ShareToSystem(partyDetailDeepLink(partyId)))
-            PartyDetailIntent.OnKakaoShareClick -> handleKakaoShare()
-            PartyDetailIntent.OnXShareClick -> sendEffect(ShareToX(partyDetailDeepLink(partyId)))
+
+            PartyDetailIntent.OnShareClick -> updateState { copy(showShareBottomSheet = true) }
+            PartyDetailIntent.OnCopyLinkClick -> {
+                closeShareBottomSheet()
+                sendEffect(CopyLink(deepLink))
+            }
+
+            PartyDetailIntent.OnSystemShareClick -> {
+                closeShareBottomSheet()
+                sendEffect(ShareToSystem(deepLink))
+            }
+
+            PartyDetailIntent.OnKakaoShareClick -> {
+                closeShareBottomSheet()
+                handleKakaoShare()
+            }
+
+            PartyDetailIntent.OnXShareClick -> {
+                closeShareBottomSheet()
+                handleXShare()
+            }
+
+            PartyDetailIntent.OnDismissShareBottomSheet -> closeShareBottomSheet()
         }
+    }
+
+    private fun String.toArtistDisplayName(): String {
+        val name = trim()
+        return name.replace(ENGLISH_NAME_REGEX, "").trim().ifBlank { name }
     }
 
     private fun handleKakaoShare() {
@@ -100,12 +134,73 @@ class PartyDetailViewModel @Inject constructor(
 
         sendEffect(
             ShareToKakao(
-                title = partyDetail.title,
-                description = "${partyDetail.artist} · ${partyDetail.currentCount}/${partyDetail.totalCount}명 모집 중",
-                imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
-                deepLink = partyDetailDeepLink(partyId),
+                PartyShareContent(
+                    artist = partyDetail.artist.toArtistDisplayName(),
+                    title = partyDetail.title,
+                    description = partyDetail.content,
+                    imageUrl = partyDetail.images.firstOrNull()?.imageUrl.orEmpty(),
+                    participantCount = partyDetail.currentCount,
+                    totalCount = partyDetail.totalCount,
+                    host = BuildConfig.DEEP_LINK_HOST,
+                    partyId = partyId,
+                    deepLink = deepLink,
+                ),
             ),
         )
+    }
+
+    private fun handleXShare() = launchScope {
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return@launchScope
+        val availableMembers = awaitPartyJoinOption()?.memberOptions
+        val allMembers = uiState.value.artistMembers.ifEmpty { fetchArtistMembersForShare(partyDetail.artistId) }
+
+        sendEffect(ShareToX(buildXShareText(partyDetail, availableMembers, allMembers)))
+    }
+
+    private suspend fun awaitPartyJoinOption(): PartyJoinOption? =
+        when (val option = uiState.value.partyJoinOption) {
+            is ApiState.Success -> option.data
+            ApiState.Loading -> uiState.first { it.partyJoinOption !is ApiState.Loading }
+                .partyJoinOption
+                .getSuccessDataOrNull()
+
+            else -> loadPartyJoinOption()
+        }
+
+    private suspend fun fetchArtistMembersForShare(artistId: Long): List<Member> {
+        val members = getMembersUseCase(artistId = artistId).getOrNull().orEmpty()
+        updateState { copy(artistMembers = members.toImmutableList()) }
+        return members
+    }
+
+    private fun buildXShareText(
+        partyDetail: PartyDetail,
+        availableMembers: List<Members>?,
+        allMembers: List<Member>,
+    ): String {
+        val availableNames = availableMembers?.map { it.memberName.trim() }
+        val allNames = allMembers.map { it.name.trim() }
+
+        val (available, unavailable) = when {
+            availableNames == null -> emptyList<String>() to emptyList()
+            allNames.isEmpty() -> availableNames to emptyList()
+            else -> {
+                val availableNameSet = availableNames.toSet()
+                allNames.partition { it in availableNameSet }
+            }
+        }
+
+        val artistName = partyDetail.artist.toArtistDisplayName()
+        val artistHashTag = artistName.filter(Char::isLetterOrDigit)
+
+        return buildString {
+            appendLine("$artistName ${partyDetail.title}")
+            if (available.isNotEmpty() || unavailable.isNotEmpty()) appendLine()
+            if (available.isNotEmpty()) appendLine("⭕️ ${available.joinToString(", ")}")
+            if (unavailable.isNotEmpty()) appendLine("❌ ${unavailable.joinToString(", ")}")
+            appendLine("\n#포티 #분철 #$artistHashTag @poti_kr")
+            append("\n$deepLink")
+        }
     }
 
     private fun fetchPartyDetail() = launchScope {
@@ -128,10 +223,12 @@ class PartyDetailViewModel @Inject constructor(
         fetchMyAddress()
     }
 
-    private fun fetchPartyJoinOption() = launchScope {
+    private fun fetchPartyJoinOption() = launchScope { loadPartyJoinOption() }
+
+    private suspend fun loadPartyJoinOption(): PartyJoinOption? {
         updateState { copy(partyJoinOption = ApiState.Loading) }
 
-        getPartyJoinOptionsUseCase(partyId = partyId)
+        return getPartyJoinOptionsUseCase(partyId = partyId)
             .onSuccess { joinOptions ->
                 updateState {
                     copy(
@@ -144,6 +241,7 @@ class PartyDetailViewModel @Inject constructor(
             .onFailure { error ->
                 updateState { copy(partyJoinOption = ApiState.Failure(error.message ?: "Failed")) }
             }
+            .getOrNull()
     }
 
     private fun handleMemberSelect(selectedId: String) {
@@ -284,4 +382,11 @@ class PartyDetailViewModel @Inject constructor(
             price = this.price.toMoneyString(),
             id = this.deliveryId.toString(),
         )
+
+    private fun closeShareBottomSheet() =
+        updateState { copy(showShareBottomSheet = false) }
+
+    companion object {
+        private val ENGLISH_NAME_REGEX = """\s*\((?:[^()]|\([^()]*\))*\)$""".toRegex()
+    }
 }
