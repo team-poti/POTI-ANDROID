@@ -114,13 +114,17 @@ class OnboardingViewModel @Inject constructor(
 
     private fun handleSkipClick() = launchScope {
         saveOnboardingUseCase(uiState.value.nickname, null)
-            .onSuccess { }
-        updateState {
-            copy(
-                selectedArtistId = null,
-                isButtonVisible = false,
-            )
-        }
-        sendEffect(OnboardingUiEffect.NavigateToHome)
+            .onSuccess {
+                updateState {
+                    copy(
+                        selectedArtistId = null,
+                        isButtonVisible = false,
+                    )
+                }
+                sendEffect(OnboardingUiEffect.NavigateToHome)
+            }
+            .onFailure { error ->
+                Timber.e(error, "온보딩 건너뛰기 저장 실패")
+            }
     }
 }
