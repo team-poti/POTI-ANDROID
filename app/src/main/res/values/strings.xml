@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">poti</string>
+    <string name="clipboard_default_label">포티</string>
 
     <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
@@ -93,6 +94,12 @@
     <string name="party_detail_upload_date_label">"%s 등록"</string>
     <string name="party_detail_share_button">이 분철팟 공유하기</string>
     <string name="party_detail_share_chooser_title">분철팟 공유하기</string>
+
+    <!-- PartyShare -->
+    <string name="party_share_link_copy">링크 복사</string>
+    <string name="party_share_kakao_talk">카카오톡</string>
+    <string name="party_share_x">X</string>
+    <string name="party_share_system">공유하기</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>

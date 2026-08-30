@@ -7,6 +7,8 @@ import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.core.share.PartyShareContent
+import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.type.PartyStatusType
@@ -17,7 +19,7 @@ import kotlinx.collections.immutable.toImmutableList
 data class PartyDetailUiState(
     val partyDetail: ApiState<PartyDetail> = ApiState.Loading,
     val showJoinBottomSheet: Boolean = false,
-    val partyJoinOption: ApiState<PartyJoinOption> = ApiState.Loading,
+    val partyJoinOption: ApiState<PartyJoinOption> = ApiState.Init,
     val memberMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val deliveryMenuItems: ImmutableList<FieldMenuItem> = persistentListOf(),
     val selectedMemberIds: Set<String> = emptySet(),
@@ -33,6 +35,8 @@ data class PartyDetailUiState(
     val isContactError: Boolean = false,
     val isParticipantNoticeModalVisible: Boolean = false,
     val isJoinSuccessDialogVisible: Boolean = false,
+    val showShareBottomSheet: Boolean = false,
+    val artistMembers: ImmutableList<Member> = persistentListOf(),
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
@@ -98,6 +102,12 @@ sealed interface PartyDetailIntent : UiIntent {
 
     data object OnJoinSuccessConfirm : PartyDetailIntent
 
+    data object OnShareClick : PartyDetailIntent
+
+    data object OnDismissShareBottomSheet : PartyDetailIntent
+
+    data object OnCopyLinkClick : PartyDetailIntent
+
     data object OnSystemShareClick : PartyDetailIntent
 
     data object OnKakaoShareClick : PartyDetailIntent
@@ -114,14 +124,11 @@ sealed interface PartyDetailEffect : UiEffect {
 
     data class ReloadDetail(val partyId: Long) : PartyDetailEffect
 
+    data class CopyLink(val link: String) : PartyDetailEffect
+
     data class ShareToSystem(val shareText: String) : PartyDetailEffect
 
-    data class ShareToKakao(
-        val title: String,
-        val description: String,
-        val imageUrl: String,
-        val deepLink: String,
-    ) : PartyDetailEffect
+    data class ShareToKakao(val content: PartyShareContent) : PartyDetailEffect
 
     data class ShareToX(val shareText: String) : PartyDetailEffect
 }
