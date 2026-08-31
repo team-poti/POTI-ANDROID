@@ -111,10 +111,9 @@ class AuthRepositoryImpl @Inject constructor(
                 )
                     .handleNullableApiResponse()
                     .getOrThrow()
-                withdrawalLocalDataCleaner.clear(
-                    socialType = preferenceDataSource.getSocialType(),
-                )
+                val socialType = preferenceDataSource.getSocialType()
                 authTokenStore.clearAll()
+                withdrawalLocalDataCleaner.clearInBackground(socialType = socialType)
                 authSessionManager.triggerLogout()
             }
         },

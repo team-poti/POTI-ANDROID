@@ -5,21 +5,31 @@ import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
 import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.data.auth.KakaoAccountManager
+import com.poti.android.di.ApplicationScope
 import com.poti.android.di.IoDispatcher
 import com.poti.android.domain.model.auth.SocialType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class WithdrawalLocalDataCleaner @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    @param:ApplicationScope private val applicationScope: CoroutineScope,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val kakaoAccountManager: KakaoAccountManager,
     private val fcmTokenProvider: FcmTokenProvider,
 ) {
-    suspend fun clear(socialType: SocialType?) {
+    fun clearInBackground(socialType: SocialType?) {
+        applicationScope.launch {
+            clear(socialType = socialType)
+        }
+    }
+
+    private suspend fun clear(socialType: SocialType?) {
         if (socialType == SocialType.KAKAO) {
             clearSafely("Failed to unlink Kakao account") {
                 kakaoAccountManager.unlink()
