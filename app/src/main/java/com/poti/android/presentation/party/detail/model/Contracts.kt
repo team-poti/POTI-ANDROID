@@ -9,6 +9,7 @@ import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.core.share.PartyShareContent
 import com.poti.android.domain.model.artist.Member
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.party.PartyDetail
 import com.poti.android.domain.model.party.PartyJoinOption
 import com.poti.android.domain.type.PartyStatusType
@@ -33,6 +34,8 @@ data class PartyDetailUiState(
     val isPostalCodeError: Boolean = false,
     val isAddressError: Boolean = false,
     val isContactError: Boolean = false,
+    val savedAddress: DeliveryInfo? = null,
+    val isRegisterMyAddressToggle: Boolean = false,
     val isParticipantNoticeModalVisible: Boolean = false,
     val isJoinSuccessDialogVisible: Boolean = false,
     val showShareBottomSheet: Boolean = false,
@@ -40,6 +43,27 @@ data class PartyDetailUiState(
 ) : UiState {
     val isDetailJoinEnable: Boolean
         get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
+
+    val isRequiredAddressFilled: Boolean
+        get() = orderName.isNotBlank() &&
+            postalCode.isNotBlank() &&
+            address.isNotBlank() &&
+            contact.isNotBlank()
+
+    val isAddressModified: Boolean
+        get() = savedAddress?.let {
+            orderName != it.receiverName ||
+                postalCode != it.zipcode ||
+                address != it.address ||
+                detailAddress != it.addressDetail ||
+                contact != it.phoneNumber
+        } ?: true
+
+    val isRegisterMyAddressEnable: Boolean
+        get() = isRequiredAddressFilled && isAddressModified
+
+    val isRegisterMyAddressChecked: Boolean
+        get() = isRegisterMyAddressToggle && isAddressModified
 
     val selectedMembers: ImmutableList<FieldMenuItem>
         get() = memberMenuItems
@@ -93,6 +117,8 @@ sealed interface PartyDetailIntent : UiIntent {
     data class OnDetailAddressChange(val value: String) : PartyDetailIntent
 
     data class OnContactChange(val value: String) : PartyDetailIntent
+
+    data class OnRegisterMyAddressChange(val checked: Boolean) : PartyDetailIntent
 
     data object OnFinalJoinClick : PartyDetailIntent
 

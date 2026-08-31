@@ -4,6 +4,7 @@ import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.mapper.user.toDomain
+import com.poti.android.data.mapper.user.toRequestDto
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
 import com.poti.android.data.remote.datasource.UserRemoteDataSource
@@ -11,6 +12,7 @@ import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
@@ -102,6 +104,30 @@ class UserRepositoryImpl @Inject constructor(
                     .handleApiResponse()
                     .getOrThrow()
                     .toDomain()
+            }
+        },
+    )
+
+    override suspend fun getMyAddress(): Result<DeliveryInfo?> = executeWithUiMock(
+        mock = { UiMockData.myAddress },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.getMyAddress()
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                    ?.toDomain()
+            }
+        },
+    )
+
+    override suspend fun saveMyAddress(deliveryInfo: DeliveryInfo): Result<Unit> = executeWithUiMock(
+        mock = { Unit },
+        real = {
+            httpResponseHandler.safeApiCall {
+                userRemoteDataSource.patchMyAddress(myAddressRequest = deliveryInfo.toRequestDto())
+                    .handleNullableApiResponse()
+                    .getOrThrow()
+                Unit
             }
         },
     )

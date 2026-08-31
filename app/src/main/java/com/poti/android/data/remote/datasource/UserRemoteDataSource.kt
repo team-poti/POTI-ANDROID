@@ -3,9 +3,11 @@ package com.poti.android.data.remote.datasource
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
+import com.poti.android.data.remote.dto.request.user.MyAddressRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.AccountResponseDto
+import com.poti.android.data.remote.dto.response.user.MyAddressResponseDto
 import com.poti.android.data.remote.dto.response.user.MyPageResponseDto
 import com.poti.android.data.remote.dto.response.user.NicknameDuplicateResponseDto
 import com.poti.android.data.remote.dto.response.user.OnboardingResponseDto
@@ -33,6 +35,12 @@ class UserRemoteDataSource @Inject constructor(
 
     suspend fun getUserAccount(): BaseResponse<AccountResponseDto> =
         userService.getUserAccount()
+
+    suspend fun getMyAddress(): BaseResponse<MyAddressResponseDto> =
+        userService.getMyAddress()
+
+    suspend fun patchMyAddress(myAddressRequest: MyAddressRequestDto): BaseResponse<Unit> =
+        userService.patchMyAddress(myAddressRequest = myAddressRequest)
 
     suspend fun patchProfile(editProfileRequest: EditProfileRequestDto): BaseResponse<Unit> =
         userService.patchProfile(editProfileRequest = editProfileRequest)

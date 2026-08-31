@@ -3,9 +3,11 @@ package com.poti.android.data.remote.service
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.remote.dto.request.user.EditProfileRequestDto
 import com.poti.android.data.remote.dto.request.user.FavoriteArtistRequestDto
+import com.poti.android.data.remote.dto.request.user.MyAddressRequestDto
 import com.poti.android.data.remote.dto.request.user.NicknameDuplicateRequestDto
 import com.poti.android.data.remote.dto.request.user.OnboardingRequestDto
 import com.poti.android.data.remote.dto.response.user.AccountResponseDto
+import com.poti.android.data.remote.dto.response.user.MyAddressResponseDto
 import com.poti.android.data.remote.dto.response.user.MyPageResponseDto
 import com.poti.android.data.remote.dto.response.user.NicknameDuplicateResponseDto
 import com.poti.android.data.remote.dto.response.user.OnboardingResponseDto
@@ -42,6 +44,14 @@ interface UserService {
 
     @GET("/api/v1/users/me/account")
     suspend fun getUserAccount(): BaseResponse<AccountResponseDto>
+
+    @GET("/api/v1/users/me/address")
+    suspend fun getMyAddress(): BaseResponse<MyAddressResponseDto>
+
+    @PATCH("/api/v1/users/me/address")
+    suspend fun patchMyAddress(
+        @Body myAddressRequest: MyAddressRequestDto,
+    ): BaseResponse<Unit>
 
     @PATCH("/api/v1/users/me/profile")
     suspend fun patchProfile(

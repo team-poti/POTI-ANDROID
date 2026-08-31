@@ -9,9 +9,10 @@ import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.core.share.PartyShareContent
+import com.poti.android.di.ApplicationScope
 import com.poti.android.domain.model.artist.Member
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
-import com.poti.android.domain.model.party.DeliveryInfo
 import com.poti.android.domain.model.party.JoinOption
 import com.poti.android.domain.model.party.Members
 import com.poti.android.domain.model.party.PartyDetail
@@ -21,6 +22,8 @@ import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.party.GetPartyDetailUseCase
 import com.poti.android.domain.usecase.party.GetPartyJoinOptionsUseCase
 import com.poti.android.domain.usecase.party.JoinPartyUseCase
+import com.poti.android.domain.usecase.user.GetMyAddressUseCase
+import com.poti.android.domain.usecase.user.SaveMyAddressUseCase
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect.*
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -29,7 +32,9 @@ import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
 import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,12 +44,17 @@ class PartyDetailViewModel @Inject constructor(
     private val getPartyJoinOptionsUseCase: GetPartyJoinOptionsUseCase,
     private val getMembersUseCase: GetMembersUseCase,
     private val joinPartyUseCase: JoinPartyUseCase,
+    private val getMyAddressUseCase: GetMyAddressUseCase,
+    private val saveMyAddressUseCase: SaveMyAddressUseCase,
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
     ) {
     private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
     private val deepLink: String = partyDetailDeepLink(partyId)
+
+    private var isMyAddressLoaded = false
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -71,24 +81,21 @@ class PartyDetailViewModel @Inject constructor(
                     isAddressError = false,
                 )
             }
-
             is PartyDetailIntent.OnDetailAddressChange -> updateState { copy(detailAddress = intent.value) }
             is PartyDetailIntent.OnContactChange -> updateState { copy(contact = intent.value, isContactError = false) }
+            is PartyDetailIntent.OnRegisterMyAddressChange -> updateState { copy(isRegisterMyAddressToggle = intent.checked) }
             PartyDetailIntent.OnFinalJoinClick -> {
                 if (validateInputs()) {
                     updateState { copy(isParticipantNoticeModalVisible = true) }
                 }
             }
-
             PartyDetailIntent.OnParticipantNoticeDismiss -> {
                 updateState { copy(isParticipantNoticeModalVisible = false) }
             }
-
             PartyDetailIntent.OnParticipantNoticeConfirm -> {
                 updateState { copy(isParticipantNoticeModalVisible = false) }
                 postOrder()
             }
-
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }
                 sendEffect(ReloadDetail(partyId))
@@ -215,6 +222,7 @@ class PartyDetailViewModel @Inject constructor(
     private fun handleDetailJoin() {
         updateState { copy(showJoinBottomSheet = true) }
         fetchPartyJoinOption()
+        fetchMyAddress()
     }
 
     private fun fetchPartyJoinOption() = launchScope { loadPartyJoinOption() }
@@ -259,6 +267,32 @@ class PartyDetailViewModel @Inject constructor(
         updateState { copy(selectedDeliveryIds = newSet) }
     }
 
+    private fun fetchMyAddress() {
+        if (isMyAddressLoaded) return
+        isMyAddressLoaded = true
+
+        launchScope {
+            getMyAddressUseCase()
+                .onSuccess { saved ->
+                    saved ?: return@onSuccess
+                    updateState {
+                        copy(
+                            savedAddress = saved,
+                            orderName = orderName.ifBlank { saved.receiverName },
+                            postalCode = postalCode.ifBlank { saved.zipcode },
+                            address = address.ifBlank { saved.address },
+                            detailAddress = detailAddress.ifBlank { saved.addressDetail },
+                            contact = contact.ifBlank { saved.phoneNumber },
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    isMyAddressLoaded = false
+                    Timber.e(error, "내 배송지 조회 실패")
+                }
+        }
+    }
+
     private fun validateInputs(): Boolean {
         val currentState = uiState.value
         val isNameEmpty = currentState.orderName.isBlank()
@@ -294,9 +328,8 @@ class PartyDetailViewModel @Inject constructor(
             val deliveryInfo = DeliveryInfo(
                 receiverName = currentState.orderName,
                 zipcode = currentState.postalCode,
-                address = listOf(currentState.address, currentState.detailAddress)
-                    .filter(String::isNotBlank)
-                    .joinToString(" "),
+                address = currentState.address,
+                addressDetail = currentState.detailAddress,
                 phoneNumber = currentState.contact,
             )
 
@@ -310,9 +343,22 @@ class PartyDetailViewModel @Inject constructor(
             joinPartyUseCase(joinInfo = joinInfo)
                 .onSuccess {
                     updateState { copy(isJoinSuccessDialogVisible = true) }
+
+                    if (currentState.isRegisterMyAddressChecked) {
+                        registerMyAddress(deliveryInfo)
+                    }
                 }
                 .onFailure { error ->
                     Timber.e(error, "postPartyJoin 실패")
+                }
+        }
+    }
+
+    private fun registerMyAddress(deliveryInfo: DeliveryInfo) {
+        applicationScope.launch {
+            saveMyAddressUseCase(deliveryInfo = deliveryInfo)
+                .onFailure { error ->
+                    Timber.e(error, "내 배송지 저장 실패")
                 }
         }
     }

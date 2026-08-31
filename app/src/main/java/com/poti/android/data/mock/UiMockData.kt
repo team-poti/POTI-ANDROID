@@ -6,6 +6,8 @@ import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
 import com.poti.android.domain.model.history.DeliveryDetail
 import com.poti.android.domain.model.history.DepositInfo
@@ -333,6 +335,14 @@ object UiMockData {
         socialType = SocialType.KAKAO,
     )
 
+    val myAddress = DeliveryInfo(
+        receiverName = "이포티",
+        zipcode = "01234",
+        address = "서울특별시 솝트구 다솝로 456",
+        addressDetail = "101동 1002호",
+        phoneNumber = "010-1234-5678",
+    )
+
     val notifications = List(10) { index ->
         Notification(
             id = index.toLong(),
@@ -355,6 +365,16 @@ object UiMockData {
         refreshToken = "ui-mock-refresh-token",
         isNewUser = false,
         userId = 1,
+    )
+
+    val withdrawalReasons = listOf(
+        WithdrawalReason("HARD_TO_FIND", "원하는 굿즈를 찾기 어려워요."),
+        WithdrawalReason("INCONVENIENT_PROCESS", "분철 모집 또는 참여 과정이 불편해요."),
+        WithdrawalReason("LACK_OF_FEATURES", "필요한 기능이 부족해요."),
+        WithdrawalReason("FREQUENT_ERRORS", "오류나 버그를 자주 경험했어요."),
+        WithdrawalReason("USING_OTHER_SERVICE", "다른 서비스를 이용하고 있어요."),
+        WithdrawalReason("LOW_FREQUENCY", "이용 빈도가 낮아요."),
+        WithdrawalReason("OTHER", "기타"),
     )
 
     fun presignedUploadInfos(extensions: List<String>) = extensions.mapIndexed { index, extension ->

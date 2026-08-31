@@ -9,15 +9,20 @@ import com.poti.android.core.designsystem.component.button.ModalButtonType
 import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 
 @Composable
-fun WithdrawalModal(modifier: Modifier = Modifier) {
+fun WithdrawalModal(
+    onDismissRequest: () -> Unit,
+    onDismissClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     PotiSmallModal(
-        onDismissRequest = {},
+        onDismissRequest = onDismissRequest,
         title = stringResource(R.string.withdrawal_confirm_modal_title),
         text = stringResource(R.string.withdrawal_confirm_modal_text),
         dismissBtnText = stringResource(R.string.withdrawal_confirm_modal_dismiss),
         confirmBtnText = stringResource(R.string.withdrawal_confirm_modal_confirm),
-        onDismissBtnClick = {},
-        onConfirmBtnClick = {},
+        onDismissBtnClick = onDismissClick,
+        onConfirmBtnClick = onConfirmClick,
         modifier = modifier,
         confirmBtnType = ModalButtonType.SECONDARY,
     )
@@ -26,5 +31,9 @@ fun WithdrawalModal(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun WithdrawalModalPreview() {
-    WithdrawalModal()
+    WithdrawalModal(
+        onDismissRequest = {},
+        onDismissClick = {},
+        onConfirmClick = {},
+    )
 }
