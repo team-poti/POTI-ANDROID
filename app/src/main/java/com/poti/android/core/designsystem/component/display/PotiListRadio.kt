@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,7 +63,8 @@ fun PotiListRadioItem(
                 indication = null,
                 onClick = onClick,
             )
-            .padding(vertical = 16.dp),
+            .heightIn(48.dp)
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -79,7 +82,7 @@ fun PotiListRadioItem(
 @Preview(showBackground = true)
 @Composable
 private fun PotiListRadioPreview() {
-    var selected by remember { mutableStateOf(1) }
+    var selected by remember { mutableIntStateOf(1) }
 
     PotiTheme {
         PotiListRadio(
