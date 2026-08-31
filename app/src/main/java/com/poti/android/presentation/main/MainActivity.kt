@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
                 mainNavigator.navigateToHome()
                 consumeDeepLink(mainNavigator.navController)
                 consumePendingReturnDeepLink(mainNavigator.navController)
+                viewModel.checkNotificationPermission()
             }
 
             PotiTheme {
