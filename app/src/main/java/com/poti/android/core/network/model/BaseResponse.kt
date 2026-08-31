@@ -10,7 +10,7 @@ data class BaseResponse<T>(
     @SerialName("message")
     val message: String,
     @SerialName("data")
-    val data: T?,
+    val data: T? = null,
 )
 
 fun <T> BaseResponse<T>.handleApiResponse(): Result<T> =

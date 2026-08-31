@@ -1,5 +1,6 @@
 package com.poti.android.data.local.datasource
 
+import com.poti.android.core.common.util.suspendRunCatching
 import com.poti.android.di.ApplicationScope
 import com.poti.android.di.IoDispatcher
 import com.poti.android.domain.model.auth.AuthState
@@ -108,9 +109,29 @@ class AuthTokenStore @Inject constructor(
 
     suspend fun clearAll() {
         val generation = clearCachedTokens()
-        persistenceMutex.withLock {
-            if (isLogoutGenerationCurrent(generation)) {
-                preferenceDataSource.clearAll()
+        suspendRunCatching {
+            persistAllClearIfCurrent(generation)
+        }.onFailure { error ->
+            Timber.Forest.tag("AuthTokenStore")
+                .e(error, "Failed to clear persisted auth data. Retrying in application scope.")
+            retryAllClear(generation)
+        }
+    }
+
+    private suspend fun persistAllClearIfCurrent(generation: Long): Boolean = persistenceMutex.withLock {
+        if (!isLogoutGenerationCurrent(generation)) return@withLock false
+
+        preferenceDataSource.clearAll()
+        true
+    }
+
+    private fun retryAllClear(generation: Long) {
+        externalScope.launch(ioDispatcher) {
+            suspendRunCatching {
+                persistAllClearIfCurrent(generation)
+            }.onFailure { error ->
+                Timber.Forest.tag("AuthTokenStore")
+                    .e(error, "Failed to retry clearing persisted auth data.")
             }
         }
     }

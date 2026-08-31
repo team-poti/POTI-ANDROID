@@ -2,6 +2,7 @@ package com.poti.android.data.auth
 
 import android.content.Context
 import com.poti.android.core.auth.SocialLoginResult
+import com.poti.android.data.local.datasource.WithdrawalLocalDataCleaner
 import com.poti.android.domain.model.auth.SocialType
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -11,6 +12,7 @@ import org.mockito.Mockito.`when`
 
 class DefaultSocialLoginLauncherTest {
     private val context: Context = mock(Context::class.java)
+    private val withdrawalLocalDataCleaner = mock(WithdrawalLocalDataCleaner::class.java)
 
     @Test
     fun `delegates to Kakao provider when social type is Kakao`() = runBlocking {
@@ -19,6 +21,7 @@ class DefaultSocialLoginLauncherTest {
         val launcher = DefaultSocialLoginLauncher(
             KakaoLoginProvider(client),
             googleLoginProvider,
+            withdrawalLocalDataCleaner,
         )
 
         val result = launcher.login(context, SocialType.KAKAO)
@@ -37,6 +40,7 @@ class DefaultSocialLoginLauncherTest {
         val launcher = DefaultSocialLoginLauncher(
             KakaoLoginProvider(client),
             googleLoginProvider,
+            withdrawalLocalDataCleaner,
         )
 
         val result = launcher.login(context, SocialType.GOOGLE)

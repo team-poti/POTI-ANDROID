@@ -5,6 +5,7 @@ import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -226,7 +227,12 @@ class LoginViewModelTest {
 
         override suspend fun logout(): Result<Unit> = Result.success(Unit)
 
-        override suspend fun withdrawal(): Result<Unit> = Result.success(Unit)
+        override suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>> =
+            error("Not used")
+
+        override suspend fun withdrawal(reason: String): Result<Unit> {
+            return Result.success(Unit)
+        }
     }
 
     private companion object {
