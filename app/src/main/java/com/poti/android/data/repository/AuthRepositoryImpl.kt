@@ -9,6 +9,7 @@ import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
 import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.PreferenceDataSource
+import com.poti.android.data.local.datasource.WithdrawalLocalDataCleaner
 import com.poti.android.data.mapper.auth.toDomain
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.data.mock.executeWithUiMock
@@ -33,6 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val authSessionManager: AuthSessionManager,
     private val fcmTokenProvider: FcmTokenProvider,
     private val fcmRemoteDataSource: FcmRemoteDataSource,
+    private val withdrawalLocalDataCleaner: WithdrawalLocalDataCleaner,
 ) : AuthRepository {
     override fun observeAuthState(): Flow<AuthState> = authTokenStore.authState
 
@@ -107,6 +109,7 @@ class AuthRepositoryImpl @Inject constructor(
                 )
                     .handleNullableApiResponse()
                     .getOrThrow()
+                withdrawalLocalDataCleaner.clear()
                 authTokenStore.clearAll()
                 authSessionManager.triggerLogout()
             }
