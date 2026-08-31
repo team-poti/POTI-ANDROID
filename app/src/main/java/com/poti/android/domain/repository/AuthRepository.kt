@@ -3,6 +3,7 @@ package com.poti.android.domain.repository
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -17,5 +18,7 @@ interface AuthRepository {
 
     suspend fun logout(): Result<Unit>
 
-    suspend fun withdrawal(): Result<Unit>
+    suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>>
+
+    suspend fun withdrawal(reason: String): Result<Unit>
 }

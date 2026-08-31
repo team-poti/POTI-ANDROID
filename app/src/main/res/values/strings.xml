@@ -301,6 +301,8 @@
     <string name="alarm_title">알림</string>
     <string name="alarm_empty">새로운 알림이 없어요\n알림이 도착하면 알려드릴게요</string>
     <string name="alarm_load_failed">알림을 불러오지 못했어요</string>
+    <string name="alarm_read_all">전체 읽음</string>
+    <string name="alarm_read_all_failed">알림 전체 읽기에 실패했어요</string>
 
     <string name="alarm_setting_title">알림 설정</string>
     <string name="alarm_setting_trade_title">거래 알림</string>
@@ -357,15 +359,6 @@
     <!-- Withdrawal -->
     <string name="withdrawal_title">회원 탈퇴</string>
     <string name="withdrawal_reason_label">탈퇴 사유</string>
-    <string-array name="withdrawal_reason_options">
-        <item>원하는 굿즈를 찾기 어려워요.</item>
-        <item>분철 모집 또는 참여 과정이 불편해요.</item>
-        <item>필요한 기능이 부족해요.</item>
-        <item>오류나 버그를 자주 경험했어요.</item>
-        <item>다른 서비스를 이용하고 있어요.</item>
-        <item>이용 빈도가 낮아요.</item>
-        <item>기타</item>
-    </string-array>
     <string name="withdrawal_button">탈퇴하기</string>
     <string name="withdrawal_confirm_modal_title">정말 탈퇴하시겠어요?</string>
     <string name="withdrawal_confirm_modal_text">회원탈퇴 후에는 계정 정보가 모두 삭제되며, 복구할 수 없어요.</string>

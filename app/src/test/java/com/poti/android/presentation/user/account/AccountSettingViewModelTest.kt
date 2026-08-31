@@ -4,6 +4,7 @@ import com.poti.android.MainDispatcherRule
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.domain.repository.UserRepository
@@ -92,7 +93,10 @@ class AccountSettingViewModelTest {
             return logoutResult
         }
 
-        override suspend fun withdrawal(): Result<Unit> = error("Not used")
+        override suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>> =
+            error("Not used")
+
+        override suspend fun withdrawal(reason: String): Result<Unit> = error("Not used")
     }
 
     private companion object {

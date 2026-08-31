@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.notification.Notification
 import com.poti.android.domain.type.NotificationType
+import com.poti.android.presentation.alarm.list.component.AlarmReadButton
 import com.poti.android.presentation.alarm.list.model.AlarmListUiEffect
 import com.poti.android.presentation.alarm.list.model.AlarmListUiIntent
 import com.poti.android.presentation.alarm.list.model.AlarmListUiState
@@ -66,6 +68,7 @@ fun AlarmListRoute(
         onBackClick = { viewModel.processIntent(AlarmListUiIntent.OnBackClick) },
         onSettingClick = { viewModel.processIntent(AlarmListUiIntent.OnSettingClick) },
         onAlarmClick = { alarm -> viewModel.processIntent(AlarmListUiIntent.OnAlarmClick(alarm)) },
+        onAlarmReadAllClick = { viewModel.processIntent(AlarmListUiIntent.OnAlarmReadAllClick) },
         modifier = modifier,
     )
 }
@@ -76,26 +79,41 @@ private fun AlarmListScreen(
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onAlarmClick: (Notification) -> Unit,
+    onAlarmReadAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Scaffold(
         modifier = modifier,
-    ) {
-        PotiHeaderPage(
-            onNavigationClick = onBackClick,
-            title = stringResource(R.string.alarm_title),
-            onTrailingIconClick = onSettingClick,
-            trailingIconRes = R.drawable.ic_setting,
-        )
-
+        topBar = {
+            PotiHeaderPage(
+                onNavigationClick = onBackClick,
+                title = stringResource(R.string.alarm_title),
+                onTrailingIconClick = onSettingClick,
+                trailingIconRes = R.drawable.ic_setting,
+            )
+        },
+        bottomBar = {
+            AlarmReadButton(
+                onClick = onAlarmReadAllClick,
+                enabled = uiState.alarmReadAllEnabled,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 14.dp),
+            )
+        },
+    ) { innerPadding ->
         uiState.alarmsLoadState.onSuccess { alarms ->
             if (alarms.isEmpty()) {
                 PotiEmptyStateInline(
                     text = stringResource(R.string.alarm_empty),
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(top = 12.dp),
                 )
             } else {
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier.padding(innerPadding),
+                ) {
                     items(
                         items = alarms,
                         key = { alarm -> alarm.id },
@@ -162,6 +180,7 @@ private fun AlarmListScreenEmptyPreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -176,6 +195,7 @@ private fun AlarmListScreenPreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -190,6 +210,7 @@ private fun AlarmListScreenScrollablePreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }

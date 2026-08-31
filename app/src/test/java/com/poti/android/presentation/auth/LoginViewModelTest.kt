@@ -5,6 +5,7 @@ import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
+import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
@@ -91,7 +92,7 @@ class LoginViewModelTest {
         }
 
     @Test
-    fun `moves to failure when social login fails`() =
+    fun `returns to idle when social login fails`() =
         runTest(mainDispatcherRule.testDispatcher) {
             startSocialLogin()
 
@@ -102,7 +103,7 @@ class LoginViewModelTest {
                 ),
             )
 
-            assertEquals(LoginPhase.FAILURE, viewModel.uiState.value.phase)
+            assertEquals(LoginPhase.IDLE, viewModel.uiState.value.phase)
             assertEquals(0, authRepository.loginCallCount)
         }
 
@@ -119,6 +120,19 @@ class LoginViewModelTest {
         }
 
     @Test
+    fun `returns to idle when server login fails`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            authRepository.loginResult = Result.failure(RuntimeException("Server login failed"))
+            startSocialLogin()
+
+            viewModel.processIntent(socialLoginSuccessIntent())
+            advanceUntilIdle()
+
+            assertEquals(LoginPhase.IDLE, viewModel.uiState.value.phase)
+            assertEquals(1, authRepository.loginCallCount)
+        }
+
+    @Test
     fun `navigates to onboarding when server login returns new user`() =
         runTest(mainDispatcherRule.testDispatcher) {
             authRepository.loginResult = Result.success(userAuth(isNewUser = true))
@@ -128,8 +142,25 @@ class LoginViewModelTest {
             viewModel.processIntent(socialLoginSuccessIntent())
             advanceUntilIdle()
 
-            assertEquals(LoginPhase.SUCCESS, viewModel.uiState.value.phase)
+            assertEquals(LoginPhase.IDLE, viewModel.uiState.value.phase)
             assertTrue(effects.contains(LoginEffect.NavigateToOnboarding))
+        }
+
+    @Test
+    fun `allows login again after navigating to onboarding`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            authRepository.loginResult = Result.success(userAuth(isNewUser = true))
+            val effects = collectEffects()
+            startSocialLogin()
+            viewModel.processIntent(socialLoginSuccessIntent())
+            advanceUntilIdle()
+
+            assertEquals(LoginPhase.IDLE, viewModel.uiState.value.phase)
+            viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
+            advanceUntilIdle()
+
+            assertEquals(LoginPhase.SOCIAL_LOGIN, viewModel.uiState.value.phase)
+            assertTrue(effects.contains(LoginEffect.LaunchSocialLogin(SocialType.GOOGLE)))
         }
 
     @Test
@@ -142,7 +173,7 @@ class LoginViewModelTest {
             viewModel.processIntent(socialLoginSuccessIntent())
             advanceUntilIdle()
 
-            assertEquals(LoginPhase.SUCCESS, viewModel.uiState.value.phase)
+            assertEquals(LoginPhase.IDLE, viewModel.uiState.value.phase)
             assertTrue(effects.contains(LoginEffect.NavigateToHome))
         }
 
@@ -196,7 +227,12 @@ class LoginViewModelTest {
 
         override suspend fun logout(): Result<Unit> = Result.success(Unit)
 
-        override suspend fun withdrawal(): Result<Unit> = Result.success(Unit)
+        override suspend fun getWithdrawalReasons(): Result<List<WithdrawalReason>> =
+            error("Not used")
+
+        override suspend fun withdrawal(reason: String): Result<Unit> {
+            return Result.success(Unit)
+        }
     }
 
     private companion object {

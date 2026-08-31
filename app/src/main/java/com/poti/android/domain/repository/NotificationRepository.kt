@@ -15,4 +15,10 @@ interface NotificationRepository {
         isTradeEnabled: Boolean,
         isEventEnabled: Boolean,
     ): Result<NotificationSetting>
+
+    suspend fun readNotification(
+        notificationId: Long,
+    ): Result<Unit>
+
+    suspend fun readAllNotifications(): Result<Unit>
 }
