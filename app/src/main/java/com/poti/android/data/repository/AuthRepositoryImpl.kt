@@ -45,6 +45,7 @@ class AuthRepositoryImpl @Inject constructor(
         mock = {
             UiMockData.userAuth.also {
                 authTokenStore.saveTokens(it.accessToken, it.refreshToken)
+                preferenceDataSource.saveSocialType(socialType)
                 preferenceDataSource.saveOnboardingState(!it.isNewUser)
             }
         },
@@ -59,6 +60,7 @@ class AuthRepositoryImpl @Inject constructor(
                     .getOrThrow()
                     .apply {
                         authTokenStore.saveTokens(accessToken, refreshToken)
+                        preferenceDataSource.saveSocialType(socialType)
                         preferenceDataSource.saveOnboardingState(!isNewUser)
                     }
                     .toDomain()
@@ -109,7 +111,9 @@ class AuthRepositoryImpl @Inject constructor(
                 )
                     .handleNullableApiResponse()
                     .getOrThrow()
-                withdrawalLocalDataCleaner.clear()
+                withdrawalLocalDataCleaner.clear(
+                    socialType = preferenceDataSource.getSocialType(),
+                )
                 authTokenStore.clearAll()
                 authSessionManager.triggerLogout()
             }

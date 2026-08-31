@@ -6,6 +6,7 @@ import coil.imageLoader
 import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.data.auth.KakaoAccountManager
 import com.poti.android.di.IoDispatcher
+import com.poti.android.domain.model.auth.SocialType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -18,9 +19,11 @@ class WithdrawalLocalDataCleaner @Inject constructor(
     private val kakaoAccountManager: KakaoAccountManager,
     private val fcmTokenProvider: FcmTokenProvider,
 ) {
-    suspend fun clear() {
-        clearSafely("Failed to unlink Kakao account") {
-            kakaoAccountManager.unlink()
+    suspend fun clear(socialType: SocialType?) {
+        if (socialType == SocialType.KAKAO) {
+            clearSafely("Failed to unlink Kakao account") {
+                kakaoAccountManager.unlink()
+            }
         }
         clearSafely("Failed to delete local FCM token") {
             fcmTokenProvider.deleteToken()

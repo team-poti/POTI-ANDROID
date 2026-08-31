@@ -6,7 +6,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.poti.android.domain.model.auth.AuthState
+import com.poti.android.domain.model.auth.SocialType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ class PreferenceDataSource @Inject constructor(
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("ACCESS_TOKEN")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("REFRESH_TOKEN")
         private val IS_ONBOARDING_FINISHED_KEY = booleanPreferencesKey("IS_ONBOARDING_FINISHED")
+        private val SOCIAL_TYPE_KEY = stringPreferencesKey("SOCIAL_TYPE")
     }
 
     val tokenPair: Flow<TokenPair?> = dataStore.data.map { prefs ->
@@ -46,6 +49,13 @@ class PreferenceDataSource @Inject constructor(
     suspend fun saveOnboardingState(isFinished: Boolean) = dataStore.edit { prefs ->
         prefs[IS_ONBOARDING_FINISHED_KEY] = isFinished
     }
+
+    suspend fun saveSocialType(socialType: SocialType) = dataStore.edit { prefs ->
+        prefs[SOCIAL_TYPE_KEY] = socialType.name
+    }
+
+    suspend fun getSocialType(): SocialType? = dataStore.data.first()[SOCIAL_TYPE_KEY]
+        ?.let { value -> SocialType.entries.firstOrNull { it.name == value } }
 
     val authState: Flow<AuthState> = dataStore.data.map { prefs ->
         AuthState(
