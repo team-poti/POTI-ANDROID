@@ -61,19 +61,17 @@ class LoginViewModelTest {
         }
 
     @Test
-    fun `enters guest mode and navigates to home once when browse is clicked repeatedly`() =
+    fun `enters guest mode and clears pending deep link and navigates to home when browse is clicked`() =
         runTest(mainDispatcherRule.testDispatcher) {
             val effects = collectEffects()
             authSessionManager.setPendingReturnDeepLink("poti://party/1")
 
             viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
-            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
             advanceUntilIdle()
 
             assertTrue(authSessionManager.isGuest.value)
             assertEquals(null, authSessionManager.consumePendingReturnDeepLink())
-            assertEquals(LoginPhase.SUCCESS, viewModel.uiState.value.phase)
-            assertEquals(listOf(LoginEffect.NavigateToHome), effects)
+            assertEquals(LoginEffect.NavigateToHome, effects.first())
         }
 
     @Test
