@@ -48,7 +48,7 @@ fun MainScreen(
 
     val systemPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { viewModel.syncSystemNotificationPermission() }
+    ) { isGranted -> viewModel.applySystemPermissionDialogResult(isGranted) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.syncSystemNotificationPermission()

@@ -53,6 +53,15 @@ class PermissionManager @Inject constructor(
         return PermissionRequestRoute.SystemDialog
     }
 
+    suspend fun applySystemPermissionDialogResult(isGranted: Boolean) {
+        if (!isGranted) {
+            hasPendingServerEnable = false
+            return
+        }
+
+        syncSystemPermissionToServer()
+    }
+
     suspend fun syncSystemPermissionToServer() {
         if (!isSystemNotificationGranted() || !hasPendingServerEnable) return
 
