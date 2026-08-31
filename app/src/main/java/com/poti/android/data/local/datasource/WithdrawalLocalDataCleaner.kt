@@ -8,6 +8,7 @@ import com.poti.android.di.ApplicationScope
 import com.poti.android.di.IoDispatcher
 import com.poti.android.domain.model.auth.SocialType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -80,7 +81,12 @@ class WithdrawalLocalDataCleaner @Inject constructor(
         errorMessage: String,
         block: suspend () -> Unit,
     ) {
-        runCatching { block() }
-            .onFailure { error -> Timber.e(error, errorMessage) }
+        try {
+            block()
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            Timber.e(error, errorMessage)
+        }
     }
 }
