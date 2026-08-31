@@ -29,6 +29,7 @@ import com.poti.android.core.common.extension.shareTextToX
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
@@ -53,6 +54,7 @@ fun PartyDetailRoute(
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
     onReload: (Long) -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -70,7 +72,20 @@ fun PartyDetailRoute(
             is PartyDetailEffect.ShareToKakao -> KakaoShareManager.sharePartyDetail(context, effect.content)
             is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
             is PartyDetailEffect.CopyLink -> context.copyToClipboard(effect.link)
+            PartyDetailEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.showLoginRequiredDialog) {
+        PotiSmallModal(
+            onDismissRequest = { viewModel.processIntent(PartyDetailIntent.OnLoginRequiredDismiss) },
+            title = stringResource(R.string.login_required_title),
+            text = stringResource(R.string.login_required_join),
+            dismissBtnText = stringResource(R.string.login_required_dismiss),
+            confirmBtnText = stringResource(R.string.login_required_confirm),
+            onDismissBtnClick = { viewModel.processIntent(PartyDetailIntent.OnLoginRequiredDismiss) },
+            onConfirmBtnClick = { viewModel.processIntent(PartyDetailIntent.OnLoginRequiredConfirm) },
+        )
     }
 
     if (uiState.showJoinBottomSheet) {

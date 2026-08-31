@@ -13,6 +13,7 @@ data class ProductCategoryUiState(
     val nextProductCategoryPage: Int = 0,
     val isSortBottomSheetVisible: Boolean = false,
     val selectedSortType: ProductSortType = ProductSortType.HOT,
+    val showLoginRequiredDialog: Boolean = false,
 ) : UiState
 
 sealed interface ProductCategoryUiIntent : UiIntent {
@@ -29,6 +30,10 @@ sealed interface ProductCategoryUiIntent : UiIntent {
     data object OnSortDismiss : ProductCategoryUiIntent
 
     data class OnCardClick(val artistId: Long, val title: String) : ProductCategoryUiIntent
+
+    data object OnLoginRequiredConfirm : ProductCategoryUiIntent
+
+    data object OnLoginRequiredDismiss : ProductCategoryUiIntent
 }
 
 sealed interface ProductCategoryUiEffect : UiEffect {
@@ -37,4 +42,6 @@ sealed interface ProductCategoryUiEffect : UiEffect {
     data object NavigateToPartyCreate : ProductCategoryUiEffect
 
     data class NavigateToProductPartyList(val artistId: Long, val title: String) : ProductCategoryUiEffect
+
+    data object NavigateToLogin : ProductCategoryUiEffect
 }

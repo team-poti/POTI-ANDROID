@@ -11,6 +11,7 @@ import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.auth.navigation.navigateToLogin
 import com.poti.android.presentation.party.create.navigation.PartyCreateRoute
 import com.poti.android.presentation.party.detail.PartyDetailRoute
 import com.poti.android.presentation.party.detail.PartyJoinRoute
@@ -73,6 +74,7 @@ fun NavGraphBuilder.partyDetailNavGraph(
                 onNavigateToJoin = navController::navigateToPartyJoin,
                 onNavigateToProfile = navController::navigateToProfile,
                 onReload = navController::reloadPartyDetail,
+                onNavigateToLogin = navController::navigateToLogin,
                 viewModel = entry.sharedViewModel(navController),
                 modifier = Modifier.padding(paddingValues),
             )

@@ -9,6 +9,7 @@ import com.poti.android.domain.model.home.HomeContent
 data class HomeUiState(
     val homeContentLoadState: ApiState<HomeContent> = ApiState.Loading,
     val artistIdToNull: Boolean = false,
+    val showLoginRequiredDialog: Boolean = false,
 ) : UiState
 
 sealed interface HomeUiIntent : UiIntent {
@@ -25,6 +26,10 @@ sealed interface HomeUiIntent : UiIntent {
     data object LoadHomeContent : HomeUiIntent
 
     data object OnAlarmClick : HomeUiIntent
+
+    data object OnLoginRequiredConfirm : HomeUiIntent
+
+    data object OnLoginRequiredDismiss : HomeUiIntent
 }
 
 sealed interface HomeUiEffect : UiEffect {
@@ -39,4 +44,6 @@ sealed interface HomeUiEffect : UiEffect {
     data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 
     data object NavigateToAlarmList : HomeUiEffect
+
+    data object NavigateToLogin : HomeUiEffect
 }

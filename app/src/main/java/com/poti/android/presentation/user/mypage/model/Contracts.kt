@@ -10,12 +10,15 @@ import com.poti.android.presentation.user.component.HistorySummaryType
 
 data class MyPageUiState(
     val userMyPageLoadState: ApiState<UserMyPage> = ApiState.Loading,
+    val isGuest: Boolean = false,
 ) : UiState
 
 sealed interface MyPageUiIntent : UiIntent {
     data object OnArtistClick : MyPageUiIntent
 
     data object OnResume : MyPageUiIntent
+
+    data object OnLoginClick : MyPageUiIntent
 
     data class OnHistoryClick(
         val mode: HistoryMode,
@@ -32,4 +35,6 @@ sealed interface MyPageUiEffect : UiEffect {
         val mode: HistoryMode,
         val tab: HistorySummaryType,
     ) : MyPageUiEffect
+
+    data object NavigateToLogin : MyPageUiEffect
 }

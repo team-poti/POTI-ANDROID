@@ -1,12 +1,15 @@
 package com.poti.android.presentation.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.auth.SocialLoginResult
+import com.poti.android.core.common.extension.noRippleClickable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.presentation.auth.component.LoginButton
@@ -38,12 +42,19 @@ import kotlin.coroutines.cancellation.CancellationException
 fun LoginRoute(
     onNavigateToOnboarding: () -> Unit,
     onNavigateToHome: () -> Unit,
+    canNavigateBack: Boolean,
+    onNavigateBack: () -> Unit,
     socialLoginLauncher: SocialLoginLauncher,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = canNavigateBack) {
+        viewModel.onLoginCancelled()
+        onNavigateBack()
+    }
 
     LaunchedEffect(viewModel.sideEffect) {
         viewModel.sideEffect.collect { effect ->
@@ -79,6 +90,9 @@ fun LoginRoute(
         onGoogleClick = {
             viewModel.processIntent(LoginIntent.OnSocialLoginClick(SocialType.GOOGLE))
         },
+        onBrowseAsGuestClick = {
+            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
+        },
         modifier = modifier,
     )
 }
@@ -88,10 +102,13 @@ private fun LoginScreen(
     isLoginInProgress: Boolean,
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
+    onBrowseAsGuestClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(PotiTheme.colors.white),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(267.dp))
@@ -131,7 +148,18 @@ private fun LoginScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(162.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = stringResource(R.string.login_browse_as_guest),
+            style = PotiTheme.typography.body14m,
+            color = PotiTheme.colors.gray800,
+            modifier = Modifier
+                .noRippleClickable { if (!isLoginInProgress) onBrowseAsGuestClick() }
+                .padding(10.dp),
+        )
+
+        Spacer(modifier = Modifier.height(102.dp))
     }
 }
 
@@ -143,6 +171,7 @@ private fun LoginScreenPreview() {
             isLoginInProgress = false,
             onKakaoClick = {},
             onGoogleClick = {},
+            onBrowseAsGuestClick = {},
         )
     }
 }

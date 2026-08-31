@@ -2,11 +2,14 @@ package com.poti.android.presentation.auth
 
 import com.poti.android.MainDispatcherRule
 import com.poti.android.core.auth.SocialLoginResult
+import com.poti.android.domain.manager.AuthSessionManager
 import com.poti.android.domain.model.auth.AuthState
 import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
+import com.poti.android.domain.usecase.auth.ClearPendingReturnDeepLinkUseCase
+import com.poti.android.domain.usecase.auth.EnterGuestModeUseCase
 import com.poti.android.domain.usecase.auth.LoginUseCase
 import com.poti.android.presentation.auth.model.LoginEffect
 import com.poti.android.presentation.auth.model.LoginIntent
@@ -30,12 +33,18 @@ class LoginViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private lateinit var authRepository: FakeAuthRepository
+    private lateinit var authSessionManager: AuthSessionManager
     private lateinit var viewModel: LoginViewModel
 
     @Before
     fun setUp() {
         authRepository = FakeAuthRepository()
-        viewModel = LoginViewModel(LoginUseCase(authRepository))
+        authSessionManager = AuthSessionManager()
+        viewModel = LoginViewModel(
+            loginUseCase = LoginUseCase(authRepository),
+            enterGuestModeUseCase = EnterGuestModeUseCase(authSessionManager),
+            clearPendingReturnDeepLinkUseCase = ClearPendingReturnDeepLinkUseCase(authSessionManager),
+        )
     }
 
     @Test
@@ -49,6 +58,20 @@ class LoginViewModelTest {
 
             assertEquals(listOf(LoginEffect.LaunchSocialLogin(SocialType.KAKAO)), effects)
             assertEquals(LoginPhase.SOCIAL_LOGIN, viewModel.uiState.value.phase)
+        }
+
+    @Test
+    fun `enters guest mode and clears pending deep link and navigates to home when browse is clicked`() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val effects = collectEffects()
+            authSessionManager.setPendingReturnDeepLink("poti://party/1")
+
+            viewModel.processIntent(LoginIntent.OnBrowseAsGuestClick)
+            advanceUntilIdle()
+
+            assertTrue(authSessionManager.isGuest.value)
+            assertEquals(null, authSessionManager.consumePendingReturnDeepLink())
+            assertEquals(LoginEffect.NavigateToHome, effects.first())
         }
 
     @Test

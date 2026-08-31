@@ -29,6 +29,7 @@ data class ProductPartyListUiState(
     val isSortFilterBottomSheetVisible: Boolean = false,
     val bottomSheetSelectedMembers: ImmutableList<Member> = persistentListOf(),
     val isMemberBottomSheetToucehd: Boolean = false,
+    val showLoginRequiredDialog: Boolean = false,
 ) : UiState {
     val memberFilterText: String
         @Composable get() = when {
@@ -81,6 +82,10 @@ sealed interface ProductPartyListUiIntent : UiIntent {
     data object OnMemberFilterDone : ProductPartyListUiIntent
 
     data object OnMemberFilterRefresh : ProductPartyListUiIntent
+
+    data object OnLoginRequiredConfirm : ProductPartyListUiIntent
+
+    data object OnLoginRequiredDismiss : ProductPartyListUiIntent
 }
 
 sealed interface ProductPartyListUiEffect : UiEffect {
@@ -89,4 +94,6 @@ sealed interface ProductPartyListUiEffect : UiEffect {
     data class NavigateToPartyCreate(val artistName: String, val productName: String) : ProductPartyListUiEffect
 
     data class NavigateToPartyDetail(val partyId: Long) : ProductPartyListUiEffect
+
+    data object NavigateToLogin : ProductPartyListUiEffect
 }

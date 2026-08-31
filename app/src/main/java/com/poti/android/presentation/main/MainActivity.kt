@@ -24,7 +24,6 @@ import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.share.KakaoShareManager
 import com.poti.android.domain.manager.AuthSessionManager
-import com.poti.android.presentation.party.PartyGraph
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private var navController: NavHostController? = null
+    private var mainNavigator: MainNavigator? = null
     private var pendingDeepLink: Uri? by mutableStateOf(null)
 
     @Inject
@@ -70,11 +69,12 @@ class MainActivity : ComponentActivity() {
             val mainNavigator: MainNavigator = rememberPotiNavigator()
             val targetDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
-            navController = mainNavigator.navController
+            this.mainNavigator = mainNavigator
 
             val onAuthCompleted = {
                 mainNavigator.navigateToHome()
                 consumeDeepLink(mainNavigator.navController)
+                consumePendingReturnDeepLink(mainNavigator.navController)
             }
 
             PotiTheme {
@@ -84,9 +84,7 @@ class MainActivity : ComponentActivity() {
                         navigator = mainNavigator,
                         socialLoginLauncher = socialLoginLauncher,
                         onSplashFinished = {
-                            if (destination == PartyGraph) {
-                                consumeDeepLink(mainNavigator.navController)
-                            }
+                            processPendingDeepLink(mainNavigator)
                         },
                         onLoginSuccess = onAuthCompleted,
                         onOnboardingFinished = onAuthCompleted,
@@ -103,11 +101,13 @@ class MainActivity : ComponentActivity() {
         val uri = intent.resolveDeepLink() ?: return
         intent.data = null
 
-        if (viewModel.startDestination.value == PartyGraph) {
-            navController?.navigateToDeepLink(uri)
-        } else {
+        val navigator = mainNavigator
+        if (navigator == null) {
             pendingDeepLink = uri
+            return
         }
+
+        processDeepLink(uri, navigator)
     }
 
     private fun Intent.resolveDeepLink(): Uri? {
@@ -117,16 +117,53 @@ class MainActivity : ComponentActivity() {
         return uri.getQueryParameter(KakaoShareManager.PARAM_DEEP_LINK)?.toUri()
     }
 
-    private fun consumeDeepLink(navController: NavHostController) {
+    private fun processPendingDeepLink(navigator: MainNavigator) {
         val uri = pendingDeepLink ?: return
-        pendingDeepLink = null
-        navController.navigateToDeepLink(uri)
+        processDeepLink(uri, navigator)
     }
 
-    private fun NavHostController.navigateToDeepLink(uri: Uri) {
+    private fun processDeepLink(
+        uri: Uri,
+        navigator: MainNavigator,
+    ) {
+        when (viewModel.getDeepLinkEntryMode()) {
+            DeepLinkEntryMode.DEFER -> pendingDeepLink = uri
+            DeepLinkEntryMode.MEMBER -> navigateToDeepLink(uri, navigator.navController)
+            DeepLinkEntryMode.GUEST -> {
+                viewModel.enterGuestMode()
+                navigator.navigateToHome()
+                navigateToDeepLink(uri, navigator.navController)
+            }
+        }
+    }
+
+    private fun consumeDeepLink(navController: NavHostController) {
+        val uri = pendingDeepLink ?: return
+        navigateToDeepLink(uri, navController)
+    }
+
+    private fun navigateToDeepLink(
+        uri: Uri,
+        navController: NavHostController,
+    ) {
+        if (navController.navigateToDeepLink(uri)) {
+            if (pendingDeepLink == uri) pendingDeepLink = null
+        } else {
+            pendingDeepLink = uri
+        }
+    }
+
+    private fun consumePendingReturnDeepLink(navController: NavHostController) {
+        val deepLink = authSessionManager.consumePendingReturnDeepLink() ?: return
+        if (!navController.navigateToDeepLink(deepLink.toUri())) {
+            authSessionManager.setPendingReturnDeepLink(deepLink)
+        }
+    }
+
+    private fun NavHostController.navigateToDeepLink(uri: Uri): Boolean =
         runCatching { navigate(uri) }
             .onFailure { Timber.w(it, "Unhandled deep link: $uri") }
-    }
+            .isSuccess
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return

@@ -28,6 +28,7 @@ import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.button.PotiSmallButton
+import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.data.mock.UiMockData
@@ -44,6 +45,7 @@ fun ProductCategoryRoute(
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
     onNavigateToProductPartyList: (Long, String) -> Unit,
+    onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductCategoryViewModel = hiltViewModel(),
 ) {
@@ -54,13 +56,31 @@ fun ProductCategoryRoute(
             ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
             is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
             is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(effect.artistId, effect.title)
+            ProductCategoryUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
+    }
+
+    if (uiState.showLoginRequiredDialog) {
+        PotiSmallModal(
+            onDismissRequest = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredDismiss) },
+            title = stringResource(R.string.login_required_title),
+            text = stringResource(R.string.login_required_create),
+            dismissBtnText = stringResource(R.string.login_required_dismiss),
+            confirmBtnText = stringResource(R.string.login_required_confirm),
+            onDismissBtnClick = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredDismiss) },
+            onConfirmBtnClick = { viewModel.processIntent(ProductCategoryUiIntent.OnLoginRequiredConfirm) },
+        )
     }
 
     uiState.productCategoryLoadState.onSuccess { goodsCategory ->
         ProductCategoryScreen(
-            title = if (viewModel.isMyArtist) stringResource(R.string.home_recommend_goods, goodsCategory.nickname) else stringResource(R.string.home_other_goods),
-            isMyArtsit = viewModel.isMyArtist,
+            title = when {
+                !viewModel.isMyArtist -> stringResource(R.string.home_other_goods)
+                // TODO: [천민재] home 화면과 동일한 임시 문자열
+                goodsCategory.nickname.isBlank() -> stringResource(R.string.home_recommend_goods_guest)
+                else -> stringResource(R.string.home_recommend_goods, goodsCategory.nickname)
+            },
+            isMyArtist = viewModel.isMyArtist,
             productCategory = goodsCategory,
             selectedSortType = uiState.selectedSortType,
             isSortBottomSheetVisible = uiState.isSortBottomSheetVisible,
@@ -81,7 +101,7 @@ fun ProductCategoryRoute(
 @Composable
 private fun ProductCategoryScreen(
     title: String,
-    isMyArtsit: Boolean,
+    isMyArtist: Boolean,
     productCategory: ProductCategory,
     selectedSortType: ProductSortType,
     isSortBottomSheetVisible: Boolean,
@@ -142,7 +162,7 @@ private fun ProductCategoryScreen(
                 ),
             ) {
                 item {
-                    if (isMyArtsit) {
+                    if (isMyArtist) {
                         PotiSmallButton(
                             text = stringResource(selectedSortType.displayRes),
                             onClick = onSortFilterClick,
@@ -190,7 +210,7 @@ private fun ProductCategoryScreenPreview() {
     PotiTheme {
         ProductCategoryScreen(
             title = "",
-            isMyArtsit = false,
+            isMyArtist = false,
             productCategory = UiMockData.productCategory,
             selectedSortType = ProductSortType.LATEST,
             isSortBottomSheetVisible = false,

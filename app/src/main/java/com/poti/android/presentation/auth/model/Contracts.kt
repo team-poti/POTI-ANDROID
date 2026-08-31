@@ -19,6 +19,8 @@ sealed interface LoginIntent : UiIntent {
     ) : LoginIntent
 
     data object OnSocialLoginAborted : LoginIntent
+
+    data object OnBrowseAsGuestClick : LoginIntent
 }
 
 sealed interface LoginEffect : UiEffect {

@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.auth.navigation.navigateToLogin
 import com.poti.android.presentation.party.create.navigation.navigateToPartyCreate
 import com.poti.android.presentation.party.detail.navigation.navigateToPartyDetail
 import com.poti.android.presentation.party.product.partylist.ProductPartyListRoute
@@ -54,6 +55,7 @@ fun NavGraphBuilder.productNavGraph(
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
             onNavigateToProductPartyList = navController::navigateToProductPartyList,
+            onNavigateToLogin = navController::navigateToLogin,
             modifier = Modifier.padding(paddingValues),
         )
     }
@@ -65,6 +67,7 @@ fun NavGraphBuilder.productNavGraph(
             onPopBackStack = onPopBackStack,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
+            onNavigateToLogin = navController::navigateToLogin,
             modifier = Modifier.padding(paddingValues),
         )
     }

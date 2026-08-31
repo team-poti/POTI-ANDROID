@@ -135,6 +135,21 @@ class TokenAuthenticatorTest {
     }
 
     @Test
+    fun `keeps guest session without reissue or logout when no token is stored`() {
+        `when`(authTokenStore.cachedTokenPair).thenReturn(null)
+
+        val retriedRequest = tokenAuthenticator.authenticate(
+            route = null,
+            response = unauthorizedResponse(withAuthorizationHeader = false),
+        )
+
+        assertNull(retriedRequest)
+        verifyNoInteractions(authRemoteDataSource)
+        verify(authTokenStore, never()).clearCachedTokens()
+        verify(authSessionManager, never()).triggerLogout()
+    }
+
+    @Test
     fun `does not reissue when response already has an authentication retry`() {
         val retriedRequest = tokenAuthenticator.authenticate(
             route = null,
@@ -234,11 +249,16 @@ class TokenAuthenticatorTest {
     private fun unauthorizedResponse(
         requestUrl: String = PARTY_URL,
         previousResponse: Response? = null,
+        withAuthorizationHeader: Boolean = true,
     ): Response = Response.Builder()
         .request(
             Request.Builder()
                 .url(requestUrl)
-                .header(AUTHORIZATION_HEADER, "Bearer $OLD_ACCESS_TOKEN")
+                .apply {
+                    if (withAuthorizationHeader) {
+                        header(AUTHORIZATION_HEADER, "Bearer $OLD_ACCESS_TOKEN")
+                    }
+                }
                 .build(),
         )
         .protocol(Protocol.HTTP_1_1)

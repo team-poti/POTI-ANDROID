@@ -52,6 +52,7 @@ class AuthRepositoryImpl @Inject constructor(
                     authTokenStore.saveTokens(it.accessToken, it.refreshToken)
                     preferenceDataSource.saveSocialType(socialType)
                     preferenceDataSource.saveOnboardingState(!it.isNewUser)
+                    authSessionManager.exitGuest()
                 }
             },
             real = {
@@ -67,6 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
                             authTokenStore.saveTokens(accessToken, refreshToken)
                             preferenceDataSource.saveSocialType(socialType)
                             preferenceDataSource.saveOnboardingState(!isNewUser)
+                            authSessionManager.exitGuest()
                         }
                         .toDomain()
                 }.onSuccess { syncFcmToken() }
@@ -90,6 +92,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         deleteFcmToken()
         authTokenStore.clearAll()
+        authSessionManager.exitGuest()
         authSessionManager.triggerLogout()
     }
 
@@ -108,6 +111,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun withdrawal(reason: String): Result<Unit> = executeWithUiMock(
         mock = {
             authTokenStore.clearAll()
+            authSessionManager.exitGuest()
             authSessionManager.triggerLogout()
         },
         real = { withdrawalFromRemote(reason = reason) },
@@ -138,6 +142,7 @@ class AuthRepositoryImpl @Inject constructor(
             authTokenStore.clearAll()
             withdrawalLocalDataCleaner.clearCachesInBackground()
         } finally {
+            authSessionManager.exitGuest()
             authSessionManager.triggerLogout()
         }
     }

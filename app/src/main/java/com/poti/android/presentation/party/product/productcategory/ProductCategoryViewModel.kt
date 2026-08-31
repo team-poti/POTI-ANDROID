@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.usecase.auth.IsGuestUseCase
 import com.poti.android.domain.usecase.home.GetGoodsCategoryListUseCase
 import com.poti.android.presentation.party.product.navigation.ProductRoute.ProductCategory
 import com.poti.android.presentation.party.product.productcategory.model.ProductCategoryUiEffect
@@ -18,6 +19,7 @@ private const val PRODUCT_CATEGORY_PAGE_SIZE = 10
 @HiltViewModel
 class ProductCategoryViewModel @Inject constructor(
     private val getGoodsCategoryListUseCase: GetGoodsCategoryListUseCase,
+    private val isGuestUseCase: IsGuestUseCase,
     savedStateHandle: SavedStateHandle,
 ) :
     BaseViewModel<ProductCategoryUiState, ProductCategoryUiIntent, ProductCategoryUiEffect>(
@@ -30,7 +32,7 @@ class ProductCategoryViewModel @Inject constructor(
         override fun processIntent(intent: ProductCategoryUiIntent) {
             when (intent) {
                 ProductCategoryUiIntent.OnBackClick -> sendEffect(ProductCategoryUiEffect.NavigateBack)
-                ProductCategoryUiIntent.OnFloatingClick -> sendEffect(ProductCategoryUiEffect.NavigateToPartyCreate)
+                ProductCategoryUiIntent.OnFloatingClick -> handleFloatingClick()
                 ProductCategoryUiIntent.OnSortFilterClick -> updateState { copy(isSortBottomSheetVisible = true) }
                 is ProductCategoryUiIntent.OnSortSelected -> {
                     updateState {
@@ -45,7 +47,22 @@ class ProductCategoryViewModel @Inject constructor(
                 ProductCategoryUiIntent.OnLoadNextPage -> loadGoodsCategoryList(reset = false)
                 ProductCategoryUiIntent.OnSortDismiss -> updateState { copy(isSortBottomSheetVisible = false) }
                 is ProductCategoryUiIntent.OnCardClick -> sendEffect(ProductCategoryUiEffect.NavigateToProductPartyList(intent.artistId, intent.title))
+                ProductCategoryUiIntent.OnLoginRequiredConfirm -> handleLoginRequiredConfirm()
+                ProductCategoryUiIntent.OnLoginRequiredDismiss -> updateState { copy(showLoginRequiredDialog = false) }
             }
+        }
+
+        private fun handleFloatingClick() {
+            if (isGuestUseCase()) {
+                updateState { copy(showLoginRequiredDialog = true) }
+            } else {
+                sendEffect(ProductCategoryUiEffect.NavigateToPartyCreate)
+            }
+        }
+
+        private fun handleLoginRequiredConfirm() {
+            updateState { copy(showLoginRequiredDialog = false) }
+            sendEffect(ProductCategoryUiEffect.NavigateToLogin)
         }
 
         init {

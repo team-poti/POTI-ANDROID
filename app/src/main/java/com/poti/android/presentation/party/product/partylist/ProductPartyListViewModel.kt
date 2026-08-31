@@ -6,6 +6,7 @@ import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
+import com.poti.android.domain.usecase.auth.IsGuestUseCase
 import com.poti.android.domain.usecase.party.GetProductPartyListUseCase
 import com.poti.android.presentation.party.product.navigation.ProductRoute
 import com.poti.android.presentation.party.product.partylist.model.ProductPartyListUiEffect
@@ -22,6 +23,7 @@ private const val PARTY_PAGE_SIZE = 10
 class ProductPartyListViewModel @Inject constructor(
     private val getMembersUseCase: GetMembersUseCase,
     private val getProductPartyListUseCase: GetProductPartyListUseCase,
+    private val isGuestUseCase: IsGuestUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
         initialState = ProductPartyListUiState(),
@@ -39,12 +41,7 @@ class ProductPartyListViewModel @Inject constructor(
             ProductPartyListUiIntent.LoadProductPartyList -> loadPartyList()
             ProductPartyListUiIntent.LoadNextProductPartyList -> loadPartyList(reset = false)
             ProductPartyListUiIntent.OnBackClick -> sendEffect(ProductPartyListUiEffect.NavigateBack)
-            ProductPartyListUiIntent.OnFloatingClick -> sendEffect(
-                ProductPartyListUiEffect.NavigateToPartyCreate(
-                    artistName = uiState.value.cachedSubTitle,
-                    productName = title,
-                ),
-            )
+            ProductPartyListUiIntent.OnFloatingClick -> handleFloatingClick()
 
             is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
             ProductPartyListUiIntent.OnMemberFilterClick -> {
@@ -78,7 +75,28 @@ class ProductPartyListViewModel @Inject constructor(
                     clearSelectedMembers()
                 }
             }
+
+            ProductPartyListUiIntent.OnLoginRequiredConfirm -> handleLoginRequiredConfirm()
+            ProductPartyListUiIntent.OnLoginRequiredDismiss -> updateState { copy(showLoginRequiredDialog = false) }
         }
+    }
+
+    private fun handleFloatingClick() {
+        if (isGuestUseCase()) {
+            updateState { copy(showLoginRequiredDialog = true) }
+        } else {
+            sendEffect(
+                ProductPartyListUiEffect.NavigateToPartyCreate(
+                    artistName = uiState.value.cachedSubTitle,
+                    productName = title,
+                ),
+            )
+        }
+    }
+
+    private fun handleLoginRequiredConfirm() {
+        updateState { copy(showLoginRequiredDialog = false) }
+        sendEffect(ProductPartyListUiEffect.NavigateToLogin)
     }
 
     private fun loadPartyList(reset: Boolean = true) = launchScope {

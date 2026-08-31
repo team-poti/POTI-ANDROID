@@ -9,7 +9,7 @@ import com.poti.android.domain.model.home.GroupItem
 import com.poti.android.domain.model.home.HomeContent
 
 fun HomeResponseDto.toDomain(): HomeContent = HomeContent(
-    nickname = nickname,
+    nickname = nickname.orEmpty(),
     mainArtist = mainArtist,
     mainArtistId = mainArtistId,
     myGroupItems = myGroupItems.orEmpty().map { it.toDomain() },
