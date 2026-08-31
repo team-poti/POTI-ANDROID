@@ -1,6 +1,7 @@
 package com.poti.android.presentation.main
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import com.poti.android.core.navigation.Route
 import com.poti.android.core.permission.PermissionRequestRoute
 import com.poti.android.presentation.auth.navigation.navigateToLogin
 
+@SuppressLint("InlinedApi")
 @Composable
 fun MainScreen(
     targetDestination: Route,
