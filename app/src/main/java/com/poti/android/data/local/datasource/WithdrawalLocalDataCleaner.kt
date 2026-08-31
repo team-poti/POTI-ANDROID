@@ -3,7 +3,6 @@ package com.poti.android.data.local.datasource
 import android.content.Context
 import coil.annotation.ExperimentalCoilApi
 import coil.imageLoader
-import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.data.auth.KakaoAccountManager
 import com.poti.android.di.ApplicationScope
 import com.poti.android.di.IoDispatcher
@@ -11,6 +10,8 @@ import com.poti.android.domain.model.auth.SocialType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -21,29 +22,44 @@ class WithdrawalLocalDataCleaner @Inject constructor(
     @param:ApplicationScope private val applicationScope: CoroutineScope,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val kakaoAccountManager: KakaoAccountManager,
-    private val fcmTokenProvider: FcmTokenProvider,
 ) {
-    fun clearInBackground(socialType: SocialType?) {
-        applicationScope.launch {
-            clear(socialType = socialType)
+    private val cacheCleanupJobLock = Any()
+    private var cacheCleanupJob: Job? = null
+
+    suspend fun unlinkKakaoAccount(socialType: SocialType?) {
+        if (socialType != SocialType.KAKAO) return
+
+        clearSafely("Failed to unlink Kakao account") {
+            kakaoAccountManager.unlink()
         }
     }
 
-    private suspend fun clear(socialType: SocialType?) {
-        if (socialType == SocialType.KAKAO) {
-            clearSafely("Failed to unlink Kakao account") {
-                kakaoAccountManager.unlink()
+    fun clearCachesInBackground() {
+        val newJob = synchronized(cacheCleanupJobLock) {
+            val previousJob = cacheCleanupJob
+            applicationScope.launch(start = CoroutineStart.LAZY) {
+                previousJob?.join()
+                clearSafely("Failed to clear Coil caches") {
+                    clearCoilCaches()
+                }
+                clearSafely("Failed to clear app cache files") {
+                    clearAppCacheFiles()
+                }
+            }.also { job ->
+                cacheCleanupJob = job
             }
         }
-        clearSafely("Failed to delete local FCM token") {
-            fcmTokenProvider.deleteToken()
+
+        newJob.invokeOnCompletion {
+            synchronized(cacheCleanupJobLock) {
+                if (cacheCleanupJob === newJob) cacheCleanupJob = null
+            }
         }
-        clearSafely("Failed to clear Coil caches") {
-            clearCoilCaches()
-        }
-        clearSafely("Failed to clear app cache files") {
-            clearAppCacheFiles()
-        }
+        newJob.start()
+    }
+
+    suspend fun awaitCacheCleanup() {
+        synchronized(cacheCleanupJobLock) { cacheCleanupJob }?.join()
     }
 
     @OptIn(ExperimentalCoilApi::class)

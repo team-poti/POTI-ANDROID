@@ -6,7 +6,6 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @Singleton
 class FcmTokenProvider @Inject constructor() {
@@ -20,17 +19,4 @@ class FcmTokenProvider @Inject constructor() {
                     continuation.resume(null)
                 }
         }
-
-    @Suppress("DEPRECATION")
-    suspend fun deleteToken() {
-        suspendCancellableCoroutine { continuation ->
-            FirebaseMessaging.getInstance().deleteToken()
-                .addOnSuccessListener {
-                    if (continuation.isActive) continuation.resume(Unit)
-                }
-                .addOnFailureListener { error ->
-                    if (continuation.isActive) continuation.resumeWithException(error)
-                }
-        }
-    }
 }

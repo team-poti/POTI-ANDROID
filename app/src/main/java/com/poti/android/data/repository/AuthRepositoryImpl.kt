@@ -41,32 +41,36 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(
         socialType: SocialType,
         token: String,
-    ): Result<UserAuth> = executeWithUiMock(
-        mock = {
-            UiMockData.userAuth.also {
-                authTokenStore.saveTokens(it.accessToken, it.refreshToken)
-                preferenceDataSource.saveSocialType(socialType)
-                preferenceDataSource.saveOnboardingState(!it.isNewUser)
-            }
-        },
-        real = {
-            httpResponseHandler.safeApiCall {
-                val requestDto = LoginRequestDto(
-                    socialType = socialType.name,
-                    token = token,
-                )
-                authRemoteDataSource.login(loginRequest = requestDto)
-                    .handleApiResponse()
-                    .getOrThrow()
-                    .apply {
-                        authTokenStore.saveTokens(accessToken, refreshToken)
-                        preferenceDataSource.saveSocialType(socialType)
-                        preferenceDataSource.saveOnboardingState(!isNewUser)
-                    }
-                    .toDomain()
-            }.onSuccess { syncFcmToken() }
-        },
-    )
+    ): Result<UserAuth> {
+        withdrawalLocalDataCleaner.awaitCacheCleanup()
+
+        return executeWithUiMock(
+            mock = {
+                UiMockData.userAuth.also {
+                    authTokenStore.saveTokens(it.accessToken, it.refreshToken)
+                    preferenceDataSource.saveSocialType(socialType)
+                    preferenceDataSource.saveOnboardingState(!it.isNewUser)
+                }
+            },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    val requestDto = LoginRequestDto(
+                        socialType = socialType.name,
+                        token = token,
+                    )
+                    authRemoteDataSource.login(loginRequest = requestDto)
+                        .handleApiResponse()
+                        .getOrThrow()
+                        .apply {
+                            authTokenStore.saveTokens(accessToken, refreshToken)
+                            preferenceDataSource.saveSocialType(socialType)
+                            preferenceDataSource.saveOnboardingState(!isNewUser)
+                        }
+                        .toDomain()
+                }.onSuccess { syncFcmToken() }
+            },
+        )
+    }
 
     override suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit> = executeWithUiMock(
         mock = {
@@ -112,8 +116,9 @@ class AuthRepositoryImpl @Inject constructor(
                     .handleNullableApiResponse()
                     .getOrThrow()
                 val socialType = preferenceDataSource.getSocialType()
+                withdrawalLocalDataCleaner.unlinkKakaoAccount(socialType = socialType)
                 authTokenStore.clearAll()
-                withdrawalLocalDataCleaner.clearInBackground(socialType = socialType)
+                withdrawalLocalDataCleaner.clearCachesInBackground()
                 authSessionManager.triggerLogout()
             }
         },
