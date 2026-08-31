@@ -5,9 +5,9 @@ import com.poti.android.core.auth.SocialLoginResult
 import com.poti.android.domain.model.auth.SocialType
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class DefaultSocialLoginLauncherTest {
     private val context: Context = mock(Context::class.java)
@@ -15,7 +15,11 @@ class DefaultSocialLoginLauncherTest {
     @Test
     fun `delegates to Kakao provider when social type is Kakao`() = runBlocking {
         val client = TrackingKakaoAuthClient(accessToken = KAKAO_ACCESS_TOKEN)
-        val launcher = DefaultSocialLoginLauncher(KakaoLoginProvider(client))
+        val googleLoginProvider = mock(GoogleLoginProvider::class.java)
+        val launcher = DefaultSocialLoginLauncher(
+            KakaoLoginProvider(client),
+            googleLoginProvider,
+        )
 
         val result = launcher.login(context, SocialType.KAKAO)
 
@@ -25,14 +29,19 @@ class DefaultSocialLoginLauncherTest {
     }
 
     @Test
-    fun `does not delegate to Kakao provider when social type is Google`() = runBlocking {
+    fun `delegates to Google provider when social type is Google`() = runBlocking {
         val client = TrackingKakaoAuthClient(accessToken = KAKAO_ACCESS_TOKEN)
-        val launcher = DefaultSocialLoginLauncher(KakaoLoginProvider(client))
+        val googleLoginProvider = mock(GoogleLoginProvider::class.java)
+        val googleResult = SocialLoginResult.Success(GOOGLE_ID_TOKEN)
+        `when`(googleLoginProvider.login(context)).thenReturn(googleResult)
+        val launcher = DefaultSocialLoginLauncher(
+            KakaoLoginProvider(client),
+            googleLoginProvider,
+        )
 
         val result = launcher.login(context, SocialType.GOOGLE)
 
-        require(result is SocialLoginResult.Failure)
-        assertTrue(result.cause is UnsupportedOperationException)
+        assertEquals(googleResult, result)
         assertEquals(0, client.isKakaoTalkLoginAvailableCallCount)
         assertEquals(0, client.kakaoTalkLoginCallCount)
         assertEquals(0, client.kakaoAccountLoginCallCount)
@@ -74,5 +83,6 @@ class DefaultSocialLoginLauncherTest {
 
     private companion object {
         const val KAKAO_ACCESS_TOKEN = "kakao-access-token"
+        const val GOOGLE_ID_TOKEN = "google-id-token"
     }
 }

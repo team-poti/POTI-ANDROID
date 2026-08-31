@@ -4,13 +4,11 @@ enum class LoginPhase {
     IDLE,
     SOCIAL_LOGIN,
     SERVER_LOGIN,
-    SUCCESS,
-    FAILURE,
     ;
 
     val isInProgress: Boolean
-        get() = this == SOCIAL_LOGIN || this == SERVER_LOGIN
+        get() = this != IDLE
 
     val canStartLogin: Boolean
-        get() = this == IDLE || this == FAILURE
+        get() = this == IDLE
 }
