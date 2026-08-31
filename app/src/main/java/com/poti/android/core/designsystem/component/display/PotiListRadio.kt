@@ -63,6 +63,7 @@ fun PotiListRadioItem(
                 indication = null,
                 onClick = onClick,
             )
+            .heightIn(48.dp)
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
