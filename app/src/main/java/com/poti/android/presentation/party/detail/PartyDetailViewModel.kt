@@ -9,6 +9,7 @@ import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
 import com.poti.android.core.share.PartyShareContent
+import com.poti.android.di.ApplicationScope
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.delivery.DeliveryOption
@@ -31,9 +32,9 @@ import com.poti.android.presentation.party.detail.navigation.PartyDetailGraph
 import com.poti.android.presentation.party.detail.navigation.partyDetailDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -45,6 +46,7 @@ class PartyDetailViewModel @Inject constructor(
     private val joinPartyUseCase: JoinPartyUseCase,
     private val getMyAddressUseCase: GetMyAddressUseCase,
     private val saveMyAddressUseCase: SaveMyAddressUseCase,
+    @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
@@ -338,34 +340,26 @@ class PartyDetailViewModel @Inject constructor(
                 joinItems = joinItems,
             )
 
-            coroutineScope {
-                val joinDeferred = async {
-                    joinPartyUseCase(joinInfo = joinInfo)
-                }
-                val saveAddressDeferred =
+            joinPartyUseCase(joinInfo = joinInfo)
+                .onSuccess {
+                    updateState { copy(isJoinSuccessDialogVisible = true) }
+
                     if (currentState.isRegisterMyAddressChecked) {
-                        async {
-                            saveMyAddressUseCase(deliveryInfo = deliveryInfo)
-                        }
-                    } else {
-                        null
+                        registerMyAddress(deliveryInfo)
                     }
+                }
+                .onFailure { error ->
+                    Timber.e(error, "postPartyJoin 실패")
+                }
+        }
+    }
 
-                val joinResult = joinDeferred.await()
-                val saveAddressResult = saveAddressDeferred?.await()
-
-                saveAddressResult?.onFailure { error ->
+    private fun registerMyAddress(deliveryInfo: DeliveryInfo) {
+        applicationScope.launch {
+            saveMyAddressUseCase(deliveryInfo = deliveryInfo)
+                .onFailure { error ->
                     Timber.e(error, "내 배송지 저장 실패")
                 }
-
-                joinResult
-                    .onSuccess {
-                        updateState { copy(isJoinSuccessDialogVisible = true) }
-                    }
-                    .onFailure { error ->
-                        Timber.e(error, "postPartyJoin 실패")
-                    }
-            }
         }
     }
 
