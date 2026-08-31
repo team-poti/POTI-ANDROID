@@ -21,9 +21,10 @@ class FcmTokenProvider @Inject constructor() {
                 }
         }
 
+    @Suppress("DEPRECATION")
     suspend fun deleteToken() {
         suspendCancellableCoroutine { continuation ->
-            FirebaseMessaging.getInstance().unregister()
+            FirebaseMessaging.getInstance().deleteToken()
                 .addOnSuccessListener {
                     if (continuation.isActive) continuation.resume(Unit)
                 }
