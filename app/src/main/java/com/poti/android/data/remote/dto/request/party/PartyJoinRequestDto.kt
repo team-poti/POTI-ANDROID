@@ -21,8 +21,10 @@ data class DeliveryInfoDto(
     val receiverName: String,
     @SerialName("zipcode")
     val zipcode: String,
-    @SerialName("addressLine")
-    val addressLine: String,
+    @SerialName("address")
+    val address: String,
+    @SerialName("addressDetail")
+    val addressDetail: String,
     @SerialName("phone")
     val phone: String,
 )

@@ -1,5 +1,6 @@
 package com.poti.android.domain.repository
 
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
 import com.poti.android.domain.model.user.UserProfile
@@ -25,6 +26,12 @@ interface UserRepository {
     ): Result<UserProfile>
 
     suspend fun getUserAccount(): Result<UserAccount>
+
+    suspend fun getMyAddress(): Result<DeliveryInfo?>
+
+    suspend fun saveMyAddress(
+        deliveryInfo: DeliveryInfo,
+    ): Result<Unit>
 
     suspend fun patchProfile(
         nickname: String,

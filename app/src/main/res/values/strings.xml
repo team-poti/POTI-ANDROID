@@ -109,6 +109,7 @@
     <string name="party_join_total_price">총 입금 예정 금액</string>
     <string name="party_join_button">참여하기</string>
     <string name="party_join_order_info">주문자 정보</string>
+    <string name="party_join_register_my_address">내 배송지로 등록</string>
     <string name="party_join_confirm_modal_title">참여가 완료되었어요</string>
     <string name="party_join_confirm_modal_text">모집이 끝나면 입금이 시작돼요</string>
     <string name="party_join_notice_modal_title">참여자 안내 사항</string>

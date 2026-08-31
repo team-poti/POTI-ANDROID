@@ -6,6 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
@@ -31,6 +34,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.designsystem.component.button.PotiCheckBoxButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiItemOptionType
@@ -134,6 +138,7 @@ fun PartyJoinRoute(
         onAddressSearchClick = { addressSearchLauncher.launch(Intent(context, AddressSearchActivity::class.java)) },
         onDetailAddressChange = { viewModel.processIntent(PartyDetailIntent.OnDetailAddressChange(it)) },
         onContactChange = { viewModel.processIntent(PartyDetailIntent.OnContactChange(it)) },
+        onRegisterMyAddressChange = { viewModel.processIntent(PartyDetailIntent.OnRegisterMyAddressChange(it)) },
         onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
         onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnFinalJoinClick) },
         modifier = modifier,
@@ -147,6 +152,7 @@ private fun PartyJoinScreen(
     onAddressSearchClick: () -> Unit,
     onDetailAddressChange: (String) -> Unit,
     onContactChange: (String) -> Unit,
+    onRegisterMyAddressChange: (Boolean) -> Unit,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -213,12 +219,26 @@ private fun PartyJoinScreen(
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
             ) {
-                Text(
-                    text = stringResource(R.string.party_join_order_info),
-                    style = PotiTheme.typography.title18sb,
-                    color = PotiTheme.colors.black,
-                    modifier = Modifier.padding(bottom = 24.dp),
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.party_join_order_info),
+                        style = PotiTheme.typography.title18sb,
+                        color = PotiTheme.colors.black,
+                    )
+
+                    PotiCheckBoxButton(
+                        text = stringResource(R.string.party_join_register_my_address),
+                        selected = uiState.isRegisterMyAddressChecked,
+                        onCheckedChange = onRegisterMyAddressChange,
+                        enabled = uiState.isRegisterMyAddressEnable,
+                    )
+                }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(28.dp),
                 ) {
@@ -287,6 +307,7 @@ private fun PartyJoinScreenPreview() {
             onAddressSearchClick = {},
             onDetailAddressChange = {},
             onContactChange = {},
+            onRegisterMyAddressChange = {},
         )
     }
 }
