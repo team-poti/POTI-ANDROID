@@ -1,5 +1,8 @@
 package com.poti.android.presentation.alarm.setting
 
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.common.extension.toast
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiMenuToggle
 import com.poti.android.core.designsystem.component.modal.PotiLargeModal
@@ -27,6 +35,7 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiEffect
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiIntent
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiState
+import timber.log.Timber
 
 @Composable
 fun AlarmSettingRoute(
@@ -35,10 +44,25 @@ fun AlarmSettingRoute(
     viewModel: AlarmSettingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val isSystemNotificationEnabled = {
+        NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.processIntent(
+            AlarmSettingUiIntent.OnResume(
+                isSystemNotificationEnabled = isSystemNotificationEnabled(),
+            ),
+        )
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             AlarmSettingUiEffect.NavigateBack -> onPopBackStack()
+            AlarmSettingUiEffect.OpenSystemNotificationSetting ->
+                context.openSystemNotificationSetting()
+            is AlarmSettingUiEffect.ShowToast -> context.toast(context.getString(effect.messageRes))
         }
     }
 
@@ -70,13 +94,31 @@ fun AlarmSettingRoute(
         uiState = uiState,
         onBackClick = { viewModel.processIntent(AlarmSettingUiIntent.OnBackClick) },
         onTradeToggle = { enabled ->
-            viewModel.processIntent(AlarmSettingUiIntent.OnTradeToggle(enabled))
+            viewModel.processIntent(
+                AlarmSettingUiIntent.OnTradeToggle(
+                    enabled = enabled,
+                    isSystemNotificationEnabled = isSystemNotificationEnabled(),
+                ),
+            )
         },
         onEventToggle = { enabled ->
-            viewModel.processIntent(AlarmSettingUiIntent.OnEventToggle(enabled))
+            viewModel.processIntent(
+                AlarmSettingUiIntent.OnEventToggle(
+                    enabled = enabled,
+                    isSystemNotificationEnabled = isSystemNotificationEnabled(),
+                ),
+            )
         },
         modifier = modifier,
     )
+}
+
+private fun Context.openSystemNotificationSetting() {
+    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+        .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+
+    runCatching { startActivity(intent) }
+        .onFailure { Timber.w(it, "Unable to open system notification setting") }
 }
 
 @Composable

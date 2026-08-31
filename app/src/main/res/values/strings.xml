@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">poti</string>
+    <string name="clipboard_default_label">포티</string>
 
     <!-- NavBottomBar -->
     <string name="bottom_nav_home">홈</string>
@@ -93,6 +94,12 @@
     <string name="party_detail_upload_date_label">"%s 등록"</string>
     <string name="party_detail_share_button">이 분철팟 공유하기</string>
     <string name="party_detail_share_chooser_title">분철팟 공유하기</string>
+
+    <!-- PartyShare -->
+    <string name="party_share_link_copy">링크 복사</string>
+    <string name="party_share_kakao_talk">카카오톡</string>
+    <string name="party_share_x">X</string>
+    <string name="party_share_system">공유하기</string>
 
     <!-- PartyJoin -->
     <string name="party_join_option_member_label">멤버</string>
@@ -292,6 +299,9 @@
     <!-- Alarm -->
     <string name="alarm_title">알림</string>
     <string name="alarm_empty">새로운 알림이 없어요\n알림이 도착하면 알려드릴게요</string>
+    <string name="alarm_load_failed">알림을 불러오지 못했어요</string>
+    <string name="alarm_read_all">전체 읽음</string>
+    <string name="alarm_read_all_failed">알림 전체 읽기에 실패했어요</string>
 
     <string name="alarm_setting_title">알림 설정</string>
     <string name="alarm_setting_trade_title">거래 알림</string>
@@ -302,6 +312,8 @@
     <string name="alarm_setting_permission_modal_text">분철 진행 상황을 실시간으로 확인할 수 있도록 알림을 보내드려요.</string>
     <string name="alarm_setting_permission_modal_button">푸시 알림 허용</string>
     <string name="alarm_setting_permission_modal_sub_button">나중에</string>
+    <string name="alarm_setting_load_failed">알림 설정을 불러오지 못했어요</string>
+    <string name="alarm_setting_update_failed">알림 설정 변경에 실패했어요</string>
 
     <!-- Relative Time -->
     <string name="time_just_now">방금 전</string>

@@ -16,10 +16,15 @@ val properties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
-fun requiredLocalProperty(key: String): String =
-    requireNotNull(properties[key] as? String) {
-        "$key is required in local.properties"
+fun requiredLocalProperty(key: String): String {
+    val value = properties[key] as? String
+
+    require(!value.isNullOrBlank()) {
+        "$key must not be blank in local.properties"
     }
+
+    return value
+}
 
 fun buildConfigString(value: String): String = "\"$value\""
 
@@ -79,6 +84,11 @@ android {
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://dev-app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BODY"))
             manifestPlaceholders["deepLinkHost"] = "dev-app.poti.kr"
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                buildConfigString(requiredLocalProperty("google.dev.web.client.id")),
+            )
         }
         create("prod") {
             dimension = "server"
@@ -86,6 +96,11 @@ android {
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BASIC"))
             manifestPlaceholders["deepLinkHost"] = "app.poti.kr"
+            buildConfigField(
+                "String",
+                "GOOGLE_WEB_CLIENT_ID",
+                buildConfigString(requiredLocalProperty("google.prod.web.client.id")),
+            )
         }
     }
     compileOptions {
@@ -114,6 +129,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
 
     // --- UI (Jetpack Compose) ---
     implementation(platform(libs.androidx.compose.bom))
@@ -164,8 +181,9 @@ dependencies {
     "mockImplementation"(libs.androidx.ui.tooling)
     "mockImplementation"(libs.androidx.ui.test.manifest)
 
-    // Kakao
+    // Social
     implementation(libs.kakao.user)
+    implementation(libs.googleid)
     implementation(libs.kakao.share)
 
     // Firebase

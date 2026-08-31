@@ -1,5 +1,6 @@
 package com.poti.android.presentation.alarm.list.model
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
@@ -11,7 +12,14 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 data class AlarmListUiState(
     val alarmsLoadState: ApiState<ImmutableList<Notification>> = ApiState.Init,
-) : UiState
+    val readAllState: ApiState<Unit> = ApiState.Init,
+) : UiState {
+    val alarmReadAllEnabled = if (alarmsLoadState is ApiState.Success) {
+        readAllState !is ApiState.Loading && alarmsLoadState.data.any { alarm -> !alarm.isRead }
+    } else {
+        false
+    }
+}
 
 sealed interface AlarmListUiIntent : UiIntent {
     data object OnBackClick : AlarmListUiIntent
@@ -19,10 +27,20 @@ sealed interface AlarmListUiIntent : UiIntent {
     data object OnSettingClick : AlarmListUiIntent
 
     data class OnAlarmClick(val alarm: Notification) : AlarmListUiIntent
+
+    data object OnAlarmReadAllClick : AlarmListUiIntent
 }
 
 sealed interface AlarmListUiEffect : UiEffect {
     data object NavigateBack : AlarmListUiEffect
 
     data object NavigateToSetting : AlarmListUiEffect
+
+    data class OpenDeepLink(
+        val deepLink: String,
+    ) : AlarmListUiEffect
+
+    data class ShowToast(
+        @param:StringRes val messageRes: Int,
+    ) : AlarmListUiEffect
 }

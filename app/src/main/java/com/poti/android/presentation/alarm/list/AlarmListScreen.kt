@@ -1,22 +1,28 @@
 package com.poti.android.presentation.alarm.list
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.toRelativeTime
+import com.poti.android.core.common.extension.toast
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
@@ -27,12 +33,14 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.notification.Notification
 import com.poti.android.domain.type.NotificationType
+import com.poti.android.presentation.alarm.list.component.AlarmReadButton
 import com.poti.android.presentation.alarm.list.model.AlarmListUiEffect
 import com.poti.android.presentation.alarm.list.model.AlarmListUiIntent
 import com.poti.android.presentation.alarm.list.model.AlarmListUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import timber.log.Timber
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
@@ -44,11 +52,14 @@ fun AlarmListRoute(
     viewModel: AlarmListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             AlarmListUiEffect.NavigateBack -> onPopBackStack()
             AlarmListUiEffect.NavigateToSetting -> navigateToSetting()
+            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
+            is AlarmListUiEffect.ShowToast -> context.toast(context.getString(effect.messageRes))
         }
     }
 
@@ -57,6 +68,7 @@ fun AlarmListRoute(
         onBackClick = { viewModel.processIntent(AlarmListUiIntent.OnBackClick) },
         onSettingClick = { viewModel.processIntent(AlarmListUiIntent.OnSettingClick) },
         onAlarmClick = { alarm -> viewModel.processIntent(AlarmListUiIntent.OnAlarmClick(alarm)) },
+        onAlarmReadAllClick = { viewModel.processIntent(AlarmListUiIntent.OnAlarmReadAllClick) },
         modifier = modifier,
     )
 }
@@ -67,26 +79,41 @@ private fun AlarmListScreen(
     onBackClick: () -> Unit,
     onSettingClick: () -> Unit,
     onAlarmClick: (Notification) -> Unit,
+    onAlarmReadAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Scaffold(
         modifier = modifier,
-    ) {
-        PotiHeaderPage(
-            onNavigationClick = onBackClick,
-            title = stringResource(R.string.alarm_title),
-            onTrailingIconClick = onSettingClick,
-            trailingIconRes = R.drawable.ic_setting,
-        )
-
+        topBar = {
+            PotiHeaderPage(
+                onNavigationClick = onBackClick,
+                title = stringResource(R.string.alarm_title),
+                onTrailingIconClick = onSettingClick,
+                trailingIconRes = R.drawable.ic_setting,
+            )
+        },
+        bottomBar = {
+            AlarmReadButton(
+                onClick = onAlarmReadAllClick,
+                enabled = uiState.alarmReadAllEnabled,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 14.dp),
+            )
+        },
+    ) { innerPadding ->
         uiState.alarmsLoadState.onSuccess { alarms ->
             if (alarms.isEmpty()) {
                 PotiEmptyStateInline(
                     text = stringResource(R.string.alarm_empty),
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(top = 12.dp),
                 )
             } else {
-                LazyColumn {
+                LazyColumn(
+                    modifier = Modifier.padding(innerPadding),
+                ) {
                     items(
                         items = alarms,
                         key = { alarm -> alarm.id },
@@ -112,6 +139,14 @@ private fun AlarmListScreen(
             }
         }
     }
+}
+
+private fun Context.openDeepLink(deepLink: String) {
+    val intent = Intent(Intent.ACTION_VIEW, deepLink.toUri())
+        .setPackage(packageName)
+
+    runCatching { startActivity(intent) }
+        .onFailure { Timber.w(it, "Unable to open deep link: $deepLink") }
 }
 
 private val previewAlarmSamples = listOf(
@@ -145,6 +180,7 @@ private fun AlarmListScreenEmptyPreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -159,6 +195,7 @@ private fun AlarmListScreenPreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -173,6 +210,7 @@ private fun AlarmListScreenScrollablePreview() {
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
+            onAlarmReadAllClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }

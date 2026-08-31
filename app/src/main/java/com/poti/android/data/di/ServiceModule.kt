@@ -5,6 +5,7 @@ import com.poti.android.data.remote.service.AuthService
 import com.poti.android.data.remote.service.DeliveryService
 import com.poti.android.data.remote.service.HomeService
 import com.poti.android.data.remote.service.ImageService
+import com.poti.android.data.remote.service.NotificationService
 import com.poti.android.data.remote.service.ParticipationService
 import com.poti.android.data.remote.service.PartyService
 import com.poti.android.data.remote.service.PaymentService
@@ -84,4 +85,9 @@ object ServiceModule {
     @Singleton
     fun provideReviewService(retrofit: Retrofit): ReviewService =
         retrofit.create(ReviewService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(retrofit: Retrofit): NotificationService =
+        retrofit.create(NotificationService::class.java)
 }
