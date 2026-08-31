@@ -22,7 +22,9 @@ import com.poti.android.domain.model.auth.SocialType
 import com.poti.android.domain.model.auth.UserAuth
 import com.poti.android.domain.model.auth.WithdrawalReason
 import com.poti.android.domain.repository.AuthRepository
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -108,21 +110,37 @@ class AuthRepositoryImpl @Inject constructor(
             authTokenStore.clearAll()
             authSessionManager.triggerLogout()
         },
-        real = {
-            httpResponseHandler.safeApiCall {
-                authRemoteDataSource.withdrawal(
-                    request = WithdrawalRequestDto(reason = reason),
-                )
-                    .handleNullableApiResponse()
-                    .getOrThrow()
-                val socialType = preferenceDataSource.getSocialType()
-                withdrawalLocalDataCleaner.unlinkKakaoAccount(socialType = socialType)
-                authTokenStore.clearAll()
-                withdrawalLocalDataCleaner.clearCachesInBackground()
-                authSessionManager.triggerLogout()
-            }
-        },
+        real = { withdrawalFromRemote(reason = reason) },
     )
+
+    private suspend fun withdrawalFromRemote(reason: String): Result<Unit> {
+        val socialType = httpResponseHandler.safeApiCall {
+            preferenceDataSource.getSocialType()
+        }.getOrElse { error ->
+            return Result.failure(error)
+        }
+
+        val remoteResult = httpResponseHandler.safeApiCall {
+            authRemoteDataSource.withdrawal(request = WithdrawalRequestDto(reason = reason))
+                .handleNullableApiResponse()
+                .getOrThrow()
+            Unit
+        }
+        if (remoteResult.isFailure) return remoteResult
+
+        finalizeWithdrawal(socialType = socialType)
+        return Result.success(Unit)
+    }
+
+    private suspend fun finalizeWithdrawal(socialType: SocialType?) = withContext(NonCancellable) {
+        try {
+            withdrawalLocalDataCleaner.unlinkKakaoAccount(socialType = socialType)
+            authTokenStore.clearAll()
+            withdrawalLocalDataCleaner.clearCachesInBackground()
+        } finally {
+            authSessionManager.triggerLogout()
+        }
+    }
 
     private suspend fun syncFcmToken() {
         val fcmToken = fcmTokenProvider.getToken() ?: return
