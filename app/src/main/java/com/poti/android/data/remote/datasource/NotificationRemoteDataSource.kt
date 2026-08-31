@@ -28,4 +28,12 @@ class NotificationRemoteDataSource @Inject constructor(
         notificationSettingRequest: NotificationSettingRequestDto,
     ): BaseResponse<NotificationSettingResponseDto> =
         notificationService.patchNotificationSetting(body = notificationSettingRequest)
+
+    suspend fun patchNotificationRead(
+        notificationId: Long,
+    ): BaseResponse<Unit> =
+        notificationService.patchNotificationRead(notificationId)
+
+    suspend fun patchNotificationReadAll(): BaseResponse<Unit> =
+        notificationService.patchNotificationReadAll()
 }

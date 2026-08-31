@@ -7,6 +7,7 @@ import com.poti.android.data.remote.dto.response.notification.NotificationSettin
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface NotificationService {
@@ -24,4 +25,12 @@ interface NotificationService {
     suspend fun patchNotificationSetting(
         @Body body: NotificationSettingRequestDto,
     ): BaseResponse<NotificationSettingResponseDto>
+
+    @PATCH("/api/v1/notifications/{notificationId}/read")
+    suspend fun patchNotificationRead(
+        @Path("notificationId") notificationId: Long,
+    ): BaseResponse<Unit>
+
+    @PATCH("/api/v1/notifications/read-all")
+    suspend fun patchNotificationReadAll(): BaseResponse<Unit>
 }

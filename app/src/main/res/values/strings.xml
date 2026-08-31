@@ -300,6 +300,8 @@
     <string name="alarm_title">알림</string>
     <string name="alarm_empty">새로운 알림이 없어요\n알림이 도착하면 알려드릴게요</string>
     <string name="alarm_load_failed">알림을 불러오지 못했어요</string>
+    <string name="alarm_read_all">전체 읽음</string>
+    <string name="alarm_read_all_failed">알림 전체 읽기에 실패했어요</string>
 
     <string name="alarm_setting_title">알림 설정</string>
     <string name="alarm_setting_trade_title">거래 알림</string>
