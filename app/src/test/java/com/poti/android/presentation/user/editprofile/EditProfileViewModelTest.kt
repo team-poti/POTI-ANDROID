@@ -3,6 +3,7 @@ package com.poti.android.presentation.user.editprofile
 import com.poti.android.MainDispatcherRule
 import com.poti.android.R
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.delivery.DeliveryInfo
 import com.poti.android.domain.model.user.HistorySummary
 import com.poti.android.domain.model.user.UserAccount
 import com.poti.android.domain.model.user.UserMyPage
@@ -181,6 +182,10 @@ class EditProfileViewModelTest {
         override suspend fun getUserProfile(userId: Long): Result<UserProfile> = error("Not used")
 
         override suspend fun getUserAccount(): Result<UserAccount> = error("Not used")
+
+        override suspend fun getMyAddress(): Result<DeliveryInfo?> = error("Not used")
+
+        override suspend fun saveMyAddress(deliveryInfo: DeliveryInfo): Result<Unit> = error("Not used")
     }
 
     private companion object {
