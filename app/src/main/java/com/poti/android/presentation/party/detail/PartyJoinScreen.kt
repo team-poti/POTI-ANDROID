@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,7 +47,6 @@ import com.poti.android.core.designsystem.component.modal.PotiNoticeModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
-import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.TotalPrice
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
@@ -288,9 +288,7 @@ private fun PartyJoinScreen(
                 }
             }
 
-            PotiDivider(styleType = PotiDividerStyle.LARGE)
-
-            ParticipantGuidelines()
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }

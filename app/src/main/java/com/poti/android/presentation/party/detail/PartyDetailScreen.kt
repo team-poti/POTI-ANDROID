@@ -1,9 +1,11 @@
 package com.poti.android.presentation.party.detail
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -36,7 +38,6 @@ import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.share.KakaoShareManager
 import com.poti.android.data.mock.UiMockData
 import com.poti.android.domain.model.party.PartyDetail
-import com.poti.android.presentation.party.detail.component.ParticipantGuidelines
 import com.poti.android.presentation.party.detail.component.PartyDetailContent
 import com.poti.android.presentation.party.detail.component.PartyDetailHeaderInfo
 import com.poti.android.presentation.party.detail.component.PartyJoinBottomSheet
@@ -214,7 +215,7 @@ private fun PartyDetailScreen(
 
             PartyShareButton(onClick = onShareClick)
 
-            ParticipantGuidelines()
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
