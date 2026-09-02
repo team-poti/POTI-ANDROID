@@ -172,6 +172,7 @@ object UiMockData {
     val partyDetail = PartyDetail(
         postId = 1,
         isMyPost = false,
+        isParticipated = false,
         status = PartyStatusType.RECRUITING,
         artist = "IVE",
         artistId = 1,

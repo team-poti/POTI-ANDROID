@@ -46,6 +46,7 @@ import com.poti.android.presentation.party.detail.component.PartyShareButton
 import com.poti.android.presentation.party.detail.component.PartyUploaderInfo
 import com.poti.android.presentation.party.detail.model.PartyDetailEffect
 import com.poti.android.presentation.party.detail.model.PartyDetailIntent
+import com.poti.android.presentation.party.detail.model.PartyDetailJoinButtonState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,7 +113,7 @@ fun PartyDetailRoute(
     uiState.partyDetail.onSuccess { partyDetail ->
         PartyDetailScreen(
             partyDetail = partyDetail,
-            isJoinEnable = uiState.isDetailJoinEnable,
+            joinButtonState = uiState.detailJoinButtonState,
             onBackClick = { viewModel.processIntent(PartyDetailIntent.OnBackClick) },
             onJoinClick = { viewModel.processIntent(PartyDetailIntent.OnDetailJoinClick) },
             onUploaderClick = { viewModel.processIntent(PartyDetailIntent.OnUploaderClick(it)) },
@@ -125,7 +126,7 @@ fun PartyDetailRoute(
 @Composable
 private fun PartyDetailScreen(
     partyDetail: PartyDetail,
-    isJoinEnable: Boolean,
+    joinButtonState: PartyDetailJoinButtonState,
     onBackClick: () -> Unit,
     onJoinClick: () -> Unit,
     onUploaderClick: (Long) -> Unit,
@@ -142,9 +143,16 @@ private fun PartyDetailScreen(
         },
         bottomBar = {
             PotiBottomButton(
-                text = if (isJoinEnable) stringResource(R.string.party_detail_join_party) else stringResource(R.string.party_detail_join_party_closed),
+                text = when (joinButtonState) {
+                    PartyDetailJoinButtonState.MY_POST -> stringResource(R.string.party_detail_join_party_my_post)
+                    PartyDetailJoinButtonState.ALREADY_JOINED -> stringResource(R.string.party_detail_join_party_already_joined)
+                    PartyDetailJoinButtonState.CLOSED -> stringResource(R.string.party_detail_join_party_closed)
+                    PartyDetailJoinButtonState.JOIN,
+                    PartyDetailJoinButtonState.DISABLED,
+                    -> stringResource(R.string.party_detail_join_party)
+                },
                 onClick = onJoinClick,
-                enabled = isJoinEnable,
+                enabled = joinButtonState == PartyDetailJoinButtonState.JOIN,
             )
         },
     ) { innerPadding ->
@@ -217,7 +225,7 @@ private fun PartyDetailScreenPreview() {
     PotiTheme {
         PartyDetailScreen(
             partyDetail = UiMockData.partyDetail,
-            isJoinEnable = true,
+            joinButtonState = PartyDetailJoinButtonState.JOIN,
             onBackClick = {},
             onJoinClick = {},
             onUploaderClick = {},

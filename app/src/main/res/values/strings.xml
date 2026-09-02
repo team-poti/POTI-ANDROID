@@ -99,6 +99,8 @@
         <item>마감 기한까지 모집 인원이 과반수 이상 충족되지 않을 경우, 해당 분철팟은 자동으로 종료되며 분철은 진행되지 않습니다.</item>
     </string-array>
     <string name="party_detail_join_party">분철팟 참여하기</string>
+    <string name="party_detail_join_party_my_post">내가 등록한 분철팟이에요</string>
+    <string name="party_detail_join_party_already_joined">이미 참여한 분철팟이에요</string>
     <string name="party_detail_join_party_closed">마감된 분철팟이에요</string>
     <string name="party_detail_upload_date_label">"%s 등록"</string>
     <string name="party_detail_share_button">이 분철팟 공유하기</string>

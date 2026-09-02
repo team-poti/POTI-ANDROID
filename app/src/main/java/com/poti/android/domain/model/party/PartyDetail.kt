@@ -7,6 +7,7 @@ import com.poti.android.domain.type.PartyStatusType
 data class PartyDetail(
     val postId: Long, // 분철글 고유 ID
     val isMyPost: Boolean, // 본인 작성 글 여부
+    val isParticipated: Boolean, // 본인 참여 여부
     val status: PartyStatusType, // 모집 상태
     val artist: String, // 아티스트 그룹명
     val artistId: Long, // 아티스트 아이디

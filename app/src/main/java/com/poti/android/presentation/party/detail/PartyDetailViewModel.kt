@@ -234,6 +234,8 @@ class PartyDetailViewModel @Inject constructor(
     }
 
     private fun handleDetailJoin() {
+        if (!uiState.value.isDetailJoinEnable) return
+
         if (isGuestUseCase()) {
             updateState { copy(showLoginRequiredDialog = true) }
             return
