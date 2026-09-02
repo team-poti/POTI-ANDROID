@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.navigation.Route
+import com.poti.android.presentation.alarm.navigation.navigateToAlarmList
 import com.poti.android.presentation.auth.navigation.navigateToLogin
 import com.poti.android.presentation.history.navigation.navigateToHistoryList
 import com.poti.android.presentation.user.favoriteartist.FavoriteArtistRoute
@@ -45,6 +46,7 @@ fun NavGraphBuilder.myPageNavGraph(
             onNavigateToHistoryList = navController::navigateToHistoryList,
             onNavigateToSetting = navController::navigateToSetting,
             onNavigateToFavoriteArtist = navController::navigateToFavoriteArtist,
+            onNavigateToAlarmList = navController::navigateToAlarmList,
             onNavigateToLogin = navController::navigateToLogin,
             modifier = Modifier
                 .fillMaxSize()
