@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
@@ -13,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,17 +30,6 @@ fun PartyDetailContent(
     partyDetail: PartyDetail,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
-    val textStyle = PotiTheme.typography.body14m
-
-    val textHeightDp = with(density) {
-        if (textStyle.lineHeight.isSp) {
-            textStyle.lineHeight.toDp()
-        } else {
-            textStyle.fontSize.toDp()
-        }
-    }
-
     Column(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -88,6 +78,7 @@ fun PartyDetailContent(
                 ) {
                     partyDetail.deliveryOptions.forEachIndexed { index, option ->
                         Row(
+                            modifier = Modifier.height(IntrinsicSize.Min),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                         ) {
                             Text(
@@ -100,7 +91,7 @@ fun PartyDetailContent(
                                 VerticalDivider(
                                     thickness = 1.dp,
                                     color = PotiTheme.colors.gray800,
-                                    modifier = Modifier.height(textHeightDp),
+                                    modifier = Modifier.fillMaxHeight(),
                                 )
                             }
                         }
