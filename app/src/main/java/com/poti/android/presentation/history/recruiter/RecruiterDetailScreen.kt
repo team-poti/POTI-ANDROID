@@ -21,12 +21,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.designsystem.component.button.PotiTextButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.data.mock.UiMockData
+import com.poti.android.domain.type.PartyStatusType
 import com.poti.android.presentation.history.component.HistoryDetailContentHeader
 import com.poti.android.presentation.history.component.PartyInfoSection
 import com.poti.android.presentation.history.component.ProgressStatusSection
@@ -65,6 +67,7 @@ fun RecruiterDetailRoute(
                 onBackClick = { viewModel.processIntent(RecruiterDetailUiIntent.BackButtonClicked) },
                 onDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.PartyCardClicked) },
                 onParticipantManageDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.ParticipantSectionClicked) },
+                onDeleteClick = {},
             )
         }
     }
@@ -76,14 +79,28 @@ private fun RecruiterDetailScreen(
     onBackClick: () -> Unit,
     onDetailClick: () -> Unit,
     onParticipantManageDetailClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isDeletable = recruiterDetail.partySummary.partyStatus == PartyStatusType.RECRUITING &&
+        recruiterDetail.participantCount == 0
+
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
         PotiHeaderPage(
             onNavigationClick = onBackClick,
             title = stringResource(id = R.string.history_ongoing_title),
+            trailingContent = if (isDeletable) {
+                {
+                    PotiTextButton(
+                        text = stringResource(id = R.string.history_recruiter_delete),
+                        onClick = onDeleteClick,
+                    )
+                }
+            } else {
+                null
+            },
         )
 
         LazyColumn(
@@ -158,6 +175,7 @@ private fun RecruiterDetailScreenRecruitPreview() {
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},
+            onDeleteClick = {},
         )
     }
 }
@@ -171,6 +189,7 @@ private fun RecruiterDetailScreenDepositPreview() {
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},
+            onDeleteClick = {},
         )
     }
 }
@@ -184,6 +203,7 @@ private fun RecruiterDetailScreenDeliveryDonePreview() {
             onBackClick = {},
             onDetailClick = {},
             onParticipantManageDetailClick = {},
+            onDeleteClick = {},
         )
     }
 }

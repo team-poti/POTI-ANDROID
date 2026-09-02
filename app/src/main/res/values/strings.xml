@@ -225,6 +225,7 @@
     <string name="history_participant_detail_total_deposit_label">총 입금 금액</string>
     <string name="history_participant_detail_won_unit_format">%s원</string>
     <string name="history_ongoing_title">진행 중인 분철</string>
+    <string name="history_recruiter_delete">삭제</string>
     <string name="history_recruit_number">모집번호 %s</string>
     <string name="history_progress_status_title">진행 상황</string>
     <string name="history_state_guide_waiting">참여자들을 기다리고 있어요</string>
