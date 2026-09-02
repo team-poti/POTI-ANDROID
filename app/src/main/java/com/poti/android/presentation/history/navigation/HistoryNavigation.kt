@@ -97,7 +97,10 @@ fun NavGraphBuilder.historyNavGraph(
         ParticipantDetailRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.white)
+                .padding(paddingValues),
         )
     }
     slideComposable<HistoryRoute.RecruiterDetail>(
@@ -108,7 +111,10 @@ fun NavGraphBuilder.historyNavGraph(
         ),
     ) {
         RecruiterDetailRoute(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.white)
+                .padding(paddingValues),
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
             onNavigateToParticipantManage = navController::navigateToParticipantManage,
