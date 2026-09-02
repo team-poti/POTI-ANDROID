@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,6 +52,7 @@ fun PartyDetailContent(
         Spacer(modifier = Modifier.height(60.dp))
 
         Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Column(
@@ -72,6 +72,7 @@ fun PartyDetailContent(
             }
 
             Column(
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
@@ -81,22 +82,27 @@ fun PartyDetailContent(
                 )
 
                 FlowRow(
-                    modifier = Modifier.height(IntrinsicSize.Min),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     partyDetail.deliveryOptions.forEachIndexed { index, option ->
-                        Text(
-                            text = stringResource(R.string.party_detail_shipping_price_format, option.name, option.price.toMoneyString()),
-                            style = PotiTheme.typography.body14m,
-                            color = PotiTheme.colors.black,
-                        )
-
-                        if (index < partyDetail.deliveryOptions.lastIndex) {
-                            VerticalDivider(
-                                thickness = 1.dp,
-                                color = PotiTheme.colors.gray800,
-                                modifier = Modifier.height(textHeightDp),
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.party_detail_shipping_price_format, option.name, option.price.toMoneyString()),
+                                style = PotiTheme.typography.body14m,
+                                color = PotiTheme.colors.black,
                             )
+
+                            if (index < partyDetail.deliveryOptions.lastIndex) {
+                                VerticalDivider(
+                                    thickness = 1.dp,
+                                    color = PotiTheme.colors.gray800,
+                                    modifier = Modifier.height(textHeightDp),
+                                )
+                            }
                         }
                     }
                 }
