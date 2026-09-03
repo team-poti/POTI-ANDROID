@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.recruiter
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,14 +58,15 @@ fun RecruiterDetailRoute(
         }
     }
 
-    uiState.recruiterDetailState.onSuccess { recruiterDetail ->
-        RecruiterDetailScreen(
-            recruiterDetail = recruiterDetail,
-            onBackClick = { viewModel.processIntent(RecruiterDetailUiIntent.BackButtonClicked) },
-            onDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.PartyCardClicked) },
-            onParticipantManageDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.ParticipantSectionClicked) },
-            modifier = modifier,
-        )
+    Box(modifier = modifier) {
+        uiState.recruiterDetailState.onSuccess { recruiterDetail ->
+            RecruiterDetailScreen(
+                recruiterDetail = recruiterDetail,
+                onBackClick = { viewModel.processIntent(RecruiterDetailUiIntent.BackButtonClicked) },
+                onDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.PartyCardClicked) },
+                onParticipantManageDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.ParticipantSectionClicked) },
+            )
+        }
     }
 }
 

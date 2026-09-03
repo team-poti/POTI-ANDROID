@@ -1,5 +1,6 @@
 package com.poti.android.presentation.history.participant
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,33 +52,34 @@ fun ParticipantDetailRoute(
         }
     }
 
-    uiState.participantDetailState.onSuccess { participantDetail ->
-        ParticipantDetailScreen(
-            participantDetail = participantDetail,
-            overlayState = uiState.overlayState,
-            onBackClick = onPopBackStack,
-            onDetailClick = { viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.partyId)) },
-            onActionButtonClick = { buttonState ->
-                when (buttonState) {
-                    ParticipantButtonState.DEPOSIT_DONE -> viewModel.processIntent(ParticipantDetailUiIntent.OnDepositCompleteClick)
-                    ParticipantButtonState.DELIVERY_RECEIVED -> viewModel.processIntent(ParticipantDetailUiIntent.OnDeliveredClick)
-                    ParticipantButtonState.NONE -> {}
-                }
-            },
-            onOverlayClose = { viewModel.processIntent(ParticipantDetailUiIntent.CloseOverlay) },
-            onSubmitDeposit = { depositor, depositTime -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime)) },
-            onConfirmDelivery = { viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery) },
-            onSubmitReview = { rating ->
-                viewModel.processIntent(
-                    ParticipantDetailUiIntent.SubmitReview(
-                        transactionId = participantDetail.participationId,
-                        rating = rating,
-                    ),
-                )
-            },
-            onSkipReview = { viewModel.processIntent(ParticipantDetailUiIntent.SkipReview) },
-            modifier = modifier,
-        )
+    Box(modifier = modifier) {
+        uiState.participantDetailState.onSuccess { participantDetail ->
+            ParticipantDetailScreen(
+                participantDetail = participantDetail,
+                overlayState = uiState.overlayState,
+                onBackClick = onPopBackStack,
+                onDetailClick = { viewModel.processIntent(ParticipantDetailUiIntent.OnPartyDetailClick(participantDetail.partyId)) },
+                onActionButtonClick = { buttonState ->
+                    when (buttonState) {
+                        ParticipantButtonState.DEPOSIT_DONE -> viewModel.processIntent(ParticipantDetailUiIntent.OnDepositCompleteClick)
+                        ParticipantButtonState.DELIVERY_RECEIVED -> viewModel.processIntent(ParticipantDetailUiIntent.OnDeliveredClick)
+                        ParticipantButtonState.NONE -> {}
+                    }
+                },
+                onOverlayClose = { viewModel.processIntent(ParticipantDetailUiIntent.CloseOverlay) },
+                onSubmitDeposit = { depositor, depositTime -> viewModel.processIntent(ParticipantDetailUiIntent.SubmitDeposit(depositor, depositTime)) },
+                onConfirmDelivery = { viewModel.processIntent(ParticipantDetailUiIntent.ConfirmDelivery) },
+                onSubmitReview = { rating ->
+                    viewModel.processIntent(
+                        ParticipantDetailUiIntent.SubmitReview(
+                            transactionId = participantDetail.participationId,
+                            rating = rating,
+                        ),
+                    )
+                },
+                onSkipReview = { viewModel.processIntent(ParticipantDetailUiIntent.SkipReview) },
+            )
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 package com.poti.android.presentation.history.manage
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -75,14 +76,15 @@ fun ParticipantManageRoute(
         ManageModalState.None -> {}
     }
 
-    uiState.participantManageDetailLoadState.onSuccess { participants ->
-        ParticipantManageScreen(
-            uiState = participants,
-            onBackClick = { viewModel.processIntent(ParticipantManageUiIntent.OnBackClick) },
-            onConfirmDepositClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositConfirmClick(it)) },
-            onInputTrackingNumberClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDeliveryInputClick(it)) },
-            modifier = modifier,
-        )
+    Box(modifier = modifier) {
+        uiState.participantManageDetailLoadState.onSuccess { participants ->
+            ParticipantManageScreen(
+                uiState = participants,
+                onBackClick = { viewModel.processIntent(ParticipantManageUiIntent.OnBackClick) },
+                onConfirmDepositClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDepositConfirmClick(it)) },
+                onInputTrackingNumberClick = { viewModel.processIntent(ParticipantManageUiIntent.OnDeliveryInputClick(it)) },
+            )
+        }
     }
 }
 
