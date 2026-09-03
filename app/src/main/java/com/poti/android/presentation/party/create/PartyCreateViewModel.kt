@@ -428,7 +428,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 deliveryOptions = newOptions,
-                deliveryError = if (this.deliveryError == FieldError.DELIVERY_EMPTY_ERROR) null else this.deliveryError,
+                deliveryError = this.deliveryError?.takeIf { it == deliveryErrorOf(newOptions) },
             )
         }
     }
@@ -454,6 +454,12 @@ class PartyCreateViewModel @Inject constructor(
 
     private fun hasInvalidDeliveryPrice(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
         deliveries.filter { it.isSelected }.any { it.priceInput.toIntOrNull() == null }
+
+    private fun deliveryErrorOf(deliveries: ImmutableList<DeliveryOptionUiModel>): FieldError? = when {
+        !hasSelectedDeliveryOption(deliveries) -> FieldError.DELIVERY_EMPTY_ERROR
+        hasInvalidDeliveryPrice(deliveries) -> FieldError.DELIVERY_PRICE_ERROR
+        else -> null
+    }
 
     private fun DeliveryOptionUiModel.toDeliveryOption(): DeliveryOption =
         DeliveryOption(deliveryId = deliveryId, name = name, price = requireNotNull(priceInput.toIntOrNull()))
@@ -481,11 +487,7 @@ class PartyCreateViewModel @Inject constructor(
             hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
             else -> null
         }
-        val deliveryError = when {
-            !hasSelectedDeliveryOption(uiState.value.deliveryOptions) -> FieldError.DELIVERY_EMPTY_ERROR
-            hasInvalidDeliveryPrice(uiState.value.deliveryOptions) -> FieldError.DELIVERY_PRICE_ERROR
-            else -> null
-        }
+        val deliveryError = deliveryErrorOf(uiState.value.deliveryOptions)
 
         val hasError = imageError != null || artistError != null || productError != null ||
             deadlineError != null || descriptionError != null ||
