@@ -61,7 +61,7 @@ fun FavoriteArtistRoute(
             viewModel.processIntent(FavoriteArtistUiIntent.OnArtistSelect(artistId))
         },
         onSaveClick = { viewModel.processIntent(FavoriteArtistUiIntent.OnSaveClick) },
-        onInquiryClick = { uriHandler.openUri(ExternalLinks.INQUIRY) },
+        onInquiryClick = { uriHandler.openUri(ExternalLinks.ARTIST_REQUEST_FORM) },
         modifier = modifier,
     )
 }
