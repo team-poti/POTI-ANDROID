@@ -243,7 +243,7 @@ class PartyCreateViewModel @Inject constructor(
                             deliveryId = it.deliveryId,
                             name = it.name,
                             priceInput = it.price.toString(),
-                            isSelected = true,
+                            isSelected = false,
                         )
                     }.toPersistentList()
 
