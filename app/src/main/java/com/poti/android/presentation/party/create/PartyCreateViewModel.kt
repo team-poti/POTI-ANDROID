@@ -54,8 +54,8 @@ class PartyCreateViewModel @Inject constructor(
     private val createPartyUseCase: CreatePartyUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<CreateUiState, CreateUiIntent, CreateUiEffect>(
-        initialState = CreateUiState(),
-    ) {
+    initialState = CreateUiState(),
+) {
     private val params = savedStateHandle.toRoute<PartyCreateGraph>()
     private val paramArtistId = params.artistId
     private val paramArtistName = params.artistName
@@ -428,6 +428,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 deliveryOptions = newOptions,
+                deliveryError = if (this.deliveryError == FieldError.DELIVERY_EMPTY_ERROR) null else this.deliveryError,
             )
         }
     }
@@ -447,6 +448,9 @@ class PartyCreateViewModel @Inject constructor(
 
     private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
         members.any { it.price == "0" || it.price.isBlank() }
+
+    private fun hasSelectedDeliveryOption(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
+        deliveries.any { it.isSelected }
 
     private fun hasInvalidDeliveryPrice(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
         deliveries.filter { it.isSelected }.any { it.priceInput.toIntOrNull() == null }
@@ -477,10 +481,10 @@ class PartyCreateViewModel @Inject constructor(
             hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
             else -> null
         }
-        val deliveryError = if (hasInvalidDeliveryPrice(uiState.value.deliveryOptions)) {
-            FieldError.DELIVERY_PRICE_ERROR
-        } else {
-            null
+        val deliveryError = when {
+            !hasSelectedDeliveryOption(uiState.value.deliveryOptions) -> FieldError.DELIVERY_EMPTY_ERROR
+            hasInvalidDeliveryPrice(uiState.value.deliveryOptions) -> FieldError.DELIVERY_PRICE_ERROR
+            else -> null
         }
 
         val hasError = imageError != null || artistError != null || productError != null ||

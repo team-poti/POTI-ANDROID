@@ -39,6 +39,7 @@ enum class FieldError(
     MEMBER_EMPTY_ERROR(R.string.create_error_need_member),
     MEMBER_PRICE_ERROR(R.string.create_error_need_price),
     DELIVERY_PRICE_ERROR(R.string.create_error_need_delivery_price),
+    DELIVERY_EMPTY_ERROR(R.string.create_error_need_delivery_option)
 }
 
 data class CreateUiState(
