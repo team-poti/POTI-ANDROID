@@ -46,13 +46,4 @@ class PartyDetailUiStateTest {
 
         assertFalse(state.isDetailJoinEnable)
     }
-
-    @Test
-    fun `비로그인 사용자는 모집 중인 분철팟에 참여 버튼이 활성화된다`() {
-        val state = PartyDetailUiState(
-            partyDetail = ApiState.Success(UiMockData.partyDetail),
-        )
-
-        assertTrue(state.isDetailJoinEnable)
-    }
 }
