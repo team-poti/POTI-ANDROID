@@ -2,6 +2,7 @@ package com.poti.android.presentation.alarm.list
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,8 @@ import com.poti.android.core.common.extension.toRelativeTime
 import com.poti.android.core.common.extension.toast
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
+import com.poti.android.core.designsystem.component.button.ActionButtonType
+import com.poti.android.core.designsystem.component.button.PotiActionButton
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
 import com.poti.android.core.designsystem.component.display.PotiEmptyStateInline
@@ -33,7 +37,6 @@ import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.domain.model.notification.Notification
 import com.poti.android.domain.type.NotificationType
-import com.poti.android.presentation.alarm.list.component.AlarmReadButton
 import com.poti.android.presentation.alarm.list.model.AlarmListUiEffect
 import com.poti.android.presentation.alarm.list.model.AlarmListUiIntent
 import com.poti.android.presentation.alarm.list.model.AlarmListUiState
@@ -92,15 +95,6 @@ private fun AlarmListScreen(
                 trailingIconRes = R.drawable.ic_setting,
             )
         },
-        bottomBar = {
-            AlarmReadButton(
-                onClick = onAlarmReadAllClick,
-                enabled = uiState.alarmReadAllEnabled,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 4.dp, bottom = 14.dp),
-            )
-        },
     ) { innerPadding ->
         uiState.alarmsLoadState.onSuccess { alarms ->
             if (alarms.isEmpty()) {
@@ -111,30 +105,44 @@ private fun AlarmListScreen(
                         .padding(top = 12.dp),
                 )
             } else {
-                LazyColumn(
-                    modifier = Modifier.padding(innerPadding),
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                 ) {
-                    items(
-                        items = alarms,
-                        key = { alarm -> alarm.id },
-                    ) { alarm ->
-                        Column {
-                            PotiDivider(styleType = PotiDividerStyle.SMALL)
+                    LazyColumn {
+                        items(
+                            items = alarms,
+                            key = { alarm -> alarm.id },
+                        ) { alarm ->
+                            Column {
+                                PotiDivider(styleType = PotiDividerStyle.SMALL)
 
-                            PotiNoticeItem(
-                                title = alarm.title,
-                                content = alarm.body,
-                                time = alarm.createdAt.toRelativeTime(),
-                                isRead = alarm.isRead,
-                                onClick = { onAlarmClick(alarm) },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
+                                PotiNoticeItem(
+                                    title = alarm.title,
+                                    content = alarm.body,
+                                    time = alarm.createdAt.toRelativeTime(),
+                                    isRead = alarm.isRead,
+                                    onClick = { onAlarmClick(alarm) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        }
+
+                        item {
+                            PotiDivider(styleType = PotiDividerStyle.SMALL)
                         }
                     }
 
-                    item {
-                        PotiDivider(styleType = PotiDividerStyle.SMALL)
-                    }
+                    PotiActionButton(
+                        text = stringResource(R.string.alarm_read_all),
+                        onClick = onAlarmReadAllClick,
+                        type = ActionButtonType.SECONDARY_MAIN,
+                        enabled = uiState.alarmReadAllEnabled,
+                        modifier = Modifier
+                            .padding(bottom = 4.dp)
+                            .align(Alignment.BottomCenter),
+                    )
                 }
             }
         }
@@ -192,6 +200,21 @@ private fun AlarmListScreenPreview() {
     PotiTheme {
         AlarmListScreen(
             uiState = AlarmListUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 3))),
+            onBackClick = {},
+            onSettingClick = {},
+            onAlarmClick = {},
+            onAlarmReadAllClick = {},
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "버튼 비활성화")
+@Composable
+private fun AlarmListScreenDisabledPreview() {
+    PotiTheme {
+        AlarmListScreen(
+            uiState = AlarmListUiState(alarmsLoadState = ApiState.Success(previewAlarms(count = 3).map { alarm -> alarm.copy(isRead = true) }.toImmutableList())),
             onBackClick = {},
             onSettingClick = {},
             onAlarmClick = {},
