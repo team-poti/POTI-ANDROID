@@ -1,6 +1,8 @@
 package com.poti.android.presentation.history.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -9,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.slideComposable
+import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.history.list.HistoryListRoute
 import com.poti.android.presentation.history.list.model.HistoryMode
@@ -94,7 +97,10 @@ fun NavGraphBuilder.historyNavGraph(
         ParticipantDetailRoute(
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.white)
+                .padding(paddingValues),
         )
     }
     slideComposable<HistoryRoute.RecruiterDetail>(
@@ -105,7 +111,10 @@ fun NavGraphBuilder.historyNavGraph(
         ),
     ) {
         RecruiterDetailRoute(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.white)
+                .padding(paddingValues),
             onPopBackStack = navController::popBackStack,
             onNavigateToPartyDetail = navController::navigateToPartyDetail,
             onNavigateToParticipantManage = navController::navigateToParticipantManage,
@@ -119,7 +128,10 @@ fun NavGraphBuilder.historyNavGraph(
         ),
     ) {
         ParticipantManageRoute(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PotiTheme.colors.white)
+                .padding(paddingValues),
             popBackStack = navController::popBackStack,
         )
     }

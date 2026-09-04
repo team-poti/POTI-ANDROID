@@ -48,6 +48,7 @@ fun MyPageRoute(
     onNavigateToHistoryList: (HistoryMode, HistorySummaryType) -> Unit,
     onNavigateToFavoriteArtist: (String?) -> Unit,
     onNavigateToSetting: () -> Unit,
+    onNavigateToAlarmList: () -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
@@ -85,6 +86,7 @@ fun MyPageRoute(
         MyPageScreen(
             userMyPage = userMyPage,
             onArtistClick = { viewModel.processIntent(MyPageUiIntent.OnArtistClick) },
+            onAlarmClick = onNavigateToAlarmList,
             onInquiryClick = { uriHandler.openUri(ExternalLinks.INQUIRY) },
             onSettingClick = onNavigateToSetting,
             onHistoryClick = { mode, type ->
@@ -132,6 +134,7 @@ private fun GuestMyPageScreen(
 private fun MyPageScreen(
     userMyPage: UserMyPage,
     onArtistClick: () -> Unit,
+    onAlarmClick: () -> Unit,
     onSettingClick: () -> Unit,
     onInquiryClick: () -> Unit,
     onHistoryClick: (HistoryMode, HistorySummaryType) -> Unit,
@@ -148,7 +151,7 @@ private fun MyPageScreen(
             firstIconRes = R.drawable.ic_setting,
             onFirstIconClick = onSettingClick,
             secondIconRes = R.drawable.ic_alarm,
-            onSecondIconClick = {},
+            onSecondIconClick = onAlarmClick,
             containerColor = PotiTheme.colors.gray100,
         )
         Column(
@@ -251,6 +254,7 @@ private fun ProfileScreenPreview() {
                 ),
             ),
             onArtistClick = {},
+            onAlarmClick = {},
             onInquiryClick = {},
             onSettingClick = {},
             onHistoryClick = { _, _ -> },
