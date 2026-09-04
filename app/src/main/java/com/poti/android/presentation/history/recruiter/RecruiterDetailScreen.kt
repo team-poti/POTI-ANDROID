@@ -67,7 +67,7 @@ fun RecruiterDetailRoute(
                 onBackClick = { viewModel.processIntent(RecruiterDetailUiIntent.BackButtonClicked) },
                 onDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.PartyCardClicked) },
                 onParticipantManageDetailClick = { viewModel.processIntent(RecruiterDetailUiIntent.ParticipantSectionClicked) },
-                onDeleteClick = {},
+                onDeleteClick = { viewModel.processIntent(RecruiterDetailUiIntent.DeleteButtonClicked) },
             )
         }
     }
