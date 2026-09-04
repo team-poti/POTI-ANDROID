@@ -9,6 +9,8 @@ data class PartyDetailResponseDto(
     val postId: Long,
     @SerialName("isMyPost")
     val isMyPost: Boolean,
+    @SerialName("isParticipated")
+    val isParticipated: Boolean,
     @SerialName("status")
     val status: String,
     @SerialName("artist")

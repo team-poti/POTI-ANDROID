@@ -42,8 +42,20 @@ data class PartyDetailUiState(
     val artistMembers: ImmutableList<Member> = persistentListOf(),
     val showLoginRequiredDialog: Boolean = false,
 ) : UiState {
+    val detailJoinButtonState: PartyDetailJoinButtonState
+        get() {
+            val detail = partyDetail.getSuccessDataOrNull() ?: return PartyDetailJoinButtonState.DISABLED
+
+            return when {
+                detail.isMyPost -> PartyDetailJoinButtonState.MY_POST
+                detail.isParticipated -> PartyDetailJoinButtonState.ALREADY_JOINED
+                detail.status != PartyStatusType.RECRUITING -> PartyDetailJoinButtonState.CLOSED
+                else -> PartyDetailJoinButtonState.JOIN
+            }
+        }
+
     val isDetailJoinEnable: Boolean
-        get() = partyDetail.getSuccessDataOrNull()?.status == PartyStatusType.RECRUITING
+        get() = detailJoinButtonState == PartyDetailJoinButtonState.JOIN
 
     val isRequiredAddressFilled: Boolean
         get() = orderName.isNotBlank() &&
@@ -87,6 +99,14 @@ data class PartyDetailUiState(
 
     val isBottomSheetButtonEnable: Boolean
         get() = selectedMemberIds.isNotEmpty() && selectedDeliveryIds.isNotEmpty()
+}
+
+enum class PartyDetailJoinButtonState {
+    JOIN,
+    MY_POST,
+    ALREADY_JOINED,
+    CLOSED,
+    DISABLED,
 }
 
 sealed interface PartyDetailIntent : UiIntent {

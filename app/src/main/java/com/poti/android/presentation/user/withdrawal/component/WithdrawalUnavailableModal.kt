@@ -39,7 +39,7 @@ fun WithdrawalUnavailableModal(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_notice),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_notice_lg),
                 contentDescription = null,
                 modifier = Modifier
                     .padding(bottom = 12.dp)

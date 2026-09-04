@@ -15,6 +15,7 @@ import com.poti.android.domain.type.PartyStatusType
 fun PartyDetailResponseDto.toDomain(): PartyDetail = PartyDetail(
     postId = postId,
     isMyPost = isMyPost,
+    isParticipated = isParticipated,
     status = mapToPartyStatus(status),
     artist = artist,
     artistId = artistId,
