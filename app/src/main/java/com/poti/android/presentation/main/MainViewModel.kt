@@ -87,9 +87,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun applySystemPermissionDialogResult(isGranted: Boolean) {
-        viewModelScope.launch {
-            permissionManager.applySystemPermissionDialogResult(isGranted)
-        }
+        permissionManager.applySystemPermissionDialogResult(isGranted)
     }
 
     fun syncSystemNotificationPermission() {
