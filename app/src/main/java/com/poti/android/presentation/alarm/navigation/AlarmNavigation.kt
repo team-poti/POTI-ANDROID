@@ -1,6 +1,7 @@
 package com.poti.android.presentation.alarm.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -35,7 +36,9 @@ fun NavGraphBuilder.alarmNavGraph(
         AlarmListRoute(
             onPopBackStack = navController::popBackStack,
             navigateToSetting = navController::navigateToAlarmSetting,
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .consumeWindowInsets(paddingValues)
+                .padding(paddingValues),
         )
     }
 
