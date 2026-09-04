@@ -1,20 +1,15 @@
 package com.poti.android.presentation.main
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,9 +36,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var socialLoginLauncher: SocialLoginLauncher
 
-    private val requestNotificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -60,8 +52,6 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        requestNotificationPermission()
-
         pendingDeepLink = intent?.resolveDeepLink()
         intent?.data = null
 
@@ -75,6 +65,7 @@ class MainActivity : ComponentActivity() {
                 mainNavigator.navigateToHome()
                 consumeDeepLink(mainNavigator.navController)
                 consumePendingReturnDeepLink(mainNavigator.navController)
+                viewModel.checkNotificationPermission()
             }
 
             PotiTheme {
@@ -164,19 +155,6 @@ class MainActivity : ComponentActivity() {
         runCatching { navigate(uri) }
             .onFailure { Timber.w(it, "Unhandled deep link: $uri") }
             .isSuccess
-
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-
-        val isGranted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (!isGranted) {
-            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
 
     private fun handleLogoutNavigation() {
         val intent = Intent(this, MainActivity::class.java).apply {
