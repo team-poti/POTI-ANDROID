@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
@@ -53,4 +54,12 @@ fun Context.shareTextToX(text: String) {
     runCatching { startActivity(appIntent) }
         .recoverCatching { startActivity(webIntent) }
         .onFailure { Timber.e(it, "X 공유 실패") }
+}
+
+fun Context.openSystemNotificationSetting() {
+    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+        .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+
+    runCatching { startActivity(intent) }
+        .onFailure { Timber.w(it, "Unable to open system notification setting") }
 }

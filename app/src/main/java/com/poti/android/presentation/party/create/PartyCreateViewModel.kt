@@ -243,7 +243,7 @@ class PartyCreateViewModel @Inject constructor(
                             deliveryId = it.deliveryId,
                             name = it.name,
                             priceInput = it.price.toString(),
-                            isSelected = true,
+                            isSelected = false,
                         )
                     }.toPersistentList()
 
@@ -428,6 +428,7 @@ class PartyCreateViewModel @Inject constructor(
         updateState {
             copy(
                 deliveryOptions = newOptions,
+                deliveryError = this.deliveryError?.takeIf { it == deliveryErrorOf(newOptions) },
             )
         }
     }
@@ -448,8 +449,17 @@ class PartyCreateViewModel @Inject constructor(
     private fun hasInvalidPrice(members: ImmutableList<MemberPriceOption>): Boolean =
         members.any { it.price == "0" || it.price.isBlank() }
 
+    private fun hasSelectedDeliveryOption(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
+        deliveries.any { it.isSelected }
+
     private fun hasInvalidDeliveryPrice(deliveries: ImmutableList<DeliveryOptionUiModel>): Boolean =
         deliveries.filter { it.isSelected }.any { it.priceInput.toIntOrNull() == null }
+
+    private fun deliveryErrorOf(deliveries: ImmutableList<DeliveryOptionUiModel>): FieldError? = when {
+        !hasSelectedDeliveryOption(deliveries) -> FieldError.DELIVERY_EMPTY_ERROR
+        hasInvalidDeliveryPrice(deliveries) -> FieldError.DELIVERY_PRICE_ERROR
+        else -> null
+    }
 
     private fun DeliveryOptionUiModel.toDeliveryOption(): DeliveryOption =
         DeliveryOption(deliveryId = deliveryId, name = name, price = requireNotNull(priceInput.toIntOrNull()))
@@ -477,11 +487,7 @@ class PartyCreateViewModel @Inject constructor(
             hasInvalidPrice(uiState.value.selectedMembers) -> FieldError.MEMBER_PRICE_ERROR
             else -> null
         }
-        val deliveryError = if (hasInvalidDeliveryPrice(uiState.value.deliveryOptions)) {
-            FieldError.DELIVERY_PRICE_ERROR
-        } else {
-            null
-        }
+        val deliveryError = deliveryErrorOf(uiState.value.deliveryOptions)
 
         val hasError = imageError != null || artistError != null || productError != null ||
             deadlineError != null || descriptionError != null ||
