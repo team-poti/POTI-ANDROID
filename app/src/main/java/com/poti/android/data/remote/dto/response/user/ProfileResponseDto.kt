@@ -10,7 +10,7 @@ data class ProfileResponseDto(
     @SerialName("nickname")
     val nickname: String,
     @SerialName("profileImageUrl")
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     @SerialName("ratingAvg")
     val ratingAvg: Double,
     @SerialName("activityMessage")

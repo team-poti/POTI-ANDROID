@@ -9,7 +9,7 @@ sealed interface ParticipantDetailOverlayState {
 
     data class DeliveryReviewModal(
         val recruiterName: String,
-        val recruiterProfileUrl: String,
+        val recruiterProfileUrl: String?,
         val partnerRating: String,
     ) : ParticipantDetailOverlayState
 }
