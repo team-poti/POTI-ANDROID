@@ -30,10 +30,12 @@ class PermissionManager @Inject constructor(
 
         hasPendingServerEnable = false
 
+        if (!isSystemNotificationGranted()) return true
+
         val setting = getNotificationSettingUseCase().getOrNull() ?: return false
         isServerNotificationEnabled = setting.isTradeEnabled || setting.isEventEnabled
 
-        return !isSystemNotificationGranted() || !isServerNotificationEnabled
+        return !isServerNotificationEnabled
     }
 
     suspend fun requestNotificationPermission(shouldShowRationale: Boolean): PermissionRequestRoute {
