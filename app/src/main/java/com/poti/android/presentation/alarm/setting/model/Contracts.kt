@@ -5,10 +5,11 @@ import com.poti.android.core.base.UiEffect
 import com.poti.android.core.base.UiIntent
 import com.poti.android.core.base.UiState
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.notification.NotificationSetting
 
 data class AlarmSettingUiState(
-    val isTradeEnabled: Boolean = true,
-    val isEventEnabled: Boolean = true,
+    val currentSetting: NotificationSetting = NotificationSetting(isTradeEnabled = true, isEventEnabled = true),
+    val previousSetting: NotificationSetting = NotificationSetting(isTradeEnabled = true, isEventEnabled = true),
     val showModal: Boolean = false,
     val updateState: ApiState<Unit> = ApiState.Init,
 ) : UiState
