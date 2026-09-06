@@ -28,11 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.noRippleClickable
+import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.display.PotiDivider
 import com.poti.android.core.designsystem.component.display.PotiDividerStyle
@@ -44,6 +46,7 @@ import com.poti.android.core.designsystem.component.modal.PotiSmallModal
 import com.poti.android.core.designsystem.component.navigation.PotiBottomButton
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.artist.ArtistSearchResult
 import com.poti.android.domain.model.artist.MemberPriceOption
 import com.poti.android.presentation.party.component.MemberSelectBottomSheet
 import com.poti.android.presentation.party.create.component.CreateDeliverySetting
@@ -81,7 +84,10 @@ import com.poti.android.presentation.party.create.model.CreateUiIntent.OnSearchC
 import com.poti.android.presentation.party.create.model.CreateUiIntent.ScrollComplete
 import com.poti.android.presentation.party.create.model.CreateUiState
 import com.poti.android.presentation.party.create.model.DeliveryOptionUiModel
+import com.poti.android.presentation.party.create.model.FieldError
+import com.poti.android.presentation.party.create.model.MemberSettingStatus
 import com.poti.android.presentation.party.create.util.DateTransformation
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -401,3 +407,120 @@ private fun PartyCreateScreen(
         }
     }
 }
+
+@Preview(showBackground = true, heightDp = 1800, name = "초기 상태")
+@Composable
+private fun PartyCreateScreenPreview_Initial() {
+    PotiTheme {
+        PartyCreateScreen(
+            uiState = CreateUiState(
+                memberSettingStatus = MemberSettingStatus.ARTIST_NOT_SELECTED,
+                deliveryOptions = previewDeliveryOptions(),
+            ),
+            onScrollComplete = {},
+            onBackClick = {},
+            onImageChanged = {},
+            onSearchArtist = {},
+            onProductFocusChanged = {},
+            onProductChanged = {},
+            onProductSearchItemClick = {},
+            onDeadlineChanged = {},
+            onDescriptionChanged = {},
+            onAccountNumberChanged = {},
+            onBankChanged = {},
+            onMemberPriceChanged = {},
+            onMemberEditBtnClick = {},
+            onDeliveryRadioBtnClick = {},
+            onDeliveryPriceChanged = {},
+            onCreateBtnClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 1800, name = "입력 완료")
+@Composable
+private fun PartyCreateScreenPreview_Filled() {
+    PotiTheme {
+        PartyCreateScreen(
+            uiState = CreateUiState(
+                selectedArtist = ArtistSearchResult(artistId = 1L, name = "아이브(IVE)"),
+                selectedProduct = "IVE SECRET 포토카드",
+                productName = "IVE SECRET 포토카드",
+                productSearchState = ApiState.Success(emptyList()),
+                deadline = "20260930",
+                description = "포카 분철 진행합니다. 입금 후 배송 진행돼요.",
+                accountNumber = "1002123456789",
+                bank = "우리은행",
+                selectedMembers = persistentListOf(
+                    MemberPriceOption(memberId = 1L, name = "안유진", price = "12000"),
+                    MemberPriceOption(memberId = 2L, name = "가을", price = "10000"),
+                    MemberPriceOption(memberId = 3L, name = "레이", price = "10000"),
+                ),
+                memberSettingStatus = MemberSettingStatus.EDITABLE,
+                deliveryOptions = previewDeliveryOptions(selectedId = 2L),
+            ),
+            onScrollComplete = {},
+            onBackClick = {},
+            onImageChanged = {},
+            onSearchArtist = {},
+            onProductFocusChanged = {},
+            onProductChanged = {},
+            onProductSearchItemClick = {},
+            onDeadlineChanged = {},
+            onDescriptionChanged = {},
+            onAccountNumberChanged = {},
+            onBankChanged = {},
+            onMemberPriceChanged = {},
+            onMemberEditBtnClick = {},
+            onDeliveryRadioBtnClick = {},
+            onDeliveryPriceChanged = {},
+            onCreateBtnClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 1800, name = "에러 상태")
+@Composable
+private fun PartyCreateScreenPreview_Error() {
+    PotiTheme {
+        PartyCreateScreen(
+            uiState = CreateUiState(
+                imageError = FieldError.IMAGE_EMPTY_ERROR,
+                artistError = FieldError.ARTIST_EMPTY_ERROR,
+                productError = FieldError.PRODUCT_EMPTY_ERROR,
+                deadline = "20240101",
+                deadlineError = FieldError.DEADLINE_PAST_ERROR,
+                descriptionError = FieldError.DESCRIPTION_ERROR,
+                accountNumberError = FieldError.ACCOUNT_NUMBER_ERROR,
+                bankError = FieldError.BANK_ERROR,
+                memberSettingStatus = MemberSettingStatus.MEMBER_NOT_SELECTED,
+                memberError = FieldError.MEMBER_EMPTY_ERROR,
+                deliveryOptions = previewDeliveryOptions(),
+                deliveryError = FieldError.DELIVERY_EMPTY_ERROR,
+            ),
+            onScrollComplete = {},
+            onBackClick = {},
+            onImageChanged = {},
+            onSearchArtist = {},
+            onProductFocusChanged = {},
+            onProductChanged = {},
+            onProductSearchItemClick = {},
+            onDeadlineChanged = {},
+            onDescriptionChanged = {},
+            onAccountNumberChanged = {},
+            onBankChanged = {},
+            onMemberPriceChanged = {},
+            onMemberEditBtnClick = {},
+            onDeliveryRadioBtnClick = {},
+            onDeliveryPriceChanged = {},
+            onCreateBtnClick = {},
+        )
+    }
+}
+
+private fun previewDeliveryOptions(selectedId: Long? = null) = persistentListOf(
+    DeliveryOptionUiModel(deliveryId = 1L, name = "일반우편", priceInput = "500", isSelected = selectedId == 1L),
+    DeliveryOptionUiModel(deliveryId = 2L, name = "준등기", priceInput = "1800", isSelected = selectedId == 2L),
+    DeliveryOptionUiModel(deliveryId = 3L, name = "등기", priceInput = "3000", isSelected = selectedId == 3L),
+    DeliveryOptionUiModel(deliveryId = 4L, name = "택배", priceInput = "4000", isSelected = selectedId == 4L),
+)
