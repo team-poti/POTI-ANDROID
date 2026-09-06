@@ -19,8 +19,8 @@ class AlarmSettingViewModel @Inject constructor(
     private val getNotificationSettingUseCase: GetNotificationSettingUseCase,
     private val updateNotificationSettingUseCase: UpdateNotificationSettingUseCase,
 ) : BaseViewModel<AlarmSettingUiState, AlarmSettingUiIntent, AlarmSettingUiEffect>(
-    initialState = AlarmSettingUiState(),
-) {
+        initialState = AlarmSettingUiState(),
+    ) {
     init {
         loadAlarmSetting()
     }
