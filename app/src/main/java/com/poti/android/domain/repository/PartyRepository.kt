@@ -47,6 +47,8 @@ interface PartyRepository {
 
     suspend fun getRecruitPostParticipant(postId: Long): Result<ParticipantManageDetail>
 
+    suspend fun deleteRecruitPost(postId: Long): Result<Unit>
+
     suspend fun getProductPartyList(
         page: Int?,
         size: Int?,

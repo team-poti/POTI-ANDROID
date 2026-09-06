@@ -36,6 +36,7 @@ enum class PotiHeaderPageType(
 
 /**
  * @param containerColor 헤더 배경색입니다. 화면 배경이 흰색이 아닌 경우 맞춰서 전달합니다.
+ * @param trailingContent 헤더 우측에 배치할 커스텀 콘텐츠입니다. 전달 시 [onTrailingIconClick]보다 우선하며, 둘은 함께 노출되지 않습니다.
  */
 @Composable
 fun PotiHeaderPage(
@@ -47,6 +48,7 @@ fun PotiHeaderPage(
     onTrailingIconClick: (() -> Unit)? = null,
     @DrawableRes trailingIconRes: Int = R.drawable.ic_switch,
     containerColor: Color = PotiTheme.colors.white,
+    trailingContent: (@Composable RowScope.() -> Unit)? = null,
 ) {
     PotiHeaderPageBase(
         onNavigationClick = onNavigationClick,
@@ -82,7 +84,9 @@ fun PotiHeaderPage(
             }
         }
 
-        onTrailingIconClick?.let {
+        if (trailingContent != null) {
+            trailingContent()
+        } else if (onTrailingIconClick != null) {
             PotiIconButton(
                 iconRes = trailingIconRes,
                 onClick = onTrailingIconClick,

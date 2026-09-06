@@ -7,6 +7,7 @@ import com.poti.android.core.common.state.ApiState
 
 data class RecruiterDetailUiState(
     val recruiterDetailState: ApiState<RecruiterDetailUiModel> = ApiState.Loading,
+    val isDeleting: Boolean = false,
 ) : UiState
 
 sealed interface RecruiterDetailUiIntent : UiIntent {
@@ -15,6 +16,8 @@ sealed interface RecruiterDetailUiIntent : UiIntent {
     data object PartyCardClicked : RecruiterDetailUiIntent
 
     data object ParticipantSectionClicked : RecruiterDetailUiIntent
+
+    data object DeleteButtonClicked : RecruiterDetailUiIntent
 
     data object OnResume : RecruiterDetailUiIntent
 }
