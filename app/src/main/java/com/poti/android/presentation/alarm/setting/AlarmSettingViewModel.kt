@@ -34,7 +34,7 @@ class AlarmSettingViewModel @Inject constructor(
             is AlarmSettingUiIntent.OnResume ->
                 closePermissionModalIfGranted(intent.isSystemNotificationEnabled)
 
-            AlarmSettingUiIntent.OnModalClose -> updateState { copy(showModal = false) }
+            AlarmSettingUiIntent.OnModalClose -> closePermissionModal()
         }
     }
 
@@ -80,20 +80,26 @@ class AlarmSettingViewModel @Inject constructor(
             copy(
                 currentSetting = setting,
                 previousSetting = currentSetting,
-                updateState = ApiState.Loading,
             )
         }
 
+        if (isTurnedOn && !isSystemNotificationEnabled) {
+            showPermissionModal()
+            return
+        }
+
+        syncAlarmSettingToServer()
+    }
+
+    private fun syncAlarmSettingToServer() {
         viewModelScope.launch {
+            updateState { copy(updateState = ApiState.Loading) }
+
             updateNotificationSettingUseCase(
-                isTradeEnabled = setting.isTradeEnabled,
-                isEventEnabled = setting.isEventEnabled,
+                isTradeEnabled = uiState.value.currentSetting.isTradeEnabled,
+                isEventEnabled = uiState.value.currentSetting.isEventEnabled,
             ).onSuccess { _ ->
                 updateState { copy(updateState = ApiState.Success(Unit)) }
-
-                if (isTurnedOn && !isSystemNotificationEnabled) {
-                    showPermissionModal()
-                }
             }.onFailure { error ->
                 updateState {
                     copy(
@@ -114,9 +120,20 @@ class AlarmSettingViewModel @Inject constructor(
         sendEffect(AlarmSettingUiEffect.OpenSystemNotificationSetting)
     }
 
+    private fun closePermissionModal() {
+        updateState {
+            copy(
+                currentSetting = previousSetting,
+                showModal = false,
+            )
+        }
+    }
+
     private fun closePermissionModalIfGranted(isSystemNotificationEnabled: Boolean) {
         if (!isSystemNotificationEnabled) return
+        if (!uiState.value.showModal) return
 
         updateState { copy(showModal = false) }
+        syncAlarmSettingToServer()
     }
 }
