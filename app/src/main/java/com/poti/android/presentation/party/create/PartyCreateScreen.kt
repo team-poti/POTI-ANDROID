@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,7 +50,6 @@ import com.poti.android.presentation.party.create.component.CreateDeliverySettin
 import com.poti.android.presentation.party.create.component.CreateDropdownField
 import com.poti.android.presentation.party.create.component.CreateMemberSetting
 import com.poti.android.presentation.party.create.component.CreatePhotoUpload
-import com.poti.android.presentation.party.create.component.SellerNotice
 import com.poti.android.presentation.party.create.component.ViewType
 import com.poti.android.presentation.party.create.model.CreateModalType
 import com.poti.android.presentation.party.create.model.CreateUiEffect.NavigateToBack
@@ -394,17 +395,8 @@ private fun PartyCreateScreen(
                     onPriceChange = onDeliveryPriceChanged,
                     errorMessage = uiState.deliveryError?.let { stringResource(it.message) } ?: "",
                 )
-            }
 
-            item {
-                PotiDivider(
-                    styleType = PotiDividerStyle.LARGE,
-                )
-
-                SellerNotice(
-                    modifier = Modifier
-                        .padding(bottom = 40.dp),
-                )
+                Spacer(Modifier.height(40.dp))
             }
         }
     }
