@@ -2,6 +2,7 @@ import java.util.Properties
 import kotlin.apply
 
 plugins {
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -123,7 +124,14 @@ ktlint {
     outputToConsole = true
 }
 
+androidComponents {
+    onVariants { variant ->
+        variant.manifestPlaceholders.put("crashlyticsCollectionEnabled", (variant.name == "prodRelease").toString())
+    }
+}
+
 dependencies {
+    implementation(libs.firebase.crashlytics)
     // --- Android Core & Lifecycle ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)

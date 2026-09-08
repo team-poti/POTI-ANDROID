@@ -55,6 +55,7 @@ googleId = "1.2.0"
 
 # --- Firebase ---
 firebaseBom = "34.15.0"
+crashlyticsPlugin = "3.0.8"
 google-services = "4.5.0"
 
 
@@ -120,6 +121,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 # --- Firebase ---
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 [plugins]
 # --- Android & Kotlin ---
@@ -133,3 +135,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
