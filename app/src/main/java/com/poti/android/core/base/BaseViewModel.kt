@@ -2,6 +2,9 @@ package com.poti.android.core.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poti.android.core.monitoring.CrashOperation
+import com.poti.android.core.monitoring.CrashReporter
+import com.poti.android.core.monitoring.isUnexpectedFailure
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 interface UiState
@@ -21,6 +25,9 @@ interface UiEffect
 abstract class BaseViewModel<S : UiState, I : UiIntent, E : UiEffect>(
     initialState: S,
 ) : ViewModel() {
+    @Inject
+    lateinit var crashReporter: CrashReporter
+
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<S> = _uiState.asStateFlow()
 
@@ -48,6 +55,9 @@ abstract class BaseViewModel<S : UiState, I : UiIntent, E : UiEffect>(
                 block()
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
+                if (::crashReporter.isInitialized && isUnexpectedFailure(e)) {
+                    crashReporter.recordNonFatal(e, CrashOperation.VIEW_MODEL)
+                }
                 onError(e)
             }
         }

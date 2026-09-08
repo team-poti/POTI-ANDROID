@@ -1,5 +1,8 @@
 package com.poti.android.data.network
 
+import com.poti.android.core.monitoring.CrashOperation
+import com.poti.android.core.monitoring.CrashReporter
+import com.poti.android.core.network.model.MissingResponseDataException
 import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.TokenPair
 import com.poti.android.data.remote.datasource.AuthRemoteDataSource
@@ -20,6 +23,7 @@ class TokenAuthenticator @Inject constructor(
     private val authTokenStore: AuthTokenStore,
     private val authRemoteDataSource: Provider<AuthRemoteDataSource>,
     private val authSessionManager: AuthSessionManager,
+    private val crashReporter: CrashReporter,
 ) : Authenticator {
     private val lock = Any()
 
@@ -70,6 +74,7 @@ class TokenAuthenticator @Inject constructor(
                     .w(e, "Reissue API call failed due to network error. Keep session.")
                 return@synchronized RefreshResult.Stop
             } catch (e: Exception) {
+                crashReporter.recordNonFatal(e, CrashOperation.TOKEN_REISSUE)
                 Timber.Forest.tag("TokenAuthenticator")
                     .e(e, "Reissue API call failed unexpectedly. Keep session.")
                 return@synchronized RefreshResult.Stop
@@ -98,6 +103,7 @@ class TokenAuthenticator @Inject constructor(
 
             val reissueData = refreshResponse.body()?.data
             if (reissueData == null) {
+                crashReporter.recordNonFatal(MissingResponseDataException(), CrashOperation.TOKEN_RESPONSE)
                 Timber.Forest.tag("TokenAuthenticator")
                     .e("Reissue API returned success but body/data is null. Keep session.")
                 return@synchronized RefreshResult.Stop
@@ -146,6 +152,10 @@ class TokenAuthenticator @Inject constructor(
                 }
             }
         }.onFailure { error ->
+            crashReporter.recordNonFatal(
+                IllegalStateException("Token clear failed").apply { stackTrace = error.stackTrace },
+                CrashOperation.TOKEN_CLEAR,
+            )
             Timber.Forest.tag("TokenAuthenticator")
                 .e(error, "Failed to persist token clear. Continue logout with cleared in-memory tokens.")
         }.getOrNull()
@@ -171,6 +181,10 @@ class TokenAuthenticator @Inject constructor(
                 }
             }
         }.onFailure { error ->
+            crashReporter.recordNonFatal(
+                IllegalStateException("Token persistence failed").apply { stackTrace = error.stackTrace },
+                CrashOperation.TOKEN_PERSIST,
+            )
             Timber.Forest.tag("TokenAuthenticator")
                 .e(error, "Failed to persist refreshed tokens. Keep the updated in-memory token pair.")
         }
