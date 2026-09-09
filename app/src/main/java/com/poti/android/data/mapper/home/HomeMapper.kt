@@ -36,7 +36,7 @@ fun OtherGroupItemDto.toDomain(): GroupItem = GroupItem(
 )
 
 fun HomeBannerDto.toDomain(): Banner = Banner(
-    postId = postId,
+    id = id,
     imageUrl = imageUrl,
-    deepLink = deeplink,
+    deepLink = deeplink.orEmpty(),
 )
