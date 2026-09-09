@@ -3,6 +3,7 @@ package com.poti.android
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
+import com.poti.android.core.analytics.AppOpenTracker
 import com.poti.android.core.analytics.MixpanelClient
 import com.poti.android.core.fcm.FcmMessagingService
 import com.poti.android.core.fcm.FcmTokenProvider
@@ -20,6 +21,9 @@ class PotiApplication : Application() {
     lateinit var mixpanelClient: MixpanelClient
 
     @Inject
+    lateinit var appOpenTracker: AppOpenTracker
+
+    @Inject
     lateinit var fcmTokenProvider: FcmTokenProvider
 
     @Inject
@@ -35,6 +39,7 @@ class PotiApplication : Application() {
         setTimber()
         initKakaoSdk()
         mixpanelClient.initialize()
+        appOpenTracker.start()
         initializeFirebaseFeatures()
     }
 
