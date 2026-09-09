@@ -1,5 +1,7 @@
 package com.poti.android.data.repository
 
+import com.poti.android.core.analytics.AnalyticsUserPropertyKey
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.network.model.handleApiResponse
 import com.poti.android.core.network.model.handleNullableApiResponse
 import com.poti.android.core.network.util.HttpResponseHandler
@@ -22,38 +24,52 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val httpResponseHandler: HttpResponseHandler,
     private val userRemoteDataSource: UserRemoteDataSource,
+    private val eventTracker: EventTracker,
 ) : UserRepository {
     override suspend fun patchOnboarding(
         nickname: String,
         favoriteArtistId: Long?,
-    ): Result<Unit> = executeWithUiMock(
-        mock = { Unit },
-        real = {
-            httpResponseHandler.safeApiCall {
-                val requestDto = OnboardingRequestDto(
-                    nickname = nickname,
-                    favoriteArtistId = favoriteArtistId,
-                )
-                userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
-                    .handleApiResponse()
-                    .getOrThrow()
-                Unit
-            }
-        },
-    )
+    ): Result<Unit> =
+        executeWithUiMock(
+            mock = { Unit },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    val requestDto = OnboardingRequestDto(
+                        nickname = nickname,
+                        favoriteArtistId = favoriteArtistId,
+                    )
+                    userRemoteDataSource.patchOnboarding(onboardingRequest = requestDto)
+                        .handleApiResponse()
+                        .getOrThrow()
+                    Unit
+                }
+            },
+        ).onSuccess {
+            eventTracker.setUserProperties(
+                buildMap {
+                    put(AnalyticsUserPropertyKey.ONBOARDING_COMPLETED, true)
+                    favoriteArtistId?.let { put(AnalyticsUserPropertyKey.FAVORITE_GROUP_ID, it.toString()) }
+                },
+            )
+        }
 
-    override suspend fun patchFavoriteArtist(artistId: Long): Result<Unit> = executeWithUiMock(
-        mock = { Unit },
-        real = {
-            httpResponseHandler.safeApiCall {
-                val requestDto = FavoriteArtistRequestDto(artistId = artistId)
-                userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
-                    .handleNullableApiResponse()
-                    .getOrThrow()
-                Unit
-            }
-        },
-    )
+    override suspend fun patchFavoriteArtist(artistId: Long): Result<Unit> =
+        executeWithUiMock(
+            mock = { Unit },
+            real = {
+                httpResponseHandler.safeApiCall {
+                    val requestDto = FavoriteArtistRequestDto(artistId = artistId)
+                    userRemoteDataSource.patchFavoriteArtist(favoriteArtistRequest = requestDto)
+                        .handleNullableApiResponse()
+                        .getOrThrow()
+                    Unit
+                }
+            },
+        ).onSuccess {
+            eventTracker.setUserProperties(
+                mapOf(AnalyticsUserPropertyKey.FAVORITE_GROUP_ID to artistId.toString()),
+            )
+        }
 
     override suspend fun postNicknameDuplicate(nickname: String): Result<Boolean> =
         executeWithUiMock(
