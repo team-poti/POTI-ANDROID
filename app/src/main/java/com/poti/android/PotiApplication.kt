@@ -3,6 +3,7 @@ package com.poti.android
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
+import com.poti.android.core.analytics.MixpanelClient
 import com.poti.android.core.fcm.FcmMessagingService
 import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.core.fcm.repository.FcmRepository
@@ -15,6 +16,9 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class PotiApplication : Application() {
+    @Inject
+    lateinit var mixpanelClient: MixpanelClient
+
     @Inject
     lateinit var fcmTokenProvider: FcmTokenProvider
 
@@ -30,8 +34,8 @@ class PotiApplication : Application() {
         setDarkMode()
         setTimber()
         initKakaoSdk()
-        FcmMessagingService.createChannels(this)
-        syncFcmToken()
+        mixpanelClient.initialize()
+        initializeFirebaseFeatures()
     }
 
     private fun setDarkMode() {
@@ -46,6 +50,13 @@ class PotiApplication : Application() {
 
     private fun initKakaoSdk() {
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+    }
+
+    private fun initializeFirebaseFeatures() {
+        if (!BuildConfig.FIREBASE_ENABLED) return
+
+        FcmMessagingService.createChannels(this)
+        syncFcmToken()
     }
 
     private fun syncFcmToken() {

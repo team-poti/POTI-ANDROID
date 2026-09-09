@@ -70,6 +70,8 @@ jobs:
                       echo "poti.prod.base.url=https://temp.example.com/"
                     } > local.properties
                   fi
+                  grep -q '^mixpanel.dev.project.token=' local.properties || echo 'mixpanel.dev.project.token=ci-placeholder' >> local.properties
+                  grep -q '^mixpanel.prod.project.token=' local.properties || echo 'mixpanel.prod.project.token=ci-placeholder' >> local.properties
 
             - name: Create google-services.json
               if: steps.changes.outputs.android == 'true'

@@ -1,3 +1,4 @@
+import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 import kotlin.apply
 
@@ -28,6 +29,9 @@ fun requiredLocalProperty(key: String): String {
 }
 
 fun buildConfigString(value: String): String = "\"$value\""
+
+val mixpanelDevProjectToken = requiredLocalProperty("mixpanel.dev.project.token")
+val mixpanelProdProjectToken = requiredLocalProperty("mixpanel.prod.project.token")
 
 android {
     namespace = "com.poti.android"
@@ -60,17 +64,20 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("boolean", "USE_UI_MOCK", "false")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "true")
         }
         create("mock") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
             buildConfigField("boolean", "USE_UI_MOCK", "true")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "false")
             matchingFallbacks += listOf("debug")
         }
         release {
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "true")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -127,11 +134,37 @@ ktlint {
 androidComponents {
     onVariants { variant ->
         variant.manifestPlaceholders.put("crashlyticsCollectionEnabled", (variant.name == "prodRelease").toString())
+
+        val (mixpanelEnabled, mixpanelProjectToken) =
+            when (variant.name) {
+                "devDebug", "devRelease", "prodDebug" -> true to mixpanelDevProjectToken
+                "prodRelease" -> true to mixpanelProdProjectToken
+                "devMock", "prodMock" -> false to ""
+                else -> error("Mixpanel configuration is missing for ${variant.name}")
+            }
+        val buildConfigFields =
+            requireNotNull(variant.buildConfigFields) {
+                "BuildConfig fields must be enabled for ${variant.name}"
+            }
+
+        buildConfigFields.put(
+            "MIXPANEL_ENABLED",
+            BuildConfigField("boolean", mixpanelEnabled.toString(), "Whether Mixpanel transmission is enabled"),
+        )
+        buildConfigFields.put(
+            "MIXPANEL_PROJECT_TOKEN",
+            BuildConfigField("String", buildConfigString(mixpanelProjectToken), "Mixpanel project token for this variant"),
+        )
+    }
+}
+
+tasks.configureEach {
+    if (name == "processDevMockGoogleServices" || name == "processProdMockGoogleServices") {
+        enabled = false
     }
 }
 
 dependencies {
-    implementation(libs.firebase.crashlytics)
     // --- Android Core & Lifecycle ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
@@ -197,4 +230,8 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+
+    // Monitoring
+    implementation(libs.mixpanel.android)
+    implementation(libs.firebase.crashlytics)
 }
