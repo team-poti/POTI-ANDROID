@@ -27,12 +27,18 @@ class HomeViewModel @Inject constructor(
             is HomeUiIntent.OnProductCardClick -> sendEffect(NavigateToGoodsPartyList(intent.artistId, intent.title))
             HomeUiIntent.LoadHomeContent -> loadHomeContent()
             HomeUiIntent.OnOtherProductCategoryClick -> sendEffect(NavigateToOtherProductCategory)
+            is HomeUiIntent.OnBannerClick -> handleBannerClick(intent.deepLink)
             HomeUiIntent.OnAlarmClick -> {
                 if (!isGuestUseCase()) sendEffect(NavigateToAlarmList)
             }
             HomeUiIntent.OnLoginRequiredConfirm -> handleLoginRequiredConfirm()
             HomeUiIntent.OnLoginRequiredDismiss -> updateState { copy(showLoginRequiredDialog = false) }
         }
+    }
+
+    private fun handleBannerClick(deepLink: String) {
+        if (deepLink.isBlank()) return
+        sendEffect(OpenDeepLink(deepLink))
     }
 
     private fun handleFloatingClick() {

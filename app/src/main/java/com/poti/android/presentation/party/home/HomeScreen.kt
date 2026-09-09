@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
 import com.poti.android.core.common.extension.onSuccess
+import com.poti.android.core.common.extension.openDeepLink
 import com.poti.android.core.common.util.HandleSideEffects
 import com.poti.android.core.designsystem.component.button.PotiFloatingButton
 import com.poti.android.core.designsystem.component.modal.PotiSmallModal
@@ -44,6 +46,7 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -54,6 +57,7 @@ fun HomeRoute(
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
             HomeUiEffect.NavigateToAlarmList -> onNavigateToAlarmList()
             HomeUiEffect.NavigateToLogin -> onNavigateToLogin()
+            is HomeUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
         }
     }
 
@@ -78,6 +82,7 @@ fun HomeRoute(
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
             onProductCardClick = { artistId, title -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title)) },
             onAlarmClick = { viewModel.processIntent(HomeUiIntent.OnAlarmClick) },
+            onBannerClick = { deepLink -> viewModel.processIntent(HomeUiIntent.OnBannerClick(deepLink)) },
             modifier = modifier,
         )
     }
@@ -92,6 +97,7 @@ private fun HomeScreen(
     onOtherProductCategoryClick: (Long?) -> Unit,
     onProductCardClick: (Long, String) -> Unit,
     onAlarmClick: () -> Unit,
+    onBannerClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -115,7 +121,7 @@ private fun HomeScreen(
             ) {
                 HomeBannerSection(
                     banners = homeContent.banners,
-                    onBannerClick = {},
+                    onBannerClick = onBannerClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .padding(horizontal = 16.dp),
@@ -174,6 +180,7 @@ private fun HomeScreenPreview() {
             onOtherProductCategoryClick = {},
             onProductCardClick = { _, _ -> },
             onAlarmClick = {},
+            onBannerClick = {},
         )
     }
 }
