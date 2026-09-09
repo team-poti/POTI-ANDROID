@@ -38,4 +38,5 @@ fun OtherGroupItemDto.toDomain(): GroupItem = GroupItem(
 fun HomeBannerDto.toDomain(): Banner = Banner(
     postId = postId,
     imageUrl = imageUrl,
+    deepLink = deeplink,
 )

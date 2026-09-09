@@ -21,4 +21,5 @@ data class GroupItem(
 data class Banner(
     val postId: Long,
     val imageUrl: String,
+    val deepLink: String,
 )

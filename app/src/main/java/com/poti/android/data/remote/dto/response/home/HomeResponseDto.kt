@@ -57,4 +57,6 @@ data class HomeBannerDto(
     val postId: Long,
     @SerialName("imageUrl")
     val imageUrl: String,
+    @SerialName("deeplink")
+    val deeplink: String,
 )
