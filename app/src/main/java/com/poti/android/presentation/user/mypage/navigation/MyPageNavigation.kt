@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import com.poti.android.BuildConfig
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.designsystem.theme.PotiTheme
 import com.poti.android.core.navigation.Route
@@ -18,6 +20,8 @@ import com.poti.android.presentation.user.favoriteartist.FavoriteArtistRoute
 import com.poti.android.presentation.user.mypage.MyPageRoute
 import com.poti.android.presentation.user.setting.navigation.navigateToSetting
 import kotlinx.serialization.Serializable
+
+private const val FAVORITE_ARTIST_DEEP_LINK = "${BuildConfig.DEEP_LINK_HOST}/favorite-artist"
 
 sealed interface MyPageRoute : Route {
     @Serializable
@@ -54,7 +58,11 @@ fun NavGraphBuilder.myPageNavGraph(
                 .padding(paddingValues),
         )
     }
-    slideComposable<MyPageRoute.FavoriteArtist> {
+    slideComposable<MyPageRoute.FavoriteArtist>(
+        deepLinks = listOf(
+            navDeepLink<MyPageRoute.FavoriteArtist>(FAVORITE_ARTIST_DEEP_LINK),
+        ),
+    ) {
         FavoriteArtistRoute(
             onPopBackStack = navController::popBackStack,
             modifier = Modifier.padding(paddingValues),
