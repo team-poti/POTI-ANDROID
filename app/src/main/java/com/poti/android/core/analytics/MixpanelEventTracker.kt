@@ -12,7 +12,7 @@ class MixpanelEventTracker @Inject constructor(
 ) : EventTracker {
     override fun track(
         eventName: String,
-        properties: Map<String, Any>,
+        properties: Map<String, Any?>,
     ) {
         if (eventName.isBlank()) return
 
@@ -29,7 +29,7 @@ class MixpanelEventTracker @Inject constructor(
         }
     }
 
-    override fun setUserProperties(properties: Map<String, Any>) {
+    override fun setUserProperties(properties: Map<String, Any?>) {
         if (properties.isEmpty()) return
 
         executeSafely("set_user_properties") { mixpanel ->
