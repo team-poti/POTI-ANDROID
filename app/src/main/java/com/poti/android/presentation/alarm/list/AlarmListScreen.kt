@@ -22,6 +22,7 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.toRelativeTime
 import com.poti.android.core.common.extension.toast
@@ -150,7 +151,10 @@ private fun AlarmListScreen(
 }
 
 private fun Context.openDeepLink(deepLink: String) {
-    val intent = Intent(Intent.ACTION_VIEW, deepLink.toUri())
+    val notificationDeepLink = deepLink.toUri().buildUpon()
+        .appendQueryParameter("source", AnalyticsValue.NOTIFICATION)
+        .build()
+    val intent = Intent(Intent.ACTION_VIEW, notificationDeepLink)
         .setPackage(packageName)
 
     runCatching { startActivity(intent) }
