@@ -12,12 +12,12 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
-val properties = Properties().apply {
+val localProperties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
 fun requiredLocalProperty(key: String): String {
-    val value = properties[key] as? String
+    val value = localProperties[key] as? String
 
     require(!value.isNullOrBlank()) {
         "$key must not be blank in local.properties"
@@ -27,6 +27,26 @@ fun requiredLocalProperty(key: String): String {
 }
 
 fun buildConfigString(value: String): String = "\"$value\""
+
+fun environmentVariableOrLocalProperty(
+    environmentVariable: String,
+    localProperty: String,
+): String? =
+    System.getenv(environmentVariable)?.takeIf(String::isNotBlank)
+        ?: localProperties.getProperty(localProperty)?.takeIf(String::isNotBlank)
+
+val uploadStoreFile = environmentVariableOrLocalProperty("UPLOAD_STORE_FILE", "upload.store.file")
+val uploadStorePassword = environmentVariableOrLocalProperty("UPLOAD_STORE_PASSWORD", "upload.store.password")
+val uploadKeyAlias = environmentVariableOrLocalProperty("UPLOAD_KEY_ALIAS", "upload.key.alias")
+val uploadKeyPassword = environmentVariableOrLocalProperty("UPLOAD_KEY_PASSWORD", "upload.key.password")
+val uploadSigningValues = listOf(uploadStoreFile, uploadStorePassword, uploadKeyAlias, uploadKeyPassword)
+val isUploadSigningConfigured = uploadSigningValues.all { !it.isNullOrBlank() }
+
+require(uploadSigningValues.none { !it.isNullOrBlank() } || isUploadSigningConfigured) {
+    "Upload signing requires UPLOAD_STORE_FILE, UPLOAD_STORE_PASSWORD, " +
+        "UPLOAD_KEY_ALIAS, and UPLOAD_KEY_PASSWORD. " +
+        "Set all four as environment variables or upload.* values in local.properties."
+}
 
 android {
     namespace = "com.poti.android"
@@ -41,7 +61,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val kakaoNativeAppKey = properties["kakao.native.app.key"].toString()
+        val kakaoNativeAppKey = localProperties["kakao.native.app.key"].toString()
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
@@ -52,6 +72,15 @@ android {
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
+        }
+
+        if (isUploadSigningConfigured) {
+            create("release") {
+                storeFile = rootProject.file(requireNotNull(uploadStoreFile))
+                storePassword = requireNotNull(uploadStorePassword)
+                keyAlias = requireNotNull(uploadKeyAlias)
+                keyPassword = requireNotNull(uploadKeyPassword)
+            }
         }
     }
 
@@ -68,6 +97,7 @@ android {
             matchingFallbacks += listOf("debug")
         }
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
