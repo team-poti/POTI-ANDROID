@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.usecase.history.DeleteRecruitPostUseCase
 import com.poti.android.domain.usecase.history.GetRecruitDetailUseCase
 import com.poti.android.presentation.history.navigation.HistoryRoute
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiEffect
@@ -12,12 +13,14 @@ import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiIn
 import com.poti.android.presentation.history.recruiter.model.RecruiterDetailUiState
 import com.poti.android.presentation.history.recruiter.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class RecruiterViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getRecruitDetailUseCase: GetRecruitDetailUseCase,
+    private val deleteRecruitPostUseCase: DeleteRecruitPostUseCase,
 ) : BaseViewModel<RecruiterDetailUiState, RecruiterDetailUiIntent, RecruiterDetailUiEffect>(
         initialState = RecruiterDetailUiState(),
     ) {
@@ -32,7 +35,24 @@ class RecruiterViewModel @Inject constructor(
             is RecruiterDetailUiIntent.BackButtonClicked -> sendEffect(RecruiterDetailUiEffect.NavigateBack)
             is RecruiterDetailUiIntent.PartyCardClicked -> sendEffect(NavigateToPartyDetail(recruitId))
             is RecruiterDetailUiIntent.ParticipantSectionClicked -> sendEffect(NavigateToParticipantList(recruitId))
+            RecruiterDetailUiIntent.DeleteButtonClicked -> deleteRecruitPost()
             RecruiterDetailUiIntent.OnResume -> getRecruiterDetail()
+        }
+    }
+
+    private fun deleteRecruitPost() {
+        if (uiState.value.isDeleting) return
+
+        launchScope {
+            updateState { copy(isDeleting = true) }
+            deleteRecruitPostUseCase(recruitId)
+                .onSuccess {
+                    sendEffect(NavigateBack)
+                }
+                .onFailure { error ->
+                    Timber.d("deleteRecruitPost 실패: $error")
+                    updateState { copy(isDeleting = false) }
+                }
         }
     }
 

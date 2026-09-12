@@ -53,6 +53,9 @@ class PartyRemoteDataSource @Inject constructor(
     suspend fun getRecruitPostParticipant(postId: Long): BaseResponse<GroupBuyPostParticipantDetailDto> =
         partyService.getRecruitPostParticipant(postId)
 
+    suspend fun deleteParty(postId: Long): BaseResponse<Unit> =
+        partyService.deleteParty(postId)
+
     suspend fun getProductPartyList(
         page: Int?,
         size: Int?,

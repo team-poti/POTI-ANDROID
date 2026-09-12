@@ -15,6 +15,7 @@ import com.poti.android.data.remote.dto.response.party.ProductPartyListResponseD
 import com.poti.android.data.remote.dto.response.party.ProductSearchResponseDto
 import com.poti.android.data.remote.dto.response.party.ShippingOptionResponseDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -69,6 +70,11 @@ interface PartyService {
     suspend fun getRecruitPostParticipant(
         @Path("postId") postId: Long,
     ): BaseResponse<GroupBuyPostParticipantDetailDto>
+
+    @DELETE("/api/v1/posts/{postId}")
+    suspend fun deleteParty(
+        @Path("postId") postId: Long,
+    ): BaseResponse<Unit>
 
     @GET("/api/v1/posts/pots")
     suspend fun getProductPartyList(

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.poti.android.R
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.domain.model.notification.NotificationSetting
 import com.poti.android.domain.usecase.notification.GetNotificationSettingUseCase
 import com.poti.android.domain.usecase.notification.UpdateNotificationSettingUseCase
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiEffect
@@ -32,7 +33,8 @@ class AlarmSettingViewModel @Inject constructor(
             AlarmSettingUiIntent.OnAllowSystemAlarm -> requestSystemAlarmPermission()
             is AlarmSettingUiIntent.OnResume ->
                 closePermissionModalIfGranted(intent.isSystemNotificationEnabled)
-            AlarmSettingUiIntent.OnModalClose -> updateState { copy(showModal = false) }
+
+            AlarmSettingUiIntent.OnModalClose -> closePermissionModal()
         }
     }
 
@@ -41,8 +43,8 @@ class AlarmSettingViewModel @Inject constructor(
             getNotificationSettingUseCase().onSuccess { setting ->
                 updateState {
                     copy(
-                        isTradeEnabled = setting.isTradeEnabled,
-                        isEventEnabled = setting.isEventEnabled,
+                        currentSetting = setting,
+                        previousSetting = setting,
                     )
                 }
             }.onFailure { _ ->
@@ -53,8 +55,7 @@ class AlarmSettingViewModel @Inject constructor(
 
     private fun updateTradeAlarm(intent: AlarmSettingUiIntent.OnTradeToggle) {
         updateAlarmSetting(
-            isTradeEnabled = intent.enabled,
-            isEventEnabled = uiState.value.isEventEnabled,
+            setting = uiState.value.currentSetting.copy(isTradeEnabled = intent.enabled),
             isTurnedOn = intent.enabled,
             isSystemNotificationEnabled = intent.isSystemNotificationEnabled,
         )
@@ -62,46 +63,47 @@ class AlarmSettingViewModel @Inject constructor(
 
     private fun updateEventAlarm(intent: AlarmSettingUiIntent.OnEventToggle) {
         updateAlarmSetting(
-            isTradeEnabled = uiState.value.isTradeEnabled,
-            isEventEnabled = intent.enabled,
+            setting = uiState.value.currentSetting.copy(isEventEnabled = intent.enabled),
             isTurnedOn = intent.enabled,
             isSystemNotificationEnabled = intent.isSystemNotificationEnabled,
         )
     }
 
     private fun updateAlarmSetting(
-        isTradeEnabled: Boolean,
-        isEventEnabled: Boolean,
+        setting: NotificationSetting,
         isTurnedOn: Boolean,
         isSystemNotificationEnabled: Boolean,
     ) {
         if (uiState.value.updateState is ApiState.Loading) return
 
-        val previousSetting = uiState.value
-
         updateState {
             copy(
-                isTradeEnabled = isTradeEnabled,
-                isEventEnabled = isEventEnabled,
-                updateState = ApiState.Loading,
+                currentSetting = setting,
+                previousSetting = currentSetting,
             )
         }
 
+        if (isTurnedOn && !isSystemNotificationEnabled) {
+            showPermissionModal()
+            return
+        }
+
+        syncAlarmSettingToServer()
+    }
+
+    private fun syncAlarmSettingToServer() {
         viewModelScope.launch {
+            updateState { copy(updateState = ApiState.Loading) }
+
             updateNotificationSettingUseCase(
-                isTradeEnabled = isTradeEnabled,
-                isEventEnabled = isEventEnabled,
+                isTradeEnabled = uiState.value.currentSetting.isTradeEnabled,
+                isEventEnabled = uiState.value.currentSetting.isEventEnabled,
             ).onSuccess { _ ->
                 updateState { copy(updateState = ApiState.Success(Unit)) }
-
-                if (isTurnedOn && !isSystemNotificationEnabled) {
-                    showPermissionModal()
-                }
             }.onFailure { error ->
                 updateState {
                     copy(
-                        isTradeEnabled = previousSetting.isTradeEnabled,
-                        isEventEnabled = previousSetting.isEventEnabled,
+                        currentSetting = previousSetting,
                         updateState = ApiState.Failure(error.toString()),
                     )
                 }
@@ -118,9 +120,20 @@ class AlarmSettingViewModel @Inject constructor(
         sendEffect(AlarmSettingUiEffect.OpenSystemNotificationSetting)
     }
 
+    private fun closePermissionModal() {
+        updateState {
+            copy(
+                currentSetting = previousSetting,
+                showModal = false,
+            )
+        }
+    }
+
     private fun closePermissionModalIfGranted(isSystemNotificationEnabled: Boolean) {
         if (!isSystemNotificationEnabled) return
+        if (!uiState.value.showModal) return
 
         updateState { copy(showModal = false) }
+        syncAlarmSettingToServer()
     }
 }

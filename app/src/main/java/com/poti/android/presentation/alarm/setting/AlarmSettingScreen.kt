@@ -23,6 +23,7 @@ import com.poti.android.core.designsystem.component.button.PotiMenuToggle
 import com.poti.android.core.designsystem.component.modal.PotiPermissionModal
 import com.poti.android.core.designsystem.component.navigation.PotiHeaderPage
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.domain.model.notification.NotificationSetting
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiEffect
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiIntent
 import com.poti.android.presentation.alarm.setting.model.AlarmSettingUiState
@@ -107,7 +108,7 @@ private fun AlarmSettingScreen(
         PotiMenuToggle(
             title = stringResource(R.string.alarm_setting_trade_title),
             description = stringResource(R.string.alarm_setting_trade_description),
-            checked = uiState.isTradeEnabled,
+            checked = uiState.currentSetting.isTradeEnabled,
             onCheckedChange = onTradeToggle,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -115,7 +116,7 @@ private fun AlarmSettingScreen(
         PotiMenuToggle(
             title = stringResource(R.string.alarm_setting_event_title),
             description = stringResource(R.string.alarm_setting_event_description),
-            checked = uiState.isEventEnabled,
+            checked = uiState.currentSetting.isEventEnabled,
             onCheckedChange = onEventToggle,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -128,8 +129,10 @@ private fun AlarmSettingScreenPreview() {
     PotiTheme {
         AlarmSettingScreen(
             uiState = AlarmSettingUiState(
-                isTradeEnabled = true,
-                isEventEnabled = false,
+                currentSetting = NotificationSetting(
+                    isTradeEnabled = true,
+                    isEventEnabled = false,
+                ),
             ),
             onBackClick = {},
             onTradeToggle = {},
