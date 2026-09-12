@@ -48,6 +48,30 @@ require(uploadSigningValues.none { !it.isNullOrBlank() } || isUploadSigningConfi
         "Set all four as environment variables or upload.* values in local.properties."
 }
 
+val appVersionCode =
+    providers.gradleProperty("VERSION_CODE")
+        .orElse(providers.environmentVariable("VERSION_CODE"))
+        .orElse("1")
+        .get()
+        .let { value ->
+            val parsedValue = value.toIntOrNull()
+            require(parsedValue != null && parsedValue in 1..2_100_000_000) {
+                "VERSION_CODE must be an integer between 1 and 2100000000, but was '$value'."
+            }
+            parsedValue
+        }
+
+val appVersionName =
+    providers.gradleProperty("VERSION_NAME")
+        .orElse(providers.environmentVariable("VERSION_NAME"))
+        .orElse("1.0.0")
+        .get()
+        .also { value ->
+            require(value.isNotBlank()) {
+                "VERSION_NAME must not be blank."
+            }
+        }
+
 android {
     namespace = "com.poti.android"
     compileSdk = 36
@@ -56,8 +80,8 @@ android {
         applicationId = "com.poti.android"
         minSdk = 28
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
