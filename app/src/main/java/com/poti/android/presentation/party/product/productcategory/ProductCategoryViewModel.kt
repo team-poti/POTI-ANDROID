@@ -2,6 +2,10 @@ package com.poti.android.presentation.party.product.productcategory
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
@@ -20,6 +24,7 @@ private const val PRODUCT_CATEGORY_PAGE_SIZE = 10
 class ProductCategoryViewModel @Inject constructor(
     private val getGoodsCategoryListUseCase: GetGoodsCategoryListUseCase,
     private val isGuestUseCase: IsGuestUseCase,
+    private val eventTracker: EventTracker,
     savedStateHandle: SavedStateHandle,
 ) :
     BaseViewModel<ProductCategoryUiState, ProductCategoryUiIntent, ProductCategoryUiEffect>(
@@ -46,7 +51,29 @@ class ProductCategoryViewModel @Inject constructor(
 
                 ProductCategoryUiIntent.OnLoadNextPage -> loadGoodsCategoryList(reset = false)
                 ProductCategoryUiIntent.OnSortDismiss -> updateState { copy(isSortBottomSheetVisible = false) }
-                is ProductCategoryUiIntent.OnCardClick -> sendEffect(ProductCategoryUiEffect.NavigateToProductPartyList(intent.artistId, intent.title))
+                is ProductCategoryUiIntent.OnCardClick -> {
+                    eventTracker.track(
+                        eventName = AnalyticsEvent.GOODS_CARD_CLICKED,
+                        properties = mapOf(
+                            AnalyticsEventProperty.GROUP_ID to intent.artistId.toString(),
+                            AnalyticsEventProperty.GOODS_ID to intent.goodsId.toString(),
+                            AnalyticsEventProperty.HOME_SECTION to if (isMyArtist) {
+                                AnalyticsValue.RECOMMENDED
+                            } else {
+                                AnalyticsValue.DISCOVER
+                            },
+                            AnalyticsEventProperty.SOURCE to AnalyticsValue.HOME_SECTION_MORE,
+                            AnalyticsEventProperty.POSITION to intent.position,
+                        ),
+                    )
+                    sendEffect(
+                        ProductCategoryUiEffect.NavigateToProductPartyList(
+                            goodsId = intent.goodsId,
+                            artistId = intent.artistId,
+                            title = intent.title,
+                        ),
+                    )
+                }
                 ProductCategoryUiIntent.OnLoginRequiredConfirm -> handleLoginRequiredConfirm()
                 ProductCategoryUiIntent.OnLoginRequiredDismiss -> updateState { copy(showLoginRequiredDialog = false) }
             }
@@ -108,7 +135,7 @@ class ProductCategoryViewModel @Inject constructor(
                                 productCategoryLoadState = ApiState.Success(
                                     goodsCategory.copy(
                                         groupItems = updatedGroupItems.distinctBy { item ->
-                                            item.artistId to item.postTitle
+                                            item.goodsId
                                         },
                                     ),
                                 ),

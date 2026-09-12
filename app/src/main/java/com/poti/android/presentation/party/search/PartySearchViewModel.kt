@@ -1,6 +1,10 @@
 package com.poti.android.presentation.party.search
 
 import androidx.lifecycle.viewModelScope
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.search.SearchPartyUseCase
@@ -20,6 +24,7 @@ private const val PARTY_SEARCH_DEBOUNCE_MILLIS = 400L
 @HiltViewModel
 class PartySearchViewModel @Inject constructor(
     private val searchPartyUseCase: SearchPartyUseCase,
+    private val eventTracker: EventTracker,
 ) :
     BaseViewModel<PartySearchUiState, PartySearchUiIntent, PartySearchUiEffect>(
             initialState = PartySearchUiState(),
@@ -29,12 +34,24 @@ class PartySearchViewModel @Inject constructor(
         override fun processIntent(intent: PartySearchUiIntent) {
             when (intent) {
                 PartySearchUiIntent.OnBackClick -> sendEffect(PartySearchUiEffect.NavigateBack)
-                is PartySearchUiIntent.OnCardClick -> sendEffect(
-                    PartySearchUiEffect.NavigateToProductPartyList(
-                        artistId = intent.artistId,
-                        title = intent.title,
-                    ),
-                )
+                is PartySearchUiIntent.OnCardClick -> {
+                    eventTracker.track(
+                        eventName = AnalyticsEvent.SEARCH_RESULT_CLICKED,
+                        properties = mapOf(
+                            AnalyticsEventProperty.KEYWORD to uiState.value.searchKeyword.trim(),
+                            AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
+                            AnalyticsEventProperty.RESULT_ID to intent.goodsId.toString(),
+                            AnalyticsEventProperty.POSITION to intent.position,
+                        ),
+                    )
+                    sendEffect(
+                        PartySearchUiEffect.NavigateToProductPartyList(
+                            goodsId = intent.goodsId,
+                            artistId = intent.artistId,
+                            title = intent.title,
+                        ),
+                    )
+                }
                 is PartySearchUiIntent.OnSearchKeywordChange -> scheduleSearch(intent.keyword)
                 is PartySearchUiIntent.OnSearch -> scheduleSearch(intent.keyword, debounceMillis = 0L)
                 PartySearchUiIntent.OnLoadNextPage -> loadNextPage()
@@ -122,6 +139,15 @@ class PartySearchViewModel @Inject constructor(
                 size = PARTY_SEARCH_PAGE_SIZE,
             )
                 .onSuccess { result ->
+                    if (reset) {
+                        eventTracker.track(
+                            eventName = AnalyticsEvent.SEARCH_PERFORMED,
+                            properties = mapOf(
+                                AnalyticsEventProperty.KEYWORD to keyword,
+                                AnalyticsEventProperty.RESULT_COUNT to result.items.size,
+                            ),
+                        )
+                    }
                     val currentItems = (uiState.value.searchResultLoadState as? ApiState.Success)
                         ?.data
                         ?.items
@@ -133,7 +159,7 @@ class PartySearchViewModel @Inject constructor(
                             searchResultLoadState = ApiState.Success(
                                 result.copy(
                                     items = updatedItems.distinctBy { item ->
-                                        item.artistId to item.postTitle
+                                        item.goodsId
                                     },
                                 ),
                             ),

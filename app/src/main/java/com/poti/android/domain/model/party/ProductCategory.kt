@@ -8,6 +8,7 @@ data class ProductCategory(
 )
 
 data class GroupItem(
+    val goodsId: Long,
     val artist: String,
     val artistId: Long,
     val postImage: String,

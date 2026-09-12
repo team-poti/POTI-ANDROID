@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -118,7 +118,9 @@ fun ProductPartyListRoute(
         onFloatingClick = { viewModel.processIntent(ProductPartyListUiIntent.OnFloatingClick) },
         onMemberFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnMemberFilterClick) },
         onSortFilterClick = { viewModel.processIntent(ProductPartyListUiIntent.OnSortFilterClick) },
-        onCardClick = { potId -> viewModel.processIntent(ProductPartyListUiIntent.OnPartyClick(potId)) },
+        onCardClick = { potId, position ->
+            viewModel.processIntent(ProductPartyListUiIntent.OnPartyClick(potId, position))
+        },
         onLoadNextPage = { viewModel.processIntent(ProductPartyListUiIntent.LoadNextProductPartyList) },
         modifier = modifier,
     )
@@ -135,7 +137,7 @@ private fun ProductPartyListScreen(
     onFloatingClick: () -> Unit,
     onMemberFilterClick: () -> Unit,
     onSortFilterClick: () -> Unit,
-    onCardClick: (Long) -> Unit,
+    onCardClick: (Long, Int) -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -196,7 +198,7 @@ private fun ProductPartyListScreen(
                     }
                 }
 
-                items(productPartyListInfo.partySummaries) { party ->
+                itemsIndexed(productPartyListInfo.partySummaries) { index, party ->
                     PartyCard(
                         potId = party.partyId,
                         profileImageUrl = party.profileImageUrl ?: "",
@@ -207,7 +209,7 @@ private fun ProductPartyListScreen(
                         price = party.priceText(),
                         currentCount = party.currentCount,
                         totalCount = party.totalCount,
-                        onClick = onCardClick,
+                        onClick = { partyId -> onCardClick(partyId, index + 1) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
@@ -268,7 +270,7 @@ private fun ProductPartyListScreenPreveiw() {
         onFloatingClick = {},
         onMemberFilterClick = {},
         onSortFilterClick = {},
-        onCardClick = {},
+        onCardClick = { _, _ -> },
         onLoadNextPage = {},
     )
 }

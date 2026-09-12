@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +44,7 @@ fun ProductCategoryRoute(
     artistId: Long?,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
-    onNavigateToProductPartyList: (Long, String) -> Unit,
+    onNavigateToProductPartyList: (Long, Long, String) -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductCategoryViewModel = hiltViewModel(),
@@ -55,7 +55,9 @@ fun ProductCategoryRoute(
         when (effect) {
             ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
             is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
-            is ProductCategoryUiEffect.NavigateToProductPartyList -> onNavigateToProductPartyList(effect.artistId, effect.title)
+            is ProductCategoryUiEffect.NavigateToProductPartyList -> {
+                onNavigateToProductPartyList(effect.goodsId, effect.artistId, effect.title)
+            }
             ProductCategoryUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
     }
@@ -91,7 +93,9 @@ fun ProductCategoryRoute(
             onSortFilterClick = { viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick) },
             onSortSelect = { viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it)) },
             onSortDismiss = { viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss) },
-            onCardClick = { artistId, title -> viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title)) },
+            onCardClick = { goodsId, artistId, title, position ->
+                viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(goodsId, artistId, title, position))
+            },
             onLoadNextPage = { viewModel.processIntent(ProductCategoryUiIntent.OnLoadNextPage) },
             modifier = modifier,
         )
@@ -112,7 +116,7 @@ private fun ProductCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (ProductSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: (Long, String) -> Unit,
+    onCardClick: (Long, Long, String, Int) -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -175,14 +179,16 @@ private fun ProductCategoryScreen(
                     }
                 }
 
-                items(productCategory.groupItems) { groupItem ->
+                itemsIndexed(productCategory.groupItems) { index, groupItem ->
                     GoodsLargeCard(
                         imageUrl = groupItem.postImage,
                         artist = groupItem.artist,
                         title = groupItem.postTitle,
                         partyCount = groupItem.postCount.toLong(),
                         tag = groupItem.tag,
-                        onClick = { id, title -> onCardClick(groupItem.artistId, groupItem.postTitle) },
+                        onClick = { _, _ ->
+                            onCardClick(groupItem.goodsId, groupItem.artistId, groupItem.postTitle, index + 1)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
@@ -221,7 +227,7 @@ private fun ProductCategoryScreenPreview() {
             onSortFilterClick = {},
             onSortSelect = {},
             onSortDismiss = {},
-            onCardClick = { _, _ -> },
+            onCardClick = { _, _, _, _ -> },
             onLoadNextPage = {},
         )
     }

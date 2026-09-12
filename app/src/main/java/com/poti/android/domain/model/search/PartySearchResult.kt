@@ -6,6 +6,7 @@ data class PartySearchResult(
 )
 
 data class PartySearchItem(
+    val goodsId: Long,
     val artist: String,
     val artistId: Long,
     val postImage: String,

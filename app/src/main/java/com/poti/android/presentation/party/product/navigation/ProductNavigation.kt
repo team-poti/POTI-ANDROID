@@ -18,6 +18,7 @@ import kotlinx.serialization.Serializable
 sealed interface ProductRoute : Route {
     @Serializable
     data class ProductPartyList(
+        val goodsId: Long,
         val artistId: Long,
         val title: String,
     ) : ProductRoute
@@ -30,10 +31,11 @@ sealed interface ProductRoute : Route {
 }
 
 fun NavController.navigateToProductPartyList(
+    goodsId: Long,
     artistId: Long,
     title: String,
 ) {
-    navigate(ProductRoute.ProductPartyList(artistId, title))
+    navigate(ProductRoute.ProductPartyList(goodsId, artistId, title))
 }
 
 fun NavController.navigateToProductCategory(

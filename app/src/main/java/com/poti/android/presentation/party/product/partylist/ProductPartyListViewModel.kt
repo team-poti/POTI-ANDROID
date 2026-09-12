@@ -2,6 +2,9 @@ package com.poti.android.presentation.party.product.partylist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
@@ -24,12 +27,15 @@ class ProductPartyListViewModel @Inject constructor(
     private val getMembersUseCase: GetMembersUseCase,
     private val getProductPartyListUseCase: GetProductPartyListUseCase,
     private val isGuestUseCase: IsGuestUseCase,
+    private val eventTracker: EventTracker,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
         initialState = ProductPartyListUiState(),
     ) {
-    private val artistId: Long = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().artistId
-    private val title: String = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().title
+    private val args = savedStateHandle.toRoute<ProductRoute.ProductPartyList>()
+    private val goodsId: Long = args.goodsId
+    private val artistId: Long = args.artistId
+    private val title: String = args.title
 
     init {
         fetchArtistMembers()
@@ -43,7 +49,19 @@ class ProductPartyListViewModel @Inject constructor(
             ProductPartyListUiIntent.OnBackClick -> sendEffect(ProductPartyListUiEffect.NavigateBack)
             ProductPartyListUiIntent.OnFloatingClick -> handleFloatingClick()
 
-            is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
+            is ProductPartyListUiIntent.OnPartyClick -> {
+                eventTracker.track(
+                    eventName = AnalyticsEvent.SPLIT_CARD_CLICKED,
+                    properties = mapOf(
+                        AnalyticsEventProperty.SPLIT_ID to intent.partyId.toString(),
+                        AnalyticsEventProperty.GROUP_ID to artistId.toString(),
+                        AnalyticsEventProperty.GOODS_ID to goodsId.toString(),
+                        AnalyticsEventProperty.SORT_TYPE to uiState.value.partySortType.analyticsValue,
+                        AnalyticsEventProperty.POSITION to intent.position,
+                    ),
+                )
+                sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
+            }
             ProductPartyListUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()
                 updateState { copy(isMemberFilterBottomSheetVisible = true) }

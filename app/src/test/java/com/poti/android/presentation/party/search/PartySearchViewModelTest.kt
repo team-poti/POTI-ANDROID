@@ -1,6 +1,10 @@
 package com.poti.android.presentation.party.search
 
 import com.poti.android.MainDispatcherRule
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
@@ -22,6 +26,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PartySearchViewModelTest {
@@ -30,11 +36,13 @@ class PartySearchViewModelTest {
 
     private lateinit var searchRepository: FakeSearchRepository
     private lateinit var viewModel: PartySearchViewModel
+    private lateinit var eventTracker: EventTracker
 
     @Before
     fun setUp() {
         searchRepository = FakeSearchRepository()
-        viewModel = PartySearchViewModel(SearchPartyUseCase(searchRepository))
+        eventTracker = mock(EventTracker::class.java)
+        viewModel = PartySearchViewModel(SearchPartyUseCase(searchRepository), eventTracker)
     }
 
     @Test
@@ -53,6 +61,13 @@ class PartySearchViewModelTest {
 
             assertEquals(1, searchRepository.requests.size)
             assertEquals("아이브", searchRepository.requests.single().keyword)
+            verify(eventTracker).track(
+                AnalyticsEvent.SEARCH_PERFORMED,
+                mapOf(
+                    AnalyticsEventProperty.KEYWORD to "아이브",
+                    AnalyticsEventProperty.RESULT_COUNT to 1,
+                ),
+            )
         }
 
     @Test
@@ -182,15 +197,26 @@ class PartySearchViewModelTest {
 
             viewModel.processIntent(
                 PartySearchUiIntent.OnCardClick(
+                    goodsId = 77L,
                     artistId = 1L,
                     title = "앨범",
+                    position = 1,
                 ),
             )
             advanceUntilIdle()
 
             assertEquals(
-                listOf(PartySearchUiEffect.NavigateToProductPartyList(1L, "앨범")),
+                listOf(PartySearchUiEffect.NavigateToProductPartyList(77L, 1L, "앨범")),
                 effects,
+            )
+            verify(eventTracker).track(
+                AnalyticsEvent.SEARCH_RESULT_CLICKED,
+                mapOf(
+                    AnalyticsEventProperty.KEYWORD to "",
+                    AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
+                    AnalyticsEventProperty.RESULT_ID to "77",
+                    AnalyticsEventProperty.POSITION to 1,
+                ),
             )
         }
 
@@ -209,6 +235,7 @@ class PartySearchViewModelTest {
         }
 
     private fun item(id: Long) = PartySearchItem(
+        goodsId = id,
         artist = "artist-$id",
         artistId = id,
         postImage = "image-$id",

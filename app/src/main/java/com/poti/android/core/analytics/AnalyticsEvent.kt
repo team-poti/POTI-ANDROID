@@ -4,12 +4,11 @@ object AnalyticsEvent {
     const val APP_OPENED = "App Opened"
     const val ONBOARDING_COMPLETED = "Onboarding Completed"
     const val HOME_VIEWED = "Home Viewed"
+    const val HOME_SECTION_MORE_CLICKED = "Home Section More Clicked"
+    const val GOODS_CARD_CLICKED = "Goods Card Clicked"
     const val SPLIT_CARD_CLICKED = "Split Card Clicked"
     const val SEARCH_PERFORMED = "Search Performed"
     const val SEARCH_RESULT_CLICKED = "Search Result Clicked"
-    const val SPLIT_DETAIL_VIEWED = "Split Detail Viewed"
-    const val JOIN_BUTTON_CLICKED = "Join Button Clicked"
-    const val PARTICIPANT_INFO_SUBMITTED = "Participant Info Submitted"
 }
 
 object AnalyticsEventProperty {
@@ -21,14 +20,13 @@ object AnalyticsEventProperty {
     const val SPLIT_ID = "split_id"
     const val GROUP_ID = "group_id"
     const val GOODS_ID = "goods_id"
-    const val SECTION = "section"
+    const val HOME_SECTION = "home_section"
+    const val SORT_TYPE = "sort_type"
     const val POSITION = "position"
     const val KEYWORD = "keyword"
     const val RESULT_COUNT = "result_count"
-    const val SEARCH_TYPE = "search_type"
     const val RESULT_TYPE = "result_type"
     const val RESULT_ID = "result_id"
-    const val SPLIT_STATUS = "split_status"
     const val SOURCE = "source"
 }
 
@@ -39,14 +37,11 @@ object AnalyticsValue {
     const val FAVORITE_GROUP = "favorite_group"
     const val ALL = "all"
     const val GOODS = "goods"
+    const val RECOMMENDED = "recommended"
+    const val DISCOVER = "discover"
     const val HOME = "home"
-    const val SEARCH = "search"
-    const val POPULAR = "popular"
+    const val HOME_SECTION_MORE = "home_section_more"
     const val LATEST = "latest"
     const val CLOSING_SOON = "closing_soon"
+    const val RATING = "rating"
 }
-
-fun goodsIdentifier(
-    groupId: Long,
-    goodsTitle: String,
-): String = "$groupId:$goodsTitle"

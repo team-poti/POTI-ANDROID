@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.filter
 @Composable
 fun PartySearchRoute(
     onBackClick: () -> Unit,
-    onNavigateToProductPartyList: (Long, String) -> Unit,
+    onNavigateToProductPartyList: (Long, Long, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PartySearchViewModel = hiltViewModel(),
 ) {
@@ -57,7 +57,7 @@ fun PartySearchRoute(
         when (effect) {
             PartySearchUiEffect.NavigateBack -> onBackClick()
             is PartySearchUiEffect.NavigateToProductPartyList -> {
-                onNavigateToProductPartyList(effect.artistId, effect.title)
+                onNavigateToProductPartyList(effect.goodsId, effect.artistId, effect.title)
             }
         }
     }
@@ -65,8 +65,8 @@ fun PartySearchRoute(
     PartySearchScreen(
         uiState = uiState,
         onBackClick = { viewModel.processIntent(PartySearchUiIntent.OnBackClick) },
-        onCardClick = { artistId, title ->
-            viewModel.processIntent(PartySearchUiIntent.OnCardClick(artistId, title))
+        onCardClick = { goodsId, artistId, title, position ->
+            viewModel.processIntent(PartySearchUiIntent.OnCardClick(goodsId, artistId, title, position))
         },
         onSearchKeywordChange = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearchKeywordChange(keyword)) },
         onSearch = { keyword -> viewModel.processIntent(PartySearchUiIntent.OnSearch(keyword)) },
@@ -80,7 +80,7 @@ fun PartySearchRoute(
 fun PartySearchScreen(
     uiState: PartySearchUiState,
     onBackClick: () -> Unit,
-    onCardClick: (Long, String) -> Unit,
+    onCardClick: (Long, Long, String, Int) -> Unit,
     onSearchKeywordChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onLoadNextPage: () -> Unit,
@@ -165,14 +165,14 @@ fun PartySearchScreen(
                         )
                     }
                 } else {
-                    items(searchResult.items) { groupItem ->
+                    itemsIndexed(searchResult.items) { index, groupItem ->
                         GoodsLargeCard(
                             imageUrl = groupItem.postImage,
                             artist = groupItem.artist,
                             title = groupItem.postTitle,
                             partyCount = groupItem.postCount,
                             tag = groupItem.tag,
-                            onClick = onCardClick,
+                            onClick = { artistId, title -> onCardClick(groupItem.goodsId, artistId, title, index + 1) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 16.dp),
@@ -193,6 +193,7 @@ private fun PartySearchScreenPreview() {
             PartySearchResult(
                 items = listOf(
                     PartySearchItem(
+                        goodsId = 1L,
                         artist = "아이브",
                         artistId = 1L,
                         postImage = "",
@@ -201,6 +202,7 @@ private fun PartySearchScreenPreview() {
                         tag = "미공포",
                     ),
                     PartySearchItem(
+                        goodsId = 2L,
                         artist = "아이브",
                         artistId = 1L,
                         postImage = "",
@@ -220,6 +222,6 @@ private fun PartySearchScreenPreview() {
         onSearch = {},
         onLoadNextPage = {},
         onRetryNextPage = {},
-        onCardClick = { _, _ -> },
+        onCardClick = { _, _, _, _ -> },
     )
 }

@@ -18,6 +18,7 @@ fun HomeResponseDto.toDomain(): HomeContent = HomeContent(
 )
 
 fun MyGroupItemDto.toDomain(): GroupItem = GroupItem(
+    goodsId = goodsId,
     postTitle = postTitle.orEmpty(),
     artist = artist.orEmpty(),
     artistId = artistId ?: 0,
@@ -27,6 +28,7 @@ fun MyGroupItemDto.toDomain(): GroupItem = GroupItem(
 )
 
 fun OtherGroupItemDto.toDomain(): GroupItem = GroupItem(
+    goodsId = goodsId,
     postTitle = postTitle,
     artist = artist,
     artistId = artistId ?: 0,

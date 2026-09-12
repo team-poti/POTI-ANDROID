@@ -15,6 +15,7 @@ fun GoodsCategoryResponseDto.toDomain(): ProductCategory =
 
 fun GroupItemDto.toDomain(): GroupItem =
     GroupItem(
+        goodsId = goodsId,
         artist = artist.orEmpty(),
         artistId = artistId ?: 0L,
         postImage = postImage.orEmpty(),

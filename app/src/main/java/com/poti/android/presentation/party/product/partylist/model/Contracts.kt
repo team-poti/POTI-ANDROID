@@ -65,7 +65,10 @@ sealed interface ProductPartyListUiIntent : UiIntent {
 
     data object OnFloatingClick : ProductPartyListUiIntent
 
-    data class OnPartyClick(val partyId: Long) : ProductPartyListUiIntent
+    data class OnPartyClick(
+        val partyId: Long,
+        val position: Int,
+    ) : ProductPartyListUiIntent
 
     data object OnMemberFilterClick : ProductPartyListUiIntent
 
