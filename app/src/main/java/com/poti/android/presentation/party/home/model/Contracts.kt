@@ -25,6 +25,8 @@ sealed interface HomeUiIntent : UiIntent {
 
     data object LoadHomeContent : HomeUiIntent
 
+    data class OnBannerClick(val deepLink: String) : HomeUiIntent
+
     data object OnAlarmClick : HomeUiIntent
 
     data object OnLoginRequiredConfirm : HomeUiIntent
@@ -44,6 +46,8 @@ sealed interface HomeUiEffect : UiEffect {
     data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
 
     data object NavigateToAlarmList : HomeUiEffect
+
+    data class OpenDeepLink(val deepLink: String) : HomeUiEffect
 
     data object NavigateToLogin : HomeUiEffect
 }
