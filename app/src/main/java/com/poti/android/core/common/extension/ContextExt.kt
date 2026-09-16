@@ -56,6 +56,14 @@ fun Context.shareTextToX(text: String) {
         .onFailure { Timber.e(it, "X 공유 실패") }
 }
 
+fun Context.openDeepLink(deepLink: String) {
+    val intent = Intent(Intent.ACTION_VIEW, deepLink.toUri())
+        .setPackage(packageName)
+
+    runCatching { startActivity(intent) }
+        .onFailure { Timber.w(it, "Unable to open deep link: $deepLink") }
+}
+
 fun Context.openSystemNotificationSetting() {
     val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
         .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)

@@ -28,7 +28,7 @@ import com.poti.android.domain.model.home.Banner
 @Composable
 fun HomeBannerSection(
     banners: List<Banner>,
-    onBannerClick: (Long) -> Unit,
+    onBannerClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState { banners.size }
@@ -76,7 +76,7 @@ fun HomeBannerSection(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(PotiTheme.colors.gray100)
-                    .noRippleClickable { onBannerClick(banners[page].postId) },
+                    .noRippleClickable { onBannerClick(banners[page].deepLink) },
                 contentScale = ContentScale.Crop,
             )
         }
@@ -100,9 +100,9 @@ private fun HomeBannerSectionPreview() {
         ) {
             HomeBannerSection(
                 banners = listOf(
-                    Banner(1, "https://cdn.womansense.co.kr/news/photo/202507/60429_201513_4257.jpg"),
-                    Banner(2, "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/dn/2024/01/06/news_1704518501_1314695_m_1.jpeg"),
-                    Banner(3, "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/201706/07/bbcf94e4-b533-4a5e-82c8-b7bc576cd8a0.jpg"),
+                    Banner(1, "https://cdn.womansense.co.kr/news/photo/202507/60429_201513_4257.jpg", ""),
+                    Banner(2, "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/dn/2024/01/06/news_1704518501_1314695_m_1.jpeg", ""),
+                    Banner(3, "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/201706/07/bbcf94e4-b533-4a5e-82c8-b7bc576cd8a0.jpg", ""),
                 ),
                 onBannerClick = {},
                 modifier = Modifier,
