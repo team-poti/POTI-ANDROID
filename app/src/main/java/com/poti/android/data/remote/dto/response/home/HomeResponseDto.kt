@@ -21,8 +21,6 @@ data class HomeResponseDto(
 
 @Serializable
 data class MyGroupItemDto(
-    @SerialName("goodsId")
-    val goodsId: Long,
     @SerialName("artist")
     val artist: String?,
     @SerialName("artistId")
@@ -39,8 +37,6 @@ data class MyGroupItemDto(
 
 @Serializable
 data class OtherGroupItemDto(
-    @SerialName("goodsId")
-    val goodsId: Long,
     @SerialName("artist")
     val artist: String,
     @SerialName("artistId")

@@ -197,7 +197,6 @@ class PartySearchViewModelTest {
 
             viewModel.processIntent(
                 PartySearchUiIntent.OnCardClick(
-                    goodsId = 77L,
                     artistId = 1L,
                     title = "앨범",
                     position = 1,
@@ -206,7 +205,7 @@ class PartySearchViewModelTest {
             advanceUntilIdle()
 
             assertEquals(
-                listOf(PartySearchUiEffect.NavigateToProductPartyList(77L, 1L, "앨범")),
+                listOf(PartySearchUiEffect.NavigateToProductPartyList(1L, "앨범")),
                 effects,
             )
             verify(eventTracker).track(
@@ -214,7 +213,7 @@ class PartySearchViewModelTest {
                 mapOf(
                     AnalyticsEventProperty.KEYWORD to "",
                     AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
-                    AnalyticsEventProperty.RESULT_ID to "77",
+                    AnalyticsEventProperty.RESULT_ID to "1:앨범",
                     AnalyticsEventProperty.POSITION to 1,
                 ),
             )
@@ -235,7 +234,6 @@ class PartySearchViewModelTest {
         }
 
     private fun item(id: Long) = PartySearchItem(
-        goodsId = id,
         artist = "artist-$id",
         artistId = id,
         postImage = "image-$id",

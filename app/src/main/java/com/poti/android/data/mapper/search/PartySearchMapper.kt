@@ -13,7 +13,6 @@ fun PartySearchResponseDto.toDomain(): PartySearchResult =
 
 private fun PartySearchItemResponseDto.toDomain(): PartySearchItem =
     PartySearchItem(
-        goodsId = goodsId,
         artist = artist,
         artistId = artistId,
         postImage = postImage.orEmpty(),

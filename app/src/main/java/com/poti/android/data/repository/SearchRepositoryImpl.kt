@@ -33,7 +33,6 @@ class SearchRepositoryImpl @Inject constructor(
             PartySearchResult(
                 items = pageItems.map { item ->
                     PartySearchItem(
-                        goodsId = item.goodsId,
                         artist = item.artist,
                         artistId = item.artistId,
                         postImage = item.postImage,

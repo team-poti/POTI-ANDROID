@@ -10,7 +10,6 @@ data class HomeContent(
 )
 
 data class GroupItem(
-    val goodsId: Long,
     val postTitle: String,
     val artist: String,
     val artistId: Long,

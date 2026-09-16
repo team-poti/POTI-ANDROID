@@ -56,8 +56,14 @@ fun Context.shareTextToX(text: String) {
         .onFailure { Timber.e(it, "X 공유 실패") }
 }
 
-fun Context.openDeepLink(deepLink: String) {
-    val intent = Intent(Intent.ACTION_VIEW, deepLink.toUri())
+fun Context.openDeepLink(
+    deepLink: String,
+    source: String? = null,
+) {
+    val uri = deepLink.toUri().buildUpon().apply {
+        source?.let { appendQueryParameter("source", it) }
+    }.build()
+    val intent = Intent(Intent.ACTION_VIEW, uri)
         .setPackage(packageName)
 
     runCatching { startActivity(intent) }

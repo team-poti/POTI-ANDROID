@@ -30,7 +30,6 @@ sealed interface ProductCategoryUiIntent : UiIntent {
     data object OnSortDismiss : ProductCategoryUiIntent
 
     data class OnCardClick(
-        val goodsId: Long,
         val artistId: Long,
         val title: String,
         val position: Int,
@@ -47,7 +46,6 @@ sealed interface ProductCategoryUiEffect : UiEffect {
     data object NavigateToPartyCreate : ProductCategoryUiEffect
 
     data class NavigateToProductPartyList(
-        val goodsId: Long,
         val artistId: Long,
         val title: String,
     ) : ProductCategoryUiEffect

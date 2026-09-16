@@ -59,7 +59,7 @@ fun AlarmListRoute(
         when (effect) {
             AlarmListUiEffect.NavigateBack -> onPopBackStack()
             AlarmListUiEffect.NavigateToSetting -> navigateToSetting()
-            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
+            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink, AnalyticsValue.NOTIFICATION)
             is AlarmListUiEffect.ShowToast -> context.toast(context.getString(effect.messageRes))
         }
     }
@@ -145,17 +145,6 @@ private fun AlarmListScreen(
             }
         }
     }
-}
-
-private fun Context.openDeepLink(deepLink: String) {
-    val notificationDeepLink = deepLink.toUri().buildUpon()
-        .appendQueryParameter("source", AnalyticsValue.NOTIFICATION)
-        .build()
-    val intent = Intent(Intent.ACTION_VIEW, notificationDeepLink)
-        .setPackage(packageName)
-
-    runCatching { startActivity(intent) }
-        .onFailure { Timber.w(it, "Unable to open deep link: $deepLink") }
 }
 
 private val previewAlarmSamples = listOf(

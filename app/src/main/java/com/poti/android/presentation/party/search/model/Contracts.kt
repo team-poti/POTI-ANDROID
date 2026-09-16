@@ -28,7 +28,6 @@ sealed interface PartySearchUiIntent : UiIntent {
     data object OnBackClick : PartySearchUiIntent
 
     data class OnCardClick(
-        val goodsId: Long,
         val artistId: Long,
         val title: String,
         val position: Int,
@@ -47,7 +46,6 @@ sealed interface PartySearchUiEffect : UiEffect {
     data object NavigateBack : PartySearchUiEffect
 
     data class NavigateToProductPartyList(
-        val goodsId: Long,
         val artistId: Long,
         val title: String,
     ) : PartySearchUiEffect

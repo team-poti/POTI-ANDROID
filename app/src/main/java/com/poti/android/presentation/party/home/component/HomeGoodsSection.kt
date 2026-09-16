@@ -29,7 +29,7 @@ fun HomeGoodsSection(
     nickname: String,
     groupItems: List<GroupItem>,
     onMoreClick: (Long?) -> Unit,
-    onCardClick: (Long, Long, String, Int) -> Unit,
+    onCardClick: (Long, String, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -71,7 +71,7 @@ fun HomeGoodsSection(
                     title = item.postTitle,
                     partyCount = item.postCount,
                     tag = item.tag,
-                    onClick = { artistId, title -> onCardClick(item.goodsId, artistId, title, index + 1) },
+                    onClick = { artistId, title -> onCardClick(artistId, title, index + 1) },
                 )
             }
         }
@@ -88,7 +88,7 @@ private fun HomeGoodsSectionPreview() {
             nickname = "포티",
             groupItems = UiMockData.homeGroupItems,
             onMoreClick = {},
-            onCardClick = { _, _, _, _ -> },
+            onCardClick = { _, _, _ -> },
         )
     }
 }

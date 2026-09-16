@@ -103,9 +103,9 @@ object UiMockData {
     )
 
     val homeGroupItems = listOf(
-        GroupItem(101, "2026 시즌 콘서트 후드", "아이유", 6, "", 3, "인기"),
-        GroupItem(102, "공식 응원봉 Ver.2", "IVE", 1, "", 12, "NEW"),
-        GroupItem(103, "월드투어 포토북", "aespa", 2, "", 7, ""),
+        GroupItem("2026 시즌 콘서트 후드", "아이유", 6, "", 3, "인기"),
+        GroupItem("공식 응원봉 Ver.2", "IVE", 1, "", 12, "NEW"),
+        GroupItem("월드투어 포토북", "aespa", 2, "", 7, ""),
     )
 
     val homeContent = HomeContent(
@@ -133,7 +133,6 @@ object UiMockData {
             val tags = listOf("인기", "NEW", null, "마감임박")
 
             PartyGroupItem(
-                goodsId = index + 1L,
                 artist = if (index % 2 == 0) "IVE" else "aespa",
                 artistId = if (index % 2 == 0) 1 else 2,
                 postImage = "",

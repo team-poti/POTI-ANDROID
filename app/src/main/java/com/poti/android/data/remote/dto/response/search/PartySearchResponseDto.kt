@@ -13,8 +13,6 @@ data class PartySearchResponseDto(
 
 @Serializable
 data class PartySearchItemResponseDto(
-    @SerialName("goodsId")
-    val goodsId: Long,
     @SerialName("artist")
     val artist: String,
     @SerialName("artistId")

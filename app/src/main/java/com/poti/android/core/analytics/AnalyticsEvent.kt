@@ -45,3 +45,8 @@ object AnalyticsValue {
     const val CLOSING_SOON = "closing_soon"
     const val RATING = "rating"
 }
+
+fun goodsAnalyticsId(
+    groupId: Long,
+    goodsTitle: String,
+): String = "$groupId:$goodsTitle"

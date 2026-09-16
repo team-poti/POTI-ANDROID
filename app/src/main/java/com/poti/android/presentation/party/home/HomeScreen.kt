@@ -40,7 +40,7 @@ fun HomeRoute(
     onNavigateToPartySearch: () -> Unit,
     onNavigateToAlarmList: () -> Unit,
     onNavigateToPartyCreate: () -> Unit,
-    onNavigateToGoodsPartyList: (Long, Long, String) -> Unit,
+    onNavigateToGoodsPartyList: (Long, String) -> Unit,
     onNavigateToProductCategory: (Long?, Boolean) -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,7 +54,7 @@ fun HomeRoute(
             HomeUiEffect.NavigateToPartySearch -> onNavigateToPartySearch()
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
             is HomeUiEffect.NavigateToGoodsPartyList -> {
-                onNavigateToGoodsPartyList(effect.goodsId, effect.artistId, effect.title)
+                onNavigateToGoodsPartyList(effect.artistId, effect.title)
             }
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
@@ -83,8 +83,8 @@ fun HomeRoute(
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
-            onProductCardClick = { goodsId, artistId, title, homeSection, position ->
-                viewModel.processIntent(HomeUiIntent.OnProductCardClick(goodsId, artistId, title, homeSection, position))
+            onProductCardClick = { artistId, title, homeSection, position ->
+                viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title, homeSection, position))
             },
             onAlarmClick = { viewModel.processIntent(HomeUiIntent.OnAlarmClick) },
             onBannerClick = { deepLink -> viewModel.processIntent(HomeUiIntent.OnBannerClick(deepLink)) },
@@ -100,7 +100,7 @@ private fun HomeScreen(
     onFloatingClick: () -> Unit,
     onMyArtistCategoryClick: (Long?) -> Unit,
     onOtherProductCategoryClick: (Long?) -> Unit,
-    onProductCardClick: (Long, Long, String, String, Int) -> Unit,
+    onProductCardClick: (Long, String, String, Int) -> Unit,
     onAlarmClick: () -> Unit,
     onBannerClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -145,8 +145,8 @@ private fun HomeScreen(
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
                     onMoreClick = onMyArtistCategoryClick,
-                    onCardClick = { goodsId, artistId, title, position ->
-                        onProductCardClick(goodsId, artistId, title, AnalyticsValue.RECOMMENDED, position)
+                    onCardClick = { artistId, title, position ->
+                        onProductCardClick(artistId, title, AnalyticsValue.RECOMMENDED, position)
                     },
                 )
 
@@ -158,8 +158,8 @@ private fun HomeScreen(
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
                     onMoreClick = onOtherProductCategoryClick,
-                    onCardClick = { goodsId, artistId, title, position ->
-                        onProductCardClick(goodsId, artistId, title, AnalyticsValue.DISCOVER, position)
+                    onCardClick = { artistId, title, position ->
+                        onProductCardClick(artistId, title, AnalyticsValue.DISCOVER, position)
                     },
                 )
             }
@@ -187,7 +187,7 @@ private fun HomeScreenPreview() {
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
             onOtherProductCategoryClick = {},
-            onProductCardClick = { _, _, _, _, _ -> },
+            onProductCardClick = { _, _, _, _ -> },
             onAlarmClick = {},
             onBannerClick = {},
         )

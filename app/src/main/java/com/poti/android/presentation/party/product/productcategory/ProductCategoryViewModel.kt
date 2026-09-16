@@ -6,6 +6,7 @@ import com.poti.android.core.analytics.AnalyticsEvent
 import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.analytics.EventTracker
+import com.poti.android.core.analytics.goodsAnalyticsId
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
@@ -56,7 +57,7 @@ class ProductCategoryViewModel @Inject constructor(
                         eventName = AnalyticsEvent.GOODS_CARD_CLICKED,
                         properties = mapOf(
                             AnalyticsEventProperty.GROUP_ID to intent.artistId.toString(),
-                            AnalyticsEventProperty.GOODS_ID to intent.goodsId.toString(),
+                            AnalyticsEventProperty.GOODS_ID to goodsAnalyticsId(intent.artistId, intent.title),
                             AnalyticsEventProperty.HOME_SECTION to if (isMyArtist) {
                                 AnalyticsValue.RECOMMENDED
                             } else {
@@ -68,7 +69,6 @@ class ProductCategoryViewModel @Inject constructor(
                     )
                     sendEffect(
                         ProductCategoryUiEffect.NavigateToProductPartyList(
-                            goodsId = intent.goodsId,
                             artistId = intent.artistId,
                             title = intent.title,
                         ),
@@ -135,7 +135,7 @@ class ProductCategoryViewModel @Inject constructor(
                                 productCategoryLoadState = ApiState.Success(
                                     goodsCategory.copy(
                                         groupItems = updatedGroupItems.distinctBy { item ->
-                                            item.goodsId
+                                            goodsAnalyticsId(item.artistId, item.postTitle)
                                         },
                                     ),
                                 ),

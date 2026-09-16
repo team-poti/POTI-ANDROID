@@ -44,7 +44,7 @@ fun ProductCategoryRoute(
     artistId: Long?,
     onPopBackStack: () -> Unit,
     onNavigateToPartyCreate: (Long?) -> Unit,
-    onNavigateToProductPartyList: (Long, Long, String) -> Unit,
+    onNavigateToProductPartyList: (Long, String) -> Unit,
     onNavigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductCategoryViewModel = hiltViewModel(),
@@ -56,7 +56,7 @@ fun ProductCategoryRoute(
             ProductCategoryUiEffect.NavigateBack -> onPopBackStack()
             is ProductCategoryUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate(artistId)
             is ProductCategoryUiEffect.NavigateToProductPartyList -> {
-                onNavigateToProductPartyList(effect.goodsId, effect.artistId, effect.title)
+                onNavigateToProductPartyList(effect.artistId, effect.title)
             }
             ProductCategoryUiEffect.NavigateToLogin -> onNavigateToLogin()
         }
@@ -93,8 +93,8 @@ fun ProductCategoryRoute(
             onSortFilterClick = { viewModel.processIntent(ProductCategoryUiIntent.OnSortFilterClick) },
             onSortSelect = { viewModel.processIntent(ProductCategoryUiIntent.OnSortSelected(it)) },
             onSortDismiss = { viewModel.processIntent(ProductCategoryUiIntent.OnSortDismiss) },
-            onCardClick = { goodsId, artistId, title, position ->
-                viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(goodsId, artistId, title, position))
+            onCardClick = { artistId, title, position ->
+                viewModel.processIntent(ProductCategoryUiIntent.OnCardClick(artistId, title, position))
             },
             onLoadNextPage = { viewModel.processIntent(ProductCategoryUiIntent.OnLoadNextPage) },
             modifier = modifier,
@@ -116,7 +116,7 @@ private fun ProductCategoryScreen(
     onSortFilterClick: () -> Unit,
     onSortSelect: (ProductSortType) -> Unit,
     onSortDismiss: () -> Unit,
-    onCardClick: (Long, Long, String, Int) -> Unit,
+    onCardClick: (Long, String, Int) -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -187,7 +187,7 @@ private fun ProductCategoryScreen(
                         partyCount = groupItem.postCount.toLong(),
                         tag = groupItem.tag,
                         onClick = { _, _ ->
-                            onCardClick(groupItem.goodsId, groupItem.artistId, groupItem.postTitle, index + 1)
+                            onCardClick(groupItem.artistId, groupItem.postTitle, index + 1)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -227,7 +227,7 @@ private fun ProductCategoryScreenPreview() {
             onSortFilterClick = {},
             onSortSelect = {},
             onSortDismiss = {},
-            onCardClick = { _, _, _, _ -> },
+            onCardClick = { _, _, _ -> },
             onLoadNextPage = {},
         )
     }

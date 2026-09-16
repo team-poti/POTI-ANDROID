@@ -5,6 +5,7 @@ import com.poti.android.core.analytics.AnalyticsEvent
 import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.analytics.EventTracker
+import com.poti.android.core.analytics.goodsAnalyticsId
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.usecase.search.SearchPartyUseCase
@@ -40,13 +41,12 @@ class PartySearchViewModel @Inject constructor(
                         properties = mapOf(
                             AnalyticsEventProperty.KEYWORD to uiState.value.searchKeyword.trim(),
                             AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
-                            AnalyticsEventProperty.RESULT_ID to intent.goodsId.toString(),
+                            AnalyticsEventProperty.RESULT_ID to goodsAnalyticsId(intent.artistId, intent.title),
                             AnalyticsEventProperty.POSITION to intent.position,
                         ),
                     )
                     sendEffect(
                         PartySearchUiEffect.NavigateToProductPartyList(
-                            goodsId = intent.goodsId,
                             artistId = intent.artistId,
                             title = intent.title,
                         ),
@@ -159,7 +159,7 @@ class PartySearchViewModel @Inject constructor(
                             searchResultLoadState = ApiState.Success(
                                 result.copy(
                                     items = updatedItems.distinctBy { item ->
-                                        item.goodsId
+                                        goodsAnalyticsId(item.artistId, item.postTitle)
                                     },
                                 ),
                             ),
