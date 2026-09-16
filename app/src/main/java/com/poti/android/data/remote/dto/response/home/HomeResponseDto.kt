@@ -57,8 +57,10 @@ data class OtherGroupItemDto(
 
 @Serializable
 data class HomeBannerDto(
-    @SerialName("postId")
-    val postId: Long,
+    @SerialName("id")
+    val id: Long,
     @SerialName("imageUrl")
     val imageUrl: String,
+    @SerialName("deeplink")
+    val deeplink: String?,
 )

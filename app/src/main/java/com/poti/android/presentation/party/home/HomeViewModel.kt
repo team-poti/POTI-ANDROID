@@ -50,12 +50,18 @@ class HomeViewModel @Inject constructor(
                 trackHomeSectionMoreClicked(AnalyticsValue.DISCOVER)
                 sendEffect(NavigateToOtherProductCategory)
             }
+            is HomeUiIntent.OnBannerClick -> handleBannerClick(intent.deepLink)
             HomeUiIntent.OnAlarmClick -> {
                 if (!isGuestUseCase()) sendEffect(NavigateToAlarmList)
             }
             HomeUiIntent.OnLoginRequiredConfirm -> handleLoginRequiredConfirm()
             HomeUiIntent.OnLoginRequiredDismiss -> updateState { copy(showLoginRequiredDialog = false) }
         }
+    }
+
+    private fun handleBannerClick(deepLink: String) {
+        if (deepLink.isBlank()) return
+        sendEffect(OpenDeepLink(deepLink))
     }
 
     private fun trackHomeSectionMoreClicked(homeSection: String) {

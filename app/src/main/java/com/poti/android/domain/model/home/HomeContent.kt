@@ -20,6 +20,7 @@ data class GroupItem(
 )
 
 data class Banner(
-    val postId: Long,
+    val id: Long,
     val imageUrl: String,
+    val deepLink: String,
 )

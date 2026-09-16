@@ -114,7 +114,7 @@ object UiMockData {
         mainArtistId = 1,
         myGroupItems = homeGroupItems,
         otherGroupItems = homeGroupItems.reversed(),
-        banners = listOf(Banner(1, ""), Banner(2, ""), Banner(3, "")),
+        banners = listOf(Banner(1, "", ""), Banner(2, "", ""), Banner(3, "", "")),
     )
 
     val productCategory = ProductCategory(
