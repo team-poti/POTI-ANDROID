@@ -2,7 +2,7 @@ name: PR CI Check
 
 on:
     pull_request:
-        branches: [ develop, main ]
+        branches: [ develop ]
 
 permissions:
     contents: read
@@ -177,11 +177,11 @@ jobs:
                         });
                       }
 
-            - name: Build Debug APK
+            - name: Run unit tests and build Dev Debug APK
               id: build
               if: steps.changes.outputs.android == 'true' && steps.ktlint.outcome == 'success'
               continue-on-error: true
-              run: ./gradlew :app:assembleDebug
+              run: ./gradlew :app:testDevDebugUnitTest :app:assembleDevDebug
 
             - name: Comment PR on build failure
               if: steps.build.outcome == 'failure'
@@ -192,10 +192,10 @@ jobs:
                       const body =
                         `${marker}\n` +
                         `🔥 **Build Failed!**\n\n` +
-                        `The project build has failed.\n` +
+                        `The project test or build has failed.\n` +
                         `Please check the error logs and try again.\n` +
                         "```bash\n" +
-                        "./gradlew :app:assembleDebug\n" +
+                        "./gradlew :app:testDevDebugUnitTest :app:assembleDevDebug\n" +
                         "```";
 
                       const { owner, repo } = context.repo;
