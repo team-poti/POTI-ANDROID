@@ -121,7 +121,6 @@ android {
             matchingFallbacks += listOf("debug")
         }
         release {
-            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -134,6 +133,7 @@ android {
             dimension = "server"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://dev-app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BODY"))
@@ -146,6 +146,7 @@ android {
         }
         create("prod") {
             dimension = "server"
+            signingConfig = signingConfigs.findByName("release")
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BASIC"))
