@@ -60,7 +60,7 @@ fun HomeRoute(
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
             HomeUiEffect.NavigateToAlarmList -> onNavigateToAlarmList()
             HomeUiEffect.NavigateToLogin -> onNavigateToLogin()
-            is HomeUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
+            is HomeUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink, AnalyticsValue.HOME)
         }
     }
 

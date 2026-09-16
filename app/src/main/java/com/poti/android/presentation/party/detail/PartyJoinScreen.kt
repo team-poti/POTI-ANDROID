@@ -56,7 +56,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun PartyJoinRoute(
     onPopBackStack: () -> Unit,
-    onReload: (Long) -> Unit,
+    onReload: (Long, String) -> Unit,
     viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -87,7 +87,7 @@ fun PartyJoinRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             PartyDetailEffect.NavigateBack -> onPopBackStack()
-            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
+            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId, effect.source)
             else -> {}
         }
     }

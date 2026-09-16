@@ -7,6 +7,7 @@ object AnalyticsEvent {
     const val HOME_SECTION_MORE_CLICKED = "Home Section More Clicked"
     const val GOODS_CARD_CLICKED = "Goods Card Clicked"
     const val SPLIT_CARD_CLICKED = "Split Card Clicked"
+    const val SPLIT_DETAIL_VIEWED = "Split Detail Viewed"
     const val SEARCH_PERFORMED = "Search Performed"
     const val SEARCH_RESULT_CLICKED = "Search Result Clicked"
 }
@@ -20,6 +21,7 @@ object AnalyticsEventProperty {
     const val SPLIT_ID = "split_id"
     const val GROUP_ID = "group_id"
     const val GOODS_ID = "goods_id"
+    const val SPLIT_STATUS = "split_status"
     const val HOME_SECTION = "home_section"
     const val SORT_TYPE = "sort_type"
     const val POSITION = "position"
@@ -40,6 +42,7 @@ object AnalyticsValue {
     const val RECOMMENDED = "recommended"
     const val DISCOVER = "discover"
     const val HOME = "home"
+    const val SEARCH = "search"
     const val HOME_SECTION_MORE = "home_section_more"
     const val LATEST = "latest"
     const val DEADLINE = "deadline"

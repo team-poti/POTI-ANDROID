@@ -3,6 +3,9 @@ package com.poti.android.presentation.party.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.BuildConfig
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
@@ -50,15 +53,19 @@ class PartyDetailViewModel @Inject constructor(
     private val saveMyAddressUseCase: SaveMyAddressUseCase,
     private val isGuestUseCase: IsGuestUseCase,
     private val setPendingReturnDeepLinkUseCase: SetPendingReturnDeepLinkUseCase,
+    private val eventTracker: EventTracker,
     @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
     ) {
-    private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
+    private val args = savedStateHandle.toRoute<PartyDetailGraph>()
+    private val partyId = args.partyId
+    private val source = args.source
     private val deepLink: String = partyDetailDeepLink(partyId)
 
     private var isMyAddressLoaded = false
+    private var hasTrackedDetailView = false
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -102,7 +109,7 @@ class PartyDetailViewModel @Inject constructor(
             }
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }
-                sendEffect(ReloadDetail(partyId))
+                sendEffect(ReloadDetail(partyId, source))
             }
 
             PartyDetailIntent.OnShareClick -> updateState { copy(showShareBottomSheet = true) }
@@ -226,11 +233,28 @@ class PartyDetailViewModel @Inject constructor(
             .onSuccess { partyDetail ->
                 Timber.d("getPartyDetail 실행: $partyDetail")
                 updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
+                trackDetailViewed(partyDetail)
             }
             .onFailure { error ->
                 Timber.d("getPartyDetail 실패: $error")
                 updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
             }
+    }
+
+    private fun trackDetailViewed(partyDetail: PartyDetail) {
+        if (hasTrackedDetailView) return
+        hasTrackedDetailView = true
+
+        eventTracker.track(
+            eventName = AnalyticsEvent.SPLIT_DETAIL_VIEWED,
+            properties = mapOf(
+                AnalyticsEventProperty.SPLIT_ID to partyDetail.postId.toString(),
+                AnalyticsEventProperty.GROUP_ID to partyDetail.artistId.toString(),
+                AnalyticsEventProperty.GOODS_ID to partyDetail.title,
+                AnalyticsEventProperty.SPLIT_STATUS to partyDetail.status.name,
+                AnalyticsEventProperty.SOURCE to source,
+            ),
+        )
     }
 
     private fun handleDetailJoin() {

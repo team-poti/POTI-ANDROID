@@ -55,7 +55,7 @@ fun PartyDetailRoute(
     onPopBackStack: () -> Unit,
     onNavigateToJoin: () -> Unit,
     onNavigateToProfile: (Long) -> Unit,
-    onReload: (Long) -> Unit,
+    onReload: (Long, String) -> Unit,
     onNavigateToLogin: () -> Unit,
     viewModel: PartyDetailViewModel,
     modifier: Modifier = Modifier,
@@ -69,7 +69,7 @@ fun PartyDetailRoute(
             PartyDetailEffect.NavigateBack -> onPopBackStack()
             PartyDetailEffect.NavigateToJoin -> onNavigateToJoin()
             is PartyDetailEffect.NavigateToProfile -> onNavigateToProfile(effect.userId)
-            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId)
+            is PartyDetailEffect.ReloadDetail -> onReload(effect.partyId, effect.source)
             is PartyDetailEffect.ShareToSystem -> context.shareText(shareChooserTitle, effect.shareText)
             is PartyDetailEffect.ShareToKakao -> KakaoShareManager.sharePartyDetail(context, effect.content)
             is PartyDetailEffect.ShareToX -> context.shareTextToX(effect.shareText)
