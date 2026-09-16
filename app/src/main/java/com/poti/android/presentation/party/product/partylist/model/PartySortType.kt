@@ -17,7 +17,7 @@ enum class PartySortType(
     val analyticsValue: String
         get() = when (this) {
             LATEST -> AnalyticsValue.LATEST
-            DEADLINE -> AnalyticsValue.CLOSING_SOON
+            DEADLINE -> AnalyticsValue.DEADLINE
             RATING -> AnalyticsValue.RATING
         }
 }

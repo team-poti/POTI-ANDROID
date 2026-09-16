@@ -42,6 +42,6 @@ object AnalyticsValue {
     const val HOME = "home"
     const val HOME_SECTION_MORE = "home_section_more"
     const val LATEST = "latest"
-    const val CLOSING_SOON = "closing_soon"
+    const val DEADLINE = "deadline"
     const val RATING = "rating"
 }
