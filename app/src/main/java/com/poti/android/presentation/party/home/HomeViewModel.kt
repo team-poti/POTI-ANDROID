@@ -7,6 +7,8 @@ import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceMonitor
+import com.poti.android.core.monitoring.PerformanceTraceName
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
 import com.poti.android.domain.usecase.home.GetHomeContentUseCase
 import com.poti.android.presentation.party.home.model.HomeUiEffect
@@ -21,6 +23,7 @@ class HomeViewModel @Inject constructor(
     private val getHomeContentUseCase: GetHomeContentUseCase,
     private val isGuestUseCase: IsGuestUseCase,
     private val eventTracker: EventTracker,
+    private val performanceMonitor: PerformanceMonitor,
 ) : BaseViewModel<HomeUiState, HomeUiIntent, HomeUiEffect>(
         initialState = HomeUiState(),
     ) {
@@ -89,25 +92,26 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadHomeContent() = launchScope {
-        getHomeContentUseCase()
-            .onSuccess { homeContent ->
-                eventTracker.track(
-                    eventName = AnalyticsEvent.HOME_VIEWED,
-                    properties = buildMap {
-                        put(
-                            AnalyticsEventProperty.CONTENT_TYPE,
-                            if (homeContent.mainArtistId == null) AnalyticsValue.ALL else AnalyticsValue.FAVORITE_GROUP,
-                        )
-                        homeContent.mainArtistId?.let {
-                            put(AnalyticsEventProperty.FAVORITE_GROUP_ID, it.toString())
-                        }
-                    },
-                )
-                updateState {
-                    copy(homeContentLoadState = ApiState.Success(homeContent))
-                }
-                validateArtistId()
+        performanceMonitor.traceResult(PerformanceTraceName.HOME_LOAD) {
+            getHomeContentUseCase()
+        }.onSuccess { homeContent ->
+            eventTracker.track(
+                eventName = AnalyticsEvent.HOME_VIEWED,
+                properties = buildMap {
+                    put(
+                        AnalyticsEventProperty.CONTENT_TYPE,
+                        if (homeContent.mainArtistId == null) AnalyticsValue.ALL else AnalyticsValue.FAVORITE_GROUP,
+                    )
+                    homeContent.mainArtistId?.let {
+                        put(AnalyticsEventProperty.FAVORITE_GROUP_ID, it.toString())
+                    }
+                },
+            )
+            updateState {
+                copy(homeContentLoadState = ApiState.Success(homeContent))
             }
+            validateArtistId()
+        }
             .onFailure { throwable ->
                 updateState {
                     copy(

@@ -4,6 +4,7 @@ import kotlin.apply
 
 plugins {
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.performance)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -134,6 +135,10 @@ ktlint {
 androidComponents {
     onVariants { variant ->
         variant.manifestPlaceholders.put("crashlyticsCollectionEnabled", (variant.name == "prodRelease").toString())
+        val performanceMonitoringEnabled =
+            variant.name == "devDebug" || variant.name == "devRelease" || variant.name == "prodRelease"
+        variant.manifestPlaceholders.put("performanceCollectionEnabled", performanceMonitoringEnabled.toString())
+        variant.manifestPlaceholders.put("performanceLogcatEnabled", (variant.name == "devDebug").toString())
 
         val (mixpanelEnabled, mixpanelProjectToken) =
             when (variant.name) {
@@ -154,6 +159,10 @@ androidComponents {
         buildConfigFields.put(
             "MIXPANEL_PROJECT_TOKEN",
             BuildConfigField("String", buildConfigString(mixpanelProjectToken), "Mixpanel project token for this variant"),
+        )
+        buildConfigFields.put(
+            "PERFORMANCE_MONITORING_ENABLED",
+            BuildConfigField("boolean", performanceMonitoringEnabled.toString(), "Whether Firebase Performance collection is enabled"),
         )
     }
 }
@@ -235,4 +244,5 @@ dependencies {
     // Monitoring
     implementation(libs.mixpanel.android)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.performance)
 }

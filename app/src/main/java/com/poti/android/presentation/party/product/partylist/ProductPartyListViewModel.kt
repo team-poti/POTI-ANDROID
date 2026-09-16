@@ -7,6 +7,10 @@ import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceAttribute
+import com.poti.android.core.monitoring.PerformanceAttributeValue
+import com.poti.android.core.monitoring.PerformanceMonitor
+import com.poti.android.core.monitoring.PerformanceTraceName
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
@@ -28,6 +32,7 @@ class ProductPartyListViewModel @Inject constructor(
     private val getProductPartyListUseCase: GetProductPartyListUseCase,
     private val isGuestUseCase: IsGuestUseCase,
     private val eventTracker: EventTracker,
+    private val performanceMonitor: PerformanceMonitor,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
         initialState = ProductPartyListUiState(),
@@ -135,14 +140,26 @@ class ProductPartyListViewModel @Inject constructor(
             )
         }
 
-        getProductPartyListUseCase(
-            page = page,
-            size = PARTY_PAGE_SIZE,
-            title = title,
-            artistId = artistId,
-            sort = sort,
-            memberIds = memberIds,
-        ).onSuccess { partyList ->
+        performanceMonitor.traceResult(
+            name = PerformanceTraceName.SPLIT_LIST_LOAD,
+            attributes = mapOf(
+                PerformanceAttribute.LOAD_TYPE to if (reset) {
+                    PerformanceAttributeValue.INITIAL
+                } else {
+                    PerformanceAttributeValue.NEXT
+                },
+                PerformanceAttribute.SORT_TYPE to currentState.partySortType.analyticsValue,
+            ),
+        ) {
+            getProductPartyListUseCase(
+                page = page,
+                size = PARTY_PAGE_SIZE,
+                title = title,
+                artistId = artistId,
+                sort = sort,
+                memberIds = memberIds,
+            )
+        }.onSuccess { partyList ->
             val currentList = (uiState.value.productPartyListInfo as? ApiState.Success)?.data?.partySummaries.orEmpty()
             val updatedPartySummaries = if (reset) {
                 partyList.partySummaries

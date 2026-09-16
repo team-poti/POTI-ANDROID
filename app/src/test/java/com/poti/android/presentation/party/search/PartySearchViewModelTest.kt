@@ -6,6 +6,7 @@ import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceMonitor
 import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.domain.repository.SearchRepository
@@ -42,7 +43,11 @@ class PartySearchViewModelTest {
     fun setUp() {
         searchRepository = FakeSearchRepository()
         eventTracker = mock(EventTracker::class.java)
-        viewModel = PartySearchViewModel(SearchPartyUseCase(searchRepository), eventTracker)
+        viewModel = PartySearchViewModel(
+            SearchPartyUseCase(searchRepository),
+            eventTracker,
+            NoOpPerformanceMonitor,
+        )
     }
 
     @Test
@@ -273,4 +278,12 @@ class PartySearchViewModelTest {
         val page: Int,
         val size: Int,
     )
+}
+
+private object NoOpPerformanceMonitor : PerformanceMonitor {
+    override suspend fun <T> traceResult(
+        name: String,
+        attributes: Map<String, String>,
+        block: suspend () -> Result<T>,
+    ): Result<T> = block()
 }

@@ -57,6 +57,7 @@ googleId = "1.2.0"
 # --- Firebase ---
 firebaseBom = "34.15.0"
 crashlyticsPlugin = "3.0.8"
+firebasePerformancePlugin = "2.0.2"
 google-services = "4.5.0"
 
 
@@ -125,6 +126,7 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 
 [plugins]
 # --- Android & Kotlin ---
@@ -139,3 +141,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
+firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerformancePlugin" }

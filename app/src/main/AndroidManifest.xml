@@ -36,6 +36,12 @@
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlyticsCollectionEnabled}" />
+        <meta-data
+            android:name="firebase_performance_collection_enabled"
+            android:value="${performanceCollectionEnabled}" />
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="${performanceLogcatEnabled}" />
         <activity
             android:name=".presentation.party.detail.AddressSearchActivity"
             android:exported="false"
