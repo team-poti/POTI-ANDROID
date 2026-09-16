@@ -6,6 +6,16 @@ import org.junit.Test
 
 class AppOpenTrackerTest {
     @Test
+    fun `sets the initial entry point before the first app open in a process`() {
+        assertTrue(shouldSetInitialEntryPoint(hasTrackedInProcess = false))
+    }
+
+    @Test
+    fun `does not reset the entry point after an app open was tracked in the same process`() {
+        assertFalse(shouldSetInitialEntryPoint(hasTrackedInProcess = true))
+    }
+
+    @Test
     fun `tracks the first foreground entry in a process`() {
         assertTrue(
             shouldTrackAppOpen(

@@ -46,9 +46,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            appOpenTracker.setEntryPoint(intent.analyticsEntryPoint())
-        }
+        appOpenTracker.setInitialEntryPoint(intent.analyticsEntryPoint())
 
         splashScreen.setKeepOnScreenCondition {
             viewModel.startDestination.value == null

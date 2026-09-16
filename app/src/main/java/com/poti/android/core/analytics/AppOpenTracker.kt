@@ -24,6 +24,12 @@ class AppOpenTracker @Inject constructor(
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
+    fun setInitialEntryPoint(entryPoint: String) {
+        if (shouldSetInitialEntryPoint(hasTrackedInProcess)) {
+            this.entryPoint = entryPoint
+        }
+    }
+
     fun setEntryPoint(entryPoint: String) {
         if (
             entryPoint != AnalyticsValue.DIRECT &&
@@ -85,6 +91,9 @@ class AppOpenTracker @Inject constructor(
 }
 
 internal const val APP_OPEN_SESSION_TIMEOUT_MILLIS = 30 * 60 * 1_000L
+
+internal fun shouldSetInitialEntryPoint(hasTrackedInProcess: Boolean): Boolean =
+    !hasTrackedInProcess
 
 internal fun shouldTrackAppOpen(
     hasTrackedInProcess: Boolean,
