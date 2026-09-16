@@ -8,6 +8,7 @@ object AnalyticsEvent {
     const val GOODS_CARD_CLICKED = "Goods Card Clicked"
     const val SPLIT_CARD_CLICKED = "Split Card Clicked"
     const val SPLIT_DETAIL_VIEWED = "Split Detail Viewed"
+    const val JOIN_BUTTON_CLICKED = "Join Button Clicked"
     const val SEARCH_PERFORMED = "Search Performed"
     const val SEARCH_RESULT_CLICKED = "Search Result Clicked"
 }

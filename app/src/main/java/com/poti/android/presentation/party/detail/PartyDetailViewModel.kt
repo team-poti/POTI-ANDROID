@@ -259,6 +259,16 @@ class PartyDetailViewModel @Inject constructor(
 
     private fun handleDetailJoin() {
         if (!uiState.value.isDetailJoinEnable) return
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
+
+        eventTracker.track(
+            eventName = AnalyticsEvent.JOIN_BUTTON_CLICKED,
+            properties = mapOf(
+                AnalyticsEventProperty.SPLIT_ID to partyDetail.postId.toString(),
+                AnalyticsEventProperty.SPLIT_STATUS to partyDetail.status.name,
+                AnalyticsEventProperty.SOURCE to source,
+            ),
+        )
 
         if (isGuestUseCase()) {
             updateState { copy(showLoginRequiredDialog = true) }
