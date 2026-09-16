@@ -5,7 +5,6 @@ import androidx.navigation.toRoute
 import com.poti.android.core.analytics.AnalyticsEvent
 import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.EventTracker
-import com.poti.android.core.analytics.goodsAnalyticsId
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.domain.model.artist.Member
@@ -55,7 +54,7 @@ class ProductPartyListViewModel @Inject constructor(
                     properties = mapOf(
                         AnalyticsEventProperty.SPLIT_ID to intent.partyId.toString(),
                         AnalyticsEventProperty.GROUP_ID to artistId.toString(),
-                        AnalyticsEventProperty.GOODS_ID to goodsAnalyticsId(artistId, title),
+                        AnalyticsEventProperty.GOODS_ID to title,
                         AnalyticsEventProperty.SORT_TYPE to uiState.value.partySortType.analyticsValue,
                         AnalyticsEventProperty.POSITION to intent.position,
                     ),

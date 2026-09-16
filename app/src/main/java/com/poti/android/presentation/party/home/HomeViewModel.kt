@@ -4,7 +4,6 @@ import com.poti.android.core.analytics.AnalyticsEvent
 import com.poti.android.core.analytics.AnalyticsEventProperty
 import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.analytics.EventTracker
-import com.poti.android.core.analytics.goodsAnalyticsId
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.state.ApiState
@@ -38,7 +37,7 @@ class HomeViewModel @Inject constructor(
                     eventName = AnalyticsEvent.GOODS_CARD_CLICKED,
                     properties = mapOf(
                         AnalyticsEventProperty.GROUP_ID to intent.artistId.toString(),
-                        AnalyticsEventProperty.GOODS_ID to goodsAnalyticsId(intent.artistId, intent.title),
+                        AnalyticsEventProperty.GOODS_ID to intent.title,
                         AnalyticsEventProperty.HOME_SECTION to intent.homeSection,
                         AnalyticsEventProperty.SOURCE to AnalyticsValue.HOME,
                         AnalyticsEventProperty.POSITION to intent.position,
