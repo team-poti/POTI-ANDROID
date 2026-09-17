@@ -92,24 +92,30 @@ jobs:
                     echo "tag_exists=$TAG_EXISTS"
                   } >> "$GITHUB_OUTPUT"
 
-            - name: Set up Ruby
-              uses: ruby/setup-ruby@v1
-              with:
-                  ruby-version: '3.3'
-                  bundler-cache: true
-
-            - name: Promote internal release to production
-              env:
-                  PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-                  VERSION_CODE: ${{ steps.release.outputs.code }}
-              run: bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
-
             - name: Advance main
               env:
                   RELEASE_SHA: ${{ steps.release.outputs.sha }}
               run: |
                   set -euo pipefail
                   git push origin "$RELEASE_SHA:refs/heads/main"
+                  git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+
+                  if [ "$(git rev-parse origin/main)" != "$RELEASE_SHA" ]; then
+                    echo "::error::main was not advanced to $RELEASE_SHA."
+                    exit 1
+                  fi
+
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@v1
+              with:
+                  ruby-version: '3.3'
+                  bundler-cache: true
+
+            - name: Promote internal release to production if needed
+              env:
+                  PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+                  VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
 
             - name: Create release tag if needed
               env:
