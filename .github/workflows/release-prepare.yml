@@ -12,6 +12,10 @@ permissions:
     contents: write
     pull-requests: write
 
+concurrency:
+    group: prepare-release
+    cancel-in-progress: false
+
 jobs:
     prepare:
         name: Create release branch and draft PR
@@ -27,12 +31,53 @@ jobs:
             - name: Resolve release version
               id: release
               env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   INPUT_VERSION: ${{ inputs.version }}
               run: |
                   set -euo pipefail
 
                   if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     echo "::error::Version must use x.y.z format: $INPUT_VERSION"
+                    exit 1
+                  fi
+
+                  git fetch --prune origin \
+                    "+refs/heads/develop:refs/remotes/origin/develop" \
+                    "+refs/heads/release/*:refs/remotes/origin/release/*"
+                  git switch --detach origin/develop
+
+                  OPEN_RELEASE_PRS=$(gh pr list \
+                    --base develop \
+                    --state open \
+                    --limit 100 \
+                    --json number,headRefName \
+                    --jq '.[] | select(.headRefName | startswith("release/")) | "#\(.number) \(.headRefName)"')
+
+                  if [ -n "$OPEN_RELEASE_PRS" ]; then
+                    echo "::error::Another release PR is already open:"
+                    printf '%s\n' "$OPEN_RELEASE_PRS"
+                    exit 1
+                  fi
+
+                  PENDING_RELEASE_BRANCHES=()
+                  while IFS= read -r RELEASE_REF; do
+                    RELEASE_BRANCH="${RELEASE_REF#origin/}"
+                    MERGED_PR_COUNT=$(gh pr list \
+                      --base develop \
+                      --head "$RELEASE_BRANCH" \
+                      --state merged \
+                      --limit 1 \
+                      --json number \
+                      --jq 'length')
+
+                    if [ "$MERGED_PR_COUNT" -eq 0 ]; then
+                      PENDING_RELEASE_BRANCHES+=("$RELEASE_BRANCH")
+                    fi
+                  done < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin/release/)
+
+                  if [ "${#PENDING_RELEASE_BRANCHES[@]}" -gt 0 ]; then
+                    echo "::error::Unmerged release branches already reserve the next VERSION_CODE:"
+                    printf '%s\n' "${PENDING_RELEASE_BRANCHES[@]}"
                     exit 1
                   fi
 
@@ -115,9 +160,15 @@ jobs:
                     echo "Merging this PR uploads the exact merge commit to the Google Play internal track."
                   } > "$BODY_FILE"
 
-                  gh pr create \
-                    --base develop \
-                    --head "release/$VERSION_NAME" \
-                    --title "Release $VERSION_NAME" \
-                    --body-file "$BODY_FILE" \
-                    --draft
+                  if ! gh pr create \
+                      --base develop \
+                      --head "release/$VERSION_NAME" \
+                      --title "Release $VERSION_NAME" \
+                      --body-file "$BODY_FILE" \
+                      --draft; then
+                    echo "::error::Failed to create the release PR; deleting release/$VERSION_NAME."
+                    if ! git push origin --delete "release/$VERSION_NAME"; then
+                      echo "::warning::Failed to delete release/$VERSION_NAME; remove it before preparing another release."
+                    fi
+                    exit 1
+                  fi
