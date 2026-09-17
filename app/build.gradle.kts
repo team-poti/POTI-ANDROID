@@ -1,7 +1,10 @@
+import com.android.build.api.variant.BuildConfigField
 import java.util.Properties
 import kotlin.apply
 
 plugins {
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.performance)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
@@ -27,6 +30,9 @@ fun requiredLocalProperty(key: String): String {
 }
 
 fun buildConfigString(value: String): String = "\"$value\""
+
+val mixpanelDevProjectToken = requiredLocalProperty("mixpanel.dev.project.token")
+val mixpanelProdProjectToken = requiredLocalProperty("mixpanel.prod.project.token")
 
 android {
     namespace = "com.poti.android"
@@ -59,17 +65,20 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("boolean", "USE_UI_MOCK", "false")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "true")
         }
         create("mock") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".mock"
             versionNameSuffix = "-mock"
             buildConfigField("boolean", "USE_UI_MOCK", "true")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "false")
             matchingFallbacks += listOf("debug")
         }
         release {
             isMinifyEnabled = false
             buildConfigField("boolean", "USE_UI_MOCK", "false")
+            buildConfigField("boolean", "FIREBASE_ENABLED", "true")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -123,12 +132,54 @@ ktlint {
     outputToConsole = true
 }
 
+androidComponents {
+    onVariants { variant ->
+        variant.manifestPlaceholders.put("crashlyticsCollectionEnabled", (variant.name == "prodRelease").toString())
+        val performanceMonitoringEnabled =
+            variant.name == "devDebug" || variant.name == "devRelease" || variant.name == "prodRelease"
+        variant.manifestPlaceholders.put("performanceCollectionEnabled", performanceMonitoringEnabled.toString())
+        variant.manifestPlaceholders.put("performanceLogcatEnabled", (variant.name == "devDebug").toString())
+
+        val (mixpanelEnabled, mixpanelProjectToken) =
+            when (variant.name) {
+                "devDebug", "devRelease", "prodDebug" -> true to mixpanelDevProjectToken
+                "prodRelease" -> true to mixpanelProdProjectToken
+                "devMock", "prodMock" -> false to ""
+                else -> error("Mixpanel configuration is missing for ${variant.name}")
+            }
+        val buildConfigFields =
+            requireNotNull(variant.buildConfigFields) {
+                "BuildConfig fields must be enabled for ${variant.name}"
+            }
+
+        buildConfigFields.put(
+            "MIXPANEL_ENABLED",
+            BuildConfigField("boolean", mixpanelEnabled.toString(), "Whether Mixpanel transmission is enabled"),
+        )
+        buildConfigFields.put(
+            "MIXPANEL_PROJECT_TOKEN",
+            BuildConfigField("String", buildConfigString(mixpanelProjectToken), "Mixpanel project token for this variant"),
+        )
+        buildConfigFields.put(
+            "PERFORMANCE_MONITORING_ENABLED",
+            BuildConfigField("boolean", performanceMonitoringEnabled.toString(), "Whether Firebase Performance collection is enabled"),
+        )
+    }
+}
+
+tasks.configureEach {
+    if (name == "processDevMockGoogleServices" || name == "processProdMockGoogleServices") {
+        enabled = false
+    }
+}
+
 dependencies {
     // --- Android Core & Lifecycle ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
 
@@ -189,4 +240,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+
+    // Monitoring
+    implementation(libs.mixpanel.android)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.performance)
 }

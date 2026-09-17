@@ -1,5 +1,7 @@
 package com.poti.android.data.repository
 
+import com.poti.android.core.analytics.EventTracker
+import com.poti.android.core.analytics.authenticatedUserProperties
 import com.poti.android.core.common.util.suspendRunCatching
 import com.poti.android.core.fcm.FcmTokenProvider
 import com.poti.android.core.fcm.remote.datasource.FcmRemoteDataSource
@@ -37,6 +39,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val fcmTokenProvider: FcmTokenProvider,
     private val fcmRemoteDataSource: FcmRemoteDataSource,
     private val withdrawalLocalDataCleaner: WithdrawalLocalDataCleaner,
+    private val eventTracker: EventTracker,
 ) : AuthRepository {
     override fun observeAuthState(): Flow<AuthState> = authTokenStore.authState
 
@@ -73,7 +76,7 @@ class AuthRepositoryImpl @Inject constructor(
                         .toDomain()
                 }.onSuccess { syncFcmToken() }
             },
-        )
+        ).onSuccess(::identifyAnalyticsUser)
     }
 
     override suspend fun saveOnboardingState(isCompleted: Boolean): Result<Unit> = executeWithUiMock(
@@ -92,6 +95,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun logout(): Result<Unit> = suspendRunCatching {
         deleteFcmToken()
         authTokenStore.clearAll()
+        eventTracker.reset()
         authSessionManager.exitGuest()
         authSessionManager.triggerLogout()
     }
@@ -111,6 +115,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun withdrawal(reason: String): Result<Unit> = executeWithUiMock(
         mock = {
             authTokenStore.clearAll()
+            eventTracker.reset()
             authSessionManager.exitGuest()
             authSessionManager.triggerLogout()
         },
@@ -142,6 +147,7 @@ class AuthRepositoryImpl @Inject constructor(
             authTokenStore.clearAll()
             withdrawalLocalDataCleaner.clearCachesInBackground()
         } finally {
+            eventTracker.reset()
             authSessionManager.exitGuest()
             authSessionManager.triggerLogout()
         }
@@ -159,5 +165,15 @@ class AuthRepositoryImpl @Inject constructor(
         suspendRunCatching {
             fcmRemoteDataSource.deleteFcmToken(fcmToken)
         }.onFailure { Timber.e(it, "Failed to delete FCM token") }
+    }
+
+    private fun identifyAnalyticsUser(userAuth: UserAuth) {
+        eventTracker.identify(userAuth.userId.toString())
+        eventTracker.setUserProperties(
+            authenticatedUserProperties(
+                userId = userAuth.userId,
+                onboardingCompleted = !userAuth.isNewUser,
+            ),
+        )
     }
 }

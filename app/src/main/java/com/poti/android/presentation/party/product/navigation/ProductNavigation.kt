@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.toRoute
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.auth.navigation.navigateToLogin
@@ -20,6 +21,7 @@ sealed interface ProductRoute : Route {
     data class ProductPartyList(
         val artistId: Long,
         val title: String,
+        val source: String = AnalyticsValue.GOODS,
     ) : ProductRoute
 
     @Serializable
@@ -33,7 +35,15 @@ fun NavController.navigateToProductPartyList(
     artistId: Long,
     title: String,
 ) {
-    navigate(ProductRoute.ProductPartyList(artistId, title))
+    navigateToProductPartyList(artistId, title, AnalyticsValue.GOODS)
+}
+
+fun NavController.navigateToProductPartyList(
+    artistId: Long,
+    title: String,
+    source: String,
+) {
+    navigate(ProductRoute.ProductPartyList(artistId, title, source))
 }
 
 fun NavController.navigateToProductCategory(
@@ -60,13 +70,15 @@ fun NavGraphBuilder.productNavGraph(
         )
     }
     slideComposable<ProductRoute.ProductPartyList> { backStackEntry ->
-        val artistId = backStackEntry.toRoute<ProductRoute.ProductPartyList>().artistId
+        val route = backStackEntry.toRoute<ProductRoute.ProductPartyList>()
 
         ProductPartyListRoute(
-            artistId = artistId,
+            artistId = route.artistId,
             onPopBackStack = onPopBackStack,
             onNavigateToPartyCreate = navController::navigateToPartyCreate,
-            onNavigateToPartyDetail = navController::navigateToPartyDetail,
+            onNavigateToPartyDetail = { partyId ->
+                navController.navigateToPartyDetail(partyId, route.source)
+            },
             onNavigateToLogin = navController::navigateToLogin,
             modifier = Modifier.padding(paddingValues),
         )

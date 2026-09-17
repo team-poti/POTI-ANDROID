@@ -1,7 +1,12 @@
 package com.poti.android.presentation.party.search
 
 import com.poti.android.MainDispatcherRule
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceMonitor
 import com.poti.android.domain.model.search.PartySearchItem
 import com.poti.android.domain.model.search.PartySearchResult
 import com.poti.android.domain.repository.SearchRepository
@@ -22,6 +27,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PartySearchViewModelTest {
@@ -30,11 +37,17 @@ class PartySearchViewModelTest {
 
     private lateinit var searchRepository: FakeSearchRepository
     private lateinit var viewModel: PartySearchViewModel
+    private lateinit var eventTracker: EventTracker
 
     @Before
     fun setUp() {
         searchRepository = FakeSearchRepository()
-        viewModel = PartySearchViewModel(SearchPartyUseCase(searchRepository))
+        eventTracker = mock(EventTracker::class.java)
+        viewModel = PartySearchViewModel(
+            SearchPartyUseCase(searchRepository),
+            eventTracker,
+            NoOpPerformanceMonitor,
+        )
     }
 
     @Test
@@ -53,6 +66,13 @@ class PartySearchViewModelTest {
 
             assertEquals(1, searchRepository.requests.size)
             assertEquals("아이브", searchRepository.requests.single().keyword)
+            verify(eventTracker).track(
+                AnalyticsEvent.SEARCH_PERFORMED,
+                mapOf(
+                    AnalyticsEventProperty.KEYWORD to "아이브",
+                    AnalyticsEventProperty.RESULT_COUNT to 1,
+                ),
+            )
         }
 
     @Test
@@ -184,6 +204,7 @@ class PartySearchViewModelTest {
                 PartySearchUiIntent.OnCardClick(
                     artistId = 1L,
                     title = "앨범",
+                    position = 1,
                 ),
             )
             advanceUntilIdle()
@@ -191,6 +212,15 @@ class PartySearchViewModelTest {
             assertEquals(
                 listOf(PartySearchUiEffect.NavigateToProductPartyList(1L, "앨범")),
                 effects,
+            )
+            verify(eventTracker).track(
+                AnalyticsEvent.SEARCH_RESULT_CLICKED,
+                mapOf(
+                    AnalyticsEventProperty.KEYWORD to "",
+                    AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
+                    AnalyticsEventProperty.RESULT_ID to "1:앨범",
+                    AnalyticsEventProperty.POSITION to 1,
+                ),
             )
         }
 
@@ -248,4 +278,12 @@ class PartySearchViewModelTest {
         val page: Int,
         val size: Int,
     )
+}
+
+private object NoOpPerformanceMonitor : PerformanceMonitor {
+    override suspend fun <T> traceResult(
+        name: String,
+        attributes: Map<String, String>,
+        block: suspend () -> Result<T>,
+    ): Result<T> = block()
 }

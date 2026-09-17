@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import com.poti.android.BuildConfig
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.sharedViewModel
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
@@ -21,7 +22,10 @@ import kotlinx.serialization.Serializable
 private const val PARTY_DETAIL_DEEP_LINK_BASE_PATH = "${BuildConfig.DEEP_LINK_HOST}/pot"
 
 @Serializable
-data class PartyDetailGraph(val partyId: Long) : Route
+data class PartyDetailGraph(
+    val partyId: Long,
+    val source: String = AnalyticsValue.DEEP_LINK,
+) : Route
 
 fun partyDetailDeepLink(partyId: Long): String =
     "$PARTY_DETAIL_DEEP_LINK_BASE_PATH/$partyId"
@@ -35,15 +39,25 @@ sealed interface PartyDetailRoute : Route {
 }
 
 fun NavController.navigateToPartyDetail(partyId: Long) {
-    navigate(PartyDetailGraph(partyId))
+    navigateToPartyDetail(partyId, AnalyticsValue.GOODS)
+}
+
+fun NavController.navigateToPartyDetail(
+    partyId: Long,
+    source: String,
+) {
+    navigate(PartyDetailGraph(partyId, source))
 }
 
 fun NavController.navigateToPartyJoin() {
     navigate(PartyDetailRoute.Join)
 }
 
-fun NavController.reloadPartyDetail(partyId: Long) {
-    navigate(PartyDetailGraph(partyId)) {
+fun NavController.reloadPartyDetail(
+    partyId: Long,
+    source: String,
+) {
+    navigate(PartyDetailGraph(partyId, source)) {
         popUpTo<PartyDetailGraph> {
             inclusive = true
         }
@@ -51,7 +65,7 @@ fun NavController.reloadPartyDetail(partyId: Long) {
 }
 
 fun NavController.navigateToPartyDetailFromCreate(partyId: Long) {
-    navigate(PartyDetailGraph(partyId)) {
+    navigate(PartyDetailGraph(partyId, AnalyticsValue.GOODS)) {
         popUpTo<PartyCreateRoute.Create> {
             inclusive = true
         }

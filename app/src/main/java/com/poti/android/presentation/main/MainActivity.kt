@@ -15,8 +15,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.AppOpenTracker
 import com.poti.android.core.auth.SocialLoginLauncher
 import com.poti.android.core.designsystem.theme.PotiTheme
+import com.poti.android.core.fcm.FcmMessagingService
 import com.poti.android.core.share.KakaoShareManager
 import com.poti.android.domain.manager.AuthSessionManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,9 +39,14 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var socialLoginLauncher: SocialLoginLauncher
 
+    @Inject
+    lateinit var appOpenTracker: AppOpenTracker
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        appOpenTracker.setInitialEntryPoint(intent.analyticsEntryPoint())
 
         splashScreen.setKeepOnScreenCondition {
             viewModel.startDestination.value == null
@@ -88,6 +96,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        appOpenTracker.setEntryPoint(intent.analyticsEntryPoint())
 
         val uri = intent.resolveDeepLink() ?: return
         intent.data = null
@@ -103,9 +112,27 @@ class MainActivity : ComponentActivity() {
 
     private fun Intent.resolveDeepLink(): Uri? {
         val uri = data ?: return null
-        if (uri.host != KakaoShareManager.LINK_HOST) return uri
+        val resolvedUri = if (uri.host != KakaoShareManager.LINK_HOST) {
+            uri
+        } else {
+            uri.getQueryParameter(KakaoShareManager.PARAM_DEEP_LINK)?.toUri() ?: return null
+        }
 
-        return uri.getQueryParameter(KakaoShareManager.PARAM_DEEP_LINK)?.toUri()
+        return if (analyticsEntryPoint() == AnalyticsValue.NOTIFICATION) {
+            resolvedUri.buildUpon()
+                .appendQueryParameter("source", AnalyticsValue.NOTIFICATION)
+                .build()
+        } else {
+            resolvedUri
+        }
+    }
+
+    private fun Intent?.analyticsEntryPoint(): String = when {
+        this?.getStringExtra(FcmMessagingService.ANALYTICS_ENTRY_POINT_EXTRA) == AnalyticsValue.NOTIFICATION -> {
+            AnalyticsValue.NOTIFICATION
+        }
+        this?.data != null -> AnalyticsValue.DEEP_LINK
+        else -> AnalyticsValue.DIRECT
     }
 
     private fun processPendingDeepLink(navigator: MainNavigator) {

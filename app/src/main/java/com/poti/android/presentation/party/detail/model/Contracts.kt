@@ -173,7 +173,10 @@ sealed interface PartyDetailEffect : UiEffect {
 
     data class NavigateToProfile(val userId: Long) : PartyDetailEffect
 
-    data class ReloadDetail(val partyId: Long) : PartyDetailEffect
+    data class ReloadDetail(
+        val partyId: Long,
+        val source: String,
+    ) : PartyDetailEffect
 
     data class CopyLink(val link: String) : PartyDetailEffect
 

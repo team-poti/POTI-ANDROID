@@ -2,6 +2,7 @@ package com.poti.android.presentation.party.search.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.slideComposable
 import com.poti.android.core.navigation.Route
 import com.poti.android.presentation.party.product.navigation.navigateToProductPartyList
@@ -23,7 +24,9 @@ fun NavGraphBuilder.searchNavGraph(
     slideComposable<SearchRoute.Search> {
         PartySearchRoute(
             onBackClick = navController::popBackStack,
-            onNavigateToProductPartyList = navController::navigateToProductPartyList,
+            onNavigateToProductPartyList = { artistId, title ->
+                navController.navigateToProductPartyList(artistId, title, AnalyticsValue.SEARCH)
+            },
         )
     }
 }

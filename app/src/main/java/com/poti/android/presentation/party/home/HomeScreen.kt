@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.openDeepLink
 import com.poti.android.core.common.util.HandleSideEffects
@@ -52,12 +53,14 @@ fun HomeRoute(
         when (effect) {
             HomeUiEffect.NavigateToPartySearch -> onNavigateToPartySearch()
             HomeUiEffect.NavigateToPartyCreate -> onNavigateToPartyCreate()
-            is HomeUiEffect.NavigateToGoodsPartyList -> onNavigateToGoodsPartyList(effect.artistId, effect.title)
+            is HomeUiEffect.NavigateToGoodsPartyList -> {
+                onNavigateToGoodsPartyList(effect.artistId, effect.title)
+            }
             is HomeUiEffect.NavigateToMyArtistCategory -> onNavigateToProductCategory(effect.artistId, true)
             HomeUiEffect.NavigateToOtherProductCategory -> onNavigateToProductCategory(null, false)
             HomeUiEffect.NavigateToAlarmList -> onNavigateToAlarmList()
             HomeUiEffect.NavigateToLogin -> onNavigateToLogin()
-            is HomeUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
+            is HomeUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink, AnalyticsValue.HOME)
         }
     }
 
@@ -80,7 +83,9 @@ fun HomeRoute(
             onFloatingClick = { viewModel.processIntent(HomeUiIntent.OnFloatingClick) },
             onMyArtistCategoryClick = { artistId -> viewModel.processIntent(HomeUiIntent.OnMyArtistCategoryClick(artistId)) },
             onOtherProductCategoryClick = { viewModel.processIntent(HomeUiIntent.OnOtherProductCategoryClick) },
-            onProductCardClick = { artistId, title -> viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title)) },
+            onProductCardClick = { artistId, title, homeSection, position ->
+                viewModel.processIntent(HomeUiIntent.OnProductCardClick(artistId, title, homeSection, position))
+            },
             onAlarmClick = { viewModel.processIntent(HomeUiIntent.OnAlarmClick) },
             onBannerClick = { deepLink -> viewModel.processIntent(HomeUiIntent.OnBannerClick(deepLink)) },
             modifier = modifier,
@@ -95,7 +100,7 @@ private fun HomeScreen(
     onFloatingClick: () -> Unit,
     onMyArtistCategoryClick: (Long?) -> Unit,
     onOtherProductCategoryClick: (Long?) -> Unit,
-    onProductCardClick: (Long, String) -> Unit,
+    onProductCardClick: (Long, String, String, Int) -> Unit,
     onAlarmClick: () -> Unit,
     onBannerClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -140,7 +145,9 @@ private fun HomeScreen(
                     nickname = homeContent.nickname,
                     groupItems = homeContent.myGroupItems,
                     onMoreClick = onMyArtistCategoryClick,
-                    onCardClick = onProductCardClick,
+                    onCardClick = { artistId, title, position ->
+                        onProductCardClick(artistId, title, AnalyticsValue.RECOMMENDED, position)
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -151,7 +158,9 @@ private fun HomeScreen(
                     nickname = homeContent.nickname,
                     groupItems = homeContent.otherGroupItems,
                     onMoreClick = onOtherProductCategoryClick,
-                    onCardClick = onProductCardClick,
+                    onCardClick = { artistId, title, position ->
+                        onProductCardClick(artistId, title, AnalyticsValue.DISCOVER, position)
+                    },
                 )
             }
         }
@@ -178,7 +187,7 @@ private fun HomeScreenPreview() {
             onFloatingClick = { },
             onMyArtistCategoryClick = { },
             onOtherProductCategoryClick = {},
-            onProductCardClick = { _, _ -> },
+            onProductCardClick = { _, _, _, _ -> },
             onAlarmClick = {},
             onBannerClick = {},
         )

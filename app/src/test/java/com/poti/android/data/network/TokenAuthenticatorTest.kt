@@ -1,5 +1,7 @@
 package com.poti.android.data.network
 
+import com.poti.android.core.monitoring.CrashOperation
+import com.poti.android.core.monitoring.CrashReporter
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.data.local.datasource.AuthTokenStore
 import com.poti.android.data.local.datasource.TokenPair
@@ -28,6 +30,15 @@ import javax.inject.Provider
 import retrofit2.Response as RetrofitResponse
 
 class TokenAuthenticatorTest {
+    private val crashReports = mutableListOf<CrashOperation>()
+    private val crashReporter = object : CrashReporter {
+        override fun recordNonFatal(
+            error: Throwable,
+            operation: CrashOperation,
+        ) {
+            crashReports.add(operation)
+        }
+    }
     private val authTokenStore: AuthTokenStore = mock(AuthTokenStore::class.java)
     private val authRemoteDataSource: AuthRemoteDataSource = mock(AuthRemoteDataSource::class.java)
     private val authSessionManager: AuthSessionManager = mock(AuthSessionManager::class.java)
@@ -40,6 +51,7 @@ class TokenAuthenticatorTest {
             authTokenStore = authTokenStore,
             authRemoteDataSource = Provider { authRemoteDataSource },
             authSessionManager = authSessionManager,
+            crashReporter = crashReporter,
         )
 
         `when`(authTokenStore.ensureInitializedBlocking()).thenReturn(true)
@@ -110,6 +122,7 @@ class TokenAuthenticatorTest {
 
         val retriedRequest = tokenAuthenticator.authenticate(null, unauthorizedResponse())
 
+        assertEquals(emptyList<CrashOperation>(), crashReports)
         assertNull(retriedRequest)
         verify(authTokenStore, never()).clearCachedTokens()
         verify(authSessionManager, never()).triggerLogout()
@@ -129,6 +142,7 @@ class TokenAuthenticatorTest {
 
         val retriedRequest = tokenAuthenticator.authenticate(null, unauthorizedResponse())
 
+        assertEquals(listOf(CrashOperation.TOKEN_RESPONSE), crashReports)
         assertNull(retriedRequest)
         verify(authTokenStore, never()).clearCachedTokens()
         verify(authSessionManager, never()).triggerLogout()

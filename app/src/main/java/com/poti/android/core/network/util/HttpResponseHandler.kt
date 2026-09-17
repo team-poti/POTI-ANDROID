@@ -2,6 +2,9 @@ package com.poti.android.core.network.util
 
 import com.poti.android.BuildConfig
 import com.poti.android.core.common.util.suspendRunCatching
+import com.poti.android.core.monitoring.CrashOperation
+import com.poti.android.core.monitoring.CrashReporter
+import com.poti.android.core.monitoring.isUnexpectedFailure
 import com.poti.android.core.network.model.BaseResponse
 import com.poti.android.core.network.model.NetworkError
 import kotlinx.serialization.json.Json
@@ -15,6 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class HttpResponseHandler @Inject constructor(
     private val json: Json,
+    private val crashReporter: CrashReporter,
 ) {
     suspend fun <T> safeApiCall(
         block: suspend () -> T,
@@ -22,6 +26,9 @@ class HttpResponseHandler @Inject constructor(
         val result = suspendRunCatching { block() }
 
         return result.recoverCatching { throwable ->
+            if (isUnexpectedFailure(throwable)) {
+                crashReporter.recordNonFatal(throwable, CrashOperation.API_RESPONSE)
+            }
             throw when (throwable) {
                 is HttpException -> parseHttpException(throwable)
                 is UnknownHostException, is SocketTimeoutException -> NetworkError.NetworkConnection

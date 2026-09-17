@@ -3,11 +3,17 @@ package com.poti.android.presentation.party.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
 import com.poti.android.BuildConfig
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.extension.getSuccessDataOrNull
 import com.poti.android.core.common.extension.toMoneyString
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.designsystem.component.field.FieldMenuItem
+import com.poti.android.core.monitoring.PerformanceAttribute
+import com.poti.android.core.monitoring.PerformanceMonitor
+import com.poti.android.core.monitoring.PerformanceTraceName
 import com.poti.android.core.share.PartyShareContent
 import com.poti.android.di.ApplicationScope
 import com.poti.android.domain.model.artist.Member
@@ -50,15 +56,20 @@ class PartyDetailViewModel @Inject constructor(
     private val saveMyAddressUseCase: SaveMyAddressUseCase,
     private val isGuestUseCase: IsGuestUseCase,
     private val setPendingReturnDeepLinkUseCase: SetPendingReturnDeepLinkUseCase,
+    private val eventTracker: EventTracker,
+    private val performanceMonitor: PerformanceMonitor,
     @ApplicationScope private val applicationScope: CoroutineScope,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PartyDetailUiState, PartyDetailIntent, PartyDetailEffect>(
         initialState = PartyDetailUiState(),
     ) {
-    private val partyId = savedStateHandle.toRoute<PartyDetailGraph>().partyId
+    private val args = savedStateHandle.toRoute<PartyDetailGraph>()
+    private val partyId = args.partyId
+    private val source = args.source
     private val deepLink: String = partyDetailDeepLink(partyId)
 
     private var isMyAddressLoaded = false
+    private var hasTrackedDetailView = false
 
     init {
         processIntent(PartyDetailIntent.LoadPartyDetail)
@@ -90,6 +101,12 @@ class PartyDetailViewModel @Inject constructor(
             is PartyDetailIntent.OnRegisterMyAddressChange -> updateState { copy(isRegisterMyAddressToggle = intent.checked) }
             PartyDetailIntent.OnFinalJoinClick -> {
                 if (validateInputs()) {
+                    eventTracker.track(
+                        eventName = AnalyticsEvent.PARTICIPANT_INFO_SUBMITTED,
+                        properties = mapOf(
+                            AnalyticsEventProperty.SPLIT_ID to partyId.toString(),
+                        ),
+                    )
                     updateState { copy(isParticipantNoticeModalVisible = true) }
                 }
             }
@@ -102,7 +119,7 @@ class PartyDetailViewModel @Inject constructor(
             }
             PartyDetailIntent.OnJoinSuccessConfirm -> {
                 updateState { copy(isJoinSuccessDialogVisible = false) }
-                sendEffect(ReloadDetail(partyId))
+                sendEffect(ReloadDetail(partyId, source))
             }
 
             PartyDetailIntent.OnShareClick -> updateState { copy(showShareBottomSheet = true) }
@@ -222,19 +239,49 @@ class PartyDetailViewModel @Inject constructor(
     private fun fetchPartyDetail() = launchScope {
         updateState { copy(partyDetail = ApiState.Loading) }
 
-        getPartyDetailUseCase(partyId = partyId)
-            .onSuccess { partyDetail ->
-                Timber.d("getPartyDetail 실행: $partyDetail")
-                updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
-            }
-            .onFailure { error ->
-                Timber.d("getPartyDetail 실패: $error")
-                updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
-            }
+        performanceMonitor.traceResult(
+            name = PerformanceTraceName.SPLIT_DETAIL_LOAD,
+            attributes = mapOf(PerformanceAttribute.SOURCE to source),
+        ) {
+            getPartyDetailUseCase(partyId = partyId)
+        }.onSuccess { partyDetail ->
+            Timber.d("getPartyDetail 실행: $partyDetail")
+            updateState { copy(partyDetail = ApiState.Success(partyDetail)) }
+            trackDetailViewed(partyDetail)
+        }.onFailure { error ->
+            Timber.d("getPartyDetail 실패: $error")
+            updateState { copy(partyDetail = ApiState.Failure(error.message ?: "Failed")) }
+        }
+    }
+
+    private fun trackDetailViewed(partyDetail: PartyDetail) {
+        if (hasTrackedDetailView) return
+        hasTrackedDetailView = true
+
+        eventTracker.track(
+            eventName = AnalyticsEvent.SPLIT_DETAIL_VIEWED,
+            properties = mapOf(
+                AnalyticsEventProperty.SPLIT_ID to partyDetail.postId.toString(),
+                AnalyticsEventProperty.GROUP_ID to partyDetail.artistId.toString(),
+                AnalyticsEventProperty.GOODS_ID to partyDetail.title,
+                AnalyticsEventProperty.SPLIT_STATUS to partyDetail.status.name,
+                AnalyticsEventProperty.SOURCE to source,
+            ),
+        )
     }
 
     private fun handleDetailJoin() {
         if (!uiState.value.isDetailJoinEnable) return
+        val partyDetail = uiState.value.partyDetail.getSuccessDataOrNull() ?: return
+
+        eventTracker.track(
+            eventName = AnalyticsEvent.JOIN_BUTTON_CLICKED,
+            properties = mapOf(
+                AnalyticsEventProperty.SPLIT_ID to partyDetail.postId.toString(),
+                AnalyticsEventProperty.SPLIT_STATUS to partyDetail.status.name,
+                AnalyticsEventProperty.SOURCE to source,
+            ),
+        )
 
         if (isGuestUseCase()) {
             updateState { copy(showLoginRequiredDialog = true) }
@@ -361,17 +408,20 @@ class PartyDetailViewModel @Inject constructor(
                 joinItems = joinItems,
             )
 
-            joinPartyUseCase(joinInfo = joinInfo)
-                .onSuccess {
-                    updateState { copy(isJoinSuccessDialogVisible = true) }
+            performanceMonitor.traceResult(
+                name = PerformanceTraceName.JOIN_SUBMIT,
+                attributes = mapOf(PerformanceAttribute.SOURCE to source),
+            ) {
+                joinPartyUseCase(joinInfo = joinInfo)
+            }.onSuccess {
+                updateState { copy(isJoinSuccessDialogVisible = true) }
 
-                    if (currentState.isRegisterMyAddressChecked) {
-                        registerMyAddress(deliveryInfo)
-                    }
+                if (currentState.isRegisterMyAddressChecked) {
+                    registerMyAddress(deliveryInfo)
                 }
-                .onFailure { error ->
-                    Timber.e(error, "postPartyJoin 실패")
-                }
+            }.onFailure { error ->
+                Timber.e(error, "postPartyJoin 실패")
+            }
         }
     }
 

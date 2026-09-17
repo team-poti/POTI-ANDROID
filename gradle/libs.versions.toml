@@ -38,6 +38,7 @@ datastorePreferences = "1.2.0"
 # --- Utils ---
 timber = "5.0.1"
 immutable = "0.4.0"
+mixpanelAndroid = "8.9.0"
 
 # --- Testing ---
 junit = "4.13.2"
@@ -55,6 +56,8 @@ googleId = "1.2.0"
 
 # --- Firebase ---
 firebaseBom = "34.15.0"
+crashlyticsPlugin = "3.0.8"
+firebasePerformancePlugin = "2.0.2"
 google-services = "4.5.0"
 
 
@@ -64,6 +67,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleRuntimeKtx" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 
@@ -99,6 +103,7 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 # --- Utils ---
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "immutable" }
+mixpanel-android = { group = "com.mixpanel.android", name = "mixpanel-android", version.ref = "mixpanelAndroid" }
 
 # --- Testing ---
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -120,6 +125,8 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 # --- Firebase ---
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 
 [plugins]
 # --- Android & Kotlin ---
@@ -133,3 +140,5 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
+firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerformancePlugin" }

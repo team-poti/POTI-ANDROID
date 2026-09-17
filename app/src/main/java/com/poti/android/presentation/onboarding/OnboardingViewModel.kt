@@ -1,6 +1,9 @@
 package com.poti.android.presentation.onboarding
 
 import com.poti.android.R
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
 import com.poti.android.core.common.util.NicknameValidator
@@ -21,6 +24,7 @@ class OnboardingViewModel @Inject constructor(
     private val getArtistsUseCase: GetArtistsUseCase,
     private val checkNicknameDuplicationUseCase: CheckNicknameDuplicationUseCase,
     private val saveOnboardingUseCase: SaveOnboardingUseCase,
+    private val eventTracker: EventTracker,
 ) : BaseViewModel<OnboardingUiState, OnboardingUiIntent, OnboardingUiEffect>(
         initialState = OnboardingUiState(),
     ) {
@@ -103,6 +107,7 @@ class OnboardingViewModel @Inject constructor(
         artistId?.let {
             saveOnboardingUseCase(uiState.value.nickname, artistId)
                 .onSuccess {
+                    trackOnboardingCompleted(artistId = artistId, skipped = false)
                     updateState { copy(isButtonVisible = false) }
                     sendEffect(OnboardingUiEffect.NavigateToHome)
                 }
@@ -115,6 +120,7 @@ class OnboardingViewModel @Inject constructor(
     private fun handleSkipClick() = launchScope {
         saveOnboardingUseCase(uiState.value.nickname, null)
             .onSuccess {
+                trackOnboardingCompleted(artistId = null, skipped = true)
                 updateState {
                     copy(
                         selectedArtistId = null,
@@ -126,5 +132,18 @@ class OnboardingViewModel @Inject constructor(
             .onFailure { error ->
                 Timber.e(error, "온보딩 건너뛰기 저장 실패")
             }
+    }
+
+    private fun trackOnboardingCompleted(
+        artistId: Long?,
+        skipped: Boolean,
+    ) {
+        eventTracker.track(
+            eventName = AnalyticsEvent.ONBOARDING_COMPLETED,
+            properties = mapOf(
+                AnalyticsEventProperty.FAVORITE_GROUP_ID to artistId?.toString(),
+                AnalyticsEventProperty.SKIPPED to skipped,
+            ),
+        )
     }
 }

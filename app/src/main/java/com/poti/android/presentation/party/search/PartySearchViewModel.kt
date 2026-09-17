@@ -1,8 +1,16 @@
 package com.poti.android.presentation.party.search
 
 import androidx.lifecycle.viewModelScope
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.AnalyticsValue
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceAttribute
+import com.poti.android.core.monitoring.PerformanceAttributeValue
+import com.poti.android.core.monitoring.PerformanceMonitor
+import com.poti.android.core.monitoring.PerformanceTraceName
 import com.poti.android.domain.usecase.search.SearchPartyUseCase
 import com.poti.android.presentation.party.search.model.NextPageLoadState
 import com.poti.android.presentation.party.search.model.PartySearchUiEffect
@@ -20,6 +28,8 @@ private const val PARTY_SEARCH_DEBOUNCE_MILLIS = 400L
 @HiltViewModel
 class PartySearchViewModel @Inject constructor(
     private val searchPartyUseCase: SearchPartyUseCase,
+    private val eventTracker: EventTracker,
+    private val performanceMonitor: PerformanceMonitor,
 ) :
     BaseViewModel<PartySearchUiState, PartySearchUiIntent, PartySearchUiEffect>(
             initialState = PartySearchUiState(),
@@ -29,12 +39,23 @@ class PartySearchViewModel @Inject constructor(
         override fun processIntent(intent: PartySearchUiIntent) {
             when (intent) {
                 PartySearchUiIntent.OnBackClick -> sendEffect(PartySearchUiEffect.NavigateBack)
-                is PartySearchUiIntent.OnCardClick -> sendEffect(
-                    PartySearchUiEffect.NavigateToProductPartyList(
-                        artistId = intent.artistId,
-                        title = intent.title,
-                    ),
-                )
+                is PartySearchUiIntent.OnCardClick -> {
+                    eventTracker.track(
+                        eventName = AnalyticsEvent.SEARCH_RESULT_CLICKED,
+                        properties = mapOf(
+                            AnalyticsEventProperty.KEYWORD to uiState.value.searchKeyword.trim(),
+                            AnalyticsEventProperty.RESULT_TYPE to AnalyticsValue.GOODS,
+                            AnalyticsEventProperty.RESULT_ID to "${intent.artistId}:${intent.title}",
+                            AnalyticsEventProperty.POSITION to intent.position,
+                        ),
+                    )
+                    sendEffect(
+                        PartySearchUiEffect.NavigateToProductPartyList(
+                            artistId = intent.artistId,
+                            title = intent.title,
+                        ),
+                    )
+                }
                 is PartySearchUiIntent.OnSearchKeywordChange -> scheduleSearch(intent.keyword)
                 is PartySearchUiIntent.OnSearch -> scheduleSearch(intent.keyword, debounceMillis = 0L)
                 PartySearchUiIntent.OnLoadNextPage -> loadNextPage()
@@ -116,48 +137,66 @@ class PartySearchViewModel @Inject constructor(
             page: Int,
             reset: Boolean,
         ) {
-            searchPartyUseCase(
-                keyword = keyword,
-                page = page,
-                size = PARTY_SEARCH_PAGE_SIZE,
-            )
-                .onSuccess { result ->
-                    val currentItems = (uiState.value.searchResultLoadState as? ApiState.Success)
-                        ?.data
-                        ?.items
-                        .orEmpty()
-                    val updatedItems = if (reset) result.items else currentItems + result.items
+            performanceMonitor.traceResult(
+                name = PerformanceTraceName.SEARCH_LOAD,
+                attributes = mapOf(
+                    PerformanceAttribute.LOAD_TYPE to if (reset) {
+                        PerformanceAttributeValue.INITIAL
+                    } else {
+                        PerformanceAttributeValue.NEXT
+                    },
+                ),
+            ) {
+                searchPartyUseCase(
+                    keyword = keyword,
+                    page = page,
+                    size = PARTY_SEARCH_PAGE_SIZE,
+                )
+            }.onSuccess { result ->
+                if (reset) {
+                    eventTracker.track(
+                        eventName = AnalyticsEvent.SEARCH_PERFORMED,
+                        properties = mapOf(
+                            AnalyticsEventProperty.KEYWORD to keyword,
+                            AnalyticsEventProperty.RESULT_COUNT to result.items.size,
+                        ),
+                    )
+                }
+                val currentItems = (uiState.value.searchResultLoadState as? ApiState.Success)
+                    ?.data
+                    ?.items
+                    .orEmpty()
+                val updatedItems = if (reset) result.items else currentItems + result.items
 
-                    updateState {
-                        copy(
-                            searchResultLoadState = ApiState.Success(
-                                result.copy(
-                                    items = updatedItems.distinctBy { item ->
-                                        item.artistId to item.postTitle
-                                    },
-                                ),
+                updateState {
+                    copy(
+                        searchResultLoadState = ApiState.Success(
+                            result.copy(
+                                items = updatedItems.distinctBy { item ->
+                                    item.artistId to item.postTitle
+                                },
                             ),
-                            nextPageLoadState = NextPageLoadState.Idle,
-                            hasNextPage = result.hasNext,
-                            nextPage = page + 1,
-                        )
-                    }
+                        ),
+                        nextPageLoadState = NextPageLoadState.Idle,
+                        hasNextPage = result.hasNext,
+                        nextPage = page + 1,
+                    )
                 }
-                .onFailure { throwable ->
-                    updateState {
-                        copy(
-                            searchResultLoadState = if (reset) {
-                                ApiState.Failure(throwable.message ?: "Failed to search parties")
-                            } else {
-                                searchResultLoadState
-                            },
-                            nextPageLoadState = if (reset) {
-                                NextPageLoadState.Idle
-                            } else {
-                                NextPageLoadState.Failure
-                            },
-                        )
-                    }
+            }.onFailure { throwable ->
+                updateState {
+                    copy(
+                        searchResultLoadState = if (reset) {
+                            ApiState.Failure(throwable.message ?: "Failed to search parties")
+                        } else {
+                            searchResultLoadState
+                        },
+                        nextPageLoadState = if (reset) {
+                            NextPageLoadState.Idle
+                        } else {
+                            NextPageLoadState.Failure
+                        },
+                    )
                 }
+            }
         }
     }
