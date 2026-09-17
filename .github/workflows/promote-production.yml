@@ -57,6 +57,7 @@ jobs:
                   VERSION_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
                   VERSION_CODE=$(sed -n 's/^VERSION_CODE=//p' gradle.properties)
                   RELEASE_SHA=$(git rev-parse HEAD)
+                  RELEASE_TAG="v$VERSION_NAME"
 
                   if [ "$VERSION_NAME" != "$INPUT_VERSION" ]; then
                     echo "::error::Tag version ($INPUT_VERSION) does not match VERSION_NAME ($VERSION_NAME)."
@@ -69,15 +70,26 @@ jobs:
                     exit 1
                   fi
 
-                  if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION_NAME" >/dev/null 2>&1; then
-                    echo "::error::v$VERSION_NAME has already been released."
-                    exit 1
+                  TAG_EXISTS=false
+                  if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+                    git fetch --force origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+                    TAG_SHA=$(git rev-list -n 1 "$RELEASE_TAG")
+
+                    if [ "$TAG_SHA" != "$RELEASE_SHA" ]; then
+                      echo "::error::$RELEASE_TAG points to $TAG_SHA instead of $RELEASE_SHA."
+                      exit 1
+                    fi
+
+                    TAG_EXISTS=true
+                    echo "$RELEASE_TAG already points to the release commit; continuing the rerun."
                   fi
 
                   {
                     echo "name=$VERSION_NAME"
                     echo "code=$VERSION_CODE"
                     echo "sha=$RELEASE_SHA"
+                    echo "tag=$RELEASE_TAG"
+                    echo "tag_exists=$TAG_EXISTS"
                   } >> "$GITHUB_OUTPUT"
 
             - name: Set up Ruby
@@ -99,18 +111,38 @@ jobs:
                   set -euo pipefail
                   git push origin "$RELEASE_SHA:refs/heads/main"
 
-            - name: Create release tag and GitHub Release
+            - name: Create release tag if needed
+              env:
+                  RELEASE_TAG: ${{ steps.release.outputs.tag }}
+                  RELEASE_SHA: ${{ steps.release.outputs.sha }}
+                  TAG_EXISTS: ${{ steps.release.outputs.tag_exists }}
+              run: |
+                  set -euo pipefail
+
+                  if [ "$TAG_EXISTS" = "true" ]; then
+                    echo "$RELEASE_TAG already exists; skipping tag creation."
+                    exit 0
+                  fi
+
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git tag -a "$RELEASE_TAG" "$RELEASE_SHA" -m "Release $RELEASE_TAG"
+                  git push origin "$RELEASE_TAG"
+
+            - name: Create GitHub Release if needed
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  VERSION_NAME: ${{ steps.release.outputs.name }}
+                  RELEASE_TAG: ${{ steps.release.outputs.tag }}
                   RELEASE_SHA: ${{ steps.release.outputs.sha }}
               run: |
                   set -euo pipefail
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git tag -a "v$VERSION_NAME" "$RELEASE_SHA" -m "Release $VERSION_NAME"
-                  git push origin "v$VERSION_NAME"
-                  gh release create "v$VERSION_NAME" \
+
+                  if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+                    echo "GitHub Release $RELEASE_TAG already exists; skipping creation."
+                    exit 0
+                  fi
+
+                  gh release create "$RELEASE_TAG" \
                     --target "$RELEASE_SHA" \
-                    --title "v$VERSION_NAME" \
+                    --title "$RELEASE_TAG" \
                     --generate-notes
