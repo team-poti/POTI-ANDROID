@@ -2,8 +2,15 @@ package com.poti.android.presentation.party.product.partylist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.toRoute
+import com.poti.android.core.analytics.AnalyticsEvent
+import com.poti.android.core.analytics.AnalyticsEventProperty
+import com.poti.android.core.analytics.EventTracker
 import com.poti.android.core.base.BaseViewModel
 import com.poti.android.core.common.state.ApiState
+import com.poti.android.core.monitoring.PerformanceAttribute
+import com.poti.android.core.monitoring.PerformanceAttributeValue
+import com.poti.android.core.monitoring.PerformanceMonitor
+import com.poti.android.core.monitoring.PerformanceTraceName
 import com.poti.android.domain.model.artist.Member
 import com.poti.android.domain.usecase.artist.GetMembersUseCase
 import com.poti.android.domain.usecase.auth.IsGuestUseCase
@@ -24,12 +31,15 @@ class ProductPartyListViewModel @Inject constructor(
     private val getMembersUseCase: GetMembersUseCase,
     private val getProductPartyListUseCase: GetProductPartyListUseCase,
     private val isGuestUseCase: IsGuestUseCase,
+    private val eventTracker: EventTracker,
+    private val performanceMonitor: PerformanceMonitor,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ProductPartyListUiState, ProductPartyListUiIntent, ProductPartyListUiEffect>(
         initialState = ProductPartyListUiState(),
     ) {
-    private val artistId: Long = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().artistId
-    private val title: String = savedStateHandle.toRoute<ProductRoute.ProductPartyList>().title
+    private val args = savedStateHandle.toRoute<ProductRoute.ProductPartyList>()
+    private val artistId: Long = args.artistId
+    private val title: String = args.title
 
     init {
         fetchArtistMembers()
@@ -43,7 +53,19 @@ class ProductPartyListViewModel @Inject constructor(
             ProductPartyListUiIntent.OnBackClick -> sendEffect(ProductPartyListUiEffect.NavigateBack)
             ProductPartyListUiIntent.OnFloatingClick -> handleFloatingClick()
 
-            is ProductPartyListUiIntent.OnPartyClick -> sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
+            is ProductPartyListUiIntent.OnPartyClick -> {
+                eventTracker.track(
+                    eventName = AnalyticsEvent.SPLIT_CARD_CLICKED,
+                    properties = mapOf(
+                        AnalyticsEventProperty.SPLIT_ID to intent.partyId.toString(),
+                        AnalyticsEventProperty.GROUP_ID to artistId.toString(),
+                        AnalyticsEventProperty.GOODS_ID to title,
+                        AnalyticsEventProperty.SORT_TYPE to uiState.value.partySortType.analyticsValue,
+                        AnalyticsEventProperty.POSITION to intent.position,
+                    ),
+                )
+                sendEffect(ProductPartyListUiEffect.NavigateToPartyDetail(intent.partyId))
+            }
             ProductPartyListUiIntent.OnMemberFilterClick -> {
                 refreshMemberSelectBottomSheet()
                 updateState { copy(isMemberFilterBottomSheetVisible = true) }
@@ -118,14 +140,26 @@ class ProductPartyListViewModel @Inject constructor(
             )
         }
 
-        getProductPartyListUseCase(
-            page = page,
-            size = PARTY_PAGE_SIZE,
-            title = title,
-            artistId = artistId,
-            sort = sort,
-            memberIds = memberIds,
-        ).onSuccess { partyList ->
+        performanceMonitor.traceResult(
+            name = PerformanceTraceName.SPLIT_LIST_LOAD,
+            attributes = mapOf(
+                PerformanceAttribute.LOAD_TYPE to if (reset) {
+                    PerformanceAttributeValue.INITIAL
+                } else {
+                    PerformanceAttributeValue.NEXT
+                },
+                PerformanceAttribute.SORT_TYPE to currentState.partySortType.analyticsValue,
+            ),
+        ) {
+            getProductPartyListUseCase(
+                page = page,
+                size = PARTY_PAGE_SIZE,
+                title = title,
+                artistId = artistId,
+                sort = sort,
+                memberIds = memberIds,
+            )
+        }.onSuccess { partyList ->
             val currentList = (uiState.value.productPartyListInfo as? ApiState.Success)?.data?.partySummaries.orEmpty()
             val updatedPartySummaries = if (reset) {
                 partyList.partySummaries

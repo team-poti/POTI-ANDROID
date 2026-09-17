@@ -17,7 +17,12 @@ sealed interface HomeUiIntent : UiIntent {
 
     data class OnMyArtistCategoryClick(val artistId: Long?) : HomeUiIntent
 
-    data class OnProductCardClick(val artistId: Long, val title: String) : HomeUiIntent
+    data class OnProductCardClick(
+        val artistId: Long,
+        val title: String,
+        val homeSection: String,
+        val position: Int,
+    ) : HomeUiIntent
 
     data object OnOtherProductCategoryClick : HomeUiIntent
 
@@ -43,7 +48,10 @@ sealed interface HomeUiEffect : UiEffect {
 
     data object NavigateToOtherProductCategory : HomeUiEffect
 
-    data class NavigateToGoodsPartyList(val artistId: Long, val title: String) : HomeUiEffect
+    data class NavigateToGoodsPartyList(
+        val artistId: Long,
+        val title: String,
+    ) : HomeUiEffect
 
     data object NavigateToAlarmList : HomeUiEffect
 

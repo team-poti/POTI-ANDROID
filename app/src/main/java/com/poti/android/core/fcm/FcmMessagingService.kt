@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.poti.android.R
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.fcm.repository.FcmRepository
 import com.poti.android.di.ApplicationScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -95,6 +96,7 @@ class FcmMessagingService : FirebaseMessagingService() {
         }
 
         return intent.apply {
+            putExtra(ANALYTICS_ENTRY_POINT_EXTRA, AnalyticsValue.NOTIFICATION)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
                 Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -102,6 +104,7 @@ class FcmMessagingService : FirebaseMessagingService() {
     }
 
     companion object {
+        const val ANALYTICS_ENTRY_POINT_EXTRA = "analytics_entry_point"
         private const val DEFAULT_CHANNEL_ID = "default_channel_id"
 
         fun createChannels(context: Context) {

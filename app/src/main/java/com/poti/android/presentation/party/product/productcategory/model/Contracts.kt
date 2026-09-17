@@ -29,7 +29,11 @@ sealed interface ProductCategoryUiIntent : UiIntent {
 
     data object OnSortDismiss : ProductCategoryUiIntent
 
-    data class OnCardClick(val artistId: Long, val title: String) : ProductCategoryUiIntent
+    data class OnCardClick(
+        val artistId: Long,
+        val title: String,
+        val position: Int,
+    ) : ProductCategoryUiIntent
 
     data object OnLoginRequiredConfirm : ProductCategoryUiIntent
 
@@ -41,7 +45,10 @@ sealed interface ProductCategoryUiEffect : UiEffect {
 
     data object NavigateToPartyCreate : ProductCategoryUiEffect
 
-    data class NavigateToProductPartyList(val artistId: Long, val title: String) : ProductCategoryUiEffect
+    data class NavigateToProductPartyList(
+        val artistId: Long,
+        val title: String,
+    ) : ProductCategoryUiEffect
 
     data object NavigateToLogin : ProductCategoryUiEffect
 }

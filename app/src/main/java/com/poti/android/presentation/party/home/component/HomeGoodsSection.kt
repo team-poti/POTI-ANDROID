@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +29,7 @@ fun HomeGoodsSection(
     nickname: String,
     groupItems: List<GroupItem>,
     onMoreClick: (Long?) -> Unit,
-    onCardClick: (Long, String) -> Unit,
+    onCardClick: (Long, String, Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -63,7 +63,7 @@ fun HomeGoodsSection(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(groupItems) { item ->
+            itemsIndexed(groupItems) { index, item ->
                 GoodsSmallCard(
                     imageUrl = item.postImage,
                     artist = item.artist,
@@ -71,7 +71,7 @@ fun HomeGoodsSection(
                     title = item.postTitle,
                     partyCount = item.postCount,
                     tag = item.tag,
-                    onClick = { id, title -> onCardClick(id, title) },
+                    onClick = { artistId, title -> onCardClick(artistId, title, index + 1) },
                 )
             }
         }
@@ -88,7 +88,7 @@ private fun HomeGoodsSectionPreview() {
             nickname = "포티",
             groupItems = UiMockData.homeGroupItems,
             onMoreClick = {},
-            onCardClick = { id, title -> },
+            onCardClick = { _, _, _ -> },
         )
     }
 }

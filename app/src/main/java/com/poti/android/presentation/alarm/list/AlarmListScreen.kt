@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poti.android.R
+import com.poti.android.core.analytics.AnalyticsValue
 import com.poti.android.core.common.extension.onSuccess
 import com.poti.android.core.common.extension.openDeepLink
 import com.poti.android.core.common.extension.toRelativeTime
@@ -58,7 +59,7 @@ fun AlarmListRoute(
         when (effect) {
             AlarmListUiEffect.NavigateBack -> onPopBackStack()
             AlarmListUiEffect.NavigateToSetting -> navigateToSetting()
-            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink)
+            is AlarmListUiEffect.OpenDeepLink -> context.openDeepLink(effect.deepLink, AnalyticsValue.NOTIFICATION)
             is AlarmListUiEffect.ShowToast -> context.toast(context.getString(effect.messageRes))
         }
     }
