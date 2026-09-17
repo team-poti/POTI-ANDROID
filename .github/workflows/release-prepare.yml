@@ -1,0 +1,123 @@
+name: Prepare release
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Release version (x.y.z, for example 1.0.1)'
+                required: true
+                type: string
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    prepare:
+        name: Create release branch and draft PR
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout develop
+              uses: actions/checkout@v4
+              with:
+                  ref: develop
+                  fetch-depth: 0
+
+            - name: Resolve release version
+              id: release
+              env:
+                  INPUT_VERSION: ${{ inputs.version }}
+              run: |
+                  set -euo pipefail
+
+                  if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+                    echo "::error::Version must use x.y.z format: $INPUT_VERSION"
+                    exit 1
+                  fi
+
+                  CURRENT_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
+                  CURRENT_CODE=$(sed -n 's/^VERSION_CODE=//p' gradle.properties)
+
+                  if ! printf '%s' "$CURRENT_CODE" | grep -qE '^[1-9][0-9]*$'; then
+                    echo "::error::Invalid current VERSION_CODE: $CURRENT_CODE"
+                    exit 1
+                  fi
+
+                  HIGHEST_VERSION=$(printf '%s\n%s\n' "$CURRENT_NAME" "$INPUT_VERSION" | sort -V | tail -n 1)
+                  if [ "$INPUT_VERSION" = "$CURRENT_NAME" ] || [ "$HIGHEST_VERSION" != "$INPUT_VERSION" ]; then
+                    echo "::error::New version ($INPUT_VERSION) must be greater than current version ($CURRENT_NAME)."
+                    exit 1
+                  fi
+
+                  if git ls-remote --exit-code --heads origin "release/$INPUT_VERSION" >/dev/null 2>&1; then
+                    echo "::error::release/$INPUT_VERSION already exists."
+                    exit 1
+                  fi
+
+                  if git ls-remote --exit-code --tags origin "refs/tags/v$INPUT_VERSION" >/dev/null 2>&1; then
+                    echo "::error::v$INPUT_VERSION has already been released."
+                    exit 1
+                  fi
+
+                  NEXT_CODE=$((CURRENT_CODE + 1))
+                  if [ "$NEXT_CODE" -gt 2100000000 ]; then
+                    echo "::error::VERSION_CODE exceeds the Google Play limit."
+                    exit 1
+                  fi
+
+                  {
+                    echo "name=$INPUT_VERSION"
+                    echo "code=$NEXT_CODE"
+                  } >> "$GITHUB_OUTPUT"
+
+            - name: Bump version and push release branch
+              env:
+                  VERSION_NAME: ${{ steps.release.outputs.name }}
+                  VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: |
+                  set -euo pipefail
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git switch -c "release/$VERSION_NAME"
+
+                  sed -i -E "s/^VERSION_CODE=.*/VERSION_CODE=$VERSION_CODE/" gradle.properties
+                  sed -i -E "s/^VERSION_NAME=.*/VERSION_NAME=$VERSION_NAME/" gradle.properties
+
+                  git add gradle.properties
+                  git commit -m "chore: bump app version to $VERSION_NAME"
+                  git push origin "release/$VERSION_NAME"
+
+            - name: Open draft release PR
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  VERSION_NAME: ${{ steps.release.outputs.name }}
+                  VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: |
+                  set -euo pipefail
+                  BODY_FILE="$RUNNER_TEMP/release-pr.md"
+                  {
+                    echo "## Release $VERSION_NAME"
+                    echo
+                    echo "| Item | Value |"
+                    echo "| --- | --- |"
+                    echo "| VERSION_NAME | \`$VERSION_NAME\` |"
+                    echo "| VERSION_CODE | \`$VERSION_CODE\` |"
+                    echo
+                    echo "## Checklist"
+                    echo
+                    echo "- [ ] CI checks pass"
+                    echo "- [ ] Release QA is complete"
+                    echo "- [ ] Release notes are ready"
+                    echo
+                    echo "Mark this draft as ready for review to run the PR CI checks."
+                    echo
+                    echo "Merging this PR uploads the exact merge commit to the Google Play internal track."
+                  } > "$BODY_FILE"
+
+                  gh pr create \
+                    --base develop \
+                    --head "release/$VERSION_NAME" \
+                    --title "Release $VERSION_NAME" \
+                    --body-file "$BODY_FILE" \
+                    --draft
