@@ -194,7 +194,7 @@ jobs:
                       const marker = "<!-- CI:BUILD -->";
                       const body =
                         `${marker}\n` +
-                        `🔥 **Build Failed!**\n\n` +
+                        `🔥 **Test or Build Failed!**\n\n` +
                         `The project test or build has failed.\n` +
                         `Please check the error logs and try again.\n` +
                         "```bash\n" +
