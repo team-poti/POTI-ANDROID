@@ -1,0 +1,154 @@
+name: Promote release to production
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Internal release version to promote (x.y.z)'
+                required: true
+                type: string
+            confirm:
+                description: 'Type PRODUCTION to confirm the rollout'
+                required: true
+                type: string
+
+permissions:
+    contents: write
+
+concurrency:
+    group: google-play-release
+    cancel-in-progress: false
+
+jobs:
+    promote:
+        name: Promote internal release and advance main
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        environment: google-play-production
+
+        steps:
+            - name: Validate confirmation
+              env:
+                  CONFIRM: ${{ inputs.confirm }}
+                  INPUT_VERSION: ${{ inputs.version }}
+              run: |
+                  if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+                    echo "::error::Version must use x.y.z format: $INPUT_VERSION"
+                    exit 1
+                  fi
+
+                  if [ "$CONFIRM" != "PRODUCTION" ]; then
+                    echo "::error::Type PRODUCTION to confirm the rollout."
+                    exit 1
+                  fi
+
+            - name: Checkout internal release
+              uses: actions/checkout@v4
+              with:
+                  ref: internal-v${{ inputs.version }}
+                  fetch-depth: 0
+
+            - name: Verify release state
+              id: release
+              env:
+                  INPUT_VERSION: ${{ inputs.version }}
+              run: |
+                  set -euo pipefail
+                  VERSION_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
+                  VERSION_CODE=$(sed -n 's/^VERSION_CODE=//p' gradle.properties)
+                  RELEASE_SHA=$(git rev-parse HEAD)
+                  RELEASE_TAG="v$VERSION_NAME"
+
+                  if [ "$VERSION_NAME" != "$INPUT_VERSION" ]; then
+                    echo "::error::Tag version ($INPUT_VERSION) does not match VERSION_NAME ($VERSION_NAME)."
+                    exit 1
+                  fi
+
+                  git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+                  if ! git merge-base --is-ancestor origin/main "$RELEASE_SHA"; then
+                    echo "::error::main must be an ancestor of the release commit."
+                    exit 1
+                  fi
+
+                  TAG_EXISTS=false
+                  if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+                    git fetch --force origin "refs/tags/$RELEASE_TAG:refs/tags/$RELEASE_TAG"
+                    TAG_SHA=$(git rev-list -n 1 "$RELEASE_TAG")
+
+                    if [ "$TAG_SHA" != "$RELEASE_SHA" ]; then
+                      echo "::error::$RELEASE_TAG points to $TAG_SHA instead of $RELEASE_SHA."
+                      exit 1
+                    fi
+
+                    TAG_EXISTS=true
+                    echo "$RELEASE_TAG already points to the release commit; continuing the rerun."
+                  fi
+
+                  {
+                    echo "name=$VERSION_NAME"
+                    echo "code=$VERSION_CODE"
+                    echo "sha=$RELEASE_SHA"
+                    echo "tag=$RELEASE_TAG"
+                    echo "tag_exists=$TAG_EXISTS"
+                  } >> "$GITHUB_OUTPUT"
+
+            - name: Advance main
+              env:
+                  RELEASE_SHA: ${{ steps.release.outputs.sha }}
+              run: |
+                  set -euo pipefail
+                  git push origin "$RELEASE_SHA:refs/heads/main"
+                  git fetch origin "+refs/heads/main:refs/remotes/origin/main"
+
+                  if [ "$(git rev-parse origin/main)" != "$RELEASE_SHA" ]; then
+                    echo "::error::main was not advanced to $RELEASE_SHA."
+                    exit 1
+                  fi
+
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@v1
+              with:
+                  ruby-version: '3.3'
+                  bundler-cache: true
+
+            - name: Promote internal release to production if needed
+              env:
+                  PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+                  VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
+
+            - name: Create release tag if needed
+              env:
+                  RELEASE_TAG: ${{ steps.release.outputs.tag }}
+                  RELEASE_SHA: ${{ steps.release.outputs.sha }}
+                  TAG_EXISTS: ${{ steps.release.outputs.tag_exists }}
+              run: |
+                  set -euo pipefail
+
+                  if [ "$TAG_EXISTS" = "true" ]; then
+                    echo "$RELEASE_TAG already exists; skipping tag creation."
+                    exit 0
+                  fi
+
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git tag -a "$RELEASE_TAG" "$RELEASE_SHA" -m "Release $RELEASE_TAG"
+                  git push origin "$RELEASE_TAG"
+
+            - name: Create GitHub Release if needed
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  RELEASE_TAG: ${{ steps.release.outputs.tag }}
+                  RELEASE_SHA: ${{ steps.release.outputs.sha }}
+              run: |
+                  set -euo pipefail
+
+                  if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+                    echo "GitHub Release $RELEASE_TAG already exists; skipping creation."
+                    exit 0
+                  fi
+
+                  gh release create "$RELEASE_TAG" \
+                    --target "$RELEASE_SHA" \
+                    --title "$RELEASE_TAG" \
+                    --generate-notes

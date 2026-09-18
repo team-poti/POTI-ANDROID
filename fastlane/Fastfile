@@ -1,0 +1,35 @@
+default_platform(:android)
+
+platform :android do
+  desc "Promote a specific internal testing release to production"
+  lane :promote_internal do |options|
+    version_code = options[:version_code].to_i
+    UI.user_error!("version_code must be a positive integer") unless version_code.positive?
+
+    json_key_data = ENV.fetch("PLAY_SERVICE_ACCOUNT_JSON")
+    production_version_codes = google_play_track_version_codes(
+      package_name: "com.poti.android",
+      json_key_data: json_key_data,
+      track: "production",
+    ).map(&:to_i)
+
+    if production_version_codes.include?(version_code)
+      UI.success("Version code #{version_code} is already available on the production track.")
+    else
+      upload_to_play_store(
+        package_name: "com.poti.android",
+        json_key_data: json_key_data,
+        track: "internal",
+        track_promote_to: "production",
+        track_promote_release_status: "completed",
+        version_code: version_code,
+        skip_upload_apk: true,
+        skip_upload_aab: true,
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true,
+      )
+    end
+  end
+end

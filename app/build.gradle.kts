@@ -15,12 +15,12 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
-val properties = Properties().apply {
+val localProperties = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
 fun requiredLocalProperty(key: String): String {
-    val value = properties[key] as? String
+    val value = localProperties[key] as? String
 
     require(!value.isNullOrBlank()) {
         "$key must not be blank in local.properties"
@@ -30,6 +30,50 @@ fun requiredLocalProperty(key: String): String {
 }
 
 fun buildConfigString(value: String): String = "\"$value\""
+
+fun environmentVariableOrLocalProperty(
+    environmentVariable: String,
+    localProperty: String,
+): String? =
+    System.getenv(environmentVariable)?.takeIf(String::isNotBlank)
+        ?: localProperties.getProperty(localProperty)?.takeIf(String::isNotBlank)
+
+val uploadStoreFile = environmentVariableOrLocalProperty("UPLOAD_STORE_FILE", "upload.store.file")
+val uploadStorePassword = environmentVariableOrLocalProperty("UPLOAD_STORE_PASSWORD", "upload.store.password")
+val uploadKeyAlias = environmentVariableOrLocalProperty("UPLOAD_KEY_ALIAS", "upload.key.alias")
+val uploadKeyPassword = environmentVariableOrLocalProperty("UPLOAD_KEY_PASSWORD", "upload.key.password")
+val uploadSigningValues = listOf(uploadStoreFile, uploadStorePassword, uploadKeyAlias, uploadKeyPassword)
+val isUploadSigningConfigured = uploadSigningValues.all { !it.isNullOrBlank() }
+
+require(uploadSigningValues.none { !it.isNullOrBlank() } || isUploadSigningConfigured) {
+    "Upload signing requires UPLOAD_STORE_FILE, UPLOAD_STORE_PASSWORD, " +
+        "UPLOAD_KEY_ALIAS, and UPLOAD_KEY_PASSWORD. " +
+        "Set all four as environment variables or upload.* values in local.properties."
+}
+
+val appVersionCode =
+    providers.gradleProperty("VERSION_CODE")
+        .orElse(providers.environmentVariable("VERSION_CODE"))
+        .orElse("1")
+        .get()
+        .let { value ->
+            val parsedValue = value.toIntOrNull()
+            require(parsedValue != null && parsedValue in 1..2_100_000_000) {
+                "VERSION_CODE must be an integer between 1 and 2100000000, but was '$value'."
+            }
+            parsedValue
+        }
+
+val appVersionName =
+    providers.gradleProperty("VERSION_NAME")
+        .orElse(providers.environmentVariable("VERSION_NAME"))
+        .orElse("1.0.0")
+        .get()
+        .also { value ->
+            require(value.isNotBlank()) {
+                "VERSION_NAME must not be blank."
+            }
+        }
 
 val mixpanelDevProjectToken = requiredLocalProperty("mixpanel.dev.project.token")
 val mixpanelProdProjectToken = requiredLocalProperty("mixpanel.prod.project.token")
@@ -42,12 +86,12 @@ android {
         applicationId = "com.poti.android"
         minSdk = 28
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val kakaoNativeAppKey = properties["kakao.native.app.key"].toString()
+        val kakaoNativeAppKey = localProperties["kakao.native.app.key"].toString()
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = kakaoNativeAppKey
     }
@@ -58,6 +102,15 @@ android {
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
+        }
+
+        if (isUploadSigningConfigured) {
+            create("release") {
+                storeFile = rootProject.file(requireNotNull(uploadStoreFile))
+                storePassword = requireNotNull(uploadStorePassword)
+                keyAlias = requireNotNull(uploadKeyAlias)
+                keyPassword = requireNotNull(uploadKeyPassword)
+            }
         }
     }
 
@@ -89,6 +142,7 @@ android {
             dimension = "server"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            signingConfig = signingConfigs.getByName("debug")
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.dev.base.url")))
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://dev-app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BODY"))
@@ -101,6 +155,7 @@ android {
         }
         create("prod") {
             dimension = "server"
+            signingConfig = signingConfigs.findByName("release")
             buildConfigField("String", "BASE_URL", buildConfigString(requiredLocalProperty("poti.prod.base.url")))
             buildConfigField("String", "DEEP_LINK_HOST", buildConfigString("https://app.poti.kr"))
             buildConfigField("String", "HTTP_LOG_LEVEL", buildConfigString("BASIC"))
