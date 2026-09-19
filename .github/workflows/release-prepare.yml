@@ -8,7 +8,7 @@ on:
                 required: true
                 type: string
             release_notes:
-                description: 'Korean Google Play release notes (user-facing, up to 500 characters)'
+                description: 'Korean Google Play release notes (use \n for line breaks, up to 500 characters)'
                 required: true
                 type: string
 
@@ -40,6 +40,7 @@ jobs:
                   RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
+                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
 
                   if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     echo "::error::Version must use x.y.z format: $INPUT_VERSION"
@@ -138,6 +139,7 @@ jobs:
                   RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
+                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git switch -c "release/$VERSION_NAME"
@@ -161,6 +163,7 @@ jobs:
                   RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
+                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
                   BODY_FILE="$RUNNER_TEMP/release-pr.md"
                   {
                     echo "## Release $VERSION_NAME"
