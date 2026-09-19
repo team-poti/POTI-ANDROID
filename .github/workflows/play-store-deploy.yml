@@ -141,17 +141,19 @@ jobs:
                   fi
                   printf '%s' "$UPLOAD_KEYSTORE_BASE64" | base64 --decode > "${{ runner.temp }}/poti-upload-key.jks"
 
-            - name: Verify and build signed AAB
+            - name: Check Kotlin style
+              run: ./gradlew ktlintCheck
+
+            - name: Run Prod Release unit tests
+              run: ./gradlew :app:testProdReleaseUnitTest
+
+            - name: Build signed AAB
               env:
                   UPLOAD_STORE_FILE: ${{ runner.temp }}/poti-upload-key.jks
                   UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
                   UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
                   UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
-              run: |
-                  ./gradlew \
-                    ktlintCheck \
-                    :app:testProdReleaseUnitTest \
-                    :app:bundleProdRelease
+              run: ./gradlew :app:bundleProdRelease
 
             - name: Upload AAB artifact
               uses: actions/upload-artifact@v4

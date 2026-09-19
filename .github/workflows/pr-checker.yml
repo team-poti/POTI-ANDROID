@@ -180,25 +180,39 @@ jobs:
                         });
                       }
 
-            - name: Run unit tests and build Dev Debug APK
-              id: build
+            - name: Run Dev Debug unit tests
+              id: tests
               if: steps.changes.outputs.android == 'true' && steps.ktlint.outcome == 'success'
               continue-on-error: true
-              run: ./gradlew :app:testDevDebugUnitTest :app:assembleDevDebug
+              run: ./gradlew :app:testDevDebugUnitTest
 
-            - name: Comment PR on build failure
-              if: steps.build.outcome == 'failure'
+            - name: Build Dev Debug APK
+              id: build
+              if: steps.changes.outputs.android == 'true' && steps.tests.outcome == 'success'
+              continue-on-error: true
+              run: ./gradlew :app:assembleDevDebug
+
+            - name: Comment PR on test or build failure
+              if: steps.tests.outcome == 'failure' || steps.build.outcome == 'failure'
               uses: actions/github-script@v7
               with:
                   script: |
                       const marker = "<!-- CI:BUILD -->";
+                      const testsFailed = "${{ steps.tests.outcome }}" === "failure";
+                      const title = testsFailed ? "Unit Tests Failed!" : "Build Failed!";
+                      const description = testsFailed
+                        ? "The unit tests have failed."
+                        : "The Dev Debug APK build has failed.";
+                      const command = testsFailed
+                        ? "./gradlew :app:testDevDebugUnitTest"
+                        : "./gradlew :app:assembleDevDebug";
                       const body =
                         `${marker}\n` +
-                        `🔥 **Test or Build Failed!**\n\n` +
-                        `The project test or build has failed.\n` +
+                        `🔥 **${title}**\n\n` +
+                        `${description}\n` +
                         `Please check the error logs and try again.\n` +
                         "```bash\n" +
-                        "./gradlew :app:testDevDebugUnitTest :app:assembleDevDebug\n" +
+                        `${command}\n` +
                         "```";
 
                       const { owner, repo } = context.repo;
@@ -235,7 +249,7 @@ jobs:
                       const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
                       const body =
                         `${marker}\n` +
-                        `✅ **Build passed.**\n\n` +
+                        `✅ **Unit tests and build passed.**\n\n` +
                         `Run: ${runUrl}`;
 
                       const { owner, repo } = context.repo;
@@ -258,6 +272,6 @@ jobs:
                         });
                       }
 
-            - name: Fail job if build failed
-              if: steps.build.outcome == 'failure'
+            - name: Fail job if tests or build failed
+              if: steps.tests.outcome == 'failure' || steps.build.outcome == 'failure'
               run: exit 1
