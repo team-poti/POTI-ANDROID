@@ -7,6 +7,10 @@ on:
                 description: 'Internal release version to promote (x.y.z)'
                 required: true
                 type: string
+            version_code:
+                description: 'Internal release version code to promote'
+                required: true
+                type: string
             confirm:
                 description: 'Type PRODUCTION to confirm the rollout'
                 required: true
@@ -31,9 +35,16 @@ jobs:
               env:
                   CONFIRM: ${{ inputs.confirm }}
                   INPUT_VERSION: ${{ inputs.version }}
+                  INPUT_VERSION_CODE: ${{ inputs.version_code }}
               run: |
+                  set -euo pipefail
                   if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     echo "::error::Version must use x.y.z format: $INPUT_VERSION"
+                    exit 1
+                  fi
+
+                  if ! printf '%s' "$INPUT_VERSION_CODE" | grep -qE '^[1-9][0-9]*$'; then
+                    echo "::error::Version code must be a positive integer: $INPUT_VERSION_CODE"
                     exit 1
                   fi
 
@@ -45,13 +56,14 @@ jobs:
             - name: Checkout internal release
               uses: actions/checkout@v4
               with:
-                  ref: internal-v${{ inputs.version }}
+                  ref: internal-v${{ inputs.version }}-code${{ inputs.version_code }}
                   fetch-depth: 0
 
             - name: Verify release state
               id: release
               env:
                   INPUT_VERSION: ${{ inputs.version }}
+                  INPUT_VERSION_CODE: ${{ inputs.version_code }}
               run: |
                   set -euo pipefail
                   VERSION_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
@@ -61,6 +73,11 @@ jobs:
 
                   if [ "$VERSION_NAME" != "$INPUT_VERSION" ]; then
                     echo "::error::Tag version ($INPUT_VERSION) does not match VERSION_NAME ($VERSION_NAME)."
+                    exit 1
+                  fi
+
+                  if [ "$VERSION_CODE" != "$INPUT_VERSION_CODE" ]; then
+                    echo "::error::Tag version code ($INPUT_VERSION_CODE) does not match VERSION_CODE ($VERSION_CODE)."
                     exit 1
                   fi
 
