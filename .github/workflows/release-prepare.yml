@@ -168,7 +168,7 @@ jobs:
                   printf '%s\n' "$RELEASE_NOTES" > "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
 
                   git add gradle.properties "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
-                  git commit -m "chore: prepare app release $VERSION_NAME (code $VERSION_CODE)"
+                  git commit -m "[Chore] prepare app release $VERSION_NAME (code $VERSION_CODE)"
                   git push origin "$RELEASE_BRANCH"
 
             - name: Open draft release PR
