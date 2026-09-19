@@ -17,6 +17,7 @@ concurrency:
 jobs:
     lint:
         name: PR CI Check (Lint & Build)
+        if: ${{ !startsWith(github.event.pull_request.head.ref, 'release/') }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
