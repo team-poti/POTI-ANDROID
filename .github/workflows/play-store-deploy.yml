@@ -46,8 +46,9 @@ jobs:
                   VERSION_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
                   VERSION_CODE=$(sed -n 's/^VERSION_CODE=//p' gradle.properties)
 
-                  if [ "$RELEASE_BRANCH" != "release/$VERSION_NAME" ]; then
-                    echo "::error::Release branch ($RELEASE_BRANCH) does not match VERSION_NAME ($VERSION_NAME)."
+                  EXPECTED_RELEASE_BRANCH="release/$VERSION_NAME-code$VERSION_CODE"
+                  if [ "$RELEASE_BRANCH" != "$EXPECTED_RELEASE_BRANCH" ]; then
+                    echo "::error::Release branch ($RELEASE_BRANCH) does not match $EXPECTED_RELEASE_BRANCH."
                     exit 1
                   fi
 
@@ -77,7 +78,7 @@ jobs:
                     echo "name=$VERSION_NAME"
                     echo "code=$VERSION_CODE"
                     echo "sha=$RELEASE_SHA"
-                    echo "candidate_tag=internal-v$VERSION_NAME"
+                    echo "candidate_tag=internal-v$VERSION_NAME-code$VERSION_CODE"
                   } >> "$GITHUB_OUTPUT"
 
             - name: Create internal release tag
@@ -180,5 +181,5 @@ jobs:
                   releaseFiles: app/build/outputs/bundle/prodRelease/app-prod-release.aab
                   tracks: internal
                   status: completed
-                  releaseName: v${{ steps.release.outputs.name }}
+                  releaseName: v${{ steps.release.outputs.name }} (code ${{ steps.release.outputs.code }})
                   whatsNewDirectory: ${{ runner.temp }}/whats-new

@@ -60,6 +60,7 @@ jobs:
                   git fetch --prune origin \
                     "+refs/heads/develop:refs/remotes/origin/develop" \
                     "+refs/heads/release/*:refs/remotes/origin/release/*"
+                  git fetch --force --tags origin
                   git switch --detach origin/develop
 
                   OPEN_RELEASE_PRS=$(gh pr list \
@@ -97,22 +98,10 @@ jobs:
                     exit 1
                   fi
 
-                  CURRENT_NAME=$(sed -n 's/^VERSION_NAME=//p' gradle.properties)
                   CURRENT_CODE=$(sed -n 's/^VERSION_CODE=//p' gradle.properties)
 
                   if ! printf '%s' "$CURRENT_CODE" | grep -qE '^[1-9][0-9]*$'; then
                     echo "::error::Invalid current VERSION_CODE: $CURRENT_CODE"
-                    exit 1
-                  fi
-
-                  HIGHEST_VERSION=$(printf '%s\n%s\n' "$CURRENT_NAME" "$INPUT_VERSION" | sort -V | tail -n 1)
-                  if [ "$INPUT_VERSION" = "$CURRENT_NAME" ] || [ "$HIGHEST_VERSION" != "$INPUT_VERSION" ]; then
-                    echo "::error::New version ($INPUT_VERSION) must be greater than current version ($CURRENT_NAME)."
-                    exit 1
-                  fi
-
-                  if git ls-remote --exit-code --heads origin "release/$INPUT_VERSION" >/dev/null 2>&1; then
-                    echo "::error::release/$INPUT_VERSION already exists."
                     exit 1
                   fi
 
@@ -121,28 +110,51 @@ jobs:
                     exit 1
                   fi
 
+                  LATEST_RELEASED_NAME=$(
+                    git tag --list 'v*' |
+                      sed -nE 's/^v([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' |
+                      sort -V |
+                      tail -n 1
+                  )
+
+                  if [ -n "$LATEST_RELEASED_NAME" ]; then
+                    HIGHEST_VERSION=$(printf '%s\n%s\n' "$LATEST_RELEASED_NAME" "$INPUT_VERSION" | sort -V | tail -n 1)
+                    if [ "$INPUT_VERSION" = "$LATEST_RELEASED_NAME" ] || [ "$HIGHEST_VERSION" != "$INPUT_VERSION" ]; then
+                      echo "::error::New version ($INPUT_VERSION) must be greater than the latest production version ($LATEST_RELEASED_NAME)."
+                      exit 1
+                    fi
+                  fi
+
                   NEXT_CODE=$((CURRENT_CODE + 1))
                   if [ "$NEXT_CODE" -gt 2100000000 ]; then
                     echo "::error::VERSION_CODE exceeds the Google Play limit."
                     exit 1
                   fi
 
+                  RELEASE_BRANCH="release/$INPUT_VERSION-code$NEXT_CODE"
+                  if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null 2>&1; then
+                    echo "::error::$RELEASE_BRANCH already exists."
+                    exit 1
+                  fi
+
                   {
                     echo "name=$INPUT_VERSION"
                     echo "code=$NEXT_CODE"
+                    echo "branch=$RELEASE_BRANCH"
                   } >> "$GITHUB_OUTPUT"
 
             - name: Bump version and push release branch
               env:
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
+                  RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
                   RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
                   RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git switch -c "release/$VERSION_NAME"
+                  git switch -c "$RELEASE_BRANCH"
 
                   sed -i -E "s/^VERSION_CODE=.*/VERSION_CODE=$VERSION_CODE/" gradle.properties
                   sed -i -E "s/^VERSION_NAME=.*/VERSION_NAME=$VERSION_NAME/" gradle.properties
@@ -152,14 +164,15 @@ jobs:
                   printf '%s\n' "$RELEASE_NOTES" > "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
 
                   git add gradle.properties "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
-                  git commit -m "chore: prepare app release $VERSION_NAME"
-                  git push origin "release/$VERSION_NAME"
+                  git commit -m "chore: prepare app release $VERSION_NAME (code $VERSION_CODE)"
+                  git push origin "$RELEASE_BRANCH"
 
             - name: Open draft release PR
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
+                  RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
                   RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
@@ -172,6 +185,7 @@ jobs:
                     echo "| --- | --- |"
                     echo "| VERSION_NAME | \`$VERSION_NAME\` |"
                     echo "| VERSION_CODE | \`$VERSION_CODE\` |"
+                    echo "| Candidate | \`$RELEASE_BRANCH\` |"
                     echo "| Release notes | \`fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt\` |"
                     echo
                     echo "## Google Play release notes (ko-KR)"
@@ -191,13 +205,13 @@ jobs:
 
                   if ! gh pr create \
                       --base develop \
-                      --head "release/$VERSION_NAME" \
-                      --title "Release $VERSION_NAME" \
+                      --head "$RELEASE_BRANCH" \
+                      --title "Release $VERSION_NAME (code $VERSION_CODE)" \
                       --body-file "$BODY_FILE" \
                       --draft; then
-                    echo "::error::Failed to create the release PR; deleting release/$VERSION_NAME."
-                    if ! git push origin --delete "release/$VERSION_NAME"; then
-                      echo "::warning::Failed to delete release/$VERSION_NAME; remove it before preparing another release."
+                    echo "::error::Failed to create the release PR; deleting $RELEASE_BRANCH."
+                    if ! git push origin --delete "$RELEASE_BRANCH"; then
+                      echo "::warning::Failed to delete $RELEASE_BRANCH; remove it before preparing another release."
                     fi
                     exit 1
                   fi
