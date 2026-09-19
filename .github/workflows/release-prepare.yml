@@ -60,7 +60,6 @@ jobs:
                   git fetch --prune origin \
                     "+refs/heads/develop:refs/remotes/origin/develop" \
                     "+refs/heads/release/*:refs/remotes/origin/release/*"
-                  git fetch --force --tags origin
                   git switch --detach origin/develop
 
                   OPEN_RELEASE_PRS=$(gh pr list \
@@ -105,14 +104,19 @@ jobs:
                     exit 1
                   fi
 
-                  if git ls-remote --exit-code --tags origin "refs/tags/v$INPUT_VERSION" >/dev/null 2>&1; then
+                  REMOTE_RELEASED_NAMES=$(
+                    git ls-remote --tags --refs origin 'refs/tags/v*' |
+                      awk '{print $2}' |
+                      sed -nE 's#^refs/tags/v([0-9]+\.[0-9]+\.[0-9]+)$#\1#p'
+                  )
+
+                  if printf '%s\n' "$REMOTE_RELEASED_NAMES" | grep -Fxq "$INPUT_VERSION"; then
                     echo "::error::v$INPUT_VERSION has already been released."
                     exit 1
                   fi
 
                   LATEST_RELEASED_NAME=$(
-                    git tag --list 'v*' |
-                      sed -nE 's/^v([0-9]+\.[0-9]+\.[0-9]+)$/\1/p' |
+                    printf '%s\n' "$REMOTE_RELEASED_NAMES" |
                       sort -V |
                       tail -n 1
                   )
