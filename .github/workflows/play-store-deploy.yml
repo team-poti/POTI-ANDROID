@@ -56,6 +56,18 @@ jobs:
                     exit 1
                   fi
 
+                  RELEASE_NOTES_FILE="fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt"
+                  if [ ! -s "$RELEASE_NOTES_FILE" ]; then
+                    echo "::error::Missing Korean Google Play release notes: $RELEASE_NOTES_FILE"
+                    exit 1
+                  fi
+
+                  RELEASE_NOTES=$(cat "$RELEASE_NOTES_FILE")
+                  if [ "${#RELEASE_NOTES}" -gt 500 ]; then
+                    echo "::error::Release notes must be 500 characters or fewer."
+                    exit 1
+                  fi
+
                   if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION_NAME" >/dev/null 2>&1; then
                     echo "::error::v$VERSION_NAME has already been released."
                     exit 1
@@ -148,6 +160,16 @@ jobs:
                   path: app/build/outputs/bundle/prodRelease/app-prod-release.aab
                   retention-days: 30
 
+            - name: Prepare Google Play release notes
+              env:
+                  VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: |
+                  set -euo pipefail
+                  mkdir -p "${{ runner.temp }}/whats-new"
+                  cp \
+                    "fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt" \
+                    "${{ runner.temp }}/whats-new/whatsnew-ko-KR"
+
             - name: Upload to Google Play internal testing
               uses: r0adkll/upload-google-play@v1
               with:
@@ -157,3 +179,4 @@ jobs:
                   tracks: internal
                   status: completed
                   releaseName: v${{ steps.release.outputs.name }}
+                  whatsNewDirectory: ${{ runner.temp }}/whats-new

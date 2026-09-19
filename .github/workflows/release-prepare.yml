@@ -7,6 +7,10 @@ on:
                 description: 'Release version (x.y.z, for example 1.0.1)'
                 required: true
                 type: string
+            release_notes:
+                description: 'Korean Google Play release notes (user-facing, up to 500 characters)'
+                required: true
+                type: string
 
 permissions:
     contents: write
@@ -33,11 +37,22 @@ jobs:
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   INPUT_VERSION: ${{ inputs.version }}
+                  RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
 
                   if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     echo "::error::Version must use x.y.z format: $INPUT_VERSION"
+                    exit 1
+                  fi
+
+                  if [ -z "${RELEASE_NOTES//[[:space:]]/}" ]; then
+                    echo "::error::Release notes must not be empty."
+                    exit 1
+                  fi
+
+                  if [ "${#RELEASE_NOTES}" -gt 500 ]; then
+                    echo "::error::Release notes must be 500 characters or fewer."
                     exit 1
                   fi
 
@@ -120,6 +135,7 @@ jobs:
               env:
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
+                  RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
                   git config user.name "github-actions[bot]"
@@ -129,8 +145,12 @@ jobs:
                   sed -i -E "s/^VERSION_CODE=.*/VERSION_CODE=$VERSION_CODE/" gradle.properties
                   sed -i -E "s/^VERSION_NAME=.*/VERSION_NAME=$VERSION_NAME/" gradle.properties
 
-                  git add gradle.properties
-                  git commit -m "chore: bump app version to $VERSION_NAME"
+                  RELEASE_NOTES_DIR="fastlane/metadata/android/ko-KR/changelogs"
+                  mkdir -p "$RELEASE_NOTES_DIR"
+                  printf '%s\n' "$RELEASE_NOTES" > "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
+
+                  git add gradle.properties "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
+                  git commit -m "chore: prepare app release $VERSION_NAME"
                   git push origin "release/$VERSION_NAME"
 
             - name: Open draft release PR
@@ -138,6 +158,7 @@ jobs:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
+                  RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
                   BODY_FILE="$RUNNER_TEMP/release-pr.md"
@@ -148,6 +169,11 @@ jobs:
                     echo "| --- | --- |"
                     echo "| VERSION_NAME | \`$VERSION_NAME\` |"
                     echo "| VERSION_CODE | \`$VERSION_CODE\` |"
+                    echo "| Release notes | \`fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt\` |"
+                    echo
+                    echo "## Google Play release notes (ko-KR)"
+                    echo
+                    printf '%s\n' "$RELEASE_NOTES"
                     echo
                     echo "## Checklist"
                     echo
