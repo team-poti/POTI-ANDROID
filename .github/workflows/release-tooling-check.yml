@@ -1,0 +1,35 @@
+name: Release tooling check
+
+on:
+    pull_request:
+        branches: [ develop ]
+        paths:
+            - 'Gemfile'
+            - 'Gemfile.lock'
+            - 'fastlane/**'
+            - '.github/workflows/promote-production.yml'
+            - '.github/workflows/release-tooling-check.yml'
+
+permissions:
+    contents: read
+
+jobs:
+    verify:
+        name: Verify Ruby and release tooling (no deployment)
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        env:
+            FASTLANE_SKIP_UPDATE_CHECK: '1'
+            FASTLANE_OPT_OUT_USAGE: '1'
+        steps:
+            - uses: actions/checkout@v4
+            - uses: ruby/setup-ruby@v1
+              with:
+                  ruby-version: '3.3'
+                  bundler-cache: true
+            - name: Test empty and existing production tracks
+              run: |
+                  set -euo pipefail
+                  ruby fastlane/tests/play_track_reader_test.rb
+                  bundle exec ruby fastlane/tests/play_track_reader_integration_test.rb
+                  bundle exec fastlane lanes
