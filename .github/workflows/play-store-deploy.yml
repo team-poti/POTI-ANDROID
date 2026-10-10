@@ -57,7 +57,7 @@ jobs:
                     exit 1
                   fi
 
-                  RELEASE_NOTES_FILE="fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt"
+                  RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
                   if [ ! -s "$RELEASE_NOTES_FILE" ]; then
                     echo "::error::Missing Korean Google Play release notes: $RELEASE_NOTES_FILE"
                     exit 1
@@ -169,8 +169,9 @@ jobs:
               run: |
                   set -euo pipefail
                   mkdir -p "${{ runner.temp }}/whats-new"
+                  RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
                   cp \
-                    "fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt" \
+                    "$RELEASE_NOTES_FILE" \
                     "${{ runner.temp }}/whats-new/whatsnew-ko-KR"
 
             - name: Upload to Google Play internal testing
