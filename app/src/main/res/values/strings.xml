@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">poti</string>
+    <string name="app_name">포티</string>
     <string name="clipboard_default_label">포티</string>
 
     <!-- NavBottomBar -->
