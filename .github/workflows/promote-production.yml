@@ -60,6 +60,7 @@ jobs:
                   client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
                   private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
                   permission-contents: write
+                  permission-workflows: write
 
             - name: Checkout internal release
               uses: actions/checkout@v4
