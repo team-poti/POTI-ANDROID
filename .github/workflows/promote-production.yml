@@ -127,8 +127,8 @@ jobs:
                     echo "tag_exists=$TAG_EXISTS"
                   } >> "$GITHUB_OUTPUT"
 
-            # Use the dispatch commit's dependencies, not the older internal tag's lockfile.
-            - name: Checkout release dependencies
+            # Use current deployment tooling while preserving the internal release SHA.
+            - name: Checkout release tooling
               uses: actions/checkout@v4
               with:
                   ref: ${{ github.sha }}
@@ -138,6 +138,9 @@ jobs:
                   sparse-checkout: |
                       Gemfile
                       Gemfile.lock
+                      fastlane/Fastfile
+                      fastlane/lib
+                      fastlane/tests
                   sparse-checkout-cone-mode: false
 
             - name: Set up Ruby
@@ -148,8 +151,11 @@ jobs:
                   bundler-cache: true
 
             - name: Verify Fastlane installation
+              working-directory: .release-tooling
               run: |
                   set -euo pipefail
+                  ruby fastlane/tests/play_track_reader_test.rb
+                  bundle exec ruby fastlane/tests/play_track_reader_integration_test.rb
                   bundle exec fastlane --version
                   bundle exec fastlane lanes
 
@@ -176,6 +182,7 @@ jobs:
                   RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
                   mkdir -p "$PLAY_METADATA_PATH/ko-KR/changelogs"
                   cp "$RELEASE_NOTES_FILE" "$PLAY_METADATA_PATH/ko-KR/changelogs/$VERSION_CODE.txt"
+                  cd .release-tooling
                   bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
 
             - name: Create release tag if needed
