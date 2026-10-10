@@ -81,7 +81,7 @@ jobs:
                     exit 1
                   fi
 
-                  RELEASE_NOTES_FILE="fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt"
+                  RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
                   if [ ! -s "$RELEASE_NOTES_FILE" ]; then
                     echo "::error::Missing Korean Google Play release notes: $RELEASE_NOTES_FILE"
                     exit 1
@@ -138,7 +138,13 @@ jobs:
               env:
                   PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
-              run: bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
+                  PLAY_METADATA_PATH: ${{ runner.temp }}/poti-play-metadata
+              run: |
+                  set -euo pipefail
+                  RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
+                  mkdir -p "$PLAY_METADATA_PATH/ko-KR/changelogs"
+                  cp "$RELEASE_NOTES_FILE" "$PLAY_METADATA_PATH/ko-KR/changelogs/$VERSION_CODE.txt"
+                  bundle exec fastlane android promote_internal version_code:"$VERSION_CODE"
 
             - name: Create release tag if needed
               env:

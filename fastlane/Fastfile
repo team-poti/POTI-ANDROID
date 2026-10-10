@@ -23,7 +23,7 @@ platform :android do
         track_promote_to: "production",
         track_promote_release_status: "completed",
         version_code: version_code,
-        metadata_path: "fastlane/metadata/android",
+        metadata_path: ENV.fetch("PLAY_METADATA_PATH", "fastlane/metadata/android"),
         skip_upload_apk: true,
         skip_upload_aab: true,
         skip_upload_metadata: true,

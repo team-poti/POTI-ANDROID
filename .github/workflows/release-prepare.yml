@@ -8,8 +8,8 @@ on:
                 required: true
                 type: string
             release_notes:
-                description: 'Korean Google Play release notes (use \n for line breaks, up to 500 characters)'
-                required: true
+                description: 'Korean release notes (leave blank to reuse previous notes; use \n for line breaks; max 500 characters)'
+                required: false
                 type: string
 
 permissions:
@@ -37,23 +37,11 @@ jobs:
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   INPUT_VERSION: ${{ inputs.version }}
-                  RELEASE_NOTES: ${{ inputs.release_notes }}
               run: |
                   set -euo pipefail
-                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
 
                   if ! printf '%s' "$INPUT_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
                     echo "::error::Version must use x.y.z format: $INPUT_VERSION"
-                    exit 1
-                  fi
-
-                  if [ -z "${RELEASE_NOTES//[[:space:]]/}" ]; then
-                    echo "::error::Release notes must not be empty."
-                    exit 1
-                  fi
-
-                  if [ "${#RELEASE_NOTES}" -gt 500 ]; then
-                    echo "::error::Release notes must be 500 characters or fewer."
                     exit 1
                   fi
 
@@ -147,15 +135,58 @@ jobs:
                     echo "branch=$RELEASE_BRANCH"
                   } >> "$GITHUB_OUTPUT"
 
+            - name: Resolve release notes
+              id: notes
+              env:
+                  RELEASE_NOTES: ${{ inputs.release_notes }}
+                  NEXT_VERSION_CODE: ${{ steps.release.outputs.code }}
+              run: |
+                  set -euo pipefail
+                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
+                  SOURCE_FILE="fastlane/metadata/android/ko-KR/changelogs/$NEXT_VERSION_CODE.txt"
+                  CREATE_FILE=true
+
+                  if [ -z "${RELEASE_NOTES//[[:space:]]/}" ]; then
+                    SOURCE_FILE=$(bash .github/scripts/resolve-release-notes.sh "$((NEXT_VERSION_CODE - 1))")
+                    RELEASE_NOTES=$(cat "$SOURCE_FILE")
+                    CREATE_FILE=false
+                    echo "Reusing release notes from $SOURCE_FILE"
+                  fi
+
+                  if [ -z "${RELEASE_NOTES//[[:space:]]/}" ]; then
+                    echo "::error::Release notes must not be empty."
+                    exit 1
+                  fi
+                  if [ "${#RELEASE_NOTES}" -gt 500 ]; then
+                    echo "::error::Release notes must be 500 characters or fewer."
+                    exit 1
+                  fi
+
+                  if [ "$CREATE_FILE" = "true" ]; then
+                    PREVIOUS_FILE=$(bash .github/scripts/resolve-release-notes.sh "$((NEXT_VERSION_CODE - 1))" 2>/dev/null || true)
+                    if [ -n "$PREVIOUS_FILE" ] && [ "$RELEASE_NOTES" = "$(cat "$PREVIOUS_FILE")" ]; then
+                      SOURCE_FILE="$PREVIOUS_FILE"
+                      CREATE_FILE=false
+                      echo "Release notes are unchanged; reusing $SOURCE_FILE"
+                    fi
+                  fi
+
+                  NOTES_PATH="$RUNNER_TEMP/poti-release-notes.txt"
+                  printf '%s\n' "$RELEASE_NOTES" > "$NOTES_PATH"
+                  echo "path=$NOTES_PATH" >> "$GITHUB_OUTPUT"
+                  echo "source=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
+                  echo "create=$CREATE_FILE" >> "$GITHUB_OUTPUT"
+
             - name: Bump version and push release branch
               env:
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
                   RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
-                  RELEASE_NOTES: ${{ inputs.release_notes }}
+                  RELEASE_NOTES_PATH: ${{ steps.notes.outputs.path }}
+                  RELEASE_NOTES_SOURCE: ${{ steps.notes.outputs.source }}
+                  CREATE_NOTES_FILE: ${{ steps.notes.outputs.create }}
               run: |
                   set -euo pipefail
-                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git switch -c "$RELEASE_BRANCH"
@@ -163,11 +194,12 @@ jobs:
                   sed -i -E "s/^VERSION_CODE=.*/VERSION_CODE=$VERSION_CODE/" gradle.properties
                   sed -i -E "s/^VERSION_NAME=.*/VERSION_NAME=$VERSION_NAME/" gradle.properties
 
-                  RELEASE_NOTES_DIR="fastlane/metadata/android/ko-KR/changelogs"
-                  mkdir -p "$RELEASE_NOTES_DIR"
-                  printf '%s\n' "$RELEASE_NOTES" > "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
-
-                  git add gradle.properties "$RELEASE_NOTES_DIR/$VERSION_CODE.txt"
+                  git add gradle.properties
+                  if [ "$CREATE_NOTES_FILE" = "true" ]; then
+                    mkdir -p "$(dirname "$RELEASE_NOTES_SOURCE")"
+                    cp "$RELEASE_NOTES_PATH" "$RELEASE_NOTES_SOURCE"
+                    git add "$RELEASE_NOTES_SOURCE"
+                  fi
                   git commit -m "[Chore] prepare app release $VERSION_NAME (code $VERSION_CODE)"
                   git push origin "$RELEASE_BRANCH"
 
@@ -177,10 +209,10 @@ jobs:
                   VERSION_NAME: ${{ steps.release.outputs.name }}
                   VERSION_CODE: ${{ steps.release.outputs.code }}
                   RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
-                  RELEASE_NOTES: ${{ inputs.release_notes }}
+                  RELEASE_NOTES_PATH: ${{ steps.notes.outputs.path }}
+                  RELEASE_NOTES_SOURCE: ${{ steps.notes.outputs.source }}
               run: |
                   set -euo pipefail
-                  RELEASE_NOTES="${RELEASE_NOTES//\\n/$'\n'}"
                   BODY_FILE="$RUNNER_TEMP/release-pr.md"
                   {
                     echo "## Release $VERSION_NAME"
@@ -190,11 +222,11 @@ jobs:
                     echo "| VERSION_NAME | \`$VERSION_NAME\` |"
                     echo "| VERSION_CODE | \`$VERSION_CODE\` |"
                     echo "| Candidate | \`$RELEASE_BRANCH\` |"
-                    echo "| Release notes | \`fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt\` |"
+                    echo "| Release notes | \`$RELEASE_NOTES_SOURCE\` |"
                     echo
                     echo "## Google Play release notes (ko-KR)"
                     echo
-                    printf '%s\n' "$RELEASE_NOTES"
+                    cat "$RELEASE_NOTES_PATH"
                     echo
                     echo "## Checklist"
                     echo
