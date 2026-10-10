@@ -29,6 +29,8 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 20
         environment: google-play-production
+        env:
+            BUNDLE_GEMFILE: ${{ github.workspace }}/.release-tooling/Gemfile
 
         steps:
             - name: Validate confirmation
@@ -125,6 +127,32 @@ jobs:
                     echo "tag_exists=$TAG_EXISTS"
                   } >> "$GITHUB_OUTPUT"
 
+            # Use the dispatch commit's dependencies, not the older internal tag's lockfile.
+            - name: Checkout release dependencies
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.sha }}
+                  path: .release-tooling
+                  token: ${{ steps.app-token.outputs.token }}
+                  persist-credentials: false
+                  sparse-checkout: |
+                      Gemfile
+                      Gemfile.lock
+                  sparse-checkout-cone-mode: false
+
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@v1
+              with:
+                  ruby-version: '3.3'
+                  working-directory: .release-tooling
+                  bundler-cache: true
+
+            - name: Verify Fastlane installation
+              run: |
+                  set -euo pipefail
+                  bundle exec fastlane --version
+                  bundle exec fastlane lanes
+
             - name: Advance main
               env:
                   RELEASE_SHA: ${{ steps.release.outputs.sha }}
@@ -137,12 +165,6 @@ jobs:
                     echo "::error::main was not advanced to $RELEASE_SHA."
                     exit 1
                   fi
-
-            - name: Set up Ruby
-              uses: ruby/setup-ruby@v1
-              with:
-                  ruby-version: '3.3'
-                  bundler-cache: true
 
             - name: Promote internal release to production if needed
               env:
