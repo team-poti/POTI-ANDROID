@@ -35,17 +35,24 @@ jobs:
                   RELEASE_NOTES_FILE="fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt"
                   mapfile -t CHANGED_FILES < <(git diff --name-only origin/develop...HEAD)
 
-                  if [ "${#CHANGED_FILES[@]}" -ne 2 ]; then
-                    echo "::error::A release PR must change exactly gradle.properties and $RELEASE_NOTES_FILE."
+                  if [ "${#CHANGED_FILES[@]}" -lt 1 ] || [ "${#CHANGED_FILES[@]}" -gt 2 ]; then
+                    echo "::error::A release PR must change gradle.properties and optionally $RELEASE_NOTES_FILE."
                     printf 'Changed file: %s\n' "${CHANGED_FILES[@]}"
                     exit 1
                   fi
 
-                  for REQUIRED_FILE in gradle.properties "$RELEASE_NOTES_FILE"; do
-                    if ! printf '%s\n' "${CHANGED_FILES[@]}" | grep -Fxq "$REQUIRED_FILE"; then
-                      echo "::error::Release PR is missing required file: $REQUIRED_FILE"
-                      exit 1
-                    fi
+                  if ! printf '%s\n' "${CHANGED_FILES[@]}" | grep -Fxq gradle.properties; then
+                    echo "::error::Release PR is missing required file: gradle.properties"
+                    exit 1
+                  fi
+                  for CHANGED_FILE in "${CHANGED_FILES[@]}"; do
+                    case "$CHANGED_FILE" in
+                      gradle.properties|"$RELEASE_NOTES_FILE") ;;
+                      *)
+                        echo "::error::Unexpected file in release PR: $CHANGED_FILE"
+                        exit 1
+                        ;;
+                    esac
                   done
 
                   git show origin/develop:gradle.properties |
@@ -94,11 +101,7 @@ jobs:
                     exit 1
                   fi
 
-                  RELEASE_NOTES_FILE="fastlane/metadata/android/ko-KR/changelogs/$VERSION_CODE.txt"
-                  if [ ! -s "$RELEASE_NOTES_FILE" ]; then
-                    echo "::error::Release notes are missing or empty: $RELEASE_NOTES_FILE"
-                    exit 1
-                  fi
+                  RELEASE_NOTES_FILE=$(bash .github/scripts/resolve-release-notes.sh "$VERSION_CODE")
 
                   RELEASE_NOTES=$(cat "$RELEASE_NOTES_FILE")
                   if [ "${#RELEASE_NOTES}" -gt 500 ]; then
